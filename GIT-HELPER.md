@@ -386,6 +386,21 @@ git tag
 git checkout v1.0
 ```
 
+### Pull Request (PR) - запрос на слияние:
+
+```bash
+# 1. Создать feature ветку
+git checkout -b feature/new-feature
+
+# 2. Сделать изменения и закоммитить
+git add .
+git commit -m "Add new feature"
+git push -u origin feature/new-feature
+
+# 3. На GitHub создать Pull Request
+# 4. После одобрения - слить в main
+```
+
 ### Работа с ветками для версий:
 
 ```bash
