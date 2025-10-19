@@ -1,0 +1,747 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import StepikHero from "../components/stepik/stepikHero.astro";
+
+import CourseWhy from "../components/stepik/CourseWhy.astro";
+import ReviewsSection from "../components/stepik/ReviewsSection.astro";
+import SupportSection from "../components/stepik/SupportSection.astro";
+import PriceBlock from "../components/stepik/PriceBlock.astro";
+import CourseOffer from "../components/stepik/CourseOffer.astro";
+import UnisMarquee from "../components/mainpage/UnisMarquee.astro";
+import MegaSection from "../components/stepik/MegaSection.astro";
+import PaymentPopup from "../components/stepik/PaymentPopup.astro";
+
+/* Готовый FAQ-компонент (тот, что ты прислал) */
+import Faq from "../components/mainpage/Faq.astro";
+
+/* Готовый блок автора (существующий у тебя компонент) */
+import AuthorSection from "../components/mainpage/AuthorSection.astro";
+
+/* SEO */
+const seo = {
+  title: "Курс по всей органической химии для ЕГЭ 2026 | ЕГЭХИМ, Филипенко Валерий",
+  description:
+    " Онлайн-курс по органической химии для ЕГЭ: видеоуроки, 1000+ задач, проверка ДЗ и поддержка в чате. Начни бесплатно и выйди на 80–100 баллов!",
+  image: "/images/technical/og-home.png",
+};
+
+/* Слайды платформы */
+const platformProps = {
+  id: "platform",
+  heading: "Как проходит обучение на платформе",
+  autoplayMs: 6000,
+  slides: [
+    {
+      img: {
+        src: "/images/stepik/gifs/platform.webm",
+        alt: "Платформа обучения",
+      },
+      step: "Платформа",
+      title: "Уникальная платформа Stepik",
+      text: "Современная платформа с интуитивным интерфейсом, мобильным приложением и удобной навигацией. Все материалы доступны в одном месте.",
+      btnText: "Перейти к регистрации",
+      href: "#offer",
+    },
+    {
+      img: {
+        src: "/images/stepik/gifs/course.webm",
+        alt: "Большой курс",
+      },
+      step: "Курс",
+      title: "Большой курс, наполненный контентом",
+      text: "Полный курс по неорганической химии с 26 часами видео и 1085 заданиями. Не нужно ничего искать дополнительно - все есть в курсе.",
+      btnText: "Начать обучение",
+      href: "#offer",
+    },
+    {
+      img: {
+        src: "/images/stepik/gifs/video.webm",
+        alt: "Видеоуроки",
+      },
+      step: "Видео",
+      title: "Качественные видеоуроки",
+      text: "Подробные видеоуроки с объяснением теории, разбором примеров и решением задач. Материал подается понятно и структурированно.",
+      btnText: "Смотреть видео",
+      href: "#offer",
+    },
+    {
+      img: {
+        src: "/images/stepik/gifs/practice.webm",
+        alt: "Практические задания",
+      },
+      step: "Практика",
+      title: "Интерактивная практика",
+      text: "Более 1000 заданий с автопроверкой и развернутыми ответами. От простых упражнений до заданий уровня ЕГЭ по химии.",
+      btnText: "К практике",
+      href: "#offer",
+    },
+    {
+      img: {
+        src: "/images/stepik/gifs/help.webm",
+        alt: "Поддержка и вопросы",
+      },
+      step: "Поддержка",
+      title: "Постоянная поддержка",
+      text: "Есть вопросы? Задавайте их в общем чате или на платформе Stepik. Мы всегда готовы помочь и объяснить сложные моменты.",
+      btnText: "Задать вопрос",
+      href: "#offer",
+    },
+    {
+      img: {
+        src: "/images/stepik/gifs/materials.webm",
+        alt: "Файлы и материалы",
+      },
+      step: "Файлы",
+      title: "Дополнительные материалы",
+      text: "Чек-листы, схемы, таблицы и другие полезные материалы для закрепления знаний. Все файлы доступны для скачивания.",
+      btnText: "Посмотреть файлы",
+      href: "#offer",
+    },
+  ],
+};
+
+/* JSON-LD: VideoObject для слайдов MegaSection */
+const videoLd = platformProps.slides
+  .filter((s) => /\.(webm|mp4)(\?.*)?$/i.test(s.img?.src || ""))
+  .map((s) => {
+    const src: string = s.img.src;
+    const ext = (src.split(".").pop() || "").toLowerCase();
+    const encoding = ext === "mp4" ? "video/mp4" : "video/webm";
+    return {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": s.title,
+      "description": s.text,
+      "inLanguage": "ru-RU",
+      "contentUrl": `${Astro.url.origin}${src}`,
+      "encodingFormat": encoding,
+      "url": `${Astro.url.origin}${Astro.url.pathname}`,
+    };
+  });
+
+/* Модули курса */
+const modulesProps = {
+  id: "modules",
+  title: "Содержание курса",
+  infoHtml: "25 часов видео<br>1065 заданий",
+  modules: [
+    {
+      lessons: "5 уроков",
+      title: "Введение в органическую химию",
+      items: [
+        "Основы органической химии",
+        "Гомологи и изомеры",
+        "Гибридизация и строение молекул",
+        "Классификация веществ и реакций",
+        "ОВР в органической химии",
+      ],
+    },
+    {
+      lessons: "3 урока",
+      title: "Номенклатура",
+      items: [
+        "Номенклатура предельных углеводородов",
+        "Номенклатура непредельных углеводородов",
+        "Номенклатура кислородсодержащих соединений",
+      ],
+    },
+    {
+      lessons: "2 урока",
+      title: "Задачи 33",
+      items: ["Задачи 33. Основы", "Практика по задачам 33"],
+    },
+    {
+      lessons: "4 урока",
+      title: "Алканы",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Циклоалканы",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Алкены",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Алкины",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Алкадиены",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Арены",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "1 урок",
+      title: "Повторение углеводородов",
+      items: ["Повторение углеводородов"],
+    },
+    {
+      lessons: "4 урока",
+      title: "Спирты",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Фенолы",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Альдегиды и кетоны",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Карбоновые кислоты и производные",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Сложные эфиры и жиры",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "2 урока",
+      title: "Углеводы",
+      items: [
+        "Углеводы (описание, химические свойства и получение)",
+        "Тренажер",
+      ],
+    },
+    {
+      lessons: "1 урок",
+      title: "Повторение кислородсодержащих",
+      items: ["Повторение по кислородсодержащим соединениям"],
+    },
+    {
+      lessons: "4 урока",
+      title: "Амины",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Аминокислоты и пептиды",
+      items: [
+        "Общие свойства",
+        "Химические свойства и получение",
+        "Тренажер",
+        "Задания с развернутым ответом",
+      ],
+    },
+    {
+      lessons: "1 урок",
+      title: "Повторение по азотсодержащим соединениям",
+      items: ["Повторение по азотсодержащим соединениям"],
+    },
+    {
+      lessons: "8 уроков",
+      title: "Практика по тестовым заданиям из ЕГЭ",
+      items: [
+        "Тренажер заданий № 10 + разбор",
+        "Тренажер заданий № 11 + разбор",
+        "Тренажер заданий № 12 + разбор",
+        "Тренажер заданий № 13 + разбор",
+        "Тренажер заданий № 14 + разбор",
+        "Тренажер заданий № 15 + разбор",
+        "Тренажер заданий № 16 + разбор",
+        "Тренажер заданий № 24 + разбор",
+      ],
+    },
+    {
+      lessons: "4 урока",
+      title: "Практика по заданиям второй части",
+      items: [
+        "Тренажер заданий № 32 + разбор",
+        "Тренажер по заданиям № 32 (Часть 2)",
+        "Тренажер заданий № 33 + разбор",
+        "Тренажер по заданиям № 33 (Часть 2)",
+      ],
+    },
+  ],
+};
+
+/* Скиллы */
+const skillsProps = {
+  id: "skills",
+  title: "Чему вы научитесь на этом курсе",
+  rows: [
+    [
+      "Писать любые органические реакции",
+      "Решать задачи на вывод формулы вещества",
+      "Решать цепочки реакций",
+    ],
+    [
+      "Писать формулы и называть органические вещества",
+      "Решать задания из ЕГЭ: 10-16, 24, 32, 33",
+      "Заработаете 85+ баллов",
+    ],
+    [
+      "Научитесь мыслить как химик",
+      "Рассуждать в любых заданиях на органику",
+      "Изучите все свойства органических веществ",
+    ],
+  ],
+};
+
+/* Блок «почему курс работает» */
+const courseWhyProps = {
+  id: "course-why",
+  className: "somic-font",
+  image: { src: "/images/stepik/science.webp", alt: "Наука" },
+  title: "Курс, который работает <br>и вот почему",
+  topCards: [
+    {
+      title: "Структура",
+      text: "Только нужная для ЕГЭ информация, ничего лишнего на курсе нет!",
+    },
+    {
+      title: "Видео",
+      text: "Никаких пустых разговоров, только короткие ролики с концентратом информации.",
+    },
+  ],
+  bottomCards: [
+    {
+      title: "Практика",
+      text: "Больше 1000 заданий пратики. Как развернутые, так и тестовые задания с автопроверкой.",
+    },
+    {
+      title: "График",
+      text: "Расписания нет, курс самостоятельный. Сколько хочешь, столько и занимаешься. Можно начинать когда угодно!",
+    },
+  ],
+  verticalCard: {
+    title: "Постоянная поддержка!",
+    text: "Всегда можно задать вопрос в общем чате или на платформе stepik. Мы всегда придем к Вам на помощь и не оставим один на один с проблемами!",
+  },
+  footer: {
+    title: "Полный курс неорганической химии!",
+    text: "В данном курсе есть все необходимое для подготовки с 0. Не нужно ничего искать дополнительно.",
+    ctaText: "Приобрести курс",
+    ctaHref: "#offer",
+    target: "_self",
+    rel: "noopener",
+  },
+};
+
+/* Отзывы (бегущие ленты) */
+const reviewsProps = {
+  id: "reviews",
+  titleHtml: "Студенты довольны обучением",
+  hintHtml: "нажми на картинку для прочтения",
+  stats: [
+    {
+      value: "98%",
+      text: "выпускников отмечают, что курсы Валерия Филипенко помогли достичь поставленной цели и вырасти в баллах",
+    },
+    {
+      value: "90%",
+      text: "выпускников готовы рекомендовать обучение на курсе Валерия Филипенко",
+    },
+    {
+      value: "4,9 ⭐",
+      text: "средний рейтинг всех курсов Валерия Филипенко. На основании независимых отзывов на платформе Stepik",
+    },
+  ],
+  speedTopSec: 50,
+  speedBottomSec: 40,
+  moreReviewsHref: "https://stepik.org/a/196367?utm_source=cite",
+  moreReviewsText: "больше отзывов",
+};
+
+/* Блок «ты не один» */
+const supportProps = {
+  id: "support",
+  heading: "А я точно справлюсь самостоятельно?",
+  accent: "Да, конечно!",
+  leftCards: [
+    {
+      title: "Готовимся с полного нуля",
+      text: "Весь материал курса подготовлен так, что даже самый новичок в химии сможет овладеть им. Нужны лишь базовые школьные знания.",
+      icon: "✔",
+    },
+    {
+      title: "Задания идут от простого к сложному",
+      text: "Все задания на модулях собраны так, чтобы вы могли тренироваться на простых и постепенно переходить к сложным!",
+      icon: "✔",
+    },
+  ],
+  rightTitle: "Ты не один, мы всегда рядом!",
+  rightText:
+    "Ты всегда можешь задать вопрос на платформе или в нашем дружном чате, где тебе всегда помогут и объяснят, как лучше поступить или решить задание!",
+  rightImg: {
+    src: "/images/stepik/researcher.webp",
+    alt: "Иллюстрация исследователя",
+  },
+};
+
+/* Цена с текстурой (локальные числа) */
+const priceProps = {
+  id: "price",
+  amount: "105 000",
+  currency: "руб",
+  mainText:
+    "Именно столько стоит объем материала этого курса, если заниматься с репетитором.",
+  subTextHtml:
+    "В данном самостоятельном курсе вы получите всё это за <strong>5 490 ₽</strong> со скидкой <strong>95%</strong>.",
+  textured: true,
+  textureSrc:
+    "https://img.freepik.com/free-vector/crumpled-paper-texture_1048-2259.jpg",
+};
+
+/* Оффер с пакетами */
+const offerProps = {
+  id: "offer",
+  badges: [
+    { text: "Обучение онлайн" },
+    { text: "Доступ навсегда" },
+    { text: "Упор на практику" },
+  ],
+  title: "Полный курс по органической химии",
+  subtitle: "Что вы получите при покупке курса?",
+  bullets: [
+    { text: "Теория по всей органической химии" },
+    { text: "25 часов видео без воды" },
+    { text: "1000+ заданий ЕГЭ" },
+    { text: "Короткие видео 10–40 мин" },
+    { text: "Чат поддержки" },
+    { text: "Удобная платформа и приложение" },
+    { text: "Автопроверка заданий" },
+    { text: "Свободное расписание" },
+  ],
+  price: "5 490 ₽",
+  oldPrice: "7 490 ₽",
+  buy: {
+    text: "Курс на Stepik",
+    href: "https://stepik.org/a/196367?utm_source=cite&utm_medium=offerpage",
+    target: "_blank",
+    rel: "noopener",
+  },
+  buyWithDiscount: {
+    text: "Оплатить со скидкой 5%",
+    href: "#",
+    target: "_self",
+    rel: "noopener",
+    onClick:
+      "openPaymentPopup('https://stepik.org/a/196367/pay?promo=74e5757035325913&utm_source=cite&utm_medium=offerpage&utm_campaign=5%25')",
+  },
+  headerImage: { src: "/images/stepik/Science-pana.webp", alt: "" },
+  ctaColor: "#FF725E",
+  packages: [
+    {
+      title: "Выгоднее взять пакет курсов",
+      price: "11 100 ₽",
+      oldPrice: "15 500 ₽",
+      discount: "-26%",
+      text: "Общая + неорганическая + органическая химии",
+      href: "https://stepik.org/a/238138?utm_source=cite&utm_medium=organika",
+      target: "_blank",
+      rel: "noopener",
+      ctaText: "Подробнее",
+      buyWithDiscount: {
+        text: "Оплатить со скидкой 5%",
+        href: "#",
+        target: "_self",
+        rel: "noopener",
+        onClick:
+          "openPaymentPopup('https://stepik.org/a/238138/pay?promo=90c9f6c96cad6e37&utm_source=cite&utm_medium=organika&utm_campaign=%25')",
+      },
+      icon: { src: "/images/stepik/planet.webp", alt: "" },
+    },
+    {
+      title: "Еще один выгодный пакет курсов",
+      price: "6 700 ₽",
+      oldPrice: "10 000 ₽",
+      discount: "-25%",
+      text: "Общая + неорганическая химии",
+      href: "https://stepik.org/a/238136?utm_source=cite&utm_medium=organika",
+      target: "_blank",
+      rel: "noopener",
+      ctaText: "Подробнее",
+      buyWithDiscount: {
+        text: "Оплатить со скидкой 5%",
+        href: "#",
+        target: "_self",
+        rel: "noopener",
+        onClick:
+          "openPaymentPopup('https://stepik.org/a/238136/pay?promo=ee3fee815d6fc976&utm_source=cite&utm_medium=organika&utm_campaign=5%25')",
+      },
+      icon: { src: "/images/stepik/book.webp", alt: "" },
+    },
+  ],
+};
+
+/* JSON-LD: Product + Offer */
+const toPriceNumber = (s: string) => String(s ?? "").replace(/[^0-9]/g, "");
+const productLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": offerProps.title,
+  "description": (seo.description || "").trim(),
+  "brand": { "@type": "Organization", "name": "ЕГЭХИМ" },
+  "url": `${Astro.url.origin}${Astro.url.pathname}`,
+  "offers": {
+    "@type": "Offer",
+    "price": toPriceNumber(offerProps.price),
+    "priceCurrency": "RUB",
+    "url": offerProps.buy?.href || `${Astro.url.origin}${Astro.url.pathname}`,
+    "availability": "https://schema.org/InStock"
+  }
+};
+
+/* === FAQ ПРОПСЫ (только «вытащил» на страницу) === */
+const faqProps = {
+  title: "Часто задаваемые вопросы",
+  headingId: "faq-title",
+  singleOpen: true, // если хочешь, чтобы можно было открывать несколько — поставь false (см. оболочку ниже)
+  items: [
+    {
+      q: "Что значит самостоятельный курс?",
+      a: "Самостоятельный курс или самостоятельная подготовка к ЕГЭ по химии подразумевает, что ученик сам проходит материал по записанным видео‑урокам. Затем самостоятельно решает задания, учит материал. При этом на курсе нет вебинаров и индивидуальных занятий. Однако всегда можно задать вопрос в общем чате или на платформе Stepik.",
+    },
+    {
+      q: "А если мне не понравится курс, я могу вернуть деньги?",
+      a: "Да, предусмотрен возврат средств при условии, что пройдено менее 20% курса и с момента покупки прошло менее 14 дней.",
+    },
+    {
+      q: "На курсе есть домашние задания?",
+      a: "На платформе Stepik размещено более 1000 заданий с автопроверкой. Они и выполняют роль домашнего задания.",
+    },
+    {
+      q: "Почему такая низкая цена?",
+      a: "Курс продаётся по низкой цене, потому что он полностью самостоятельный: нет вебинаров, индивидуальных занятий и наёмных преподавателей.",
+    },
+    {
+      q: "Есть ли конспекты на курсе?",
+      a: "На курсе есть файлы для печати (таблицы, схемы). Целых готовых конспектов нет — рекомендуем писать их самостоятельно для лучшего запоминания.",
+    },
+    {
+      q: "Предусмотрена ли рассрочка оплаты?",
+      a: "Да, рассрочку можно оформить на Stepik через Яндекс или Тинькофф.",
+    },
+  ],
+};
+
+/* JSON-LD: FAQPage */
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqProps.items.map((it) => ({
+    "@type": "Question",
+    "name": it.q,
+    "acceptedAnswer": { "@type": "Answer", "text": it.a },
+  })),
+};
+
+/* === ПРОПСЫ АВТОРА (блок у тебя уже готов; ниже — типичный набор) === */
+const authorProps = {
+  id: "author",
+  heading: "Автор курса",
+  name: "Валерий Филипенко",
+  title: "Преподаватель химии и автор ЕГЭ-курсов",
+  photo: {
+    src: "https://i.ibb.co/3C9ZP1L/teacher.png",
+    alt: "Валерий Филипенко",
+  },
+  facts: [
+    "10+ лет подготовки к ЕГЭ",
+    "Средний результат учеников: 85+",
+    "Автор задачников и методичек",
+    "Партнёр ведущих платформ",
+  ],
+  socials: [
+    { href: "https://t.me/chemestrika", label: "Telegram" },
+    { href: "https://vk.com", label: "VK" },
+  ],
+};
+
+/* === MEGA SECTION ПРОПСЫ === */
+const megaSectionProps = {
+  id: "mega-section",
+  innerGap: "var(--space-50)",
+  platform: platformProps,
+  modules: modulesProps,
+  skills: skillsProps,
+  bottomCta: {
+    href: "#offer",
+    text: "Записаться на курс",
+    target: "_self",
+    rel: "noopener",
+  },
+};
+---
+
+<MainLayout
+  title={seo.title}
+  description={seo.description}
+  image={seo.image}
+  seoType="website"
+  showBreadcrumbs={false}
+  logoSrc="/logo.svg"
+  ctaHref="/courses"
+>
+  <section id="hero">
+      <StepikHero
+        labels={["Курс", "Химия ЕГЭ 2026", "Органическая химия"]}
+        title="Вся органическая химия для ЕГЭ 2026 с 0 до 80+"
+        desc="Органическая химия – это большой блок, который занимает примерно 40% всего варианта ЕГЭ по химии. На курсе вы научитесь писать любые реакции и решать задачи. Решать задания 10, 11, 12, 13, 14, 15, 16, 24, 32, 33 а также умение писать реакции пригодятся еще во многих заданиях!"
+        ctas={[
+          {
+            href: "#offer",
+            text: "Забронировать скидку", // ← текст кнопки
+            variant: "primary",
+          },
+          {
+            href: "#author",
+            text: "Подробнее", // ← текст ссылки
+            variant: "ghost",
+          },
+        ]}
+        image={{
+          src: "/images/stepik/hero-image-neorg.webp",
+          alt: "ЕГЭХИМ — подготовка к ЕГЭ по химии",
+          width: 1200,
+          height: 800,
+        }}
+        features={[
+          { title: "Доступ к курсу", text: "Остается навсегда" },
+          {
+            title: "+40 баллов на ЕГЭ",
+            text: "После курса увеличите свой результат",
+          },
+          {
+            title: "1065 заданий на курсе",
+            text: "Курс нацелен на практику, вы будете много решать.",
+          },
+          {
+            title: "Рейтинг курса 5⭐",
+            text: "На основании независимых оценок stepik",
+          },
+        ]}
+        jsonLd={true}
+        courseName="Органическая химия для ЕГЭ"
+        courseDesc="Полный курс по органической химии: видеоуроки, практика, поддержка."
+        providerName="ЕГЭХИМ"
+      />
+    </section>
+  </div>
+
+  <section id="author">
+    <AuthorSection />
+  </section>
+
+  <section id="platform">
+    {videoLd.length > 0 && (
+      <script type="application/ld+json">{JSON.stringify(videoLd)}</script>
+    )}
+    <MegaSection {...megaSectionProps} />
+  </section>
+
+  <section id="course-why">
+    <CourseWhy {...courseWhyProps} />
+  </section>
+
+  <section id="reviews">
+    <ReviewsSection {...reviewsProps} />
+  </section>
+
+  <section id="support">
+    <SupportSection {...supportProps} />
+  </section>
+
+  <section id="price">
+    <PriceBlock {...priceProps} />
+  </section>
+
+  <section id="offer">
+    <script type="application/ld+json">{JSON.stringify(productLd)}</script>
+    <CourseOffer {...offerProps} />
+  </section>
+
+  <section id="universities">
+    <UnisMarquee />
+  </section>
+
+  {/* Оболочка для FAQ (если нужно, чтобы открывался только один пункт) */}
+  <section id="faq">
+    <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
+    <Faq {...faqProps} />
+  </section>
+  <div {...faqProps.singleOpen ? {} : { "data-faq-singleopen": "0" }}></div>
+
+  {/* Попап для оплаты */}
+  <PaymentPopup
+    stepikUrl="https://stepik.org/a/196367/pay?promo=74e5757035325913"
+    title="Оплата курса со скидкой"
+    closeText="Закрыть"
+  />
+</MainLayout>

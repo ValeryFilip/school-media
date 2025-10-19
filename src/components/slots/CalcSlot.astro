@@ -1,0 +1,162 @@
+---
+/* Ничего не требуется в фронтматтере */
+---
+
+<div class="calc-box">
+  <h3 class="calc-box-title">💰 Калькулятор</h3>
+
+  <label>
+    Ученики:
+    <span class="tooltip"
+      >❔
+      <span class="tooltip-text"
+        >Сколько человек вы пригласили и они начали заниматься</span
+      >
+    </span>
+  </label>
+  <input
+    type="number"
+    id="studentsInput"
+    value="0"
+    min="0"
+    placeholder="Например, 3"
+  />
+
+  <label>
+    Сумма покупок на Stepik:
+    <span class="tooltip"
+      >❔
+      <span class="tooltip-text"
+        >Сумма, которую потратили ваши рефералы на самостоятельные курсы</span
+      >
+    </span>
+  </label>
+  <input
+    type="number"
+    id="stepikInput"
+    value="0"
+    min="0"
+    placeholder="Например, 1500"
+  />
+
+  <!-- синяя кнопка из глобалов -->
+  <button id="calcButton" class="btn btn--blue calc-btn">Посчитать</button>
+
+  <div class="calc-result">
+    💸 <strong>Доход:</strong>
+    <span id="calcTotal">0</span> ₽
+  </div>
+</div>
+
+<style>
+  .calc-box {
+    font-family: var(--ff);
+    background: var(--white);
+    color: var(--black);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-24);
+    max-width: 520px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .calc-box-title {
+    margin: 0 0 var(--space-16);
+    font-size: var(--h3);
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .calc-box label {
+    display: block;
+    margin-top: var(--space-16);
+    font-weight: 600;
+    font-size: 16px; /* базовый, но дальше сожмётся токеном в инпутах/результате */
+  }
+
+  .calc-box input[type="number"] {
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 6px;
+    font-size: var(--text);
+    color: var(--black);
+    background: #f9f9f9;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    appearance: none;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .calc-box input[type="number"]:focus {
+    background: #fff;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
+  }
+
+  /* кнопка: берём общий стиль .btn и просто растягиваем */
+  .calc-btn {
+    width: 100%;
+    margin-top: var(--space-24);
+  }
+
+  .calc-result {
+    margin-top: var(--space-16);
+    font-size: clamp(16px, 2.2vw, 20px);
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* тултипы без изменений, только аккуратнее с размерами */
+  .tooltip {
+    position: relative;
+    cursor: help;
+    font-weight: 700;
+    color: #888;
+    margin-left: 6px;
+  }
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    bottom: 120%;
+    width: 240px;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 8px;
+    transition: opacity 0.3s;
+    z-index: 10;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("calcButton")?.addEventListener("click", () => {
+      const students = +document.getElementById("studentsInput").value || 0;
+      const stepik = +document.getElementById("stepikInput").value || 0;
+      const rate =
+        students === 1
+          ? 3000
+          : students <= 5
+            ? 3500
+            : students <= 10
+              ? 4000
+              : students > 10
+                ? 5000
+                : 0;
+
+      const income = students * rate + stepik * 0.15;
+      document.getElementById("calcTotal").textContent = Math.round(income);
+    });
+  });
+</script>

@@ -1,0 +1,149 @@
+---
+interface Props {
+  apiUrl?: string;
+  placeholder?: string;
+  buttonText?: string;
+  label?: string;
+}
+
+const {
+  apiUrl = "https://script.google.com/macros/s/AKfycbwMyyyAXHQfG26BlNNO6Z3PfIIYUVxG-t0Y_06sI5b_cPjs3Bmh2JtjzxkOqNJ0JOKJ3w/exec",
+  placeholder = "vasya_123",
+  buttonText = "Узнать",
+  label = "Telegram:",
+} = Astro.props as Props;
+
+const uid = `tg-${Math.random().toString(36).slice(2)}`;
+---
+
+<!-- Бокс чекера -->
+<div id={uid} class="tg-box" data-api={apiUrl}>
+  <label class="tg-label" for={`${uid}-input`}>{label}</label>
+  <input
+    id={`${uid}-input`}
+    class="tg-input"
+    type="text"
+    inputmode="text"
+    placeholder={placeholder}
+  />
+  <!-- глобальная кнопка + вспомогательный селектор для скрипта -->
+  <button id={`${uid}-btn`} class="btn btn--blue tg-btn" type="button">
+    {buttonText}
+  </button>
+
+  <div id={`${uid}-result`} class="tg-result" role="status" aria-live="polite">
+  </div>
+</div>
+
+<!-- Скрипт привязки (без module), получает uid из data-target -->
+<script is:inline data-target={uid}>
+  (function () {
+    const script = document.currentScript;
+    const id = script && script.getAttribute("data-target");
+    const root = id ? document.getElementById(id) : null;
+    if (!root) return;
+
+    const apiUrl = root.dataset.api;
+    const input = root.querySelector(".tg-input");
+    const button = root.querySelector(".tg-btn"); // ← оставляем селектор .tg-btn
+    const result = root.querySelector(".tg-result");
+
+    async function handleCheck() {
+      const tgRaw = ((input && input.value) || "").trim();
+      const tg = tgRaw.replace(/^@/, "");
+      if (!tg) {
+        result.innerHTML = '<p style="color:#c0392b;">Введите Telegram</p>';
+        return;
+      }
+
+      result.textContent = "🔄 Проверяем...";
+
+      try {
+        const res = await fetch(
+          apiUrl + "?telegram=" + encodeURIComponent(tg),
+          { cache: "no-store" }
+        );
+        const txt = await res.text();
+        let data;
+        try {
+          data = JSON.parse(txt);
+        } catch {
+          throw new Error("Неверный ответ сервера");
+        }
+
+        if (data && data.error) {
+          result.innerHTML = '<p style="color:#c0392b;">Ник не найден</p>';
+          return;
+        }
+
+        result.innerHTML = `
+          <p><strong>${data?.name ?? ""} ${data?.family ?? ""}</strong> (@${data?.telegram ?? tg})</p>
+          <p>👥 Ученики: <strong>${data?.students ?? 0}</strong></p>
+          <p>📦 Stepik: <strong>${data?.stepik ?? 0} ₽</strong></p>
+          <p>💰 К выплате: <strong>${data?.total ?? 0} ₽</strong></p>
+          <p>📤 Выплачено: <strong>${data?.paid ?? "Нет"}</strong></p>
+        `;
+      } catch (err) {
+        result.innerHTML = `<p style="color:#c0392b;">Ошибка: ${err.message || err}</p>`;
+      }
+    }
+
+    button && button.addEventListener("click", handleCheck);
+    input &&
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleCheck();
+      });
+  })();
+</script>
+
+<style>
+  .tg-box {
+    width: 100%;
+    background: var(--white);
+    color: var(--black);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-24);
+    box-sizing: border-box;
+    font-family: var(--ff);
+  }
+
+  .tg-label {
+    display: block;
+    margin-top: var(--space-16);
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .tg-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f9f9f9;
+    font-size: 16px;
+    color: var(--black);
+    outline: none;
+    box-sizing: border-box;
+  }
+  .tg-input:focus {
+    background: #fff;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
+  }
+
+  /* вспомогательный класс только для расположения; визуал идёт из .btn .btn--blue */
+  .tg-btn {
+    width: 100%;
+    margin-top: var(--space-16);
+  }
+
+  .tg-result {
+    margin-top: var(--space-16);
+    text-align: left;
+    font-size: clamp(16px, 2.2vw, 18px);
+    line-height: 1.5;
+  }
+</style>

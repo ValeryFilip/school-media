@@ -1,0 +1,101 @@
+---
+/**
+ * Seo.astro — универсальные мета/OG/Twitter теги.
+ *
+ * Props:
+ *  - title: string
+ *  - description: string
+ *  - image?: string            // относительный или абсолютный (OG/Twitter)
+ *  - url?: string              // каноникал; если не передан — текущий путь
+ *  - type?: 'website' | 'article'
+ *  - noindex?: boolean
+ *  - addSiteSuffix?: boolean   // добавлять " — {siteName}" к <title>
+ *  - siteName?: string         // по умолчанию из config.siteName
+ *  - imageAlt?: string         // опционально: alt для OG
+ */
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: "website" | "article";
+  noindex?: boolean;
+  addSiteSuffix?: boolean;
+  siteName?: string;
+  imageAlt?: string;
+  datePublished?: string; // ISO 8601
+  dateModified?: string; // ISO 8601
+}
+const {
+  title,
+  description,
+  image,
+  url,
+  type = "website",
+  noindex = false,
+  addSiteSuffix = true,
+  siteName: siteNameProp,
+  imageAlt,
+} = Astro.props as Props;
+
+import config from "../config.ts";
+
+/** Базовый origin: в dev -> http://localhost:4321, в проде -> реальный домен */
+const origin = Astro.url.origin;
+
+/** Абсолютизатор: http(s) — как есть; '/x' -> origin + /x; 'x' -> origin + /x */
+function abs(u?: string) {
+  if (!u) return undefined;
+  if (/^(https?:)?\/\//i.test(u)) return u; // http(s):// или //cdn...
+  return `${origin}${u.startsWith("/") ? u : "/" + u}`;
+}
+
+/** Каноникал: явный url -> abs(); иначе текущий путь без query/hash */
+const canonical = url ? abs(url) : `${origin}${Astro.url.pathname}`;
+
+/** OG image — абсолютный */
+const ogImage = abs(image);
+
+/** Название сайта: пропс > config.siteName > 'Site' */
+const siteName = siteNameProp || (config as any)?.siteName || "Site";
+
+/** <title> с суффиксом */
+const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
+---
+
+<title>{titleFinal}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={noindex ? "noindex,nofollow" : "index,follow"} />
+
+<!-- Open Graph -->
+<meta property="og:locale" content="ru_RU" />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+{
+  type === "article" && (Astro.props as any).datePublished && (
+    <meta
+      property="article:published_time"
+      content={(Astro.props as any).datePublished}
+    />
+  )
+}
+{
+  type === "article" && (Astro.props as any).dateModified && (
+    <meta
+      property="article:modified_time"
+      content={(Astro.props as any).dateModified}
+    />
+  )
+}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}

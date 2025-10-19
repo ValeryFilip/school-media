@@ -1,0 +1,72 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="404 — Страница не найдена" showBreadcrumbs={false}>
+  <section class="section">
+    <div class="container error-container">
+      <div class="error-text">
+        <h1>404 — Страница не найдена</h1>
+        <p>Упс! Запрашиваемая страница не существует.</p>
+        <div class="error-actions" role="group" aria-label="Навигация">
+          <a class="btn btn--blue" href="/">На главную</a>
+          <a class="btn btn--blue" href="/media/">В медиа</a>
+        </div>
+      </div>
+      <div class="error-image">
+        <img src="/images/technical/404.png" alt="Страница не найдена" />
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .error-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 70vh;
+      gap: 40px;
+    }
+
+    .error-text {
+      flex: 1;
+    }
+
+    .error-text h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .error-text p {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      color: #555;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .error-image {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .error-image img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .error-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .error-image {
+        order: -1;
+      }
+    }
+  </style>
+</MainLayout>

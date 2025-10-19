@@ -1,0 +1,132 @@
+---
+interface Props {
+  imageSrc: string;
+  imageAlt?: string;
+  calendarIconSrc?: string;
+  timeIconSrc?: string;
+  date?: string;
+  time?: string;
+  tag?: string;
+  title?: string;
+  text?: string;
+  wrapperClass?: string;
+}
+
+const {
+  imageSrc,
+  imageAlt,
+  date,
+  time,
+  tag,
+  title,
+  text,
+  wrapperClass,
+}: Props = Astro.props;
+---
+
+<style>
+  .card__wrapper {
+    border-radius: 8px;
+    max-width: 600px;
+    max-height: 100px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 30px;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    transform: none;
+    container-type: inline-size;
+  }
+  .card__wrapper:hover {
+    transform: translateY(-5px) rotate(1deg);
+  }
+  .card__top-img img {
+    width: 100px;
+    border-radius: 12px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+  .card__body {
+    padding: 0;
+  }
+  .card__body-title {
+    font-size: clamp(18px, 2.5vw, 20px);
+    margin: 0 0 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card__body-text {
+    font-size: clamp(14px, 2.5vw, 16px);
+    color: #666;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card__body-tag {
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: rgb(66, 126, 255);
+    align-items: center;
+  }
+  .card__body-tag:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .card__body-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: #666;
+  }
+  .card__body-meta-date,
+  .card__body-meta-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  @container (max-width: 400px) {
+    .card__top-img {
+      display: none;
+    }
+  }
+</style>
+
+<article class="card123 card-horizontal">
+  <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
+    <div class="card__top-img">
+      <img src={imageSrc} alt={imageAlt ?? "Card Image"} />
+    </div>
+    <div class="card__body">
+      <div class="card__body-meta">
+        <div class="card__body-meta-date">
+          <img
+            src="/images/technical/calendar.png"
+            alt="Date Icon"
+            width="14"
+            height="14"
+          />
+          {date}
+        </div>
+        <div class="card__body-meta-time">
+          <img
+            src="/images/technical/time.png"
+            alt="Time Icon"
+            width="14"
+            height="14"
+          />
+          {time}
+        </div>
+        <div class="card__body-tag">{tag}</div>
+      </div>
+      <h3 class="card__body-title">{title}</h3>
+      <p class="card__body-text">{text}</p>
+    </div>
+  </div>
+</article>

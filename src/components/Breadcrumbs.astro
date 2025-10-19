@@ -1,0 +1,156 @@
+---
+import config from "../config.ts";
+
+interface Crumb { name: string; href?: string; }
+interface Props {
+  items: Crumb[];
+  container?: boolean;
+  jsonLd?: boolean;
+  pageMaxWidth?: number;
+  pagePadding?: number;
+}
+
+const {
+  items,
+  container = true,
+  jsonLd = true,
+  pageMaxWidth = 1300,
+  pagePadding = 50
+} = Astro.props as Props;
+
+/* ===== Домен и хосты ===== */
+const siteOrigin = Astro.url.origin;                    // напр. http://localhost:4321 или https://egehim.ru
+const siteHost   = new URL(siteOrigin).host;
+
+let configHost: string | null = null;
+try { if (config?.siteUrl) configHost = new URL(String(config.siteUrl)).host; } catch {}
+
+const inMedia = Astro.url.pathname.startsWith("/media");
+
+/** Это «наш» внутренний абсолютный URL?
+ *  - тот же хост, что у текущего запроса; ИЛИ
+ *  - хост равен config.siteUrl (часто это и есть example.com в dev).
+ */
+function isInternalAbsolute(u: URL): boolean {
+  return u.host === siteHost || (configHost && u.host === configHost);
+}
+
+/** Нормализация href в АБСОЛЮТНЫЙ URL на текущем домене (+/media при необходимости) */
+function normalizeHref(h?: string): string | undefined {
+  if (!h) return undefined;
+
+  // внешние протоколы и якоря — оставляем
+  if (h.startsWith("mailto:") || h.startsWith("tel:") || h.startsWith("#")) return h;
+
+  // Абсолютная http(s)?
+  if (/^https?:\/\//i.test(h)) {
+    const u = new URL(h);
+    if (!isInternalAbsolute(u)) return h; // внешний домен — не трогаем
+
+    // внутренний абсолютный → перепривязываем к текущему origin
+    let path = u.pathname;
+    if (inMedia && path !== "/" && !path.startsWith("/media/")) {
+      path = "/media" + (path.startsWith("/") ? path : "/" + path);
+    }
+    return `${siteOrigin}${path}${u.search}${u.hash}`;
+  }
+
+  // Внутренний путь ("/..." или "path/...")
+  let path = h.startsWith("/") ? h : `/${h.replace(/^\/+/, "")}`;
+  if (inMedia && path !== "/" && !path.startsWith("/media/")) {
+    path = "/media" + path;
+  }
+  return `${siteOrigin}${path}`;
+}
+
+/* ===== Рендер ===== */
+const rendered: Crumb[] = [{ name: "home-icon", href: `${siteOrigin}/` }, ...items];
+
+const breadcrumbsLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": rendered.map((c, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "name": c.name === "home-icon" ? (config?.siteName || "Home") : c.name,
+    ...(c.href ? { "item": normalizeHref(c.href) } : {})
+  }))
+};
+---
+
+{jsonLd && <script type="application/ld+json">{JSON.stringify(breadcrumbsLd)}</script>}
+
+<div class={`bc-root${container ? " bc-root--container" : ""}`} style={`--bc-max:${pageMaxWidth}px; --bc-pad:${pagePadding}px;`}>
+  <nav aria-label="Breadcrumb" class="breadcrumbs">
+    <ol class="bc-list">
+      {rendered.map((c, i) => {
+        const isLast = i === rendered.length - 1 || !c.href;
+        const isHome = c.name === "home-icon";
+        const href = c.href ? normalizeHref(c.href) : undefined;
+
+        return (
+          <li class="bc-item" aria-current={isLast ? "page" : undefined}>
+            {isHome ? (
+              <a class="bc-link bc-home" href={href}>
+                <svg class="bc-home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Главная">
+                  <path fill="currentColor" d="M12 3l9 8h-3v9h-4v-6H10v6H6v-9H3z"/>
+                </svg>
+              </a>
+            ) : (
+              isLast || !href ? c.name : <a class="bc-link" href={href}>{c.name}</a>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+</div>
+
+<style>
+.bc-root { width: 100%; align-self: flex-start; justify-self: start; text-align: left; }
+.bc-root--container { box-sizing: border-box; max-width: var(--bc-max, 1300px); padding-inline: var(--bc-pad, 50px); margin-inline: auto; }
+.breadcrumbs { font-size: 12px; color: #888; margin: 25px 0; }
+.bc-list { list-style: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 0.5rem; padding: 0; margin: 0; }
+.bc-item { display: inline-flex; align-items: center; color: #666; }
+.bc-item::after { content: "›"; margin: 0 0.5rem; color: #666; }
+.bc-item:last-child::after { content: ""; }
+.bc-link { color: #0d6efd; text-decoration: none; }
+.bc-link:hover, .bc-link:focus-visible { text-decoration: underline; outline: none; }
+.bc-item[aria-current="page"] { color: #333; }
+.breadcrumbs :focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
+.bc-home { color: #999; display: flex; align-items: center; }
+.bc-home:hover { color: #0d6efd; }
+.bc-home-icon { width: 2em; height: 2em; display: block; }
+@media (max-width: 1100px) {
+  .bc-root--container { 
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    max-width: none;
+    padding-inline: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bc-root--container { 
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    max-width: none;
+    padding-inline: 15px;
+  }
+  .breadcrumbs { font-size: 15px; }
+  .bc-list { gap: 0.4rem; }
+  .bc-item::after { margin: 0 0.4rem; }
+}
+
+@media (max-width: 420px) {
+  .bc-root--container { 
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    max-width: none;
+    padding-inline: 15px;
+  }
+}
+</style>

@@ -1,0 +1,315 @@
+---
+interface DocItem {
+  id: string;
+  label: string;
+  href?: string;
+  required?: boolean;
+}
+interface Props {
+  popupId?: string;
+  title?: string;
+  submitText?: string;
+  action?: string; // GAS endpoint
+  docs?: DocItem[];
+  /* UTM метки для отслеживания */
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+}
+const {
+  popupId = "lead-popup",
+  title = "Запись / заявка",
+  submitText = "Отправить",
+  action = "https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec",
+  docs = [
+    {
+      id: "policy",
+      label: "Согласен с Политикой конфиденциальности",
+      href: "/privacy",
+      required: true,
+    },
+    {
+      id: "offer",
+      label: "Согласен с Условиями оферты",
+      href: "/agreement",
+      required: true,
+    },
+    {
+      id: "consent",
+      label: "Согласен на обработку персональных данных",
+      href: "/marketing-consent",
+      required: true,
+    },
+  ],
+  /* UTM метки */
+  utmSource,
+  utmMedium,
+  utmCampaign,
+  utmContent,
+  utmTerm,
+} = Astro.props as Props;
+---
+
+<div
+  id={popupId}
+  class="popup"
+  data-popup
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={`${popupId}-title`}
+  aria-hidden="true"
+>
+  <div class="popup__backdrop" data-popup-close></div>
+
+  <div class="popup__card">
+    <button
+      class="popup__close"
+      type="button"
+      aria-label="Закрыть"
+      data-popup-close>×</button
+    >
+    <h3 id={`${popupId}-title`} class="popup__title">{title}</h3>
+
+    <form
+      class="popup__form"
+      data-endpoint={action}
+      data-utm-source={utmSource}
+      data-utm-medium={utmMedium}
+      data-utm-campaign={utmCampaign}
+      data-utm-content={utmContent}
+      data-utm-term={utmTerm}
+      novalidate
+    >
+      <div class="field">
+        <label for={`${popupId}-fio`}>ФИО</label>
+        <input
+          id={`${popupId}-fio`}
+          name="fullName"
+          type="text"
+          placeholder="Иванов Иван Иванович"
+          autocomplete="name"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for={`${popupId}-phone`}>Телефон</label>
+        <input
+          id={`${popupId}-phone`}
+          name="phone"
+          type="tel"
+          inputmode="tel"
+          placeholder="+7 999 123-45-67"
+          autocomplete="tel"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for={`${popupId}-tg`}>Telegram (без @)</label>
+        <input
+          id={`${popupId}-tg`}
+          name="telegram"
+          type="text"
+          placeholder="username"
+          pattern="^[A-Za-z0-9_]{5,32}$"
+          autocomplete="off"
+        />
+        <small class="hint"
+          >Допустимы буквы, цифры и подчёркивание, 5–32 символа</small
+        >
+      </div>
+
+      <fieldset class="docs">
+        <legend>Документы</legend>
+        {
+          docs.map((d) => (
+            <label class="check" for={`${popupId}-${d.id}`}>
+              <input
+                id={`${popupId}-${d.id}`}
+                name={`doc_${d.id}`}
+                type="checkbox"
+                required={d.required}
+              />
+              <span>
+                {d.href ? (
+                  <a href={d.href} target="_blank" rel="noopener">
+                    {d.label}
+                  </a>
+                ) : (
+                  d.label
+                )}
+                {d.required && <em class="req"> *</em>}
+              </span>
+            </label>
+          ))
+        }
+      </fieldset>
+
+      <button class="submit" type="submit">{submitText}</button>
+      <div class="status" hidden></div>
+      <pre class="debug" hidden></pre>
+    </form>
+  </div>
+</div>
+
+<style>
+  .popup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 2147483647;
+  }
+  .popup.is-open {
+    display: grid;
+    place-items: center;
+  }
+  .popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, #000 25%, transparent);
+    backdrop-filter: blur(2px);
+  }
+  .popup__card {
+    position: relative;
+    z-index: 1;
+    width: min(560px, 96vw);
+    background: #fff;
+    color: var(--black, #1f2937);
+    border: 1px solid color-mix(in oklab, var(--blue, #4f8ef7) 22%, #dbeafe);
+    border-radius: 20px;
+    box-shadow:
+      0 20px 44px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 22px;
+  }
+  .popup__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .popup__close:hover {
+    background: #eef2ff;
+  }
+  .popup__title {
+    margin: 0 32px 14px 2px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .popup__form {
+    display: grid;
+    gap: 14px;
+  }
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+  label {
+    font-size: 14px;
+    color: var(--muted, #6b7280);
+  }
+  input[type="text"],
+  input[type="tel"] {
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    outline: none;
+  }
+  input:focus {
+    border-color: var(--blue, #4f8ef7);
+    box-shadow: 0 0 0 3px
+      color-mix(in oklab, var(--blue, #4f8ef7) 25%, transparent);
+  }
+  .hint {
+    color: var(--muted, #6b7280);
+    font-size: 12px;
+    margin-top: -2px;
+  }
+  fieldset.docs {
+    border: 1px dashed #e5e7eb;
+    border-radius: 14px;
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+    background: #fbfbfd;
+  }
+  fieldset.docs legend {
+    font-size: 13px;
+    color: var(--muted, #6b7280);
+    padding: 0 6px;
+  }
+  .check {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .check a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .req {
+    color: var(--blue, #4f8ef7);
+    font-style: normal;
+  }
+  .submit {
+    margin-top: 8px;
+    padding: 12px 16px;
+    border: 1px solid var(--blue, #4f8ef7);
+    background: color-mix(in oklab, var(--blue, #4f8ef7) 10%, #fff);
+    color: var(--black, #1f2937);
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .submit[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .status {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  .status.ok {
+    color: #0a7f35;
+  }
+  .status.err {
+    color: #b91c1c;
+  }
+  .debug {
+    margin: 6px 0 0;
+    max-height: 160px;
+    overflow: auto;
+    background: #0b1020;
+    color: #e6f0ff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font:
+      12px/1.4 ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Consolas,
+      monospace;
+  }
+  @media (max-width: 520px) {
+    .popup__card {
+      padding: 18px;
+    }
+    .popup__title {
+      font-size: 18px;
+    }
+  }
+</style>

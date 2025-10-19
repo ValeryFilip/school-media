@@ -1,0 +1,368 @@
+---
+/** SiteFooter.astro — 3 → 2 → 1 колонки, мобильный порядок: Right → Center → Left */
+const year = new Date().getFullYear();
+---
+
+<footer class="contact-bottom" role="contentinfo" aria-label="Подвал сайта">
+  <div
+    class="contact-inner"
+    style="max-width: var(--container); margin: 0 auto; padding: 0 var(--pad-desktop);"
+  >
+    <!-- 1) Левая (тех/юридическая) -->
+    <div class="footer-left">
+      <div class="footer-text-logo">Химия ЕГЭ с Валерием Филипенко</div>
+      <p class="footer-desc">Подготовим к ЕГЭ по химии с нуля до бюджета.</p>
+
+      <address class="footer-info">
+        Самозанятый Филипенко Валерий Юрьевич<br />
+        Почта: <a href="mailto:valeryfilip96@gmail.com"
+          >valeryfilip96@gmail.com</a
+        >
+      </address>
+
+      <nav class="footer-links" aria-label="Юридическая информация">
+        <a href="/privacy" rel="noopener">Политика конфиденциальности</a><br />
+        <a href="/agreement" rel="noopener">Обработка персональных данных</a><br
+        />
+        <a href="/payment" rel="noopener">Информация по оплате курсов</a><br />
+        <a href="/marketing-consent" rel="noopener"
+          >Соглашение о рекламной рассылке</a
+        ><br />
+        <a href="/sitemap.xml" rel="noopener">Карта сайта (sitemap)</a>
+      </nav>
+
+      <p class="footer-copy">{year} © Школа химии Валерия Филипенко</p>
+    </div>
+
+    <!-- 2) Центр (разделы — 5 ссылок) -->
+    <nav class="footer-center" aria-label="Разделы сайта">
+      <a href="#">Химия ЕГЭ</a>
+      <a href="#">Курсы для 10 класса</a>
+      <a href="#">Химия ОГЭ</a>
+      <a href="#">Преподаватель</a>
+      <a href="#">Блог</a>
+      <a href="/refer">Реферальная программа</a>
+    </nav>
+
+    <!-- 3) Правая (кнопка + соцсети) -->
+    <div class="footer-right">
+      <a href="/start" class="btn btn--blue footer-cta" rel="noopener"
+        >Начать бесплатно</a
+      >
+
+      <p class="social-title">Напишите нам</p>
+      <div class="social-icons" aria-label="Мессенджеры">
+        <a
+          href="https://t.me/valery_chemistry"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><img
+            src="https://i.ibb.co/B2sgbb2r/003-telegram.png"
+            alt="Telegram"
+          /></a
+        >
+        <a
+          href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><img
+            src="https://i.ibb.co/9HcX9bXv/whatsapp.webp"
+            alt="WhatsApp"
+          /></a
+        >
+        <a
+          href="https://vk.me/valeryfilip"
+          target="_blank"
+          rel="noopener noreferrer"
+          ><img src="https://i.ibb.co/4wPdvNQp/001-vk.png" alt="VK" /></a
+        >
+      </div>
+
+      <p class="social-title second">Подписывайтесь на наши соцсети</p>
+      <div class="social-icons" aria-label="Соцсети">
+        <a href="https://www.youtube.com/@chemistry_exam"
+          ><img
+            src="https://i.ibb.co/N6xJKVrh/002-youtube.png"
+            alt="YouTube"
+          /></a
+        >
+        <a href="https://vk.com/chemistry_exam"
+          ><img src="https://i.ibb.co/4wPdvNQp/001-vk.png" alt="VK" /></a
+        >
+        <a href="https://t.me/+KznfEhtzkeNlZjIy"
+          ><img
+            src="https://i.ibb.co/B2sgbb2r/003-telegram.png"
+            alt="Telegram"
+          /></a
+        >
+      </div>
+    </div>
+
+    <!-- 3.5) Доп.колонка (между центр и правой): медиа / rss / авторство -->
+    <nav class="footer-extra" aria-label="Медиа и RSS">
+      <a href="/media/">Медиа</a>
+      <a href="rss.xml">RSS</a>
+      <a href="/become-author">Хочу стать автором</a>
+    </nav>
+  </div>
+
+  <!-- Кнопка «Наверх» -->
+  <button class="scrolltop" type="button" aria-label="Прокрутить вверх">
+    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 5l-7 7h4v7h6v-7h4z" fill="currentColor"></path>
+    </svg>
+  </button>
+
+  <style>
+    .contact-bottom {
+      background: #000;
+      color: #fff;
+      font-family: var(--ff);
+      width: 100%;
+      margin-top: clamp(24px, 6vw, 48px); /* отступ сверху, чтобы не прилипал */
+      padding-block: clamp(
+        24px,
+        5vw,
+        56px
+      ); /* вертикальные внутренние отступы */
+    }
+    .contact-inner {
+      max-width: var(--container, 1300px);
+      margin: 0 auto;
+      padding: var(--pad-desktop, 50px);
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 0.9fr 0.9fr; /* desktop: 4 колонки */
+      grid-template-areas: "left center extra right";
+      gap: var(--footer-gap, 64px);
+      align-items: start;
+      box-sizing: border-box;
+    }
+    .footer-left {
+      grid-area: left;
+    }
+    .footer-center {
+      grid-area: center;
+    }
+    .footer-extra {
+      grid-area: extra;
+    }
+    .footer-right {
+      grid-area: right;
+    }
+
+    .footer-text-logo {
+      font-weight: 800;
+      font-size: 22px;
+      line-height: 1.2;
+      margin: 0 0 8px;
+    }
+    .footer-desc {
+      margin: 0 0 16px;
+      font-size: 16px;
+    }
+    .footer-info {
+      font-style: normal;
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(163, 165, 167, 0.9);
+      margin: 0 0 16px;
+    }
+    .footer-info a {
+      color: rgba(163, 165, 167, 0.9);
+      text-decoration: none;
+    }
+    .footer-info a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-links a {
+      color: rgba(163, 165, 167, 0.9);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-copy {
+      margin: 18px 0 0;
+      font-size: 14px;
+      color: rgba(163, 165, 167, 0.9);
+    }
+
+    .footer-center a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .footer-center a:hover {
+      text-decoration: underline;
+    }
+    .footer-extra a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .footer-extra a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-cta {
+      display: inline-block;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 12px 22px;
+      margin-bottom: 16px;
+    }
+
+    .social-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 14px 0 8px;
+    }
+    .social-title.second {
+      margin-top: 22px;
+    }
+    .social-icons {
+      display: flex;
+      gap: 8px;
+      margin: 4px 0 8px;
+    }
+    .social-icons a {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      transition:
+        background 0.25s,
+        border-color 0.25s,
+        transform 0.15s var(--easing, ease);
+    }
+    .social-icons a:hover {
+      background: #0060f7;
+      border-color: #0060f7;
+      transform: translateY(-1px);
+    }
+    .social-icons img {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1);
+      display: block;
+    }
+
+    /* Scroll-to-top */
+    .scrolltop {
+      position: fixed;
+      right: 20px;
+      bottom: clamp(12px, 2vw, 24px);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--blue, #366ef0);
+      color: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 24px rgba(54, 110, 240, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition:
+        opacity 0.2s,
+        transform 0.2s;
+      z-index: 9998;
+      /* Гарантируем что кнопка всегда остается в пределах экрана */
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      /* Предотвращаем влияние на layout других элементов */
+      contain: layout style paint;
+    }
+    .scrolltop.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* ≤1100px: 2 колонки, порядок (left | right) / (center | extra) */
+    @media (max-width: 1100px) {
+      .contact-inner {
+        padding: var(--space-24);
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "left right"
+          "center extra";
+        gap: var(--space-24);
+      }
+    }
+
+    /* ≤600px: 1 колонка, порядок Right → Extra → Center → Left
+       + скрываем CTA, соцсети и заголовки по левому краю */
+    @media (max-width: 600px) {
+      .contact-inner {
+        padding: var(--pad-mobile, 20px);
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "right"
+          "extra"
+          "center"
+          "left";
+        gap: var(--space-20, 20px);
+      }
+      .footer-right {
+        text-align: left; /* вместо center */
+      }
+      .footer-cta {
+        display: none; /* скрыть кнопку на мобилке */
+      }
+      .social-icons {
+        justify-content: flex-start; /* иконки по левому краю */
+      }
+      .social-title {
+        text-align: left; /* мини-заголовки слева */
+      }
+      .footer-copy {
+        text-align: center;
+      }
+    }
+
+    /* Адаптивные стили для .contact-inner */
+    @media (max-width: 1100px) {
+      .contact-inner {
+        max-width: 100% !important;
+        padding: 0 24px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .contact-inner {
+        padding: 0 var(--pad-mobile) !important;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const btn =
+        document.currentScript.parentElement.querySelector(".scrolltop");
+      const onScroll = () => {
+        const y = window.scrollY || document.documentElement.scrollTop;
+        if (y > 300) btn.classList.add("is-visible");
+        else btn.classList.remove("is-visible");
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+      btn.addEventListener("click", () =>
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      );
+    })();
+  </script>
+</footer>

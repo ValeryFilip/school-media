@@ -1,0 +1,284 @@
+---
+interface PaymentPopupProps {
+  id?: string;
+  stepikUrl: string;
+  title?: string;
+  closeText?: string;
+}
+
+const {
+  id = "payment-popup",
+  stepikUrl,
+  title = "Оплата курса",
+  closeText = "Закрыть",
+} = Astro.props as PaymentPopupProps;
+---
+
+<div
+  id={id}
+  class="payment-popup"
+  data-payment-popup
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby={`${id}-title`}
+>
+  <div class="payment-popup__overlay" data-payment-close></div>
+
+  <div class="payment-popup__container">
+    <div class="payment-popup__content">
+      <!-- Прелоадер -->
+      <div class="payment-popup__loader" id="payment-loader">
+        <div class="loader-spinner"></div>
+        <p class="loader-text">Загружаем страницу оплаты...</p>
+      </div>
+
+      <!-- Iframe -->
+      <iframe
+        src={stepikUrl}
+        class="payment-popup__iframe"
+        title="Оплата курса на Stepik"
+        loading="lazy"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"
+        allow="payment; fullscreen"
+        style="display: none;"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Обработчики для попапа оплаты
+  document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.querySelector("[data-payment-popup]");
+    const closeButtons = document.querySelectorAll("[data-payment-close]");
+    const iframe = popup?.querySelector(".payment-popup__iframe");
+    const loader = popup?.querySelector("#payment-loader");
+
+    if (!popup) return;
+
+    // Функция открытия попапа
+    window.openPaymentPopup = (url?: string) => {
+      if (url && iframe) {
+        // Показываем прелоадер
+        if (loader) loader.style.display = "flex";
+        if (iframe) iframe.style.display = "none";
+
+        // Устанавливаем новый URL
+        iframe.src = url;
+
+        // Функция скрытия прелоадера
+        function hideLoader() {
+          if (loader) loader.style.display = "none";
+          if (iframe) iframe.style.display = "block";
+        }
+
+        // Простой таймаут - скрываем прелоадер через 2 секунды
+        setTimeout(() => {
+          hideLoader();
+        }, 2000);
+
+        // Дополнительная проверка для мобильных устройств
+        if (window.innerWidth <= 768) {
+          // На мобильных устройствах увеличиваем таймаут
+          setTimeout(() => {
+            hideLoader();
+          }, 3000);
+        }
+      }
+      popup.setAttribute("aria-hidden", "false");
+      popup.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    };
+
+    // Функция закрытия попапа
+    const closePopup = () => {
+      popup.setAttribute("aria-hidden", "true");
+      popup.style.display = "none";
+      document.body.style.overflow = "";
+
+      // Сбрасываем состояние прелоадера
+      if (loader) loader.style.display = "flex";
+      if (iframe) iframe.style.display = "none";
+    };
+
+    // Обработчики закрытия
+    closeButtons.forEach((btn) => {
+      btn.addEventListener("click", closePopup);
+    });
+
+    // Закрытие по клику на overlay
+    popup.addEventListener("click", (e) => {
+      if (
+        e.target === popup ||
+        e.target.classList.contains("payment-popup__overlay")
+      ) {
+        closePopup();
+      }
+    });
+
+    // Закрытие по Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && popup.getAttribute("aria-hidden") === "false") {
+        closePopup();
+      }
+    });
+  });
+</script>
+
+<style>
+  .payment-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .payment-popup__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .payment-popup__container {
+    position: relative;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+  }
+
+  .payment-popup__content {
+    width: 100%;
+    height: 80vh;
+    position: relative;
+  }
+
+  .payment-popup__iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* Прелоадер */
+  .payment-popup__loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    z-index: 10;
+  }
+
+  .loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6b35;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  .loader-text {
+    font-family: var(
+      --ff,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif
+    );
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+    text-align: center;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .payment-popup {
+      padding: 5px;
+    }
+
+    .payment-popup__container {
+      max-height: 98vh;
+      border-radius: 12px;
+    }
+
+    .payment-popup__content {
+      height: 90vh;
+    }
+
+    .payment-popup__iframe {
+      min-height: 90vh;
+    }
+
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+    }
+
+    .loader-text {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .payment-popup {
+      padding: 0;
+    }
+
+    .payment-popup__container {
+      border-radius: 0;
+      max-height: 100vh;
+      width: 100vw;
+      max-width: 100vw;
+    }
+
+    .payment-popup__content {
+      height: 100vh;
+    }
+
+    .payment-popup__iframe {
+      min-height: 100vh;
+    }
+
+    .loader-spinner {
+      width: 35px;
+      height: 35px;
+    }
+
+    .loader-text {
+      font-size: 13px;
+    }
+  }
+</style>

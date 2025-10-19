@@ -1,0 +1,305 @@
+---
+/* UTM генератор — Astro Island, выравнен по верху, готов к вставке в .utm-container */
+---
+
+<div class="utm-box" client:load>
+  <label
+    >Имя:
+    <input type="text" id="firstName" placeholder="Иван" required />
+  </label>
+
+  <label
+    >Фамилия:
+    <input type="text" id="lastName" placeholder="Петров" required />
+  </label>
+
+  <label
+    >Telegram (без @):
+    <input type="text" id="telegramInput" placeholder="vasya_123" required />
+  </label>
+
+  <label>Телефон:</label>
+  <div class="phone-row">
+    <select id="countryCode">
+      <option value="+7">+7 (RU)</option>
+      <option value="+375">+375 (BY)</option>
+      <option value="+380">+380 (UA)</option>
+      <option value="+996">+996 (KG)</option>
+      <option value="+998">+998 (UZ)</option>
+    </select>
+    <input
+      type="tel"
+      id="phoneInput"
+      placeholder="1234567890"
+      pattern="[0-9]*"
+      inputmode="numeric"
+      required
+    />
+  </div>
+
+  <div class="consent-row">
+    <input type="checkbox" id="consentPersonal" required />
+    <label for="consentPersonal"
+      >Согласен с обработкой персональных данных</label
+    >
+  </div>
+  <div class="consent-row">
+    <input type="checkbox" id="consentOffer" required />
+    <label for="consentOffer">
+      Принимаю <a href="/agreement" target="_blank"
+        >условия оферты партнёрской программы</a
+      >
+    </label>
+  </div>
+  <div class="consent-row">
+    <input type="checkbox" id="consentSelfEmployed" required />
+    <label for="consentSelfEmployed">
+      Понимаю, что выплаты возможны только при наличии статуса самозанятого, и
+      обязуюсь его подтвердить
+    </label>
+  </div>
+  <div class="consent-row">
+    <input type="checkbox" id="consentAdLabeling" required />
+    <label for="consentAdLabeling">
+      Согласен соблюдать закон о рекламе и маркировать материалы через ОРД при
+      размещении в публичных источниках
+    </label>
+  </div>
+
+  <button id="generateUtmBtn" class="btn btn--blue">Сгенерировать ссылку</button
+  >
+  <div id="generateLoader" class="loader hidden"></div>
+
+  <div class="result hidden" id="utmResult">
+    <label>Длинная ссылка:</label>
+    <div class="copy-wrapper">
+      <input type="text" id="utmLink" readonly style="cursor:pointer;" />
+      <span class="copy-tip hidden">Скопировано!</span>
+    </div>
+    <p class="copy-hint">Нажмите, чтобы скопировать</p>
+
+    <label style="margin-top:20px;">Короткая ссылка:</label>
+    <div id="shortArea" class="copy-wrapper">
+      <div id="shortLoader" class="loader hidden"></div>
+      <input type="text" id="shortLink" readonly style="cursor:pointer;" />
+      <span class="copy-tip hidden">Скопировано!</span>
+    </div>
+    <p class="copy-hint">Нажмите, чтобы скопировать</p>
+  </div>
+</div>
+
+<style>
+  /* ===== Box ===== */
+  .utm-box {
+    font-family: var(--ff);
+    color: var(--black);
+    background: var(--white);
+    border-radius: var(--radius-24);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-20) var(--space-24) var(--space-24);
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 560px;
+    width: 100%;
+  }
+
+  /* ===== Labels & Controls ===== */
+  .utm-box label {
+    display: block;
+    margin-top: var(--space-16);
+    font-weight: 600;
+    font-size: var(--text);
+  }
+
+  .utm-box input,
+  .utm-box select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f9f9f9;
+    box-sizing: border-box;
+    color: var(--black);
+    outline: none;
+    transition:
+      border-color 0.2s var(--easing),
+      box-shadow 0.2s var(--easing),
+      background 0.2s var(--easing);
+  }
+  .utm-box input:focus,
+  .utm-box select:focus {
+    background: #fff;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
+  }
+
+  .phone-row {
+    display: flex;
+    gap: var(--space-12);
+  }
+  .phone-row select {
+    flex-shrink: 0;
+    width: 110px;
+  }
+
+  /* ===== Consents ===== */
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-12);
+    margin-top: var(--space-12);
+  }
+  .consent-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--orange);
+    margin-top: 2px;
+  }
+  .consent-row label {
+    font-size: 15px;
+    line-height: 1.4;
+    margin: 0;
+  }
+  .consent-row a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* ===== Button from globals ===== */
+  #generateUtmBtn.btn {
+    width: 100%;
+    margin-top: var(--space-16);
+  }
+
+  /* ===== Loader & Copy UI ===== */
+  .loader {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .copy-wrapper {
+    position: relative;
+  }
+  .copy-wrapper input {
+    background: #f2f4f7;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .copy-tip {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: var(--blue);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  .copy-hint {
+    font-size: 13px;
+    color: rgba(17, 17, 17, 0.6);
+    margin-top: 4px;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("generateUtmBtn");
+    const loader = document.getElementById("generateLoader");
+    const result = document.getElementById("utmResult");
+
+    btn?.addEventListener("click", async () => {
+      const fn = document.getElementById("firstName").value.trim();
+      const ln = document.getElementById("lastName").value.trim();
+      const tg = document.getElementById("telegramInput").value.trim();
+      const ph = document.getElementById("phoneInput").value.trim();
+      const cc = document.getElementById("countryCode").value;
+
+      const checksOk = [
+        "consentPersonal",
+        "consentOffer",
+        "consentSelfEmployed",
+        "consentAdLabeling",
+      ].every((id) => document.getElementById(id)?.checked);
+
+      if (!fn || !ln || !tg || !ph || !checksOk) {
+        alert("Заполните все поля и подтвердите все условия.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "⏳ Генерируется...";
+      loader.classList.remove("hidden");
+      result.classList.add("hidden");
+
+      const utm = `https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign=telegram&utm_content=${encodeURIComponent(tg)}`;
+      const body = new URLSearchParams({
+        name: fn,
+        family: ln,
+        telegram: tg,
+        phone: cc + ph,
+        utm,
+      });
+
+      try {
+        const res = await fetch(
+          "https://script.google.com/macros/s/AKfycbxPmWN7dTyHb_nJH0N2Bu41ZlmUSkei7Qd0zIrQ8ERlFnBUIhuoa7exYh56Hqo-e-eVbQ/exec",
+          { method: "POST", body }
+        );
+        const txt = await res.text();
+        if (res.ok && txt.includes("OK")) {
+          document.getElementById("utmLink").value = utm;
+          result.classList.remove("hidden");
+
+          document.getElementById("shortLoader").classList.remove("hidden");
+          const shortResp = await fetch(
+            "https://clck.ru/--?url=" + encodeURIComponent(utm)
+          );
+          document.getElementById("shortLink").value = await shortResp.text();
+          document.getElementById("shortLoader").classList.add("hidden");
+        } else {
+          alert("Ошибка: " + txt);
+        }
+      } catch (e) {
+        alert("Ошибка подключения: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Сгенерировать ссылку";
+        loader.classList.add("hidden");
+      }
+    });
+
+    ["utmLink", "shortLink"].forEach((id) => {
+      const input = document.getElementById(id);
+      const tip = input?.parentElement?.querySelector(".copy-tip");
+      input?.addEventListener("click", () => {
+        input.select();
+        document.execCommand("copy");
+        tip?.classList.remove("hidden");
+        setTimeout(() => tip?.classList.add("hidden"), 1500);
+      });
+    });
+  });
+</script>

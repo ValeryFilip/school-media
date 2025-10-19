@@ -1,0 +1,211 @@
+---
+// FAQ.astro
+/* ===== PROPS ===== */
+interface FaqItem {
+  q: string; // вопрос
+  a: string; // ответ (plain text или HTML)
+  open?: boolean; // стартовое открытие
+}
+interface Props {
+  id?: string;
+  className?: string;
+  title?: string;
+  items: FaqItem[];
+  headingId?: string; // id для <h2> и aria-labelledby
+  singleOpen?: boolean; // оставлять открытым только один пункт (по умолчанию: true)
+}
+
+const {
+  id = "faq",
+  className = "",
+  title = "Часто задаваемые вопросы",
+  items = [],
+  headingId = "faq-title",
+  singleOpen = true,
+} = Astro.props as Props;
+---
+
+<section
+  class={`section faq ${className}`.trim()}
+  id={id}
+  aria-labelledby={headingId}
+  data-faq-singleopen={singleOpen ? "1" : "0"}
+>
+  <div class="faq-inner">
+    <h2 id={headingId} class="faq__title">{title}</h2>
+
+    <div class="faq__list" role="list">
+      {
+        items.map((it) => (
+          <details class="faq__item" {...(it.open ? { open: true } : {})}>
+            <summary class="faq__q">
+              <span class="faq__q-text">{it.q}</span>
+              <span class="faq__ico" aria-hidden="true" />
+            </summary>
+
+            <div class="faq__content">
+              <div set:html={it.a} />
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  <style>
+    /* ===== КОНТЕЙНЕР КАК У "ОФФЕРА" ===== */
+    .faq {
+      font-family: var(--ff);
+      color: var(--black);
+    }
+    .faq-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    /* Планшет: edge-to-edge (как в оффере) */
+    @media (max-width: 1100px) {
+      .faq-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    /* Мобилка — можно оставить тот же принцип */
+    @media (max-width: 600px) {
+      .faq-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    /* ===== СТИЛИ КОМПОНЕНТА ===== */
+    .faq__title {
+      font-size: var(--h2);
+      line-height: 1.25;
+      margin: 0 0 var(--space-16);
+    }
+    .faq__list {
+      display: grid;
+      gap: var(--space-12);
+      margin: 0;
+      padding: 0;
+    }
+    .faq__item {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-24);
+      background: #fff;
+      box-shadow: var(--shadow-1);
+      overflow: clip;
+    }
+    .faq__q {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-16);
+      padding: 18px 20px;
+      font: 700 20px/1.3 var(--ff);
+      color: var(--black);
+    }
+    .faq__q::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq__ico {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      color: currentColor;
+    }
+    .faq__ico::before,
+    .faq__ico::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background: currentColor;
+      transform: translateY(-50%);
+      transition: transform 0.2s var(--easing);
+    }
+    .faq__ico::after {
+      transform: translateY(-50%) rotate(90deg);
+    }
+    .faq__item[open] .faq__ico::after {
+      transform: translateY(-50%) rotate(90deg) scaleX(0);
+    }
+
+    .faq__item[open] .faq__q {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .faq__content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s var(--easing);
+      will-change: grid-template-rows;
+    }
+    .faq__content > div {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      padding: 0 20px;
+      font: 500 16px/1.5 var(--ff);
+      color: var(--black);
+      background: #fff;
+    }
+    .faq__item[open] .faq__content {
+      grid-template-rows: 1fr;
+    }
+    .faq__item[open] .faq__content > div {
+      padding: 16px 20px 18px;
+    }
+
+    .faq__q:focus-visible {
+      outline: 3px solid rgba(54, 110, 240, 0.35);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 1100px) {
+      .faq__q {
+        font-size: 18px;
+        padding: 16px 18px;
+      }
+      .faq__content > div {
+        font-size: 16px;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    // Аккордеон: если singleOpen=true, открыт только один пункт
+    (function () {
+      const root = document.currentScript.closest(".faq");
+      if (!root) return;
+      const items = root.querySelectorAll(".faq__item");
+      const singleOpen = root.getAttribute("data-faq-singleopen") !== "0";
+      if (!singleOpen) return;
+
+      items.forEach((d) => {
+        d.addEventListener("toggle", () => {
+          if (d.open) {
+            items.forEach((x) => {
+              if (x !== d) x.removeAttribute("open");
+            });
+          }
+        });
+      });
+    })();
+  </script>
+</section>

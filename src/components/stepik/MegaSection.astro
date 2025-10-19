@@ -1,0 +1,1118 @@
+---
+// src/components/stepik/MegaSection.astro
+
+// ===== TYPES =====
+interface PlatformSlide {
+  img: { src: string; alt?: string };
+  step: string;
+  title: string;
+  text: string;
+  btnText: string;
+  href: string;
+}
+interface PlatformProps {
+  heading: string;
+  autoplayMs?: number;
+  slides: PlatformSlide[];
+}
+
+interface ModuleCard {
+  lessons: string;
+  title: string;
+  items: string[];
+}
+interface ModulesProps {
+  title: string;
+  infoHtml: string;
+  modules: ModuleCard[];
+}
+
+interface SkillsProps {
+  title: string;
+  rows: string[][];
+}
+
+interface CtaProps {
+  href: string;
+  text: string;
+  target?: "_blank" | "_self";
+  rel?: string;
+}
+
+interface Props {
+  id?: string;
+  innerGap?: string; // CSS-значение для gap внутри синей плашки (например "var(--space-50)")
+  platform: PlatformProps; // подплашдок 1
+  modules: ModulesProps; // подплашдок 2
+  skills: SkillsProps; // подплашдок 3
+  bottomCta?: CtaProps; // нижняя кнопка
+}
+
+// ===== DEFAULTS =====
+const {
+  id = "mega",
+  innerGap = "var(--space-50)",
+  platform = {
+    heading: "Как проходит обучение на платформе",
+    autoplayMs: 6000,
+    slides: [
+      {
+        img: {
+          src: "https://i.ibb.co/VW5JTypr/Screenshot-1.png",
+          alt: "Слайд 1",
+        },
+        step: "Регистрация",
+        title: "Знакомьтесь с платформой",
+        text: "Собственная платформа: видео, практика и связь с кураторами. Доступ открывается сразу после оплаты.",
+        btnText: "Перейти к регистрации",
+        href: "#",
+      },
+      {
+        img: {
+          src: "https://i.ibb.co/xq2w3Pth/Screenshot-2.png",
+          alt: "Слайд 2",
+        },
+        step: "Обучение",
+        title: "Изучайте в удобном темпе",
+        text: "Материалы открываются поэтапно. Видео, тесты и проекты — всё в одном месте.",
+        btnText: "Начать обучение",
+        href: "#",
+      },
+      {
+        img: {
+          src: "https://i.ibb.co/xSLqQ5VF/Screenshot-3.png",
+          alt: "Слайд 3",
+        },
+        step: "Практика",
+        title: "Применяйте знания",
+        text: "Практические задания и реальные кейсы помогают закрепить материал.",
+        btnText: "К практике",
+        href: "#",
+      },
+      {
+        img: {
+          src: "https://i.ibb.co/HDXxTtfD/Screenshot-4.png",
+          alt: "Слайд 4",
+        },
+        step: "Поддержка",
+        title: "Получайте помощь",
+        text: "Наставники и кураторы всегда на связи — не останетесь один на один с задачами.",
+        btnText: "Написать наставнику",
+        href: "#",
+      },
+    ],
+  },
+  modules = {
+    title: "Содержание курса",
+    infoHtml: "26 часов видео<br>1085 заданий",
+    modules: [
+      {
+        lessons: "6 уроков",
+        title: "Модуль 1: Повторение классификаций",
+        items: [
+          "Классификация веществ",
+          "Названия и формулы",
+          "Тренажёр №5",
+          "Классификация реакций",
+          "Тренажёр №17",
+        ],
+      },
+      {
+        lessons: "2 урока",
+        title: "Модуль 2: Свойства простых веществ",
+        items: ["Металлы", "Неметаллы"],
+      },
+      {
+        lessons: "2 урока",
+        title: "Модуль 2: Свойства простых веществ",
+        items: ["Металлы", "Неметаллы"],
+      },
+      {
+        lessons: "2 урока",
+        title: "Модуль 2: Свойства простых веществ",
+        items: ["Металлы", "Неметаллы"],
+      },
+      {
+        lessons: "2 урока",
+        title: "Модуль 2: Свойства простых веществ",
+        items: ["Металлы", "Неметаллы"],
+      },
+      {
+        lessons: "3 урока",
+        title: "Модуль 3: Свойства оксидов",
+        items: ["Получение и свойства", "Тренажёр", "Развернутые ответы"],
+      },
+      {
+        lessons: "3 урока",
+        title: "Модуль 4: Основания и амф. гидроксиды",
+        items: ["Свойства и получение", "Тренажёр", "Развернутые ответы"],
+      },
+    ],
+  },
+  skills = {
+    title: "Чему вы научитесь на этом курсе",
+    rows: [
+      [
+        "Писать химические уравнения любой сложности",
+        "Решать задачи формата ЕГЭ",
+        "Понимать закономерности реакций",
+      ],
+      [
+        "Работать с ОВР и сложными цепочками",
+        "Разбираться в строении атомов и веществ",
+        "Осваивать теорию без зубрежки",
+      ],
+      [
+        "Повышать результат на 40+ баллов",
+        "Экономить время за счёт методики",
+        "Учиться в удобном темпе",
+      ],
+    ],
+  },
+  bottomCta = {
+    href: "https://example.com",
+    text: "Записаться на курс",
+    target: "_blank",
+    rel: "noopener",
+  },
+} = Astro.props as Props;
+
+// генерим уникальные id для контролов, чтобы не конфликтовать с другими инстансами
+const SWIPER_ID = `${id}-modules-swiper`;
+const SWIPER_PREV = `${id}-swiper-prev`;
+const SWIPER_NEXT = `${id}-swiper-next`;
+---
+
+<section
+  class="section mega"
+  id={id}
+  aria-label="Секция платформы, модулей и навыков"
+>
+  <div
+    class="mega-bg"
+    style={`--inner-gap:${innerGap}; --blue-gap:${innerGap};`}
+  >
+    <!-- Блок 1: Платформа -->
+    <div class="content-block">
+      <div class="platform">
+        <h2 class="platform__h2">{platform.heading}</h2>
+
+        <div
+          class="platform__slider"
+          data-platform-slider
+          data-root
+          data-autoplay={String(platform.autoplayMs ?? 0)}
+          tabindex="0"
+          aria-roledescription="carousel"
+          style="cursor: grab;"
+        >
+          <figure class="platform__left" aria-label="Слайды">
+            {
+              platform.slides.map((s, i) =>
+                /\.(webm|mp4)(\?.*)?$/i.test(s.img.src) ? (
+                  <video
+                    class={`platform__img ${i === 0 ? "is-active" : ""}`}
+                    src={s.img.src}
+                    poster={(s.img.src || "").replace(
+                      /\.(webm|mp4)(\?.*)?$/i,
+                      ".webp"
+                    )}
+                    muted
+                    playsinline
+                    autoplay
+                    loop
+                    preload="metadata"
+                    aria-label={s.img.alt ?? ""}
+                  />
+                ) : (
+                  <img
+                    src={s.img.src}
+                    alt={s.img.alt ?? ""}
+                    class={`platform__img ${i === 0 ? "is-active" : ""}`}
+                    loading={i > 0 ? "lazy" : "eager"}
+                    decoding={i > 0 ? "async" : "auto"}
+                  />
+                )
+              )
+            }
+          </figure>
+
+          <aside class="platform__right">
+            <span class="platform__step" data-step
+              >{platform.slides[0]?.step}</span
+            >
+            <h3 class="platform__title" data-title>
+              {platform.slides[0]?.title}
+            </h3>
+            <p class="platform__text" data-text>{platform.slides[0]?.text}</p>
+            <a
+              class="btn btn--blue platform__btn"
+              data-btn
+              href={platform.slides[0]?.href}
+            >
+              {platform.slides[0]?.btnText}
+            </a>
+
+            <div
+              class="platform__dots"
+              role="tablist"
+              aria-label="Слайды платформы"
+            >
+              {
+                platform.slides.map((_, i) => (
+                  <button
+                    type="button"
+                    class={`platform__dot ${i === 0 ? "is-active" : ""}`}
+                    role="tab"
+                    aria-selected={i === 0 ? "true" : "false"}
+                    aria-label={`Показать слайд ${i + 1}`}
+                    data-dot={i}
+                  />
+                ))
+              }
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок 2: Модули -->
+    <div class="content-block">
+      <div class="modules">
+        <div class="modules__head">
+          <h2 class="modules__h2">{modules.title}</h2>
+          <p class="modules__info" set:html={modules.infoHtml} />
+        </div>
+
+        <div
+          class="swiper"
+          id={SWIPER_ID}
+          aria-label="Слайдер модулей"
+          style="cursor: grab;"
+        >
+          <div class="swiper-wrapper">
+            {
+              modules.modules.map((m) => (
+                <div class="swiper-slide" aria-label={m.title}>
+                  <div class="module-tag">{m.lessons}</div>
+                  <h3 class="module-title">{m.title}</h3>
+                  <ul class="module-list">
+                    {m.items.map((it) => (
+                      <li>{it}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+
+          <!-- Кнопки внутри контейнера слайдера -->
+          <div class="swiper-controls" aria-label="Управление слайдером">
+            <button
+              id={SWIPER_PREV}
+              class="swiper-button-prev"
+              type="button"
+              aria-label="Назад"></button>
+            <button
+              id={SWIPER_NEXT}
+              class="swiper-button-next"
+              type="button"
+              aria-label="Вперёд"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок 3: Навыки -->
+    <div class="content-block">
+      <section class="skills" aria-label={skills.title}>
+        <h2 class="skills__h2">{skills.title}</h2>
+        {
+          skills.rows.map((r) => (
+            <div class="skills__row">
+              {r.map((t) => (
+                <div class="skills__item">{t}</div>
+              ))}
+            </div>
+          ))
+        }
+      </section>
+    </div>
+
+    <!-- Нижняя кнопка -->
+    {
+      bottomCta && (
+        <div class="bottom-btn-wrap">
+          <a
+            href={bottomCta.href}
+            target={bottomCta.target ?? "_self"}
+            rel={bottomCta.rel}
+            class="btn btn--ghost main-bottom-btn"
+          >
+            {bottomCta.text}
+          </a>
+        </div>
+      )
+    }
+  </div>
+
+  <style>
+    .mega {
+      font-family: var(--ff);
+    }
+
+    /* ===== СИНЯЯ ПОДЛОЖКА ===== */
+    .mega-bg {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(
+        --inner-gap,
+        var(--blue-gap, var(--space-40))
+      ); /* единый параметр внутренних отступов */
+      border-radius: var(--radius-24);
+      padding: var(--space-32) 0;
+      background: linear-gradient(rgba(222, 221, 220, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(222, 221, 220, 0.2) 1px, transparent 1px),
+        var(--blue);
+      background-size:
+        100px 100px,
+        100px 100px,
+        100% 100%;
+      background-repeat: repeat, repeat, no-repeat;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .mega-bg {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-32) 0;
+      }
+
+      .content-block {
+        padding: 0 var(--page-padding-tablet);
+      }
+
+      .mega-title {
+        font-size: var(--h2-size-tablet);
+        margin-bottom: var(--space-24);
+      }
+
+      .mega-text {
+        font-size: var(--text-size-tablet);
+        line-height: 1.5;
+        margin-bottom: var(--space-24);
+      }
+
+      .mega-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-20);
+      }
+
+      .mega-item {
+        padding: var(--space-20);
+      }
+
+      .mega-item-title {
+        font-size: var(--h3-size-tablet);
+        margin-bottom: var(--space-12);
+      }
+
+      .mega-item-text {
+        font-size: var(--text-size-tablet);
+        line-height: 1.5;
+      }
+    }
+
+    /* Мобилка */
+    @media (max-width: 600px) {
+      .mega-bg {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-24) 0;
+      }
+
+      .content-block {
+        padding: 0 var(--page-padding-mobile);
+      }
+
+      .mega-title {
+        font-size: var(--h2-size-mobile);
+        margin-bottom: var(--space-20);
+      }
+
+      .mega-text {
+        font-size: var(--text-size-mobile);
+        line-height: 1.4;
+        margin-bottom: var(--space-20);
+      }
+
+      .mega-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-16);
+      }
+
+      .mega-item {
+        padding: var(--space-16);
+      }
+
+      .mega-item-title {
+        font-size: var(--h3-size-mobile);
+        margin-bottom: var(--space-8);
+      }
+
+      .mega-item-text {
+        font-size: var(--text-size-mobile);
+        line-height: 1.4;
+      }
+    }
+
+    /* Внутренние блоки-контейнеры */
+    .content-block {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      background: none;
+      padding: 0 50px;
+    }
+    .content-block:has(.swiper-controls) {
+      padding-top: 0;
+    }
+    @media (max-width: 1100px) {
+      .content-block {
+        padding: 0 24px;
+      }
+    }
+    @media (max-width: 600px) {
+      .content-block {
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    /* ====== БЛОК 1: ПЛАТФОРМА ====== */
+    .platform__h2 {
+      font: 700 var(--h2) / 1.2 var(--ff);
+      color: #fff;
+      margin: 0 0 30px;
+    }
+    .platform__slider {
+      display: flex;
+      gap: var(--space-20);
+      width: 100%;
+      height: 500px;
+      outline: none;
+    }
+    .platform__left {
+      position: relative;
+      flex-basis: 65%;
+      background: #f7f7f9;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-1);
+      margin: 0;
+      min-height: 240px;
+    }
+    .platform__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      image-rendering: auto;
+      image-rendering: smooth;
+      backface-visibility: hidden;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+    .platform__img.is-active {
+      opacity: 1;
+    }
+
+    /* Улучшение качества для высоких DPI экранов */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .platform__img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+      }
+    }
+
+    /* Улучшение качества для обычных экранов */
+    @media (-webkit-max-device-pixel-ratio: 1.9), (max-resolution: 191dpi) {
+      .platform__img {
+        image-rendering: auto;
+        image-rendering: smooth;
+      }
+    }
+
+    .platform__right {
+      flex-basis: 35%;
+      background: #fff;
+      border-radius: 24px;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      padding: 40px;
+      color: var(--black);
+      position: relative;
+      z-index: 1;
+    }
+    .platform__step {
+      display: inline-block;
+      margin-bottom: var(--space-16);
+      padding: 4px 20px;
+      border-radius: 999px;
+      border: 2px solid var(--blue);
+      color: var(--blue);
+      font: 600 15px/1 var(--ff);
+      width: fit-content;
+    }
+    .platform__title {
+      font: 700 var(--h3) / 1.3 var(--ff);
+      color: var(--black);
+      margin: 0 0 var(--space-20);
+    }
+    .platform__text {
+      font: 500 var(--text) / 1.5 var(--ff);
+      color: var(--black);
+      margin: 0 0 var(--space-20);
+    }
+    .platform__btn {
+      width: 100%;
+      margin-bottom: var(--space-20);
+      text-decoration: none;
+    }
+    .platform__dots {
+      display: flex;
+      gap: var(--space-8);
+      margin-top: auto;
+    }
+    .platform__dot {
+      inline-size: 12px;
+      block-size: 12px;
+      border-radius: 50%;
+      border: 0;
+      cursor: pointer;
+      background: #bbb;
+      transition: background-color 0.25s ease;
+    }
+    .platform__dot.is-active {
+      background: var(--blue);
+    }
+    .platform__dot:hover {
+      background: #3390ff;
+    }
+
+    @media (max-width: 1100px) {
+      .platform__h2 {
+        font-size: var(--h2);
+        margin-bottom: var(--space-20);
+      }
+      .platform__slider {
+        flex-direction: column;
+        gap: var(--space-20);
+        height: auto;
+        box-sizing: border-box;
+      }
+      .platform__left {
+        height: 240px;
+        min-height: 240px;
+      }
+      .platform__right {
+        padding: 20px;
+      }
+    }
+    @media (max-width: 600px) {
+      .platform__h2 {
+        font-size: var(--h2);
+        padding: 0 var(--pad-mobile);
+      }
+      .platform__slider {
+        padding: 0 var(--pad-mobile);
+      }
+      .platform__left {
+        height: 200px;
+        min-height: 200px;
+      }
+    }
+
+    /* ====== БЛОК 2: МОДУЛИ ====== */
+    .modules__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin: 0 0 20px;
+    }
+    .modules__h2 {
+      font: 700 var(--h2) / 1.2 var(--ff);
+      color: #fff;
+      margin: 0;
+    }
+    .modules__info {
+      text-align: right;
+      font-size: var(--lead);
+      color: #fff;
+    }
+    .modules {
+      margin-bottom: 0;
+    }
+
+    .swiper {
+      position: relative;
+      width: 100%;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .swiper-wrapper {
+      display: flex;
+      will-change: transform;
+      transition: transform 0.35s ease;
+    }
+    .swiper-slide {
+      flex: 0 0 calc(50% - 15px);
+      margin-right: 30px;
+      background: #fff;
+      border-radius: var(--radius-24);
+      padding: var(--space-32) var(--space-24);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+    }
+    .swiper-slide:last-child {
+      margin-right: 0;
+    }
+
+    .module-tag {
+      font: 700 var(--lead) / 1 var(--ff);
+      color: var(--blue);
+      margin-bottom: var(--space-8);
+    }
+    .module-title {
+      font: 700 var(--h3) / 1.3 var(--ff);
+      color: var(--black);
+      margin: 0 0 var(--space-8);
+    }
+    .module-list {
+      list-style: disc;
+      padding-left: var(--space-16);
+      margin: 0;
+      font: 500 var(--text) / 1.5 var(--ff);
+      color: var(--black);
+    }
+
+    /* Кнопки под слайдером по центру */
+    .swiper-controls {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-20);
+    }
+
+    /* Стили для десктопа */
+    @media (min-width: 1101px) {
+      .swiper-button-next,
+      .swiper-button-prev {
+        transform: translateY(0);
+      }
+    }
+
+    /* Скрываем кнопки на планшетах и мобилках */
+    @media (max-width: 1100px) {
+      .swiper-controls {
+        display: none;
+      }
+    }
+    .swiper-button-next,
+    .swiper-button-prev {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 0;
+      cursor: pointer;
+      background: #e2e8f0;
+      display: grid;
+      place-items: center;
+      transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+      transform: translateY(20px);
+    }
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: #cbd5e1;
+    }
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      display: block;
+      border-top: 2.5px solid var(--black);
+      border-right: 2.5px solid var(--black);
+    }
+    .swiper-button-next::after {
+      transform: rotate(45deg);
+    }
+    .swiper-button-prev::after {
+      transform: rotate(-135deg);
+    }
+    .swiper-button-disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1100px) {
+      .modules__h2 {
+        font-size: var(--h2);
+      }
+      .modules__info {
+        font-size: var(--lead);
+        text-align: left;
+      }
+      .swiper {
+        height: auto;
+      }
+      .swiper-wrapper {
+        gap: var(--space-20);
+      }
+      .swiper-slide {
+        flex: 0 0 calc(100% - 20px);
+        height: auto;
+        margin-right: 0;
+      }
+      .swiper-controls {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      .modules__h2 {
+        font-size: var(--h2);
+        padding: 0 var(--pad-mobile);
+      }
+      .modules__info {
+        padding: 0 var(--pad-mobile);
+      }
+      .swiper {
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    /* ====== БЛОК 3: SKILLS ====== */
+    .skills__h2 {
+      font: 700 var(--h2) / 1.2 var(--ff);
+      color: #fff;
+      margin: 0 0 var(--space-32);
+    }
+    .skills__row {
+      display: flex;
+      gap: var(--space-20);
+      margin: 0 0 var(--space-20);
+    }
+    .skills__item {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: var(--space-16);
+      font: 500 var(--text) / 1.5 var(--ff);
+      color: var(--black);
+      background: #fff;
+      border-radius: var(--radius-24);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 1100px) {
+      .skills__h2 {
+        font-size: var(--h2);
+        margin-top: var(--space-50);
+      }
+      .skills__row {
+        flex-direction: column;
+        gap: var(--space-16);
+      }
+      .skills__item {
+        font-size: var(--text);
+        line-height: 1.55;
+      }
+    }
+    @media (max-width: 600px) {
+      .skills__h2 {
+        font-size: var(--h2);
+        margin-top: var(--space-40);
+      }
+      .skills__item {
+        line-height: 1.5;
+      }
+    }
+
+    /* Низ */
+    .bottom-btn-wrap {
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      padding: 0 50px;
+    }
+    .main-bottom-btn {
+      width: 100%;
+    }
+    @media (max-width: 1100px) {
+      .bottom-btn-wrap {
+        padding: 0 24px 20px;
+      }
+    }
+    @media (max-width: 600px) {
+      .bottom-btn-wrap {
+        padding: 0 var(--pad-mobile) 20px;
+      }
+    }
+  </style>
+
+  <script
+    define:vars={{ platform, modules, SWIPER_ID, SWIPER_PREV, SWIPER_NEXT }}
+  >
+    // ===== Слайдер 1: Платформы =====
+    (function () {
+      const root = document.querySelector(".platform__slider[data-root]");
+      if (!root) return;
+
+      const DATA = platform.slides || [];
+      const AUTOPLAY = Number(root.dataset.autoplay || 0);
+
+      const imgs = root.querySelectorAll(".platform__img");
+      const dots = root.querySelectorAll("[data-dot]");
+      const stepEl = root.querySelector("[data-step]");
+      const titleEl = root.querySelector("[data-title]");
+      const textEl = root.querySelector("[data-text]");
+      const btnEl = root.querySelector("[data-btn]");
+
+      let i = 0;
+      let timer = null;
+
+      function show(idx) {
+        i = (idx + imgs.length) % imgs.length;
+        imgs.forEach((el, n) => {
+          const on = n === i;
+          el.classList.toggle("is-active", on);
+          if (el.tagName === "VIDEO") {
+            const v = /** @type {HTMLVideoElement} */ (el);
+            if (on) {
+              try {
+                v.play();
+              } catch {}
+            } else {
+              try {
+                v.pause();
+                v.currentTime = 0;
+              } catch {}
+            }
+          }
+        });
+        dots.forEach((d, n) => {
+          const on = n === i;
+          d.classList.toggle("is-active", on);
+          d.setAttribute("aria-selected", String(on));
+        });
+        const s = DATA[i] || {};
+        if (stepEl) stepEl.textContent = s.step || "";
+        if (titleEl) titleEl.textContent = s.title || "";
+        if (textEl) textEl.textContent = s.text || "";
+        if (btnEl) {
+          btnEl.textContent = s.btnText || "";
+          if (btnEl instanceof HTMLAnchorElement) {
+            btnEl.href = s.href || "#";
+          }
+        }
+      }
+
+      dots.forEach((d) => {
+        const dot = d;
+        dot.addEventListener("click", () => show(+(dot.dataset.dot || 0)));
+      });
+
+      if (AUTOPLAY > 0) {
+        timer = setInterval(() => show(i + 1), AUTOPLAY);
+        root.addEventListener("mouseenter", () => clearInterval(timer));
+        root.addEventListener("mouseleave", () => {
+          clearInterval(timer);
+          timer = setInterval(() => show(i + 1), AUTOPLAY);
+        });
+      }
+
+      show(0);
+
+      // Добавляем поддержку свайпа
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+
+      function onPointerDown(e) {
+        const t = e.touches ? e.touches[0] : e;
+        startX = currentX = t.clientX;
+        isDragging = true;
+        root.style.cursor = "grabbing";
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const t = e.touches ? e.touches[0] : e;
+        currentX = t.clientX;
+      }
+
+      function onPointerUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        root.style.cursor = "grab";
+
+        const diff = startX - currentX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            // свайп влево - следующий слайд
+            show(i + 1);
+          } else {
+            // свайп вправо - предыдущий слайд
+            show(i - 1);
+          }
+        }
+      }
+
+      root.addEventListener("touchstart", onPointerDown, { passive: true });
+      root.addEventListener("touchmove", onPointerMove, { passive: false });
+      root.addEventListener("touchend", onPointerUp, { passive: true });
+      root.addEventListener("mousedown", onPointerDown);
+      root.addEventListener("mousemove", onPointerMove);
+      root.addEventListener("mouseup", onPointerUp);
+      root.addEventListener("mouseleave", onPointerUp);
+    })();
+
+    // ===== Слайдер 2: Модули =====
+    (function () {
+      const swiper = document.getElementById(SWIPER_ID);
+      const prevBtn = document.getElementById(SWIPER_PREV);
+      const nextBtn = document.getElementById(SWIPER_NEXT);
+
+      if (!swiper || !prevBtn || !nextBtn) return;
+
+      const wrapper = swiper.querySelector(".swiper-wrapper");
+      const slides = swiper.querySelectorAll(".swiper-slide");
+
+      if (!wrapper || slides.length === 0) return;
+
+      let currentIndex = 0;
+      const slidesPerView = window.innerWidth <= 1100 ? 1 : 2;
+      const maxIndex = Math.max(0, slides.length - slidesPerView);
+
+      function updateSlider() {
+        const slideWidth = 100 / slidesPerView;
+        const translateX = -currentIndex * slideWidth;
+        wrapper.style.transform = `translateX(${translateX}%)`;
+
+        // Обновляем состояние кнопок
+        prevBtn.classList.toggle("swiper-button-disabled", currentIndex === 0);
+        nextBtn.classList.toggle(
+          "swiper-button-disabled",
+          currentIndex >= maxIndex
+        );
+      }
+
+      function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, maxIndex));
+        updateSlider();
+      }
+
+      function nextSlide() {
+        if (currentIndex < maxIndex) goToSlide(currentIndex + 1);
+      }
+
+      function prevSlide() {
+        if (currentIndex > 0) goToSlide(currentIndex - 1);
+      }
+
+      // Обработчики кнопок
+      nextBtn.addEventListener("click", nextSlide);
+      prevBtn.addEventListener("click", prevSlide);
+
+      // Обработчик изменения размера окна
+      function handleResize() {
+        const newSlidesPerView = window.innerWidth <= 1100 ? 1 : 2;
+        const newMaxIndex = Math.max(0, slides.length - newSlidesPerView);
+
+        if (currentIndex > newMaxIndex) {
+          currentIndex = newMaxIndex;
+        }
+
+        updateSlider();
+      }
+
+      window.addEventListener("resize", handleResize);
+
+      // Инициализация
+      updateSlider();
+
+      // Добавляем поддержку свайпа для второго слайдера
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+
+      function onPointerDown(e) {
+        const t = e.touches ? e.touches[0] : e;
+        startX = currentX = t.clientX;
+        isDragging = true;
+        swiper.style.cursor = "grabbing";
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const t = e.touches ? e.touches[0] : e;
+        currentX = t.clientX;
+      }
+
+      function onPointerUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        swiper.style.cursor = "grab";
+
+        const diff = startX - currentX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            // свайп влево - следующий слайд
+            nextSlide();
+          } else {
+            // свайп вправо - предыдущий слайд
+            prevSlide();
+          }
+        }
+      }
+
+      swiper.addEventListener("touchstart", onPointerDown, { passive: true });
+      swiper.addEventListener("touchmove", onPointerMove, { passive: false });
+      swiper.addEventListener("touchend", onPointerUp, { passive: true });
+      swiper.addEventListener("mousedown", onPointerDown);
+      swiper.addEventListener("mousemove", onPointerMove);
+      swiper.addEventListener("mouseup", onPointerUp);
+      swiper.addEventListener("mouseleave", onPointerUp);
+    })();
+  </script>
+</section>

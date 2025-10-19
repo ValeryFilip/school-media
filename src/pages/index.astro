@@ -1,0 +1,513 @@
+---
+/* src/pages/egecourse.astro */
+
+/* Стили страницы */
+
+/* Лейаут и блоки */
+import MainLayout from "../layouts/MainLayout.astro";
+import KursiHero from "../components/mainpage/KursiHero.astro";
+import KursiFormat from "../components/mainpage/KursiFormat.astro";
+import AdFreeBanner from "../components/mainpage/AdFreeBanner.astro";
+import AdSocialBanner from "../components/mainpage/AdSocialBanner.astro";
+import AdMediaBanner from "../components/mainpage/AdMediaBanner.astro";
+import AuthorSection from "../components/mainpage/AuthorSection.astro";
+import AboutSection from "../components/mainpage/AboutSection.astro";
+import CasesSlider from "../components/mainpage/CasesSlider.astro";
+import UnisMarquee from "../components/mainpage/UnisMarquee.astro";
+import Faq from "../components/mainpage/Faq.astro";
+import LeadCapture from "../components/mainpage/LeadCapture.astro";
+import CoursesTabs from "../components/mainpage/CoursesTabs.astro";
+import CourseCards from "../components/mainpage/CourseCards.astro";
+
+/* ===================== SEO ===================== */
+const seo = {
+  title: "Подготовим к ЕГЭ по химии 2026 — с нуля до 85+ и бюджета",
+  description:
+    "Понятная методика, практика и поддержка. Поможем поступить на бюджет в мед и на химфак.",
+  image: "/images/og/egecourse-hero.jpg",
+};
+
+/* =============== Контент (пропсы) =============== */
+
+/* 1) Hero */
+const heroProps = {
+  id: "kursi-hero",
+  title: "Подготовим к ЕГЭ по химии 2026",
+  highlight: "с нуля до 85+ и бюджета",
+  lead: "Хочешь учиться в меде<br />или на химфаке?<br />Мы доведём до бюджета!",
+  href1: "#self-paced",
+  text1: "Узнать подробнее",
+  href2: "#groups",
+  text2: "Про занятия в группах",
+  imgLeft: {
+    src: "images/mainpage/heroleft.png",
+    width: 550,
+    height: 1100,
+    alt: "Лаборантка с пробиркой",
+  },
+  imgRight: {
+    src: "images/mainpage/heroright.jpg",
+    width: 550,
+    height: 1100,
+    alt: "Студентка в медицинской форме",
+  },
+  jsonLd: true,
+  providerName: "EGEHIM",
+};
+
+/* 2) Блок «О нас» */
+const aboutProps = {
+  id: "about",
+  introTitle: "Кто мы?",
+  introText:
+    "Мы онлайн-школа химии. Уже 10 лет помогаем ребятам достигать крутых результатов на ЕГЭ благодаря понятной методике подготовки.",
+  stats: [
+    { value: "2000", text: "учеников прошли наши курсы" },
+    { value: "10 лет", text: "опыт подготовки к экзаменам" },
+    { value: "97%", text: "поступают в топ-30 вузов" },
+  ],
+  situationsTitle: "90% выпускников узнают себя в этих ситуациях",
+  situations: [
+    [
+      {
+        img: "https://via.placeholder.com/685x300",
+        alt: "Пробник на низкие баллы",
+        badge:
+          "Ты написал пробник на низкие баллы (30–40) и кажется, что до бюджета не дотянуть.",
+      },
+      {
+        img: "https://via.placeholder.com/475x300",
+        alt: "Репетитор без результата",
+        badge:
+          "Уже занимаешься с репетитором или в онлайн-школе, но результата нет.",
+      },
+    ],
+    [
+      {
+        img: "https://via.placeholder.com/475x300",
+        alt: "Сложно заниматься самому",
+        badge:
+          "Трудно заставить себя заниматься самостоятельно — нужен чёткий график и контроль.",
+      },
+      {
+        img: "https://via.placeholder.com/685x300",
+        alt: "Учитель идёт слишком быстро",
+        badge:
+          "Учитель в школе не объясняет или идёт слишком быстро — остаются «дыры» в темах.",
+      },
+    ],
+  ],
+  solutionText:
+    "Боишься завалить химию и потерять шанс поступить на бюджет? Нужен понятный пошаговый путь — чтобы чувствовать уверенность в результате.",
+  solutionImg: {
+    src: "https://via.placeholder.com/420x240",
+    alt: "Поддержка в обучении",
+  },
+  finalText: "На все эти ситуации у нас есть решение!",
+};
+
+/* 3) Форматы обучения */
+const formatProps = {
+  id: "kursi-format",
+  topTitle: "У нас можно выбрать комфортный формат обучения!",
+  topSub: "Выбирай под свою ситуацию и возможности!",
+  topImage: {
+    src: "images/mainpage/topimage.png",
+    width: 800,
+    height: 600,
+    alt: "Форматы обучения: иллюстрация",
+  },
+  listTitle: "Преимущества",
+  cards: [
+    {
+      img: {
+        src: "images/mainpage/group.webp",
+        width: 1200,
+        height: 800,
+        alt: "Занятия в минигруппах",
+      },
+      title: "Занятия в минигруппах – больше общения и контроля",
+      benefits: [
+        "Индивидуальный подход",
+        "Группы до 5 человек",
+        "Максимальный контакт с преподавателем",
+        "Строгое расписание",
+        "Работа в командах",
+        "Проверки работ преподавателем",
+        "Зачёты",
+      ],
+      href: "#groups",
+      ctaText: "Узнать подробнее",
+      ctaAria: "Подробнее о минигруппах",
+    },
+    {
+      img: {
+        src: "images/mainpage/indiv.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Самостоятельные курсы",
+      },
+      title: "Самостоятельные курсы – гибкость и свобода творчества",
+      benefits: [
+        "Индивидуальный подход",
+        "Группы до 5 человек",
+        "Максимальный контакт с преподавателем",
+        "Строгое расписание",
+        "Работа в командах",
+        "Проверки работ преподавателем",
+        "Зачёты",
+      ],
+      href: "#self-paced",
+      ctaText: "Узнать подробнее",
+      ctaAria: "Подробнее о самостоятельных курсах",
+    },
+  ] as [any, any],
+};
+
+/* 4) Рекламные баннеры */
+const adFreeProps = {
+  id: "ad-free",
+  title: "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
+  lead: "Два курса, которые дадут тебе +30 баллов на экзамене. Забирай по кнопкам ниже",
+  ctaText: "Забрать оба курса",
+  image: {
+    src: "/images/mainpage/adfree.png",
+    width: 400,
+    height: 300,
+    alt: "Превью бесплатного курса",
+  },
+};
+const adSocialProps = {
+  id: "ad-social",
+  title: "Подписывайся на наши соцсети и будь в курсе всего нового в мире ЕГЭ",
+  socials: [
+    {
+      href: "https://www.youtube.com/",
+      label: "YouTube",
+      icon: "images/technical/youtube.png",
+      width: 36,
+      height: 36,
+    },
+    {
+      href: "https://t.me/",
+      label: "Telegram",
+      icon: "images/technical/telegram.png",
+      width: 36,
+      height: 36,
+    },
+    {
+      href: "https://vk.com/",
+      label: "ВКонтакте",
+      icon: "images/technical/vk.png",
+      width: 36,
+      height: 36,
+    },
+  ],
+  image: {
+    src: "images/mainpage/social.webp",
+    width: 420,
+    height: 280,
+    alt: "Иллюстрация соцсетей",
+  },
+};
+const adMediaProps = {
+  id: "ad-media",
+  title: "Читайте полезные статьи от экспертов в нашем медиа",
+  ctaHref: "/media/",
+  ctaText: "Читать статьи",
+  image: {
+    src: "images/mainpage/media.png",
+    width: 500,
+    height: 380,
+    alt: "Подборка материалов по химии",
+  },
+};
+
+/* 5) Автор */
+const authorProps = {
+  id: "author",
+  heading: "Автор курса",
+  name: "Филипенко Валерий",
+  facts: [
+    "Преподаю уже 9 лет. С 2014 года",
+    "Помог подготовиться к ЕГЭ по химии более 1500 ученикам",
+    "Профессиональный химик с красным дипломом. Специалист по ракетным топливам",
+    "Сам несколько раз сдал ЕГЭ по химии на 100 баллов",
+    "Эксперт ФИПИ по подготовке к ЕГЭ и ОГЭ по химии",
+    "Каждый второй сдает ЕГЭ на 80+ и 95% ОГЭ на оценку 5",
+  ],
+  socials: [
+    {
+      href: "#",
+      label: "Telegram",
+      icon: "https://i.ibb.co/B2sgbb2r/003-telegram.png",
+    },
+    {
+      href: "#",
+      label: "YouTube",
+      icon: "https://i.ibb.co/N6xJKVrh/002-youtube.png",
+    },
+    {
+      href: "#",
+      label: "ВКонтакте",
+      icon: "https://i.ibb.co/4wPdvNQp/001-vk.png",
+    },
+  ],
+  photoSrc:
+    "https://sun9-80.userapi.com/s/v1/ig2/NmXDgi6t9b_jQsN1kzqeoQUDARTGbORviG0powVmlG3FA8ylDNyyXrJwDaME7eqpg9lEWIIB18YupK6q9FazIGSb.jpg?quality=96",
+  photoAlt: "Валерий Филипенко",
+  moreHref: "/about",
+  moreText: "Подробнее об авторе →",
+};
+
+/* 6) Tabs (минигруппы) */
+const tabsProps = {
+  id: "courses-tabs",
+  sectionTitle: "Уникальные годовые курсы в формате минигрупп",
+  sectionSub:
+    "НЕ вебинары по 1000 человек — небольшие группы для максимальной эффективности.",
+  defaultTabId: "ege",
+  contentMaxWidthPct: 56,
+  cardMinHeight: 420,
+  panels: [
+    {
+      id: "ege",
+      tabLabel: "ЕГЭ",
+      title: "Полный курс подготовки к ЕГЭ по химии 2026",
+      lead: "Что входит в курс?",
+      features: [
+        "8 занятий в месяц по 1.5 часа",
+        "Минигруппа до 5 человек",
+        "Домашние задания и автопроверка",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "10 000 ₽/мес", old: "14 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#groups",
+      bg: "var(--blue)",
+      illustration: "https://i.ibb.co/Vc6XwJYP/Science-pana.png",
+    },
+    {
+      id: "oge",
+      tabLabel: "ОГЭ",
+      title: "Полный курс подготовки к ОГЭ по химии 2026",
+      lead: "Что входит в курс?",
+      features: [
+        "8 занятий в месяц по 1.5 часа",
+        "Минигруппа до 5 человек",
+        "Проверка и разбор ошибок",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "8 000 ₽/мес", old: "10 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#groups",
+      bg: "#2E7CF0",
+      illustration:
+        "https://images.unsplash.com/photo-1551861568-16a1c1b0b1a4?w=900&q=80",
+    },
+    {
+      id: "grade10",
+      tabLabel: "10 класс",
+      title: "Органическая химия. База для 10 класса",
+      lead: "Что входит в курс?",
+      features: [
+        "4 занятия в месяц по 1.5 часа",
+        "Минигруппа до 6 человек",
+        "Практика + проверка",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "6 000 ₽/мес", old: "8 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#groups",
+      bg: "#255AD6",
+      illustration:
+        "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=900&q=80",
+    },
+  ],
+};
+
+/* 7) Самостоятельные курсы (карточки) */
+const courseCardsProps = {
+  id: "course-cards",
+  heading: "Наши самостоятельные курсы на stepik",
+  sub: "Для тех, кто хочет готовиться самостоятельно или закрыть пробелы по конкретным разделам!",
+  barRightGapPx: 48,
+  minHeightPx: 440,
+  cards: [
+    {
+      href: "/neorganika",
+      labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
+      title: "Неорганическая химия с нуля до 80+",
+      features: [
+        "<b>Гарантированный рост</b>: только на неорганике можно взять +40 баллов",
+        "<b>Точечная подготовка</b>: разбираем именно то, что нужно для ЕГЭ",
+        "<b>Короткие и понятные видео</b> — до 30 минут, без воды (28 часов видео)",
+        "<b>1000+ заданий</b>: от простых до формата ЕГЭ, с автопроверкой",
+        "<b>Поддержка и чат</b>: никогда не останешься один на один с вопросами",
+        "<b>Выгодно</b>: курс заменит 30+ занятий с репетитором и сэкономит ~50 000₽",
+        "<b>Игровые механики</b>: карточки, мини-игры и Quizlet для легкого запоминания",
+        "<b>Обновлен под ЕГЭ-2026</b>",
+        "<b>Проверено учениками</b>: результаты 80+ баллов",
+      ],
+      price: { current: "5 490 ₽", old: "7 300 ₽", discount: "скидка 26%" },
+      image: "/images/flasks/CE-BEISET__57187.png",
+    },
+    {
+      href: "/organika",
+      labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
+      title: "Органическая химия с нуля до 80+",
+      features: [
+        "<b>50% ЕГЭ — органика</b>: закрываем всю теорию и практику",
+        "<b>Структура от базы до сложных цепочек</b> (включая задание на 5 баллов)",
+        "<b>Короткие видео</b> — только нужная информация, без лишней воды",
+        "<b>1000+ заданий</b>: тематические + формат ЕГЭ, с автопроверкой",
+        "<b>Учишься рассуждать, а не зубрить</b>",
+        "<b>Поддержка и чат</b> — вопросы не остаются без ответа",
+        "<b>Экономия до 100 000₽</b> по сравнению с репетитором",
+        "<b>Полный курс</b>: всё в одном месте, искать дополнительно ничего не нужно",
+        "<b>Игровые механики</b>: карточки, Quizlet, интерактив",
+        "<b>Обновлен под ЕГЭ-2026</b>",
+        "<b>Результаты учеников</b> — 80+ баллов",
+      ],
+      price: { current: "5 490 ₽", old: "7 300 ₽", discount: "скидка 25%" },
+      image: "/images/flasks/CE-FLAISET__44996.png",
+    },
+    {
+      href: "/obschaya",
+      labels: [{ text: "Химия ЕГЭ" }, { text: "Легкие 35 баллов " }],
+      title: "Общая химия с нуля до 80+",
+      features: [
+        "<b>33% ЕГЭ — общая химия</b> (16 заданий)",
+        "<b>Короткие видео 5–25 мин</b> — только концентрат знаний",
+        "<b>500+ заданий + разборы прошлых лет</b>",
+        "<b>Автопроверка для практики</b>",
+        "<b>Обновлен под ЕГЭ-2026</b> (+100 новых заданий 2023–2024)",
+        "<b>Поддержка и чат</b>",
+        "<b>Без ограничений по времени</b> — проходи в удобном темпе",
+        "<b>Результаты учеников</b> — 80+ баллов",
+        "<b>Выгодная цена</b>",
+      ],
+      price: { current: "2 190 ₽", old: "2 600 ₽", discount: "скидка 16%" },
+      image: "/images/flasks/CE-SEPF250_1__97109.png",
+    },
+    {
+      href: "/ovr",
+      labels: [{ text: "Химия ЕГЭ" }, { text: "ОВР и реакции" }],
+      title: "ОВР и 29 задание",
+      features: [
+        "<b>ОВР — ключ к заданиям 19 и 29</b>",
+        "<b>Пошаговая структура</b>: от базы до сложных реакций",
+        "<b>Короткие видео</b> — только нужное, без воды",
+        "<b>Практика с усложнением</b> — дойдешь до уровня «ОВР с закрытыми глазами»",
+        "<b>Поддержка и чат</b>: вопросы никогда не остаются без ответа",
+        "<b>Проверено учениками</b> — 80+ баллов",
+        "<b>Соответствует ЕГЭ-2026</b>",
+        "<b>Выгодная стоимость</b>",
+      ],
+      price: { current: "990 ₽", old: "1 200 ₽", discount: "скидка 17%" },
+      image: "/images/flasks/ce-fdis250_1__98982.png",
+    },
+    {
+      href: "https://stepik.org/a/238138?utm_source=cite&utm_medium=mainpage",
+      labels: [{ text: "Пакет курсов" }, { text: "Вечный доступ" }],
+      title: "Пакет из 4 курсов",
+      features: [
+        "<b>Пакет из 4 курсов</b>: неорганика, органика, общая химия + авторские варианты",
+        "<b>80–110 часов подготовки</b>",
+        "<b>3000+ заданий</b> формата ЕГЭ",
+        "<b>Доступ навсегда</b> — без подписок и ограничений",
+        "<b>Теория + практика в каждом курсе</b> больше 70 часов видео",
+        "<b>Автопроверка заданий</b> — без ожидания проверки преподавателя",
+        "<b>Гарантия 80+ баллов</b> (проверено учениками)",
+        "<b>Готовность к ЕГЭ на максимум</b>: любые реакции и задания по плечу",
+        "<b>Подходит и для ЕГЭ, и для ОГЭ</b>",
+      ],
+      price: { current: "7 990 ₽", old: "10 300 ₽", discount: "–22%" },
+      image: "/images/flasks/CE-BEISET__57187.jpg",
+    },
+    {
+      href: "/allcourses",
+      variant: "all",
+      title: "Все наши курсы по химии",
+      image:
+        "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+};
+
+/* 8) FAQ */
+const faqItems = [
+  {
+    q: "Что значит самостоятельный курс?",
+    a: "Самостоятельный курс — формат с видео-уроками и заданиями, без вебинаров, с вопросами в чате.",
+  },
+  {
+    q: "А если не понравится, можно вернуть деньги?",
+    a: "Да, в течение 14 дней и при прохождении менее 20% курса.",
+  },
+  {
+    q: "На курсе есть домашние задания?",
+    a: "Да. На Stepik >1000 заданий с автопроверкой.",
+  },
+  {
+    q: "Почему низкая цена?",
+    a: "Потому что курс полностью самостоятельный: без вебинаров и индивидуальных занятий.",
+  },
+  {
+    q: "Есть ли конспекты?",
+    a: "Есть файлы для печати (таблицы, схемы). Полных конспектов нет — лучше писать свои.",
+  },
+  { q: "Есть рассрочка?", a: "Да, через Stepik — Яндекс или Тинькофф." },
+];
+
+/* 9) Лид-форма (оставим дефолтные пропсы) */
+const leadProps = {
+  id: "lead-capture",
+  title: "Начни подготовку с пробного бесплатного занятия",
+  subtitle: "Ответим на вопросы, расскажем про форматы и цены",
+  formAction:
+    "https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec",
+  // UTM метки для главной страницы
+  utmSource: "main-page",
+  utmMedium: "organic",
+  utmCampaign: "homepage-lead",
+};
+
+/* =============================================== */
+---
+
+<MainLayout
+  title={seo.title}
+  description={seo.description}
+  image={seo.image}
+  seoType="website"
+  showBreadcrumbs={false}
+>
+  <link slot="head" rel="preload" as="image" href="/images/girl-lead.webp" />
+  <KursiHero {...heroProps} />
+
+  <AboutSection {...aboutProps} />
+
+  <KursiFormat {...formatProps} />
+
+  <AdFreeBanner {...adFreeProps} />
+  <AuthorSection {...authorProps} />
+  <AdSocialBanner {...adSocialProps} />
+
+  <CasesSlider />
+
+  <CoursesTabs {...tabsProps} />
+
+  <CourseCards {...courseCardsProps} />
+
+  <AdMediaBanner {...adMediaProps} />
+
+  <UnisMarquee />
+
+  <LeadCapture {...leadProps} />
+
+  <Faq items={faqItems} />
+</MainLayout>

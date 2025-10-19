@@ -1,0 +1,133 @@
+---
+import { getCategoryHex, getContrastOn } from "../lib/categoryColors";
+
+interface Props {
+  name: string;
+  href?: string;
+  /** (игнорируется, оставлено ради совместимости) */
+  variant?: "solid" | "outline" | "soft";
+  /** sm | md */
+  size?: "sm" | "md";
+  /** максимально строк (0/undefined — без ограничения) */
+  clampLines?: 2 | 3 | 0;
+  class?: string;
+}
+const {
+  name,
+  href,
+  // принимаем, но принудительно рисуем solid
+  variant,
+  size = "sm",
+  clampLines = 2,
+  class: className = "",
+} = Astro.props as Props;
+
+const bg = getCategoryHex(name);
+const fg = getContrastOn(bg);
+
+// Всегда solid: фон = цвет категории, бордер = того же цвета
+const styleVars = `--cb-bg:${bg}; --cb-fg:${fg}; --cb-bd:${bg};`;
+const sizeClass = size === "md" ? "cb--md" : "cb--sm";
+const clampClass = clampLines && clampLines > 0 ? "cb--clamp" : "";
+const clampVars =
+  clampLines && clampLines > 0 ? `--cb-lines:${clampLines};` : "";
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class={`cb ${sizeClass} ${clampClass} ${className}`}
+      style={`${styleVars}${clampVars}`}
+      aria-label={`Категория: ${name}`}
+    >
+      {name}
+    </a>
+  ) : (
+    <span
+      class={`cb ${sizeClass} ${clampClass} ${className}`}
+      style={`${styleVars}${clampVars}`}
+    >
+      {name}
+    </span>
+  )
+}
+
+<style>
+  .cb {
+    box-sizing: border-box;
+    display: inline-block; /* ✅ ширина по содержимому */
+    max-width: 100%; /* не выходим за контейнер */
+    text-decoration: none;
+    border-radius: 10px;
+    border: 1px solid var(--cb-bd);
+    background: var(--cb-bg); /* ✅ всегда заливка */
+    color: var(--cb-fg);
+    line-height: 1.15;
+    font-weight: 600;
+    white-space: nowrap; /* запрещаем переносы */
+    word-break: keep-all; /* не ломаем слова */
+    vertical-align: top;
+    overflow: hidden;
+    text-overflow: ellipsis; /* многоточие для длинного текста */
+  }
+
+  /* размеры */
+  .cb--sm {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .cb--md {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  /* ограничение строк (например, до 2) */
+  .cb--clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--cb-lines, 2);
+    overflow: hidden;
+  }
+
+  .cb:hover {
+    opacity: 0.96;
+  }
+  .cb:active {
+    transform: translateY(0.5px);
+  }
+
+  /* Адаптивные стили */
+  @media (max-width: 1100px) {
+    .cb--sm {
+      font-size: 11px;
+      padding: 5px 8px;
+    }
+    .cb--md {
+      font-size: 13px;
+      padding: 7px 10px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cb--sm {
+      font-size: 10px;
+      padding: 4px 6px;
+    }
+    .cb--md {
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .cb--sm {
+      font-size: 9px;
+      padding: 3px 5px;
+    }
+    .cb--md {
+      font-size: 11px;
+      padding: 5px 7px;
+    }
+  }
+</style>

@@ -1,0 +1,189 @@
+---
+interface Img {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
+type BtnVariant = "primary" | "blue" | "ghost";
+interface ButtonProps {
+  text: string;
+  href: string;
+  variant?: BtnVariant;
+  aria?: string;
+}
+interface Props {
+  id?: string;
+  bg?: string;
+  textColor?: string;
+
+  title?: string;
+  subtitle?: string;
+  /** по умолчанию теперь var(--text), чтобы совпадать со списком */
+  subtitleSize?: string;
+  list?: string[];
+
+  showButton?: boolean;
+  button?: ButtonProps;
+
+  image?: Img;
+}
+
+const {
+  id = "two-col-promo",
+  bg = "var(--white)",
+  textColor = "var(--black)",
+
+  title = "Заголовок блока",
+  subtitle,
+  subtitleSize = "var(--text)", // <-- ключевое изменение
+  list = [],
+
+  showButton = true,
+  button,
+
+  image,
+} = Astro.props as Props;
+---
+
+<section
+  class="section two-col-promo"
+  aria-labelledby={`${id}-title`}
+  style={`--promo-bg:${bg}; --promo-color:${textColor}; --promo-sub-fz:${subtitleSize};`}
+>
+  <div class="container">
+    <div class="promo-box">
+      <div class="promo-left">
+        <h2 id={`${id}-title`} class="h2 promo-title">{title}</h2>
+
+        {subtitle && <p class="promo-sub">{subtitle}</p>}
+
+        {
+          list?.length > 0 && (
+            <ul class="promo-list">
+              {list.map((li) => (
+                <li>{li}</li>
+              ))}
+            </ul>
+          )
+        }
+
+        {
+          button && showButton !== false && (
+            <a
+              href={button.href}
+              id="cta-adfree-A"
+              type="button"
+              class={"btn btn--ghost ad-free__cta popup-btn"}
+              data-popup-id="lead-popup"
+              data-utm-source="two-col-promo"
+              data-utm-medium="cta"
+              data-utm-campaign="two-col-promo"
+              data-utm-content="btn"
+              aria-label={button.aria || button.text}
+            >
+              {button.text}
+            </a>
+          )
+        }
+      </div>
+
+      <div class="promo-right">
+        <slot name="right">
+          {
+            image && (
+              <figure class="promo-figure">
+                <img
+                  src={image.src}
+                  width={image.width ?? 900}
+                  height={image.height ?? 600}
+                  alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            )
+          }
+        </slot>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .two-col-promo {
+      color: var(--promo-color, var(--black));
+    }
+
+    .promo-box {
+      background: var(--promo-bg, var(--white));
+      border-radius: var(--radius-24);
+      box-shadow: var(--shadow-1);
+      padding: var(--space-32);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-32);
+      align-items: start;
+    }
+
+    .promo-left {
+      display: grid;
+      gap: var(--space-16);
+    }
+    .promo-title {
+      margin: 0;
+    }
+
+    /* Подзаголовок = размер списка */
+    .promo-sub {
+      margin: 0;
+      font-size: var(--promo-sub-fz, var(--text)); /* == var(--text) */
+      line-height: 1.5;
+      color: currentColor;
+      opacity: 0.95;
+    }
+
+    .promo-list {
+      margin: 0;
+      padding: 0 0 0 20px;
+      display: grid;
+      gap: 8px;
+      font-size: var(--text); /* <-- тот же размер */
+      line-height: 1.5;
+    }
+
+    .promo-left .btn {
+      width: max-content;
+    }
+
+    .promo-right {
+      min-width: 0;
+    }
+    .promo-figure {
+      margin: 0;
+      border-radius: var(--radius-24);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #00000008;
+    }
+    .promo-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    @media (max-width: 1100px) {
+      .promo-box {
+        grid-template-columns: 1fr;
+        gap: var(--space-24);
+        padding: var(--space-24);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .promo-list {
+        font-size: var(--text);
+      }
+    }
+  </style>
+</section>

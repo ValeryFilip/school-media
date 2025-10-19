@@ -1,0 +1,1462 @@
+---
+// src/layouts/ArticleLayout.astro
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import Card from "../components/Card.astro";
+import CatBadge from "../components/CatBadge.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { slugify } from "../lib/slugify";
+import "../styles/media.css";
+
+// типы пропсов
+interface Props {
+  fm: CollectionEntry<"articles">["data"] & {
+    toc?: { id: string; text: string }[];
+    authorName?: string;
+    authorRole?: string;
+    authorPhoto?: string;
+    authorImage?: string;
+    heroImage?: string;
+    hero?: string;
+    cover?: string;
+    headerImage?: string;
+    imageAlt?: string;
+    heroAlt?: string;
+    updated?: string | Date;
+    articleBody?: string; // Полный текст статьи для JSON-LD
+  };
+  slug: string;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+const { fm, slug, headings = [] } = Astro.props;
+
+/* === окружение и базовый префикс (/media) === */
+const origin = Astro.url.origin;
+const inMedia = Astro.url.pathname.startsWith("/media");
+const base = inMedia ? "/media" : ""; // префикс для внутренних путей
+
+/* === абсолютные URL === */
+const articleUrl = `${origin}${base}/articles/${slug}`;
+const categorySlug = slugify(String(fm.category || ""));
+const categoryUrl = `${origin}${base}/category/${categorySlug}`;
+
+/* === утилиты === */
+function toDate(value: unknown): Date | null {
+  if (value instanceof Date) return value;
+  if (typeof value === "string" || typeof value === "number") {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+const dateObj = toDate(fm.date);
+const updatedObj = toDate((fm as any).updated) || dateObj;
+
+function formatDate(d: Date | null) {
+  if (!d) return "";
+  return d.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function resolveSrc(input: unknown): string | null {
+  if (!input) return null;
+  const s = String(input).trim();
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.startsWith("/")) return s;
+  return "/" + s.replace(/^\.?\//, "");
+}
+const absAsset = (p?: string | null) => {
+  if (!p) return undefined;
+  if (/^https?:\/\//i.test(p)) return p;
+  return `${origin}${p.startsWith("/") ? p : "/" + p}`;
+};
+
+/* === автор === */
+const authorName = fm.authorName || fm.author || "Без имени";
+const authorRole = fm.authorRole || "Эксперт по теме";
+const authorPhoto =
+  resolveSrc((fm as any).authorPhoto) ||
+  resolveSrc((fm as any).authorImage) ||
+  "/images/stepik/researcher.webp";
+
+/* === HERO === */
+const heroFromFM =
+  resolveSrc((fm as any).heroImage) ||
+  resolveSrc((fm as any).hero) ||
+  resolveSrc((fm as any).cover) ||
+  resolveSrc((fm as any).headerImage) ||
+  resolveSrc((fm as any).image) ||
+  null;
+const heroAlt = fm.heroAlt ?? fm.imageAlt ?? fm.title;
+
+/* === TOC === */
+const tocFromFM = Array.isArray(fm.toc) && fm.toc.length ? fm.toc : null;
+const tocFromMD = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ id: h.slug, text: h.text, depth: h.depth }));
+
+/* === JSON-LD статьи === */
+const jsonLdArticle = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: fm.title,
+  description: fm.description,
+  image: heroFromFM
+    ? {
+        "@type": "ImageObject",
+        url: absAsset(heroFromFM),
+        width: "1200",
+        height: "630",
+      }
+    : undefined,
+  url: articleUrl,
+  inLanguage: "ru-RU",
+  keywords: Array.isArray(fm.tags) ? fm.tags : [],
+  articleSection: fm.category || undefined,
+  author: {
+    "@type": "Person",
+    name: authorName,
+    url: `${origin}/about`,
+    ...(authorPhoto ? { image: absAsset(authorPhoto) } : {}),
+    jobTitle: authorRole,
+    worksFor: {
+      "@type": "Organization",
+      name: "EGEHIM",
+    },
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "EGEHIM",
+    url: origin,
+    logo: {
+      "@type": "ImageObject",
+      url: `${origin}/images/technical/logo.png`,
+      width: "60",
+      height: "60",
+    },
+    description: "Подготовка к ЕГЭ по химии: курсы, разборы и материалы",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      url: `${origin}/contact`,
+    },
+    sameAs: ["https://t.me/valery_chemistry", "https://vk.me/valeryfilip"],
+  },
+  ...(dateObj ? { datePublished: dateObj.toISOString() } : {}),
+  ...(updatedObj ? { dateModified: updatedObj.toISOString() } : {}),
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": articleUrl,
+  },
+  // Добавляем полный текст статьи для лучшего SEO
+  ...(fm.articleBody ? { articleBody: fm.articleBody } : {}),
+};
+
+/* === BreadcrumbList для навигации === */
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Главная",
+      item: origin,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Медиа",
+      item: `${origin}/media`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: fm.category || "Статьи",
+      item: `${origin}/media/category/${categorySlug}`,
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      name: fm.title,
+      item: articleUrl,
+    },
+  ],
+};
+
+/* === настройки темы только для текста статьи === */
+const theme = (fm as any).theme ?? "light"; // light | dark
+const accent = (fm as any).accent ?? "blue"; // blue | orange | green ...
+const typography = (fm as any).typography ?? "sans"; // sans | serif
+
+/* === «Ещё по теме»: та же категория, новые сверху === */
+const allArticles = await getCollection("articles");
+function getTimeSafe(p: CollectionEntry<"articles">): number {
+  const v = (p.data as any)?.date;
+  const d = v instanceof Date ? v : new Date(v);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+const currentCategory = String(fm.category ?? "").toLowerCase();
+const sameCategoryTop = allArticles
+  .filter(
+    (p) =>
+      p.slug !== slug &&
+      String(p.data?.category ?? "").toLowerCase() === currentCategory
+  )
+  .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
+  .slice(0, 8);
+---
+
+<!-- JSON-LD структурированные данные -->
+<JsonLd type="article" data={jsonLdArticle as any} />
+<JsonLd type="breadcrumb" data={breadcrumbData as any} />
+
+<!-- Прогресс чтения -->
+<div class="progress" aria-hidden="true">
+  <div class="progress__track"></div>
+  <div id="progressBar" class="progress__bar"></div>
+</div>
+
+<!-- ЕДИНСТВЕННЫЙ <main> -->
+<main id="main" class="article-section" aria-labelledby="article-title">
+  <div class="container">
+    <div class="article-grid">
+      <article class="article" itemscope itemtype="https://schema.org/Article">
+        <div class="meta">
+          {
+            dateObj && (
+              <time datetime={dateObj.toISOString()} itemprop="datePublished">
+                {formatDate(dateObj)}
+              </time>
+            )
+          }
+          {fm.readingTime && <span>· {fm.readingTime}</span>}
+          <span class="meta-cat">
+            · <CatBadge
+              name={fm.category}
+              href={`${base}/category/${categorySlug}`}
+              variant="soft"
+              size="sm"
+            />
+          </span>
+        </div>
+
+        <h1 id="article-title" class="title" itemprop="headline">{fm.title}</h1>
+        {
+          fm.description && (
+            <p class="lead" itemprop="description">
+              {fm.description}
+            </p>
+          )
+        }
+
+        <address
+          class="author"
+          itemprop="author"
+          itemscope
+          itemtype="https://schema.org/Person"
+        >
+          <img
+            class="author__avatar"
+            src={authorPhoto}
+            alt={`${authorName} — автор статьи`}
+            loading="lazy"
+          />
+          <div>
+            <p class="author__name" itemprop="name">{authorName}</p>
+            <p class="author__role">{authorRole}</p>
+          </div>
+        </address>
+
+        <div class="above-content">
+          <div class="hero" id="hero">
+            <figure>
+              <div
+                class="hero__box"
+                id="heroBox"
+                aria-label="Иллюстрация к статье"
+              >
+                {
+                  heroFromFM && (
+                    <img
+                      class="hero__img"
+                      src={heroFromFM}
+                      alt={heroAlt}
+                      width="300"
+                      height="300"
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
+                    />
+                  )
+                }
+              </div>
+              <figcaption>{(fm as any).imageCaption ?? fm.title}</figcaption>
+            </figure>
+          </div>
+
+          <nav class="toc" aria-labelledby="toc-title" data-toc-levels="h2,h3">
+            <div id="toc-title" class="toc__title">Содержание</div>
+            <ol id="tocList">
+              {
+                tocFromFM
+                  ? tocFromFM.map((item) => (
+                      <li>
+                        <a href={`${Astro.url.pathname}#${item.id}`}>
+                          {item.text}
+                        </a>
+                      </li>
+                    ))
+                  : tocFromMD.map((item) => (
+                      <li
+                        style={
+                          item.depth === 3 ? "margin-left:12px" : undefined
+                        }
+                      >
+                        <a href={`${Astro.url.pathname}#${item.id}`}>
+                          {item.text}
+                        </a>
+                      </li>
+                    ))
+              }
+            </ol>
+          </nav>
+        </div>
+
+        <!-- ТОЛЬКО текст статьи стилизуется через media.css -->
+        <section
+          class="content theme-media prose"
+          itemprop="articleBody"
+          data-theme={theme}
+          data-accent={accent}
+          data-typography={typography}
+        >
+          <slot />
+        </section>
+
+        {
+          fm.tags && fm.tags.length > 0 && (
+            <div class="tags-bottom" aria-label="Теги">
+              {fm.tags.map((t, i) => (
+                <>
+                  <a rel="tag" href={`${base}/tags/${slugify(String(t))}`}>
+                    #{t}
+                  </a>
+                  {i < fm.tags.length - 1 ? " " : ""}
+                </>
+              ))}
+            </div>
+          )
+        }
+
+        <hr class="sep" />
+
+        <section class="share" aria-labelledby="share-title">
+          <div class="share-row">
+            <div class="share-left">
+              <span class="share-label">Поделиться:</span>
+              <div class="soc">
+                <a
+                  class="soc__btn soc__btn--tg"
+                  href={`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(fm.title)}`}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Telegram"
+                  ><img
+                    src="/images/technical/telegram.png"
+                    alt=""
+                    width="22"
+                    height="22"
+                    loading="lazy"
+                    decoding="async"
+                  /></a
+                >
+                <a
+                  class="soc__btn soc__btn--vk"
+                  href={`https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}`}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="VK"
+                  ><img
+                    src="/images/technical/vk.png"
+                    alt=""
+                    width="22"
+                    height="22"
+                    loading="lazy"
+                    decoding="async"
+                  /></a
+                >
+                <a
+                  class="soc__btn soc__btn--wa"
+                  href={`https://wa.me/?text=${encodeURIComponent(fm.title + " " + articleUrl)}`}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="WhatsApp"
+                  ><img
+                    src="/images/technical/whatsapp.png"
+                    alt=""
+                    width="22"
+                    height="22"
+                    loading="lazy"
+                    decoding="async"
+                  /></a
+                >
+                <button
+                  class="soc__btn soc__btn--copy"
+                  type="button"
+                  id="copyLink"
+                  aria-label="Скопировать ссылку">🔗</button
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+      </article>
+
+      <!-- sticky aside -->
+      <aside class="sidebar" aria-label="Промо-колонка">
+        <div class="promo-col">
+          <!-- Баннер: Подписка на Telegram -->
+          <a
+            class="promo banner banner--tg promo--short"
+            href="https://t.me/"
+            target="_blank"
+            rel="noopener"
+            aria-label="Подписаться на наш Telegram-канал"
+          >
+            <div class="banner__row">
+              <img
+                class="banner__icon"
+                src="/images/technical/telegram.png"
+                alt=""
+                width="28"
+                height="28"
+              />
+              <span class="banner__kicker">Telegram</span>
+            </div>
+            <div class="banner__content">
+              <strong class="banner__title">Подписывайся на канал</strong>
+              <span class="banner__sub">анонсы, разборы, бонус-материалы</span>
+            </div>
+            <span class="btn banner__btn">Подписаться</span>
+          </a>
+
+          <!-- Баннер: Подготовка к ЕГЭ с экспертом -->
+          <div
+            class="promo banner banner--ege promo--tall"
+            role="region"
+            aria-label="Подготовка к ЕГЭ по химии"
+          >
+            <div class="banner__kicker">ЕГЭ по химии</div>
+            <div class="banner__content">
+              <strong class="banner__title">Подготовка с экспертом</strong>
+              <span class="banner__sub"
+                >индивидуальный план · пробное занятие</span
+              >
+            </div>
+            <button
+              type="button"
+              class="btn popup-btn banner__btn"
+              data-popup-id="lead-popup"
+              data-utm-source="article-sidebar"
+              data-utm-medium="cta"
+              data-utm-campaign="ege-prep"
+              aria-label="Оставить заявку">Оставить заявку</button
+            >
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  {/* Ещё по теме - ВНУТРИ main для правильной семантики */}
+  {
+    sameCategoryTop.length > 0 && (
+      <section class="more-section" aria-labelledby="more-title">
+        <div class="container">
+          <h2 id="more-title" class="more-title">
+            Ещё по теме
+          </h2>
+          <div class="more-grid">
+            {sameCategoryTop.map((post) => (
+              <Card
+                post={post}
+                preset="v-270x492"
+                basePath={base}
+                border={true}
+                clampTitle={4}
+                clampDesc={2}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</main>
+<style>
+  :root {
+    --page-max-width: 1300px;
+    --page-padding: 50px;
+    --gap: 15px;
+    --radius: 24px;
+    --c-text: #222;
+    --c-meta: #666;
+    --c-card: #fff;
+    --c-border: #222;
+    --accent: #0d6efd;
+    --progress-h: 4px;
+  }
+
+  .progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: var(--progress-h);
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .progress__track {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .progress__bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      var(--accent),
+      #6ea8fe 50%,
+      var(--accent)
+    );
+    transition: width 0.1s ease;
+  }
+
+  .article-section {
+    margin: 0 0 50px;
+    background: #f8f9fa;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .article-section .container {
+    max-width: var(--page-max-width);
+    padding: 0 var(--page-padding);
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: visible;
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: var(--gap);
+    align-items: start;
+    padding: 30px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ===== АДАПТИВНЫЕ СТИЛИ ===== */
+
+  /* Планшет: уменьшаем ширину aside */
+  @media (max-width: 1200px) {
+    .article-section .container {
+      padding: 0 30px;
+    }
+
+    .article-grid {
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 20px;
+      padding: 25px 0;
+    }
+
+    .sidebar {
+      max-height: calc(100vh - 40px);
+    }
+  }
+
+  /* Мобильный: aside внизу */
+  @media (max-width: 900px) {
+    .article-section .container {
+      padding: 0 20px;
+    }
+
+    .article-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      padding: 20px 0;
+    }
+
+    .sidebar {
+      position: static;
+      order: 2;
+      max-height: none;
+    }
+
+    .article {
+      order: 1;
+    }
+  }
+
+  .article {
+    background: var(--c-card);
+    border-radius: var(--radius);
+    padding: 30px;
+    color: var(--c-text);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .meta {
+    color: var(--c-meta);
+    font-size: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin: 0 0 20px;
+  }
+  .meta a:not(.cat-badge) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .meta a:not(.cat-badge):hover {
+    text-decoration: underline;
+  }
+  .meta-cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 54px;
+    line-height: 1.15;
+    margin: 0 0 25px;
+  }
+
+  /* Адаптивные заголовки */
+  @media (max-width: 1200px) {
+    .title {
+      font-size: 48px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .title {
+      font-size: 42px;
+    }
+
+    .more-title {
+      font-size: 48px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .article-section .container {
+      padding: 0 15px;
+    }
+
+    .article-grid {
+      padding: 15px 0;
+    }
+
+    .title {
+      font-size: 36px;
+      line-height: 1.2;
+    }
+
+    .more-title {
+      font-size: 36px;
+    }
+
+    .article {
+      padding: 20px;
+    }
+  }
+
+  .lead {
+    font-size: 20px;
+    margin: 0 0 25px;
+  }
+
+  .author {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin: 0 0 25px;
+  }
+
+  /* Адаптивность для author */
+  @media (max-width: 600px) {
+    .author {
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .author__avatar {
+      width: 80px;
+      height: 80px;
+    }
+
+    .author__name {
+      font-size: 18px;
+    }
+
+    .author__role {
+      font-size: 14px;
+    }
+  }
+  .author__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+  .author__name {
+    font-size: 20px;
+    margin: 0 0 4px;
+    font-weight: 400;
+  }
+  .author__role {
+    font-size: 16px;
+
+    margin: 0;
+  }
+
+  .above-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin: 0 0 25px;
+  }
+
+  /* Адаптивность для hero и toc */
+  @media (max-width: 900px) {
+    .above-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .hero__box {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .toc {
+      height: auto;
+      min-height: 200px;
+      max-height: 300px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero__box {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .toc {
+      min-height: 150px;
+      max-height: 250px;
+    }
+  }
+  .hero figure {
+    margin: 0;
+  }
+  .hero__box {
+    width: 300px;
+    height: 300px;
+    aspect-ratio: 1/1;
+    flex: 0 0 300px;
+    min-width: 300px;
+    border-radius: var(--radius);
+    background: #e5e7eb;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero figcaption {
+    font-size: 14px;
+    color: #777;
+    margin-top: 8px;
+  }
+
+  .toc {
+    margin: 0;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #fafafa;
+    flex: 1 1 auto;
+    height: 300px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+  .toc__title {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    flex: 0 0 auto;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 18px;
+    flex: 1 1 auto;
+  }
+  .toc a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 16px;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+
+  .content :global(figure) {
+    margin: 18px 0;
+  }
+  .content :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+  }
+  .content :global(figcaption) {
+    font-size: 14px;
+    color: #777;
+    margin-top: 6px;
+  }
+
+  .tags-bottom {
+    margin: 20px 0 0;
+    color: #0d6efd;
+    line-height: 1.8;
+    font-size: 16px;
+    word-break: break-word;
+  }
+  .tags-bottom a {
+    color: #0d6efd;
+    text-decoration: none;
+  }
+  .tags-bottom a:hover {
+    text-decoration: underline;
+  }
+
+  .sep {
+    border: 0;
+    border-top: 1px solid #e5e7eb;
+    margin: 16px 0 0;
+  }
+
+  .share {
+    margin-top: 0;
+  }
+  .share-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Адаптивность для share секции */
+  @media (max-width: 600px) {
+    .share-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .share-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .share-label {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .soc {
+      justify-content: center;
+      gap: 12px;
+    }
+  }
+  .share-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .soc {
+    display: flex;
+    gap: 10px;
+  }
+  .soc__btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+  }
+  .soc__btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #d1d5db;
+  }
+  .soc__btn img {
+    width: 28px;
+    height: 28px;
+    display: block;
+  }
+  .soc__btn--tg {
+    background: #fff;
+  }
+  .soc__btn--vk {
+    background: #fff;
+  }
+  .soc__btn--wa {
+    background: #fff;
+  }
+  .soc__btn--copy {
+    background: #fff;
+    font-size: 20px;
+    color: #374151;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    height: fit-content;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .promo-col {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    box-sizing: border-box;
+  }
+  .promo {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius);
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    text-align: center;
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  /* — Баннеры — */
+  .banner {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    text-align: left;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .banner__row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  .banner__icon {
+    width: 28px;
+    height: 28px;
+    display: block;
+    flex-shrink: 0;
+  }
+  .banner__kicker {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  .banner__title {
+    font-size: 20px;
+    line-height: 1.2;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-overflow: ellipsis;
+  }
+  .banner__content {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-overflow: ellipsis;
+  }
+  .banner__sub {
+    font-size: 13px;
+    color: #777;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-overflow: ellipsis;
+  }
+  .banner__btn {
+    justify-self: start;
+    margin-top: 6px;
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-overflow: ellipsis;
+  }
+
+  .banner--tg {
+    background: linear-gradient(135deg, #2793e6 0%, #2aa5e1 50%, #38bdf8 100%);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  .banner--tg .banner__kicker {
+    color: #dff3ff;
+  }
+  .banner--tg .banner__sub {
+    color: #e9f6ff;
+  }
+  .banner--tg .btn {
+    background: #fff;
+    color: #0b69b7;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+
+  .banner--ege {
+    /* мягкий пастельный многоcлойный градиент */
+    background: radial-gradient(
+        600px 240px at -10% -20%,
+        #fde1e7 0%,
+        transparent 60%
+      ),
+      radial-gradient(420px 220px at 110% 120%, #d9f0ff 0%, transparent 58%),
+      linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
+    color: #0f172a;
+    border-color: #e5e7eb;
+  }
+  .banner--ege .banner__kicker {
+    color: #475569;
+  }
+  .banner--ege .banner__sub {
+    color: #64748b;
+  }
+  .promo--short {
+    height: 200px;
+  }
+  .promo--tall {
+    height: 300px;
+  }
+
+  /* Адаптивность для promo баннеров */
+  @media (max-width: 900px) {
+    .promo-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .promo--short,
+    .promo--tall {
+      height: auto;
+      min-height: 200px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .promo-col {
+      grid-template-columns: 1fr;
+    }
+
+    .promo {
+      padding: 20px;
+    }
+  }
+
+  .more-section {
+    margin: 60px 0 60px;
+    background: #f8f9fa;
+    padding: 40px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .more-section .container {
+    max-width: var(--page-max-width);
+    padding: 0 var(--page-padding);
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* Адаптивные отступы для more-section */
+  @media (max-width: 1200px) {
+    .more-section .container {
+      padding: 0 30px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .more-section .container {
+      padding: 0 20px;
+    }
+
+    .more-section {
+      margin: 40px 0 40px;
+      padding: 30px 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .more-section .container {
+      padding: 0 15px;
+    }
+
+    .more-section {
+      margin: 30px 0 30px;
+      padding: 20px 0;
+    }
+  }
+  .more-title {
+    font-size: 54px;
+    font-weight: 700;
+    margin: 0 0 24px;
+  }
+  .more-grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Адаптивная сетка рекомендаций */
+  @media (max-width: 1200px) {
+    .more-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .more-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .more-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  /* === FIX PACK: убираем автоскейл и даём блоку сжиматься === */
+
+  /* Гибкие внутренние отступы контейнеров */
+  .article-section .container,
+  .more-section .container {
+    padding-inline: clamp(12px, 4vw, var(--page-padding));
+  }
+
+  /* Страховка от горизонтального скролла и «растягивателей» */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  .article-section,
+  .article,
+  .above-content,
+  .toc,
+  .promo,
+  .banner,
+  .share-row {
+    min-width: 0;
+  }
+
+  /* HERO: на десктопе 1:1 с содержанием */
+  .hero__box {
+    width: 300px;
+    height: 300px;
+    aspect-ratio: 1 / 1;
+    flex: 0 0 300px;
+    min-width: 0;
+  }
+
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* HERO адаптивность: мобил - по центру, планшет - 2 колонки */
+  @media (max-width: 600px) {
+    .above-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .hero__box {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+  }
+
+  /* Планшет: hero слева, toc справа в 2 колонки */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .above-content {
+      flex-direction: row;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    .hero__box {
+      width: 200px;
+      height: 200px;
+      flex: 0 0 200px;
+      margin: 0;
+    }
+
+    .toc {
+      flex: 1;
+      width: auto;
+      max-height: 280px;
+    }
+  }
+
+  /* Дополнительные стили для share секции на планшете */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .share-row {
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .share-left {
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+  }
+
+  /* TOC не навязывает минимальную ширину, текст переносится */
+  .toc {
+    min-width: 0;
+  }
+  .toc a {
+    word-break: break-word;
+  }
+
+  /* Карточка статьи остаётся текучей и не «рвёт» строками */
+  .article {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /* Сетка и блоки на планшете/мобиле */
+  @media (max-width: 900px) {
+    .article-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .above-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+    .toc {
+      width: 100%;
+      max-height: 280px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .article {
+      padding: 18px;
+    }
+    .title {
+      font-size: clamp(26px, 6vw, 36px);
+      line-height: 1.2;
+    }
+    .lead {
+      font-size: clamp(16px, 4.4vw, 19px);
+    }
+    .author {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    .soc {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Очень узкие телефоны */
+  @media (max-width: 380px) {
+    .article-section .container {
+      padding-inline: 12px;
+    }
+    .banner__row {
+      flex-wrap: wrap;
+    }
+    .soc__btn {
+      width: 44px;
+      height: 44px;
+    }
+  }
+</style>
+<!-- подключаем стили типографики для текста статьи -->
+<style is:global>
+  @import "../styles/global_media.css";
+</style>
+
+<script is:inline>
+  // Прогресс чтения
+  (function () {
+    const bar = document.getElementById("progressBar");
+    if (!bar) return;
+    const docEl = document.documentElement;
+    const onScroll = () => {
+      const h = docEl.scrollHeight - docEl.clientHeight;
+      const y = window.scrollY || window.pageYOffset || 0;
+      const p = Math.max(0, Math.min(1, h ? y / h : 0));
+      bar.style.width = (p * 100).toFixed(2) + "%";
+    };
+    let ticking = false;
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            onScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+  })();
+
+  // Копирование ссылки
+  (function () {
+    const btn = document.getElementById("copyLink");
+    if (!btn) return;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        btn.textContent = "✅";
+        setTimeout(() => (btn.textContent = "🔗"), 1200);
+      } catch (e) {}
+    });
+  })();
+
+  // HERO: если нет картинки в FM — взять первую из контента
+  (function () {
+    const box = document.getElementById("heroBox");
+    if (!box) return;
+    if (box.querySelector("img")) return;
+
+    const content = document.querySelector(".content");
+    if (!content) return;
+
+    const img = content.querySelector("img[data-hero], img");
+    if (img && img.src) {
+      const el = document.createElement("img");
+      el.className = "hero__img";
+      el.src = img.currentSrc || img.src;
+      el.alt = "";
+      el.loading = "lazy";
+      el.decoding = "async";
+      el.width = 300;
+      el.height = 300;
+      box.appendChild(el);
+    }
+  })();
+
+  // TOC: якоря к текущему пути
+  (function () {
+    const content = document.querySelector(".content");
+    const list = document.getElementById("tocList");
+    const tocBox = document.querySelector(".toc");
+    if (!content || !list || !tocBox) return;
+    if (list.children.length > 0) return;
+
+    const levels = (tocBox.getAttribute("data-toc-levels") || "h2,h3")
+      .split(",")
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+
+    const heads = content.querySelectorAll(levels.join(","));
+    heads.forEach((h) => {
+      if (!h.id) {
+        h.id = (h.textContent || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s-]/gu, "")
+          .replace(/\s+/g, "-");
+      }
+      const li = document.createElement("li");
+      if (h.tagName === "H3") li.style.marginLeft = "12px";
+      const a = document.createElement("a");
+      a.href = location.pathname + "#" + h.id;
+      a.textContent = h.textContent || "";
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  })();
+</script>
+
+<!-- ===== СКРИПТЫ СТАТЬИ (в правильном порядке) ===== -->

@@ -1,0 +1,623 @@
+---
+interface Img {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
+interface Step {
+  num?: string | number;
+  txt: string;
+}
+interface Field {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  autocomplete?: string;
+}
+interface Consent {
+  html: string;
+  required?: boolean;
+}
+interface Messenger {
+  href: string;
+  label: string;
+  icon: string;
+  width?: number;
+  height?: number;
+}
+interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  leadCols?: string;
+  figureMinHeight?: number;
+  stepsBottomOffset?: string;
+  image?: Img;
+  steps?: Step[];
+  formAction?: string;
+  formMethod?: "get" | "post";
+  fields?: Field[];
+  consents?: Consent[];
+  buttonText?: string;
+  buttonClass?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  messengers?: Messenger[];
+}
+const {
+  id = "lead-capture",
+  title = "Начни подготовку с пробного бесплатного занятия",
+  subtitle = "Ответим на вопросы, расскажем про форматы и цены",
+  leadCols = "minmax(280px, 550px) 1fr",
+  figureMinHeight = 520,
+  stepsBottomOffset = "var(--space-40)",
+  image = {
+    src: "/images/girl-lead.webp",
+    width: 900,
+    height: 600,
+    alt: "Ученица на уроке",
+  },
+  steps = [
+    { num: 1, txt: "Познакомим с онлайн-школой" },
+    { num: 2, txt: "Расскажем, как проходят занятия" },
+    { num: 3, txt: "Запишем на бесплатный урок" },
+  ],
+  formAction = "/api/lead",
+  formMethod = "post",
+  fields = [
+    {
+      label: "ФИО",
+      name: "full_name",
+      type: "text",
+      placeholder: "Ваше имя и фамилия",
+      autocomplete: "name",
+      required: true,
+    },
+    {
+      label: "Телефон",
+      name: "phone",
+      type: "tel",
+      placeholder: "+7 (___) ___-__-__",
+      autocomplete: "tel",
+      required: true,
+    },
+    {
+      label: "Телеграм",
+      name: "telegram",
+      type: "text",
+      placeholder: "@username",
+      autocomplete: "off",
+      required: true,
+    },
+  ],
+  consents = [
+    {
+      html: "Принимаю соглашение о передаче персональных данных",
+      required: true,
+    },
+    {
+      html: 'Соглашаюсь с <a href="/privacy">политикой конфиденциальности</a>',
+      required: true,
+    },
+    { html: "Согласен на рекламную рассылку", required: true },
+  ],
+  buttonText = "Отправить заявку",
+  buttonClass = "btn btn--ghost",
+  utmSource,
+  utmMedium,
+  utmCampaign,
+  utmContent,
+  utmTerm,
+  messengers = [
+    {
+      href: "https://t.me/valery_chemistry",
+      label: "Telegram",
+      icon: "/images/technical/telegram.png",
+      width: 22,
+      height: 22,
+    },
+    {
+      href: "https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20",
+      label: "WhatsApp",
+      icon: "/images/technical/whatsapp.png",
+      width: 22,
+      height: 22,
+    },
+    {
+      href: "https://vk.me/valeryfilip",
+      label: "VK",
+      icon: "/images/technical/vk.png",
+      width: 22,
+      height: 22,
+    },
+  ],
+} = Astro.props as Props;
+---
+
+<section
+  class="section lead-capture"
+  aria-labelledby={`${id}-title`}
+  style={`--lead-cols:${leadCols}; --lead-figure-minh:${figureMinHeight}px; --lead-steps-bottom:${stepsBottomOffset};`}
+>
+  <div class="container">
+    <div class="lead-card">
+      <div class="lead-grid">
+        <!-- Фото слева -->
+        <figure class="lead-figure">
+          <img
+            src={image.src}
+            alt={image.alt}
+            width={image.width ?? 900}
+            height={image.height ?? 600}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+          {
+            steps?.length > 0 && (
+              <figcaption class="lead-steps" aria-label="Как это работает">
+                <div class="card">
+                  <ol>
+                    {steps.map((s) => (
+                      <li>
+                        {typeof s.num !== "undefined" && (
+                          <span class="num">{s.num}</span>
+                        )}
+                        <span class="txt">{s.txt}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </figcaption>
+            )
+          }
+        </figure>
+
+        <!-- Форма справа -->
+        <aside class="lead-form-wrap">
+          <h2 id={`${id}-title`} class="h2">{title}</h2>
+          {subtitle && <p class="lead-subtitle">{subtitle}</p>}
+          <form
+            class="lead-form"
+            action={formAction}
+            method={formMethod}
+            data-utm-source={utmSource}
+            data-utm-medium={utmMedium}
+            data-utm-campaign={utmCampaign}
+            data-utm-content={utmContent}
+            data-utm-term={utmTerm}
+          >
+            {
+              fields.map((f) => (
+                <label class="lead-field">
+                  <span class="lead-label">{f.label}</span>
+                  <input
+                    class="lead-input"
+                    type={(f.type ?? "text") as any}
+                    name={f.name}
+                    placeholder={f.placeholder}
+                    autocomplete={f.autocomplete}
+                    required
+                  />
+                </label>
+              ))
+            }
+
+            {
+              consents?.length > 0 && (
+                <div class="lead-consents">
+                  {consents.map((c) => (
+                    <label>
+                      <input
+                        class="lead-checkbox"
+                        type="checkbox"
+                        required={c.required ?? false}
+                      />
+                      <span set:html={c.html} />
+                    </label>
+                  ))}
+                </div>
+              )
+            }
+
+            <div class="lead-actions">
+              <button type="submit" class={buttonClass}>{buttonText}</button>
+              <div class="lead-status" hidden></div>
+              <pre class="lead-debug" hidden></pre>
+            </div>
+
+            {
+              messengers?.length > 0 && (
+                <div
+                  class="lead-messengers"
+                  aria-label="Напишите нам в мессенджере"
+                >
+                  <p class="lead-msg-text">
+                    Вы можете написать нам в мессенджере:
+                  </p>
+                  <div class="lead-msg-list">
+                    {messengers.map((m) => (
+                      <a
+                        href={m.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Написать в ${m.label}`}
+                      >
+                        <img
+                          src={m.icon}
+                          alt={m.label}
+                          width={m.width ?? 22}
+                          height={m.height ?? 22}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+          </form>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* локальный контейнер (стандартный паттерн) */
+    .container {
+      max-width: var(--container, var(--page-max-width, 1300px));
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop, var(--page-padding, 50px));
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile, 20px);
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile, 20px);
+      }
+    }
+
+    .lead-capture {
+      font-family: var(--ff);
+      color: var(--black);
+    }
+    .lead-card {
+      background: var(--blue);
+      border-radius: var(--radius-24);
+      box-shadow: var(--shadow-1);
+      overflow: hidden;
+    }
+
+    .lead-grid {
+      display: grid;
+      grid-template-columns: var(--lead-cols);
+      gap: var(--space-32);
+      padding: var(--space-24);
+      align-items: start;
+    }
+
+    .lead-figure {
+      position: relative;
+      margin: 0;
+      border-radius: var(--radius-24);
+      overflow: hidden;
+      box-shadow: var(--shadow-1);
+      background: #ddd;
+      height: 100%;
+      min-height: var(--lead-figure-minh);
+    }
+    .lead-figure img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 73% 27%;
+      display: block;
+      transition: opacity 0.3s ease;
+      opacity: 1;
+    }
+
+    .lead-steps {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: var(--lead-steps-bottom);
+      width: min(520px, 92%);
+    }
+    .lead-steps .card {
+      background: #fff;
+      color: var(--black);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: var(--space-16);
+      border-radius: 18px;
+      gap: var(--space-16);
+      box-shadow: var(--shadow-2);
+    }
+    .lead-steps ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      gap: var(--space-16);
+    }
+    .lead-steps li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .lead-steps .num {
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 1;
+    }
+    .lead-steps .txt {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .lead-form-wrap {
+      color: #fff;
+      display: grid;
+      gap: var(--space-16);
+      align-content: start;
+    }
+    .lead-form-wrap .h2,
+    .lead-form-wrap h2 {
+      margin: 0;
+      color: #fff;
+    }
+    .lead-subtitle {
+      margin: 6px 0 var(--space-8, 8px);
+      color: #eaf1ff;
+    }
+
+    form.lead-form {
+      display: grid;
+      gap: var(--space-16);
+      max-width: 520px;
+    }
+    .lead-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      color: #eaf1ff;
+    }
+    .lead-input {
+      display: block;
+      width: 100%;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0 14px;
+      font-size: 16px;
+      color: var(--black);
+    }
+    .lead-input::placeholder {
+      color: #9ba3af;
+    }
+    .lead-input:focus {
+      border-color: #b8caff;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+      outline: none;
+    }
+
+    .lead-consents {
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+      color: #eaf1ff;
+    }
+    .lead-consents label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .lead-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--orange);
+    }
+    .lead-consents a {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    .lead-actions {
+      display: grid;
+      gap: var(--space-12);
+    }
+    .lead-actions .btn {
+      width: max-content;
+    }
+    .lead-actions .btn--ghost {
+      background: #fff;
+      color: var(--black);
+      border: 1px solid var(--border);
+    }
+
+    .lead-status {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .lead-status.ok {
+      color: #10b981;
+    }
+    .lead-status.err {
+      color: #ef4444;
+    }
+    .lead-debug {
+      margin: 6px 0 0;
+      max-height: 160px;
+      overflow: auto;
+      background: rgba(0, 0, 0, 0.8);
+      color: #e6f0ff;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font:
+        12px/1.4 ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Consolas,
+        monospace;
+    }
+
+    .lead-messengers {
+      display: flex;
+      gap: var(--space-16);
+      justify-content: space-between;
+      align-items: center;
+      max-width: 520px;
+    }
+    .lead-msg-text {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #eaf1ff;
+    }
+    .lead-msg-list {
+      display: flex;
+      gap: var(--space-16);
+    }
+    .lead-msg-list a {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: var(--shadow-1);
+      transition:
+        transform 0.15s var(--easing),
+        box-shadow 0.2s var(--easing),
+        border-color 0.2s var(--easing);
+    }
+    .lead-msg-list img {
+      width: 22px;
+      height: 22px;
+      filter: grayscale(1) brightness(0.85);
+      transition: filter 0.2s ease;
+    }
+    .lead-msg-list a:hover img {
+      filter: none;
+    }
+
+    /* ===== Адаптивы локально ===== */
+    /* ≤1100px — остаёмся в 2 колонки, делаем компактнее */
+    @media (max-width: 1100px) {
+      .lead-grid {
+        gap: var(--space-24);
+      }
+      .lead-figure {
+        min-height: 340px;
+      }
+      .lead-steps {
+        width: min(520px, 94%);
+        bottom: var(--space-24);
+      }
+      .lead-steps .card {
+        padding: var(--space-12);
+        gap: var(--space-12);
+      }
+      .lead-steps .num {
+        font-size: 22px;
+      }
+      .lead-steps .txt {
+        font-size: 13px;
+      }
+      .lead-form-wrap > .h2,
+      .lead-form-wrap > h2,
+      .lead-subtitle {
+        text-align: center;
+      }
+      .lead-form {
+        margin: 0;
+      }
+      .lead-messengers {
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-16);
+      }
+      .lead-msg-text {
+        text-align: center;
+      }
+    }
+
+    /* ≤900px — одна колонка, центрируем контент */
+    @media (max-width: 900px) {
+      .lead-grid {
+        grid-template-columns: 1fr !important;
+        padding: var(--space-16);
+        gap: var(--space-16);
+      }
+      .lead-figure {
+        min-height: 280px;
+        margin-bottom: var(--space-24);
+      }
+      .lead-steps {
+        width: 96%;
+        bottom: var(--space-16);
+      }
+      .lead-steps .card {
+        padding: var(--space-12);
+        gap: var(--space-8);
+      }
+      .lead-steps .num {
+        font-size: 18px;
+        line-height: 1;
+      }
+      .lead-steps .txt {
+        font-size: 9px;
+      }
+      .lead-form-wrap > .h2,
+      .lead-form-wrap > h2,
+      .lead-subtitle {
+        text-align: center;
+      }
+      .lead-form {
+        margin-inline: auto;
+      }
+      .lead-actions {
+        justify-items: center;
+      }
+      .lead-actions .btn {
+        width: max-content !important;
+        margin-inline: auto;
+      }
+      .lead-messengers {
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-16);
+      }
+      .lead-msg-text {
+        text-align: center;
+      }
+    }
+  </style>
+</section>

@@ -1,0 +1,241 @@
+---
+interface Props {
+  id?: string;
+  className?: string;
+  amount?: string; // большая цифра (локально, не из токенов), напр. "140 000"
+  currency?: string; // подпись к сумме, напр. "рублей"
+  mainText?: string; // основной параграф
+  subTextHtml?: string; // подзаголовок с <strong> и т.п.
+  textured?: boolean; // фон «бумага»
+  textureSrc?: string; // кастомная текстура, если нужна
+}
+
+const {
+  id = "price",
+  className = "",
+  amount = "140 000",
+  currency = "рублей",
+  mainText = "Именно столько стоит объем материала этого курса, если заниматься с репетитором.",
+  subTextHtml = "В данном самостоятельном курсе вы получите всё это за <strong>5 490 ₽</strong> со скидкой <strong>95%</strong>.",
+  textured = true,
+  textureSrc = "https://img.freepik.com/free-vector/crumpled-paper-texture_1048-2259.jpg",
+} = Astro.props as Props;
+---
+
+<!-- Вписана в вертикальный ритм: .section; без своих вертикальных маргинов -->
+<section
+  class={`section price-block ${textured ? "textured" : ""} ${className}`.trim()}
+  id={id}
+  style={textured ? `--texture-url: url('${textureSrc}')` : undefined}
+  aria-labelledby={`${id}-amount`}
+>
+  <div class="price-inner">
+    <div class="cpb-container">
+      <div class="cpb-big-price">
+        <p>
+          <span id={`${id}-amount`} class="amount">{amount}</span>
+          <span class="currency">{currency}</span>
+        </p>
+      </div>
+
+      <div class="cpb-text">
+        <p class="cpb-main">{mainText}</p>
+        <p class="cpb-sub" set:html={subTextHtml} />
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Секция как элемент grid (.page-stack): центр, без своих top/bottom-margins */
+    .price-block {
+      justify-self: center;
+      inline-size: 100%;
+      color: var(--black);
+      font-family: var(--ff);
+      background: transparent;
+      display: flow-root; /* предотвращает схлопывание margin у внутренних элементов */
+    }
+
+    /* Фон-текстура (бумага) */
+    .price-block.textured {
+      background-image: var(--texture-url);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .price-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 50px; /* как в исходнике; адаптивы ниже */
+      box-sizing: border-box;
+    }
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .price-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-32) var(--page-padding-tablet);
+      }
+
+      .cpb-container {
+        flex-direction: column;
+        gap: var(--space-24);
+        text-align: center;
+      }
+
+      .cpb-title {
+        font-size: var(--h2-size-tablet);
+        margin-bottom: var(--space-16);
+      }
+
+      .cpb-text {
+        font-size: var(--text-size-tablet);
+        line-height: 1.5;
+      }
+    }
+
+    /* Мобилка */
+    @media (max-width: 600px) {
+      .price-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-24) var(--page-padding-mobile);
+      }
+
+      .cpb-container {
+        gap: var(--space-16);
+      }
+
+      .cpb-title {
+        font-size: var(--h2-size-mobile);
+        margin-bottom: var(--space-12);
+      }
+
+      .cpb-text {
+        font-size: var(--text-size-mobile);
+        line-height: 1.4;
+      }
+    }
+
+    .cpb-container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cpb-big-price {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1;
+    }
+    .cpb-big-price .amount {
+      font-size: 72px;
+      font-weight: 800;
+      color: #222;
+    }
+    .cpb-big-price .currency {
+      font-size: 28px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .cpb-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+    .cpb-main {
+      font-size: 24px;
+      font-weight: 500;
+      color: #222;
+      margin: 0;
+    }
+    .cpb-sub {
+      font-size: 24px;
+      color: #444;
+      margin: 0;
+      font-weight: 500;
+    }
+    .cpb-sub strong {
+      color: var(--blue);
+    }
+
+    /* ====== АДАПТИВЫ — синхронизируем с остальными компонентами ====== */
+    @media (max-width: 1100px) {
+      .price-inner {
+        padding: 40px;
+      }
+      .cpb-container {
+        gap: 30px;
+      }
+      .cpb-big-price .amount {
+        font-size: 64px;
+      }
+      .cpb-big-price .currency {
+        font-size: 26px;
+      }
+      .cpb-main {
+        font-size: 22px;
+      }
+      .cpb-sub {
+        font-size: 20px;
+      }
+      /* убираем скругления при full-bleed варианте, если нужно — оставим как есть */
+      .price-block.textured {
+        border-radius: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .price-inner {
+        padding: 30px;
+      }
+      .cpb-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .cpb-big-price .amount {
+        font-size: 56px;
+      }
+      .cpb-big-price .currency {
+        font-size: 24px;
+      }
+      .cpb-main {
+        font-size: 20px;
+      }
+      .cpb-sub {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .price-inner {
+        padding: 20px;
+      }
+      .cpb-big-price .amount {
+        font-size: 48px;
+      }
+      .cpb-big-price .currency {
+        font-size: 20px;
+      }
+      .cpb-main,
+      .cpb-sub {
+        font-size: 16px;
+      }
+    }
+  </style>
+</section>

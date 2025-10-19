@@ -1,0 +1,367 @@
+---
+/* Блок “Автор курса” — тот же контейнерный паттерн, выравнивание по высоте фото */
+
+interface Social {
+  href: string;
+  label: string;
+  icon: string;
+  target?: string;
+  rel?: string;
+}
+interface Props {
+  id?: string;
+  className?: string;
+  heading?: string;
+  name?: string;
+  facts?: string[];
+  socials?: Social[];
+  photoSrc?: string;
+  photoAlt?: string;
+  moreHref?: string;
+  moreTarget?: string;
+  moreRel?: string;
+  moreText?: string;
+}
+
+const {
+  id = "author",
+  className = "",
+  heading = "Автор курса",
+  name = "Филипенко Валерий",
+  facts = [
+    "Преподаю уже 9 лет. С 2014 года",
+    "Помог подготовиться к ЕГЭ по химии более 1500 ученикам",
+    "Профессиональный химик с красным дипломом. Специалист по ракетным топливам",
+    "Сам несколько раз сдал ЕГЭ по химии на 100 баллов",
+    "Эксперт ФИПИ по подготовке к ЕГЭ и ОГЭ по химии",
+    "Каждый второй сдает ЕГЭ на 80+ и 95% ОГЭ на оценку 5",
+  ],
+  socials = [
+    {
+      href: "https://t.me/+KznfEhtzkeNlZjIy",
+      label: "Telegram",
+      icon: "https://i.ibb.co/B2sgbb2r/003-telegram.png",
+      target: "_blank",
+      rel: "noopener",
+    },
+    {
+      href: "https://www.youtube.com/@chemistry_exam",
+      label: "YouTube",
+      icon: "https://i.ibb.co/N6xJKVrh/002-youtube.png",
+      target: "_blank",
+      rel: "noopener",
+    },
+    {
+      href: "https://www.vk.com/chemistry_exam",
+      label: "ВКонтакте",
+      icon: "https://i.ibb.co/4wPdvNQp/001-vk.png",
+      target: "_blank",
+      rel: "noopener",
+    },
+  ],
+  photoSrc = "/images/1234.jpg", // файлы из /public доступны как /images/…
+  photoAlt = "Валерий Филипенко — профессиональный химик, репетитор и эксперт ЕГЭ.",
+  moreHref = "https://t.me/+KznfEhtzkeNlZjIy",
+  moreTarget = "_blank",
+  moreRel = "noopener",
+  moreText = "Подробнее об авторе →",
+} = Astro.props as Props;
+---
+
+<section
+  class={`section author ${className}`.trim()}
+  aria-labelledby={`${id}-title`}
+>
+  <div class="author-inner">
+    <h2 id={`${id}-title`} class="author__heading">{heading}</h2>
+
+    <div class="author__shell">
+      <!-- Левая колонка (управляет высотой ряда) -->
+      <div class="author__left" data-equal-src>
+        <h3 class="author__name">
+          <span class="author__name--hl">{name}</span>
+        </h3>
+
+        <ul class="author__facts">
+          {facts.map((f) => <li class="card author__fact">{f}</li>)}
+        </ul>
+
+        <nav class="author__socials" aria-label="Социальные сети автора">
+          {
+            socials.map((s) => (
+              <a
+                class="author__soc"
+                href={s.href}
+                target={s.target}
+                rel={s.rel}
+                aria-label={s.label}
+              >
+                <img
+                  src={s.icon}
+                  width="24"
+                  height="24"
+                  alt={s.label}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+
+      <!-- Правая колонка: высота = высоте левой -->
+      <figure class="author__right">
+        <div class="author__photo" data-equal-target>
+          <img src={photoSrc} alt={photoAlt} loading="lazy" decoding="async" />
+          <a
+            href={moreHref}
+            target={moreTarget}
+            rel={moreRel}
+            class="btn btn--blue author__more"
+          >
+            {moreText}
+          </a>
+        </div>
+      </figure>
+    </div>
+  </div>
+
+  <style>
+    /* ===== Контейнер как у оффера ===== */
+    .author {
+      --author-equal-h: auto; /* управляемая высота правой колонки */
+      font-family: var(--ff);
+    }
+    .author-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .author-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    @media (max-width: 600px) {
+      .author-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    /* ===== Стили компонента ===== */
+    .author__heading {
+      font-size: var(--h2);
+      margin: 0 0 var(--space-16);
+      text-wrap: balance;
+    }
+
+    /* сетка: узкая левая, широкая правая */
+    .author {
+      --author-cols: 1.2fr 0.8fr;
+    }
+    .author__shell {
+      display: grid;
+      grid-template-columns: var(--author-cols);
+      gap: var(--space-24);
+      align-items: stretch;
+    }
+
+    /* Левая колонка задает реальную высоту */
+    .author__left {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto; /* имя | факты | соцсети */
+    }
+
+    .author__name {
+      margin: 0 0 var(--space-16);
+      font-size: clamp(22px, 3.2vw, 38px);
+      line-height: 1.25;
+    }
+    .author__name--hl {
+      color: var(--blue);
+    }
+
+    .author__facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-16);
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--space-16);
+    }
+    .author__fact {
+      padding: 22px;
+      border-radius: var(--radius-24);
+      border-color: var(--border);
+      box-shadow: var(--shadow-1);
+      background: #fff;
+      color: #222;
+      font: 500 16px/1.5 var(--ff);
+    }
+    .author__facts li:last-child {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      box-shadow: none;
+    }
+
+    .author__socials {
+      display: flex;
+      gap: var(--space-16);
+      align-self: end;
+    }
+    .author__soc {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background 0.2s,
+        border-color 0.2s,
+        transform 0.15s var(--easing);
+    }
+    .author__soc img {
+      width: 60%;
+      height: 60%;
+      display: block;
+      filter: grayscale(1) brightness(0.5);
+      transition: filter 0.2s;
+    }
+    .author__soc:hover {
+      background: var(--blue);
+      border-color: var(--blue);
+      transform: translateY(-1px);
+    }
+    .author__soc:hover img {
+      filter: brightness(100) invert(1);
+    }
+
+    /* Правая колонка — равная высота с левой */
+    .author__right {
+      margin: 0;
+      align-self: stretch;
+    }
+    .author__photo {
+      position: relative;
+      width: 100%;
+      height: var(--author-equal-h); /* ключ */
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow-1);
+    }
+    .author__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .author__more {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      border-radius: 10px;
+    }
+
+    /* ===== Адаптивы ===== */
+    @media (max-width: 1100px) {
+      .author__shell {
+        gap: var(--space-20);
+      }
+      .author__facts {
+        gap: var(--space-12);
+      }
+      .author__fact {
+        padding: 18px;
+        font-size: 15px;
+      }
+    }
+
+    /* Mobile ≤700px — порядок: Имя → Фото → Факты → Соцсети */
+    @media (max-width: 700px) {
+      .author {
+        --author-equal-h: auto;
+      } /* отключаем “equal height” */
+      .author__shell {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-areas:
+          "name"
+          "photo"
+          "facts"
+          "socials";
+        row-gap: var(--space-16);
+      }
+      .author__left {
+        display: contents !important;
+      }
+      .author__name {
+        grid-area: name;
+        text-align: center;
+      }
+      .author__right {
+        grid-area: photo;
+      }
+      .author__facts {
+        grid-area: facts;
+        grid-template-columns: 1fr !important;
+      }
+      .author__socials {
+        grid-area: socials;
+        justify-content: center;
+      }
+      .author__heading {
+        text-align: center;
+      }
+
+      .author__photo {
+        height: auto !important;
+        aspect-ratio: 4 / 5;
+      }
+      .author__photo img {
+        object-fit: cover;
+        object-position: center;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    // Выравниваем высоту правой колонки под левую (кросс-контентно, без флэшей)
+    (() => {
+      const root = document.currentScript.closest(".author");
+      if (!root) return;
+      const src = root.querySelector("[data-equal-src]");
+      const setH = () => {
+        const h = src?.getBoundingClientRect().height || 0;
+        root.style.setProperty("--author-equal-h", h ? `${h}px` : "auto");
+      };
+      const ro = "ResizeObserver" in window ? new ResizeObserver(setH) : null;
+      if (src && ro) ro.observe(src);
+
+      // Инициализация/обновления
+      setH();
+      window.addEventListener("load", setH);
+      window.addEventListener("resize", setH, { passive: true });
+
+      // На очень узких — равенство высот отключено через MQ, но лишний вызов не вредит
+    })();
+  </script>
+</section>

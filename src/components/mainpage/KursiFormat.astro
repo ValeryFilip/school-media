@@ -1,0 +1,316 @@
+---
+interface Img {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
+interface Card {
+  img: Img;
+  title: string;
+  benefits: string[];
+  href: string;
+  ctaText: string;
+  ctaAria?: string;
+}
+interface Props {
+  id?: string;
+  topTitle?: string;
+  topSub?: string;
+  topImage?: Img;
+  listTitle?: string;
+  cards?: [Card, Card];
+}
+const {
+  id = "kursi-format",
+  topTitle = "У нас можно выбрать комфортный формат обучения!",
+  topSub = "Выбирай под свою ситуацию и возможности!",
+  topImage = {
+    src: "images/mainpage/topimage.png",
+    width: 800,
+    height: 600,
+    alt: "Форматы обучения: иллюстрация",
+  },
+  listTitle = "Преимущества",
+  cards = [
+    {
+      img: {
+        src: "images/mainpage/group.webp",
+        width: 1200,
+        height: 800,
+        alt: "Занятия в минигруппах",
+      },
+      title: "Занятия в минигруппах – больше общения и контроля",
+      benefits: [
+        "Индивидуальный подход",
+        "Группы до 5 человек",
+        "Максимальный контакт с преподавателем",
+        "Строгое расписание",
+        "Работа в командах",
+        "Проверки работ преподавателем",
+        "Зачёты",
+      ],
+      href: "#groups",
+      ctaText: "Узнать подробнее",
+      ctaAria: "Подробнее о минигруппах",
+    },
+    {
+      img: {
+        src: "images/mainpage/indiv.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Самостоятельные курсы",
+      },
+      title: "Самостоятельные курсы – гибкость и свобода творчества",
+      benefits: [
+        "Индивидуальный подход",
+        "Группы до 5 человек",
+        "Максимальный контакт с преподавателем",
+        "Строгое расписание",
+        "Работа в командах",
+        "Проверки работ преподавателем",
+        "Зачёты",
+      ],
+      href: "#self-paced",
+      ctaText: "Узнать подробнее",
+      ctaAria: "Подробнее о самостоятельных курсах",
+    },
+  ],
+} = Astro.props as Props;
+---
+
+<section class="section kursi-format" aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <!-- Верхний синий баннер -->
+    <div class="format-top card--reset">
+      <div class="format-top__text">
+        <h2 id={`${id}-title`} class="format-title">{topTitle}</h2>
+        <p class="format-sub">{topSub}</p>
+      </div>
+      <figure class="format-illu">
+        <img
+          src={topImage.src}
+          width={topImage.width ?? 800}
+          height={topImage.height ?? 600}
+          alt={topImage.alt}
+        />
+      </figure>
+    </div>
+
+    <!-- Нижние карточки -->
+    <div class="format-cards">
+      {
+        cards.map((c) => (
+          <article class="card format-card">
+            <img
+              class="format-img"
+              src={c.img.src}
+              width={c.img.width ?? 1200}
+              height={c.img.height ?? 800}
+              alt={c.img.alt}
+            />
+            <div class="format-content">
+              <h3 class="format-card-title">{c.title}</h3>
+              <hr class="hr" />
+              <p class="format-list-title">{listTitle}</p>
+              <ul class="format-list">
+                {c.benefits.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+              <a
+                href={c.href}
+                class="btn btn--blue"
+                aria-label={c.ctaAria || c.ctaText}
+              >
+                {c.ctaText}
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <style>
+    /* локальный контейнер (стандартный паттерн) */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    .kursi-format {
+      font-family: var(--ff);
+    }
+
+    /* Верхний синий блок */
+    .format-top {
+      display: grid;
+      grid-template-columns: 1fr minmax(280px, 450px);
+      align-items: center;
+      gap: var(--space-24);
+      background: var(--blue);
+      color: #fff;
+      border-radius: var(--radius-24);
+      padding: var(--space-32);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+      margin-bottom: var(--space-16);
+    }
+    .card--reset {
+      background: var(--blue);
+      box-shadow: none;
+      border-color: transparent;
+    }
+
+    .format-top__text {
+      max-width: 680px;
+    }
+    .format-title {
+      font-size: var(--h2);
+      line-height: 1.3;
+      margin: 0 0 var(--space-12);
+    }
+    .format-sub {
+      font-size: clamp(22px, 3.2vw, 36px);
+      font-weight: 500;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .format-illu {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-24);
+      overflow: hidden;
+      align-self: stretch;
+    }
+    .format-illu img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Сетка нижних карточек */
+    .format-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-16);
+    }
+    .format-card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .format-img {
+      width: 100%;
+      height: 325px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--border);
+    }
+    .format-content {
+      padding: var(--space-32);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
+    }
+    .format-card-title {
+      font-size: clamp(22px, 3vw, 36px);
+      line-height: 1.2;
+      margin: 0;
+    }
+    .format-list-title {
+      font-size: clamp(18px, 2.4vw, 26px);
+      font-weight: 700;
+      margin: 0;
+    }
+    .format-list {
+      margin: 0 0 var(--space-8) 20px;
+      padding: 0;
+      list-style: disc;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.5;
+    }
+    .format-list li {
+      margin-bottom: 8px;
+    }
+    .format-content .btn {
+      align-self: center;
+    }
+
+    /* Адаптивы — как обсуждали, локально */
+    @media (max-width: 1100px) {
+      .format-top {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: var(--space-24);
+      }
+      .format-top__text {
+        margin-inline: auto;
+      }
+      .format-illu {
+        height: 260px;
+        align-self: center;
+      }
+      .format-illu img {
+        object-position: center;
+      }
+
+      .format-cards {
+        grid-template-columns: 1fr;
+      }
+      .format-content {
+        gap: var(--space-12);
+      }
+      .hr {
+        height: 1px;
+        border: 0;
+        background: var(--border);
+        margin: 8px 0;
+      }
+      .format-list-title {
+        margin-top: 0;
+      }
+      .format-img {
+        height: 260px;
+      }
+    }
+    @media (max-width: 600px) {
+      .format-illu {
+        height: 200px;
+      }
+      .format-img {
+        height: 200px;
+      }
+      .format-sub {
+        font-size: 22px;
+      }
+      .format-content {
+        gap: var(--space-8);
+      }
+    }
+  </style>
+</section>

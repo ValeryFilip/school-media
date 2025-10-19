@@ -1,0 +1,257 @@
+---
+interface Props {
+  telegramUrl?: string;
+  whatsappUrl?: string;
+  vkUrl?: string;
+  bottomOffset?: number; // px, расстояние от нижнего края (чтобы быть над стрелкой)
+  rightOffset?: number; // px
+  zIndex?: number;
+}
+
+const {
+  telegramUrl,
+  whatsappUrl,
+  vkUrl,
+  bottomOffset = 96,
+  rightOffset = 20,
+  zIndex = 9999,
+} = Astro.props as Props;
+
+const links = [
+  telegramUrl && {
+    href: telegramUrl,
+    label: "Написать в Telegram",
+    key: "tg",
+    brand: "tg",
+  },
+  whatsappUrl && {
+    href: whatsappUrl,
+    label: "Написать в WhatsApp",
+    key: "wa",
+    brand: "wa",
+  },
+  vkUrl && {
+    href: vkUrl,
+    label: "Написать во ВКонтакте",
+    key: "vk",
+    brand: "vk",
+  },
+].filter(Boolean) as {
+  href: string;
+  label: string;
+  key: string;
+  brand: "tg" | "wa" | "vk";
+}[];
+---
+
+<div
+  class="support-fab"
+  style={`bottom: calc(env(safe-area-inset-bottom) + ${bottomOffset}px); right: ${rightOffset}px; z-index: ${zIndex};`}
+>
+  <button
+    id="support-fab-trigger"
+    class="fab-btn"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="support-fab-menu"
+    title="Написать нам"
+  >
+    <!-- Иконка диалога -->
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8.8L5 20.8V17H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm2 4h12v2H6V8Zm0 4h9v2H6v-2Z"
+      ></path>
+    </svg>
+  </button>
+
+  {
+    links.length > 0 && (
+      <div
+        id="support-fab-menu"
+        class="fab-menu"
+        role="menu"
+        aria-label="Контакты поддержки"
+      >
+        {links.map((l) => (
+          <a
+            class={`fab-item fab-${l.brand}`}
+            href={l.href}
+            target="_blank"
+            rel="noopener"
+            role="menuitem"
+            aria-label={l.label}
+          >
+            {l.brand === "tg" && (
+              <img
+                class="fab-img"
+                src="/images/technical/telegram.png"
+                alt=""
+                width="22"
+                height="22"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            {l.brand === "wa" && (
+              <img
+                class="fab-img"
+                src="/images/technical/whatsapp.png"
+                alt=""
+                width="22"
+                height="22"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            {l.brand === "vk" && (
+              <img
+                class="fab-img"
+                src="/images/technical/vk.png"
+                alt=""
+                width="22"
+                height="22"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  <style>
+    .support-fab {
+      position: fixed;
+      inset: auto var(--_right) var(--_bottom) auto;
+      --_bottom: auto;
+      --_right: auto;
+    }
+
+    .fab-btn {
+      inline-size: 56px;
+      block-size: 56px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--blue, #366ef0);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(54, 110, 240, 0.35);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: fab-pulse 4s ease-in-out infinite;
+    }
+    .fab-btn:focus-visible {
+      outline: 3px solid #ffed4e;
+      outline-offset: 2px;
+    }
+
+    @keyframes fab-pulse {
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 8px 24px rgba(54, 110, 240, 0.35);
+      }
+      50% {
+        transform: scale(1.06);
+        box-shadow: 0 12px 32px rgba(54, 110, 240, 0.5);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fab-btn {
+        animation: none;
+      }
+    }
+
+    .fab-menu {
+      position: absolute;
+      right: 0;
+      bottom: 64px;
+      display: grid;
+      gap: 8px;
+      background: transparent;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px) scale(0.98);
+      transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+    }
+
+    .support-fab.open .fab-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .fab-item {
+      inline-size: 48px;
+      block-size: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #111;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+    .fab-item:hover {
+      filter: brightness(0.98);
+    }
+    .fab-img {
+      display: block;
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 600px) {
+      .fab-btn {
+        inline-size: 52px;
+        block-size: 52px;
+      }
+      .fab-item {
+        inline-size: 52px;
+        block-size: 52px;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const root =
+        (document.currentScript &&
+          document.currentScript.parentElement?.closest(".support-fab")) ||
+        document.querySelector(".support-fab");
+      if (!root) return;
+      const btn = root.querySelector("#support-fab-trigger");
+      const menu = root.querySelector("#support-fab-menu");
+      let open = false;
+
+      function setOpen(v) {
+        open = !!v;
+        root.classList.toggle("open", open);
+        if (btn) btn.setAttribute("aria-expanded", String(open));
+      }
+
+      function onDocClick(e) {
+        if (!root.contains(e.target)) setOpen(false);
+      }
+      function onKey(e) {
+        if (e.key === "Escape") setOpen(false);
+      }
+
+      btn?.addEventListener("click", () => setOpen(!open));
+      document.addEventListener("click", onDocClick);
+      document.addEventListener("keydown", onKey);
+
+      window.addEventListener("beforeunload", () => {
+        document.removeEventListener("click", onDocClick);
+        document.removeEventListener("keydown", onKey);
+      });
+    })();
+  </script>
+</div>

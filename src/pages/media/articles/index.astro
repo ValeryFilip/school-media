@@ -1,0 +1,509 @@
+---
+// src/pages/articles/index.astro
+import Layout from "../../../layouts/Layout.astro";
+import config from "../../../config.ts";
+import { getCollection } from "astro:content";
+import Card from "../../../components/Card.astro";
+
+// Данные
+const entries = await getCollection("articles");
+
+const toISO = (d: unknown) => {
+  if (d instanceof Date) return d.toISOString();
+  const t = new Date(String(d));
+  return isNaN(t.getTime()) ? "" : t.toISOString();
+};
+
+const indexData = entries.map((p) => ({
+  slug: p.slug,
+  title: p.data.title,
+  description: p.data.description ?? "",
+  date: toISO(p.data.date),
+  category: p.data.category ?? "",
+  tags: Array.isArray(p.data.tags) ? p.data.tags : [],
+}));
+
+const categories = Array.from(
+  new Set(indexData.map((p) => p.category).filter(Boolean))
+).sort((a, b) => a.localeCompare(b, "ru"));
+const tags = Array.from(
+  new Set(indexData.flatMap((p) => p.tags).filter(Boolean))
+).sort((a, b) => a.localeCompare(b, "ru"));
+
+// SEO + крошки
+const siteUrl = config.siteUrl.replace(/\/$/, "");
+const pageTitle = "Все статьи";
+const pageDesc = "Архив всех статей сайта";
+const pageUrl = `${siteUrl}/media/articles/`;
+const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
+
+const breadcrumbsLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: config.siteName, item: siteUrl },
+    { "@type": "ListItem", position: 2, name: pageTitle, item: pageUrl },
+  ],
+};
+
+const BATCH = 12; // 4×3
+const currentPageServer = Math.max(
+  1,
+  Number(Astro.url.searchParams.get("page") || "1")
+);
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDesc}
+  url={`${pageUrl}${currentPageServer > 1 ? `?page=${currentPageServer}` : ""}`}
+  prevUrl={currentPageServer > 1
+    ? `${pageUrl}?page=${currentPageServer - 1}`
+    : undefined}
+  nextUrl={currentPageServer * BATCH < entries.length
+    ? `${pageUrl}?page=${currentPageServer + 1}`
+    : undefined}
+  breadcrumbs={breadcrumbs}
+>
+  {/* Breadcrumbs JSON-LD уже рендерится компонентом <Breadcrumbs/> в Layout */}
+
+  <div class="page-container">
+    <header class="page-head">
+      <h1 class="page-title">{pageTitle}</h1>
+      <p class="page-desc">{pageDesc}</p>
+    </header>
+  </div>
+
+  <main
+    id="articles-main"
+    class="articles-section"
+    aria-labelledby="articles-title"
+  >
+    <div class="articles-container">
+      <h2 id="articles-title" class="articles-title">
+        Список статей с фильтрами
+      </h2>
+
+      {
+        entries.map((p) => (
+          <template id={`tmpl-${p.slug}`}>
+            {/* Универсальная карточка.
+             preset берём «медийный» вертикальный без жёсткой ширины,
+             ссылки внутренние — через /media */}
+            <Card post={p} preset="m-vertical-25em" basePath="/media" />
+          </template>
+        ))
+      }
+
+      <section class="controls" aria-labelledby="filters-title">
+        <h3 id="filters-title" class="sr-only">Фильтры и сортировка</h3>
+        <div class="controls-row">
+          <label class="control">
+            <span class="control__label">По дате</span>
+            <select
+              id="sort-date"
+              class="control__input"
+              aria-label="Сортировка по дате"
+            >
+              <option value="new">Сначала новые</option>
+              <option value="old">Сначала старые</option>
+            </select>
+          </label>
+
+          <label class="control">
+            <span class="control__label">Категория</span>
+            <select
+              id="filter-category"
+              class="control__input"
+              aria-label="Фильтр по категории"
+            >
+              <option value="">Все</option>
+              {categories.map((c) => <option value={c}>{c}</option>)}
+            </select>
+          </label>
+
+          <label class="control">
+            <span class="control__label">Тег</span>
+            <select
+              id="filter-tag"
+              class="control__input"
+              aria-label="Фильтр по тегу"
+            >
+              <option value="">Все</option>
+              {tags.map((t) => <option value={t}>{t}</option>)}
+            </select>
+          </label>
+
+          <label class="control control--search">
+            <span class="control__label">Поиск</span>
+            <input
+              type="search"
+              id="search-input"
+              class="control__input"
+              placeholder="Поиск…"
+              aria-label="Поиск по статьям"
+            />
+          </label>
+        </div>
+      </section>
+
+      <section class="grid-wrap" aria-label="Список статей">
+        <div id="articles-grid" class="grid"></div>
+        <nav class="pager" aria-label="Навигация по страницам">
+          <!-- pagination rendered by script: buttons and numbers -->
+        </nav>
+      </section>
+    </div>
+  </main>
+
+  <script
+    type="application/json"
+    id="__DATA__"
+    set:html={JSON.stringify(indexData)}
+  />
+
+  <script is:inline>
+    (function () {
+      const posts = JSON.parse(
+        document.getElementById("__DATA__").textContent || "[]"
+      );
+
+      const sortDate = document.getElementById("sort-date");
+      const filterCategory = document.getElementById("filter-category");
+      const filterTag = document.getElementById("filter-tag");
+      const searchInput = document.getElementById("search-input");
+      const grid = document.getElementById("articles-grid");
+      const pager = document.querySelector(".pager");
+
+      let filtered = [];
+      let page = 0;
+      const BATCH = 12;
+
+      const norm = (s) => (s || "").toString().toLowerCase();
+
+      function applyFilters() {
+        const sd = sortDate.value;
+        const fc = filterCategory.value;
+        const ft = filterTag.value;
+        const q = norm(searchInput.value.trim());
+
+        filtered = posts
+          .filter(
+            (p) =>
+              (fc === "" || p.category === fc) &&
+              (ft === "" || (Array.isArray(p.tags) && p.tags.includes(ft))) &&
+              (norm(p.title).includes(q) ||
+                norm(p.description).includes(q) ||
+                norm(p.category).includes(q) ||
+                (Array.isArray(p.tags) &&
+                  p.tags.some((t) => norm(t).includes(q))))
+          )
+          .sort((a, b) => {
+            const da = new Date(a.date).getTime() || 0;
+            const db = new Date(b.date).getTime() || 0;
+            return sd === "new" ? db - da : da - db;
+          });
+
+        grid.innerHTML = "";
+        page = 0;
+        renderNext();
+        renderPager();
+      }
+
+      function renderNext() {
+        const start = page * BATCH;
+        const slice = filtered.slice(start, start + BATCH);
+        slice.forEach((p) => {
+          const tpl = document.getElementById(`tmpl-${p.slug}`);
+          if (tpl?.content) grid.appendChild(tpl.content.cloneNode(true));
+        });
+        page++;
+      }
+
+      function renderPager() {
+        if (!pager) return;
+        const totalPages = Math.max(1, Math.ceil(filtered.length / BATCH));
+        const currentPage = Math.max(
+          1,
+          Math.ceil((grid.children.length || 1) / BATCH)
+        );
+        const path = location.pathname;
+
+        const btn = (label, n, aria) =>
+          `<a class="pager__link${n === currentPage ? " is-active" : ""}" ${n === currentPage ? 'aria-current="page"' : ""} href="${path}?page=${n}" aria-label="${aria}">${label}</a>`;
+
+        const numbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+          .map((n) => btn(String(n), n, `Страница ${n}`))
+          .join("");
+        const prev =
+          currentPage > 1
+            ? btn("←", currentPage - 1, "Предыдущая страница")
+            : "";
+        const next =
+          currentPage < totalPages
+            ? btn("→", currentPage + 1, "Следующая страница")
+            : "";
+        pager.innerHTML = prev + numbers + next;
+
+        // навешиваем обработку для SPA-поведения
+        pager.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", (e) => {
+            // позволяем обычную навигацию, но если та же страница — рисуем без перезагрузки
+            if (a.pathname === path) {
+              e.preventDefault();
+              const u = new URL(a.href);
+              const n = Number(u.searchParams.get("page") || "1");
+              grid.innerHTML = "";
+              page = 0;
+              while (page < n) renderNext();
+              renderPager();
+              window.history.replaceState({}, "", a.href);
+            }
+          });
+        });
+      }
+      [sortDate, filterCategory, filterTag].forEach((el) =>
+        el.addEventListener("change", applyFilters)
+      );
+      searchInput.addEventListener("input", applyFilters);
+      applyFilters();
+
+      // если есть ?page=N — отрисуем соответствующую страницу сразу
+      (function initFromQuery() {
+        const n = Number(
+          new URL(location.href).searchParams.get("page") || "1"
+        );
+        if (n > 1) {
+          grid.innerHTML = "";
+          page = 0;
+          while (page < n) renderNext();
+          renderPager();
+        }
+      })();
+    })();
+  </script>
+</Layout>
+
+<style>
+  .sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .page-container,
+  .articles-container {
+    max-width: var(--page-max-width, 1300px);
+    padding: 0 var(--page-padding, 50px);
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* Планшет (601px - 1100px) */
+  @media (min-width: 601px) and (max-width: 1100px) {
+    .page-container,
+    .articles-container {
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
+      max-width: none;
+      padding: 0 24px;
+    }
+  }
+
+  /* Мобилка (≤600px) */
+  @media (max-width: 600px) {
+    .page-container,
+    .articles-container {
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
+      max-width: none;
+      padding: 0 20px;
+    }
+  }
+
+  .page-head {
+    margin: 0 0 24px;
+  }
+  .page-title {
+    margin: 12px 0 8px;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1.1;
+    color: #111;
+  }
+  .page-desc {
+    margin: 0 0 26px;
+    font-size: 24px;
+    color: #222;
+    line-height: 1.4;
+  }
+
+  .articles-title {
+    margin: 0 0 30px;
+    font:
+      700 26px/1.2 "Montserrat",
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif;
+    color: #222;
+    letter-spacing: 0.2px;
+  }
+
+  .articles-section {
+    margin: 0 0 60px;
+  }
+
+  .controls {
+    margin: 0 0 24px;
+  }
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: flex-end;
+  }
+  .control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .control__label {
+    font-size: 14px;
+    color: #555;
+  }
+  .control__input {
+    appearance: none;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #d8dee4;
+    border-radius: 12px;
+    background: #fff;
+    min-width: 200px;
+  }
+  .control--search .control__input {
+    min-width: 260px;
+  }
+  .control__input:focus {
+    outline: 2px solid rgba(13, 110, 253, 0.2);
+    outline-offset: 0;
+  }
+
+  .grid {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .pager {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 28px 0 6px;
+  }
+  .pager__link {
+    display: inline-grid;
+    place-items: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .pager__link:hover {
+    background: #f7f9fc;
+  }
+  .pager__link.is-active {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    cursor: default;
+  }
+
+  .loadmore-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0 60px;
+  }
+  .btn {
+    appearance: none;
+    border: 1px solid #222;
+    background: #fff;
+    color: #222;
+    padding: 12px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    background: #fefefe;
+  }
+
+  @media (max-width: 1100px) {
+    .page-title {
+      font-size: 48px;
+    }
+    .articles-title {
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .control__input {
+      min-width: 180px;
+    }
+    .control--search .control__input {
+      min-width: 220px;
+    }
+  }
+  @media (max-width: 600px) {
+    .articles-container {
+      padding: 0 20px;
+    }
+    .page-title {
+      font-size: 32px;
+    }
+    .page-desc {
+      font-size: 18px;
+    }
+    .articles-title {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .loadmore-wrap {
+      margin: 24px 0 40px;
+    }
+    .controls-row {
+      gap: 10px 12px;
+    }
+    .control__input {
+      min-width: 140px;
+    }
+    .control--search .control__input {
+      min-width: 180px;
+    }
+  }
+</style>

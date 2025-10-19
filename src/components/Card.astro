@@ -1,0 +1,694 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CatBadge from "./CatBadge.astro";
+import { slugify } from "../lib/slugify";
+
+/** Human-readable presets for current cards */
+type Preset =
+  | "h-compact-150" // horizontal compact 150×150
+  | "h-list-753x150" // horizontal large 753×150
+  | "v-270x492" // vertical 270×492
+  | "v-270x613" // vertical 270×613
+  | "v-404x613" // vertical 404×613
+  | "tile-432x613" // vertical 432×613, inner img 400×400
+  | "m-vertical-25em"; // media card: square photo, adaptive height
+
+type Orientation = "vertical" | "horizontal";
+
+interface ShowT {
+  image?: boolean;
+  description?: boolean;
+  category?: boolean;
+  date?: boolean;
+  readingTime?: boolean;
+}
+
+interface DataT {
+  title?: string;
+  description?: string;
+  category?: string;
+  date?: string | Date;
+  image?: string;
+  readingTime?: string;
+  slug?: string; // если нет post
+}
+
+interface Props {
+  /** Можно передать либо post, либо data (или оба; data перекроет поля post). */
+  post?: CollectionEntry<"articles">;
+  data?: DataT;
+
+  /** Переопределения (если нужно точечно) */
+  title?: string;
+  description?: string;
+  category?: string;
+  date?: string | Date;
+  image?: string;
+  readingTime?: string;
+  href?: string; // абсолютная/относительная ссылка; если не задана — соберём из basePath+slug
+
+  /** Вариант карточки */
+  preset?: Preset;
+
+  /** Ориентация (перекрывает preset при желании) */
+  orientation?: Orientation;
+
+  /** Сколько строк обрезать */
+  clampTitle?: number; // дефолты подтянем из пресета
+  clampDesc?: number;
+
+  /** Квадрат/16:9/и т.п.: по пресету проставится автоматически, можно перекрыть */
+  ratio?: "1/1" | "16/9" | "16/10" | "auto";
+
+  /** Показ блоков */
+  show?: ShowT;
+
+  /** Размер бейджа категории */
+  catSize?: "sm" | "md";
+  /** Сколько строк клампить бейдж (как у твоего CatBadge) */
+  catClamp?: 0 | 2 | 3;
+
+  /** Бордер+тень (как .card-border) */
+  border?: boolean;
+
+  /** Префикс для ссылок медиа-раздела (по умолчанию /media) */
+  basePath?: string;
+
+  /** Доп.классы на корневой элемент */
+  class?: string;
+}
+
+const p = Astro.props as Props;
+
+/* 1) Собираем данные в единый объект */
+const fromPost = p.post?.data as any;
+const slug = p.href ? undefined : (p.post?.slug ?? p.data?.slug ?? undefined);
+
+const title =
+  p.title ?? p.data?.title ?? (fromPost?.title ? String(fromPost.title) : "");
+const description =
+  p.description ??
+  p.data?.description ??
+  (fromPost?.description ? String(fromPost.description) : "");
+const category =
+  p.category ??
+  p.data?.category ??
+  (fromPost?.category ? String(fromPost.category) : "без категории");
+const image =
+  p.image ??
+  p.data?.image ??
+  (fromPost?.image ? String(fromPost.image) : undefined);
+const readingTime =
+  p.readingTime ??
+  p.data?.readingTime ??
+  (fromPost?.readingTime ? String(fromPost.readingTime) : undefined);
+
+const dateVal: string | Date | undefined =
+  p.date ?? p.data?.date ?? fromPost?.date;
+const dateObj = dateVal ? new Date(dateVal as any) : undefined;
+const dateISO =
+  dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : undefined;
+const dateRu = dateISO
+  ? new Intl.DateTimeFormat("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(new Date(dateISO))
+  : "";
+
+/* 2) Ссылки с учётом /media */
+const basePath = (p.basePath ?? "/media").replace(/\/+$/, ""); // без хвостового /
+const postUrl = slug ? `${basePath}/articles/${slug}/` : undefined;
+const href = p.href ?? postUrl ?? "#";
+const catUrl = `${basePath}/category/${slugify(category)}/`;
+
+/* 3) Пресеты → дефолты (размеры, клампы, ориентация, соотношение сторон, фикс.ширина/высота) */
+type PresetDef = {
+  orientation: Orientation;
+  clampTitle: number;
+  clampDesc: number;
+  ratio: "1/1" | "16/9" | "16/10" | "auto";
+  w?: number;
+  h?: number; // итоговый контейнер (если у карточки фикс.рамки)
+  mediaW?: number;
+  mediaH?: number; // фикс.область для изображения, если нужна
+  fontBase?: number; // базовый font-size для пресета (как в твоих)
+};
+
+const PRESETS: Record<Preset, PresetDef> = {
+  "h-compact-150": {
+    orientation: "horizontal",
+    clampTitle: 2,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 150,
+    mediaH: 150,
+    fontBase: 16,
+    w: undefined,
+    h: undefined,
+  }, // hcard/h-card
+  "h-list-753x150": {
+    orientation: "horizontal",
+    clampTitle: 4,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 150,
+    mediaH: 150,
+    fontBase: 16,
+    w: 753,
+    h: 150,
+  },
+  "v-270x492": {
+    orientation: "vertical",
+    clampTitle: 4,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 270,
+    mediaH: 270,
+    fontBase: 16,
+    w: 270,
+    h: 492,
+  },
+  "v-270x613": {
+    orientation: "vertical",
+    clampTitle: 4,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 270,
+    mediaH: 270,
+    fontBase: 16,
+    w: 270,
+    h: 613,
+  },
+  "v-404x613": {
+    orientation: "vertical",
+    clampTitle: 4,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 404,
+    mediaH: 404,
+    fontBase: 16,
+    w: 404,
+    h: 613,
+  },
+  "tile-432x613": {
+    orientation: "vertical",
+    clampTitle: 4,
+    clampDesc: 2,
+    ratio: "1/1",
+    mediaW: 400,
+    mediaH: 400,
+    fontBase: 16,
+    w: 432,
+    h: 613,
+  },
+
+  /* ✅ фикс скейлинга: карточка без фикс.высоты; контролируем только зону медиа */
+  "m-vertical-25em": {
+    orientation: "vertical",
+    clampTitle: 2,
+    clampDesc: 0,
+    ratio: "auto", // не навязываем aspect-ratio самому <img>
+    mediaW: undefined,
+    mediaH: undefined,
+    fontBase: 16,
+    w: undefined,
+    h: undefined, // карточка растёт по контенту (без прежних 25em)
+  },
+};
+
+const preset = p.preset ?? "h-compact-150";
+const def = PRESETS[preset];
+
+/* 4) Финальные параметры компонента */
+const orientation: Orientation = p.orientation ?? def.orientation;
+const clampTitle = p.clampTitle ?? def.clampTitle;
+const clampDesc = p.clampDesc ?? def.clampDesc;
+const ratio = p.ratio ?? def.ratio;
+
+const show: Required<ShowT> = {
+  image: p.show?.image ?? true,
+  description: p.show?.description ?? !!description,
+  category: p.show?.category ?? true,
+  date: p.show?.date ?? !!dateISO,
+  readingTime: p.show?.readingTime ?? !!readingTime,
+};
+
+const catSize = p.catSize ?? "sm";
+const catClamp = p.catClamp ?? 2;
+const border = p.border ?? true;
+
+const externalClass = p.class ?? "";
+
+/* 5) Inline CSS variables из пресета */
+const styleVars = [
+  def.fontBase ? `--uc-fs:${def.fontBase}px;` : "",
+  def.w ? `--uc-w:${def.w}px;` : "",
+  def.h ? `--uc-h:${def.h}px;` : "",
+  def.mediaW ? `--uc-media-w:${def.mediaW}px;` : "",
+  def.mediaH ? `--uc-media-h:${def.mediaH}px;` : "",
+  clampTitle ? `--uc-clamp-title:${clampTitle};` : "",
+  clampDesc ? `--uc-clamp-desc:${clampDesc};` : "",
+  ratio ? `--uc-ratio:${ratio};` : "",
+].join("");
+
+/* 6) Фолбэки изображений */
+const imageSrc =
+  image ??
+  (def.mediaW
+    ? `https://via.placeholder.com/${def.mediaW}x${def.mediaH ?? def.mediaW}?text=No+Image`
+    : "https://via.placeholder.com/800x800?text=No+Image");
+---
+
+<article
+  class={`ucard ${border ? "card-border" : ""} ${externalClass} o-${orientation} preset-${preset}`}
+  itemscope
+  itemtype="https://schema.org/Article"
+  style={styleVars}
+>
+  <!-- Оверлейная ссылка на всю карточку -->
+  <a class="ucard__link" href={href} aria-label={title}></a>
+
+  <!-- Медиа -->
+  {
+    show.image && (
+      <div class="ucard__media" aria-hidden="true">
+        <img
+          src={imageSrc}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width={def.mediaW ?? 800}
+          height={def.mediaH ?? def.mediaW ?? 800}
+          itemprop="image"
+        />
+      </div>
+    )
+  }
+
+  <!-- Тело -->
+  <div class="ucard__body">
+    {
+      title && (
+        <h3 class="ucard__title" itemprop="headline">
+          {title}
+        </h3>
+      )
+    }
+
+    {
+      show.description && description && (
+        <p class="ucard__desc" itemprop="description">
+          {description}
+        </p>
+      )
+    }
+
+    <div class="ucard__meta">
+      {
+        show.category && (
+          <span class="cat-wrap">
+            <CatBadge
+              name={category}
+              href={catUrl}
+              size={catSize}
+              clampLines={catClamp}
+            />
+          </span>
+        )
+      }
+
+      <div class="ucard__meta-right">
+        {
+          show.readingTime && readingTime && (
+            <span class="time">{readingTime}</span>
+          )
+        }
+        {
+          show.date && dateISO && (
+            <time class="date" datetime={dateISO} itemprop="datePublished">
+              {dateRu}
+            </time>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</article>
+
+<style>
+  /* База */
+  .ucard {
+    position: relative;
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: transform 0.18s ease;
+    font-size: var(--uc-fs, 16px);
+    width: var(--uc-w, auto);
+    height: var(--uc-h, auto);
+  }
+  .ucard:hover {
+    transform: translateY(-4px);
+  }
+  .ucard .ucard__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .ucard .cat-wrap {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0; /* не сжимаем бейдж */
+    min-width: 0; /* разрешаем сжатие содержимого */
+  }
+
+  .ucard__media {
+    overflow: hidden;
+    background: #000;
+    flex: 0 0 auto;
+    display: block;
+    border-radius: 24px;
+  }
+  .ucard__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ucard__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #fff;
+  }
+
+  .ucard__title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.25;
+    color: #222;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--uc-clamp-title, 2);
+    overflow: hidden;
+  }
+  .ucard__desc {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--uc-clamp-desc, 2);
+    overflow: hidden;
+  }
+  .ucard__meta {
+    margin-top: auto; /* прибиваем мету к низу карточки */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* выравниваем по верху для бейджа */
+    gap: 12px;
+    font-size: 14px;
+    color: #666;
+    flex-wrap: wrap; /* разрешаем перенос */
+  }
+  .ucard__meta-right {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .date,
+  .time {
+    white-space: nowrap;
+  }
+
+  /* Ориентации */
+  .o-vertical {
+    flex-direction: column;
+  }
+  .o-horizontal {
+    flex-direction: row;
+    align-items: center;
+  }
+  /* В вертикальных карточках тело растягивается, чтобы мета прилипала к низу */
+  .o-vertical .ucard__body {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* ===== ПРЕСЕТЫ ===== */
+
+  /* 1) h-compact-150 */
+  .preset-h-compact-150 {
+  }
+  .preset-h-compact-150 .ucard__media {
+    width: var(--uc-media-w, 150px);
+    height: var(--uc-media-h, 150px);
+    margin-left: 0;
+  }
+  .preset-h-compact-150.o-horizontal .ucard__body {
+    padding: 16px 18px;
+    gap: 6px;
+    flex: 1 1 auto;
+  }
+
+  /* 2) h-list-753x150 */
+  .preset-h-list-753x150 {
+    align-items: center;
+    padding: 0 24px 0 0;
+    box-sizing: border-box;
+  }
+  .preset-h-list-753x150 .ucard__media {
+    width: var(--uc-media-w, 150px);
+    height: var(--uc-media-h, 150px);
+    margin: 0 24px;
+  }
+  .preset-h-list-753x150 .ucard__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 6px;
+  }
+
+  /* 3) v-270x492 */
+  .preset-v-270x492 .ucard__media {
+    width: var(--uc-media-w, 270px);
+    height: var(--uc-media-h, 270px);
+  }
+  .preset-v-270x492 .ucard__body {
+    width: 100%;
+    padding: 14px 14px 18px;
+    gap: 8px;
+  }
+
+  /* 4) v-270x613 */
+  .preset-v-270x613 .ucard__media {
+    width: var(--uc-media-w, 270px);
+    height: var(--uc-media-h, 270px);
+  }
+  .preset-v-270x613 .ucard__body {
+    width: 100%;
+    padding: 14px 14px 18px;
+    gap: 8px;
+  }
+
+  /* 5) v-404x613 */
+  .preset-v-404x613 .ucard__media {
+    width: var(--uc-media-w, 404px);
+    height: var(--uc-media-h, 404px);
+  }
+  .preset-v-404x613 .ucard__body {
+    width: 100%;
+    padding: 16px 16px 18px;
+    gap: 10px;
+  }
+
+  /* 6) tile-432x613 */
+  .preset-tile-432x613 .ucard__media {
+    width: var(--uc-media-w, 400px);
+    height: var(--uc-media-h, 400px);
+  }
+  .preset-tile-432x613 .ucard__body {
+    width: 100%;
+    padding: 16px 16px 18px;
+    gap: 10px;
+  }
+
+  /* 7) m-vertical-25em — контролируем только высоту медиа через clamp() */
+  .preset-m-vertical-25em {
+    height: auto;
+  }
+  .preset-m-vertical-25em .ucard__media {
+    inline-size: 100%;
+    block-size: var(--uc-media-h, clamp(190px, 22vw, 260px)); /* десктоп */
+  }
+  .preset-m-vertical-25em .ucard__media img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover; /* заполняем только медиаблок */
+  }
+  .preset-m-vertical-25em .ucard__body {
+    padding: 0.9375em;
+    gap: 0.5em;
+  }
+
+  /* Соотношения сторон для вариантов, где оно нужно */
+  .ucard[style*="--uc-ratio:16/9"] .ucard__media img {
+    aspect-ratio: 16/9;
+  }
+  .ucard[style*="--uc-ratio:16/10"] .ucard__media img {
+    aspect-ratio: 16/10;
+  }
+  .ucard[style*="--uc-ratio:1/1"] .ucard__media img {
+    aspect-ratio: 1/1;
+  }
+
+  /* Типографика/адаптация */
+  @media (max-width: 1100px) {
+    .ucard {
+      font-size: calc(var(--uc-fs, 16px) - 1px);
+    }
+    .preset-m-vertical-25em .ucard__media {
+      block-size: clamp(160px, 32vw, 220px);
+    }
+
+    /* Планшетные адаптивы для всех вертикальных карточек */
+    .preset-v-270x613,
+    .preset-v-404x613,
+    .preset-v-270x492 {
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+    }
+    .preset-v-270x613 .ucard__media,
+    .preset-v-404x613 .ucard__media,
+    .preset-v-270x492 .ucard__media {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1;
+    }
+
+    /* Адаптивы для мета-информации */
+    .ucard__meta {
+      gap: 10px;
+    }
+    .ucard__meta-right {
+      gap: 8px;
+    }
+  }
+  @media (max-width: 600px) {
+    .ucard {
+      font-size: calc(var(--uc-fs, 16px) - 2px);
+    }
+    .preset-h-compact-150 .ucard__media {
+      width: 8em;
+      height: 8em;
+    }
+    .preset-m-vertical-25em .ucard__media {
+      block-size: clamp(140px, 55vw, 200px);
+    }
+
+    /* Мобильные адаптивы для мета-информации */
+    .ucard__meta {
+      gap: 8px;
+      flex-direction: column; /* вертикально на мобилке */
+      align-items: flex-start;
+    }
+    .ucard__meta-right {
+      gap: 6px;
+      align-self: flex-end; /* выравниваем справа */
+    }
+  }
+
+  /* скругления внутренних изображений под 24px контейнера */
+  .ucard__media {
+    border-radius: 24px;
+  }
+  .ucard__media img {
+    border-radius: 24px;
+  }
+
+  /* Мобильные адаптивы для горизонтальных карточек */
+  @media (max-width: 600px) {
+    .preset-h-compact-150 .ucard__media {
+      width: 8em;
+      height: 8em;
+    }
+    .preset-m-vertical-25em .ucard__media {
+      block-size: clamp(140px, 55vw, 200px);
+    }
+  }
+
+  /* Очень узкие экраны (≤350px) */
+  @media (max-width: 350px) {
+    .ucard {
+      font-size: calc(var(--uc-fs, 16px) - 3px);
+      min-width: 0;
+    }
+
+    /* Скрываем картинки в горизонтальных карточках на очень узких экранах */
+    .preset-h-compact-150 .ucard__media,
+    .preset-h-list-753x150 .ucard__media {
+      display: none;
+    }
+    .preset-h-compact-150 .ucard__body,
+    .preset-h-list-753x150 .ucard__body {
+      padding: 12px 14px;
+      gap: 4px;
+      width: 100%; /* занимаем всю ширину */
+    }
+
+    /* Вертикальные карточки адаптируются */
+    .preset-v-270x613,
+    .preset-v-404x613,
+    .preset-v-270x492 {
+      width: 100% !important;
+      height: auto !important;
+      min-width: 0 !important;
+    }
+    .preset-v-270x613 .ucard__media,
+    .preset-v-404x613 .ucard__media,
+    .preset-v-270x492 .ucard__media {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1;
+    }
+    .preset-v-270x613 .ucard__body,
+    .preset-v-404x613 .ucard__body,
+    .preset-v-270x492 .ucard__body {
+      padding: 10px 12px 14px;
+      gap: 6px;
+    }
+
+    /* Медиа карточки */
+    .preset-m-vertical-25em .ucard__media {
+      block-size: clamp(120px, 50vw, 180px);
+    }
+    .preset-m-vertical-25em .ucard__body {
+      padding: 0.75em;
+      gap: 0.4em;
+    }
+
+    /* Уменьшаем размеры текста */
+    .ucard__title {
+      font-size: 16px;
+    }
+    .ucard__desc {
+      font-size: 12px;
+    }
+    .ucard__meta {
+      font-size: 12px;
+      gap: 6px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .ucard__meta-right {
+      gap: 4px;
+      align-self: flex-end;
+    }
+  }
+</style>

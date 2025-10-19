@@ -1,0 +1,181 @@
+---
+interface Slide {
+  image: string;
+  title: string;
+  text: string;
+  alt?: string;
+}
+interface Props {
+  slides?: Slide[];
+}
+
+const defaultSlides: Slide[] = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80",
+    title: "Горы",
+    text: "Великолепный вид на горы в солнечную погоду.",
+    alt: "Горный хребет",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+    title: "Пляж",
+    text: "Закат на побережье с мягким песком и волнами.",
+    alt: "Закат на пляже",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1000&q=80",
+    title: "Лес",
+    text: "Тропинка в лесу, окружённая высокими деревьями.",
+    alt: "Лесная тропа",
+  },
+];
+
+const { slides = defaultSlides } = Astro.props as Props;
+const cid = "ss-" + Math.random().toString(36).slice(2, 8);
+---
+
+<section class="simple-slider" aria-label="Галерея" data-cid={cid}>
+  <div class="slider-wrap">
+    <div class="img-col">
+      <img
+        data-role="img"
+        src={slides[0].image}
+        alt={slides[0].alt ?? slides[0].title}
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+
+    <div class="text-col">
+      <h2 data-role="title">{slides[0].title}</h2>
+      <p data-role="desc">{slides[0].text}</p>
+
+      <div class="controls">
+        <button
+          type="button"
+          class="btn prev"
+          data-role="prev"
+          aria-label="Предыдущий">←</button
+        >
+        <button
+          type="button"
+          class="btn next"
+          data-role="next"
+          aria-label="Следующий">→</button
+        >
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .simple-slider {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      font-family:
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        sans-serif;
+    }
+    .slider-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    .img-col img {
+      display: block;
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .text-col h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+    .text-col p {
+      margin: 0 0 16px;
+      font-size: 16px;
+      line-height: 1.55;
+      color: #374151;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #111827;
+      background: #e5e7eb;
+      transition: background 0.2s ease;
+    }
+    .btn:hover {
+      background: #d1d5db;
+    }
+    @media (max-width: 1100px) {
+      .slider-wrap {
+        grid-template-columns: 1fr;
+      }
+      .img-col img {
+        height: 320px;
+      }
+    }
+  </style>
+
+  <script define:vars={{ slides, cid }}>
+    (function () {
+      const root = document.querySelector(`[data-cid="${cid}"]`);
+      if (!root) return;
+
+      const img = root.querySelector("[data-role=img]");
+      const title = root.querySelector("[data-role=title]");
+      const desc = root.querySelector("[data-role=desc]");
+      const prev = root.querySelector("[data-role=prev]");
+      const next = root.querySelector("[data-role=next]");
+
+      let i = 0;
+
+      function show(k) {
+        const s = slides[k];
+        if (!s) return;
+        img.src = s.image;
+        img.alt = s.alt || s.title || "";
+        title.textContent = s.title || "";
+        desc.textContent = s.text || "";
+      }
+
+      prev.addEventListener("click", () => {
+        i = (i - 1 + slides.length) % slides.length;
+        show(i);
+      });
+
+      next.addEventListener("click", () => {
+        i = (i + 1) % slides.length;
+        show(i);
+      });
+
+      root.tabIndex = 0;
+      root.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") prev.click();
+        if (e.key === "ArrowRight") next.click();
+      });
+
+      show(i);
+    })();
+  </script>
+</section>

@@ -1,0 +1,684 @@
+---
+interface NavItem {
+  label: string;
+  href: string;
+}
+interface CourseItem {
+  label: string;
+  href: string;
+  sub?: string;
+}
+interface ContactItem {
+  label: string;
+  href: string;
+  imgSrc: string;
+  alt?: string;
+}
+
+interface Props {
+  logoSrc?: string;
+  logoAlt?: string;
+  navLeft?: NavItem[]; // слева от «Курсы»
+  navRight?: NavItem[]; // справа от «Курсы»
+  courses?: CourseItem[]; // элементы дропдауна
+  contacts?: ContactItem[]; // иконки-контакты
+  ctaText?: string;
+  ctaHref?: string; // ссылка на «Записаться»
+  breakpointPx?: number; // ширина, с которой включается бургер
+}
+
+const {
+  logoSrc = "/images/logo_media.svg",
+  logoAlt = "ЕГЕХИМ",
+  navLeft = [{ label: "Главная", href: "/" }],
+  navRight = [{ label: "Медиа", href: "/media" }],
+  courses = [
+    {
+      label: "Самостоятельные курсы",
+      href: "/allcourses",
+      sub: "Идёшь в своём темпе",
+    },
+    { label: "Годовые курсы", href: "/", sub: "Группа и контроль" },
+  ],
+  contacts = [
+    {
+      label: "Telegram",
+      href: "https://t.me/valery_chemistry",
+      imgSrc: "/images/technical/telegram.png",
+      alt: "Telegram",
+    },
+    {
+      label: "WhatsApp",
+      href: "https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20",
+      imgSrc: "/images/technical/whatsapp.png",
+      alt: "WhatsApp",
+    },
+    {
+      label: "VK",
+      href: "https://vk.me/valeryfilip",
+      imgSrc: "/images/technical/vk.png",
+      alt: "VK",
+    },
+  ],
+  ctaText = "Записаться",
+  ctaHref = "#signup",
+  breakpointPx = 1100,
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+---
+
+<header class="main-header" role="banner" style={`--bp:${breakpointPx}px`}>
+  <div class="container hdr">
+    <!-- ЛОГО -->
+    <a href="/" class="logo" aria-label="На главную">
+      <img src={logoSrc} alt={logoAlt} loading="eager" />
+    </a>
+
+    <!-- ДЕСКТОП-МЕНЮ -->
+    <nav class="nav" aria-label="Главное меню">
+      <ul class="nav__list" role="list">
+        {
+          navLeft.map((i) => (
+            <li class="nav__item">
+              <a
+                href={i.href}
+                class={`nav__link ${isActive(i.href) ? "is-active" : ""}`}
+              >
+                {i.label}
+              </a>
+            </li>
+          ))
+        }
+
+        <!-- КУРСЫ -->
+        <li class="nav__item nav__item--dd" data-dd>
+          <button
+            type="button"
+            class="nav__link nav__btn"
+            id="courses-btn"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="courses-menu"
+          >
+            Курсы <span class="caret" aria-hidden="true"></span>
+          </button>
+
+          <div id="courses-menu" class="dd" role="menu" hidden>
+            <ul class="dd__list" role="none">
+              {
+                courses.map((c) => (
+                  <li role="none">
+                    <a role="menuitem" class="dd__link" href={c.href}>
+                      <span class="dd__title">{c.label}</span>
+                      {c.sub && <span class="dd__sub">{c.sub}</span>}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </li>
+
+        {
+          navRight.map((i) => (
+            <li class="nav__item">
+              <a
+                href={i.href}
+                class={`nav__link ${isActive(i.href) ? "is-active" : ""}`}
+              >
+                {i.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- ПРАВАЯ ЧАСТЬ -->
+    <div class="hdr__right">
+      <div class="contacts">
+        <div class="contacts__label">Напишите нам</div>
+        <div class="socials" aria-label="Соцсети">
+          {
+            contacts.map((c) => (
+              <a
+                class="soc"
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.label}
+              >
+                <img
+                  src={c.imgSrc}
+                  alt={c.alt ?? c.label}
+                  width="20"
+                  height="20"
+                  loading="lazy"
+                />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      <a class="btn btn--primary cta" href={ctaHref}>{ctaText}</a>
+    </div>
+
+    <!-- БУРГЕР -->
+    <button
+      class="burger"
+      type="button"
+      aria-label="Открыть меню"
+      aria-controls="mnav"
+      aria-expanded="false"
+    >
+      <span class="burger__bar" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- МОБИЛЬНАЯ ПАНЕЛЬ -->
+  <div id="mnav" class="mnav" hidden>
+    <nav class="mnav__scroll" aria-label="Главное меню (мобильное)">
+      <ul class="mnav__list" role="list">
+        {
+          navLeft.map((i) => (
+            <li>
+              <a class="mnav__link" href={i.href}>
+                {i.label}
+              </a>
+            </li>
+          ))
+        }
+
+        <li class="mnav__group">
+          <details>
+            <summary class="mnav__link mnav__summary">Курсы</summary>
+            <ul class="mnav__sub">
+              {
+                courses.map((c) => (
+                  <li>
+                    <a class="mnav__sublink" href={c.href}>
+                      {c.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </details>
+        </li>
+
+        {
+          navRight.map((i) => (
+            <li>
+              <a class="mnav__link" href={i.href}>
+                {i.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mnav__foot">
+        <div class="mnav__label">Напишите нам</div>
+        <div class="m-socials">
+          {
+            contacts.map((c) => (
+              <a
+                class="soc"
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.label}
+              >
+                <img
+                  src={c.imgSrc}
+                  alt={c.alt ?? c.label}
+                  width="20"
+                  height="20"
+                  loading="lazy"
+                />
+              </a>
+            ))
+          }
+        </div>
+        <a class="btn btn--primary cta cta--full" href={ctaHref}>{ctaText}</a>
+      </div>
+    </nav>
+    <button class="mnav__backdrop" type="button" aria-label="Закрыть меню"
+    ></button>
+  </div>
+
+  <style>
+    .main-header {
+      position: relative;
+      z-index: 1000;
+      background: false;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
+    .hdr {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: var(--space-16);
+      min-height: 64px;
+    }
+    .logo img {
+      display: block;
+      height: var(--logo-size, 50px);
+      width: auto;
+    }
+    @media (max-width: 600px) {
+      .logo img {
+        height: 60px;
+      }
+    }
+
+    /* ===== DESKTOP NAV ===== */
+    .nav {
+      display: block;
+    }
+    .nav__list {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav__item {
+      position: relative;
+    }
+    .nav__link,
+    .nav__btn {
+      font: 600 16px/1 var(--ff);
+      color: var(--black);
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition:
+        background 0.2s var(--easing),
+        color 0.2s var(--easing);
+    }
+    .nav__link:hover,
+    .nav__btn:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+    .nav__link.is-active {
+      background: var(--blue);
+      color: var(--white);
+    }
+    .nav__btn {
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .caret {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      margin-left: 2px;
+      transition: transform 0.2s var(--easing);
+    }
+    .nav__btn.is-open .caret {
+      transform: rotate(-135deg);
+    }
+
+    /* DROPDOWN */
+    .dd {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 280px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-2);
+      padding: 8px;
+      z-index: 2000;
+    }
+    .dd__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .dd__link {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--black);
+    }
+    .dd__link:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+    .dd__title {
+      display: block;
+      font-weight: 700;
+    }
+    .dd__sub {
+      display: block;
+      font-size: 14px;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    /* Hover-дропдаун только на десктопе: когда нет .is-mobile на .main-header */
+    .main-header:not(.is-mobile) .nav__item--dd:hover .dd,
+    .main-header:not(.is-mobile) .nav__item--dd:focus-within .dd {
+      display: block !important;
+    }
+
+    /* ПРАВАЯ ПАНЕЛЬ */
+    .hdr__right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .contacts__label {
+      font: 600 12px/1 var(--ff);
+      color: var(--black);
+      opacity: 0.9;
+    }
+    .socials {
+      display: flex;
+      gap: 10px;
+    }
+    .soc {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-1);
+      transition:
+        transform 0.15s var(--easing),
+        box-shadow 0.2s var(--easing),
+        border-color 0.2s var(--easing);
+    }
+    .soc img {
+      display: block;
+      width: 18px;
+      height: 18px;
+      filter: grayscale(1) saturate(0) contrast(1) brightness(0.85);
+      transition:
+        filter 0.2s var(--easing),
+        transform 0.15s var(--easing);
+    }
+    .soc:hover {
+      transform: translateY(-1px);
+      border-color: color-mix(in oklab, var(--blue) 40%, var(--border));
+      box-shadow: var(--shadow-2);
+    }
+    .soc:hover img {
+      filter: none;
+    }
+
+    .cta {
+      white-space: nowrap;
+    }
+
+    /* БУРГЕР */
+    .burger {
+      display: none;
+      border: 1px solid var(--border);
+      background: var(--white);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .burger__bar {
+      position: relative;
+      width: 22px;
+      height: 2px;
+      background: var(--black);
+    }
+    .burger__bar::before,
+    .burger__bar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--black);
+    }
+    .burger__bar::before {
+      top: -7px;
+    }
+    .burger__bar::after {
+      top: 7px;
+    }
+
+    /* МОБИЛЬНАЯ НАВИГАЦИЯ */
+    .mnav {
+      position: fixed;
+      inset: 0;
+      z-index: 1900;
+      display: grid;
+      grid-template-rows: 1fr;
+    }
+    .mnav[hidden] {
+      display: none;
+    }
+    .mnav__backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      border: 0;
+    }
+    .mnav__scroll {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      width: min(88vw, 420px);
+      height: 100%;
+      overflow: auto;
+      padding: 18px;
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 20px 40px rgba(0, 0, 0, 0.18);
+    }
+    .mnav__list {
+      list-style: none;
+      margin: 0 0 8px;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .mnav__link,
+    .mnav__summary {
+      display: block;
+      padding: 12px 10px;
+      border-radius: 12px;
+      color: var(--black);
+      text-decoration: none;
+      font: 600 16px/1.2 var(--ff);
+    }
+    .mnav__link:hover,
+    .mnav__summary:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+    .mnav__group details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .mnav__group summary {
+      list-style: none;
+      cursor: pointer;
+    }
+    .mnav__sub {
+      list-style: none;
+      margin: 6px 6px 6px 10px;
+      padding: 0;
+      display: grid;
+      gap: 4px;
+    }
+    .mnav__sublink {
+      display: block;
+      padding: 10px 10px;
+      border-radius: 10px;
+      color: var(--black);
+      text-decoration: none;
+      font: 500 15px/1.2 var(--ff);
+    }
+    .mnav__sublink:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .mnav__foot {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      display: grid;
+      gap: 10px;
+    }
+    .mnav__label {
+      font: 700 12px/1 var(--ff);
+      opacity: 0.9;
+    }
+    .m-socials {
+      display: flex;
+      gap: 10px;
+    }
+    .cta--full {
+      width: 100%;
+    }
+
+    /* МОБИЛЬНЫЙ РЕЖИМ (включается классом .is-mobile на .main-header) */
+    .main-header.is-mobile .nav {
+      display: none;
+    }
+    .main-header.is-mobile .hdr {
+      grid-template-columns: auto 1fr auto;
+    }
+    .main-header.is-mobile .hdr__right {
+      display: none;
+    }
+    .main-header.is-mobile .burger {
+      display: inline-flex;
+      justify-self: end;
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const root = document.currentScript.closest(".main-header");
+      const BREAK =
+        parseInt(getComputedStyle(root).getPropertyValue("--bp")) || 1100;
+
+      // Переключение режима (десктоп/мобайл) классом .is-mobile
+      function applyMode() {
+        const w = window.innerWidth || document.documentElement.clientWidth;
+        if (w <= BREAK) {
+          root.classList.add("is-mobile");
+        } else {
+          root.classList.remove("is-mobile");
+        }
+      }
+      applyMode();
+
+      const burger = root.querySelector(".burger");
+      const panel = root.querySelector("#mnav");
+      const backdrop = root.querySelector(".mnav__backdrop");
+      const body = document.body;
+
+      // Dropdown (десктоп)
+      const ddWrap = root.querySelector("[data-dd]");
+      const ddBtn = root.querySelector("#courses-btn");
+      const ddMenu = root.querySelector("#courses-menu");
+
+      function openDD() {
+        ddWrap?.setAttribute("data-open", "1");
+        ddBtn?.setAttribute("aria-expanded", "true");
+        ddMenu?.removeAttribute("hidden");
+        ddBtn?.classList.add("is-open");
+      }
+      function closeDD() {
+        ddWrap?.removeAttribute("data-open");
+        ddBtn?.setAttribute("aria-expanded", "false");
+        ddMenu?.setAttribute("hidden", "");
+        ddBtn?.classList.remove("is-open");
+      }
+
+      ddBtn?.addEventListener("click", (e) => {
+        // На мобилке дропдаун живёт в панели — кнопка не открывает .dd
+        if (root.classList.contains("is-mobile")) return;
+        const isOpen = ddWrap?.getAttribute("data-open") === "1";
+        if (isOpen) closeDD();
+        else openDD();
+        e.stopPropagation();
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!ddWrap || root.classList.contains("is-mobile")) return;
+        if (!ddWrap.contains(e.target)) closeDD();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeDD();
+          closePanel();
+        }
+      });
+
+      // Мобильная панель
+      function openPanel() {
+        panel.hidden = false;
+        body.style.overflow = "hidden";
+        burger.setAttribute("aria-expanded", "true");
+      }
+      function closePanel() {
+        panel.hidden = true;
+        body.style.overflow = "";
+        burger.setAttribute("aria-expanded", "false");
+      }
+      burger.addEventListener("click", () => {
+        const isOpen = burger.getAttribute("aria-expanded") === "true";
+        if (isOpen) closePanel();
+        else openPanel();
+      });
+      backdrop?.addEventListener("click", closePanel);
+
+      // Сброс состояний и переключение режима при ресайзе
+      let lastW = window.innerWidth;
+      window.addEventListener(
+        "resize",
+        () => {
+          const w = window.innerWidth;
+          applyMode();
+          const crossedToDesktop = lastW <= BREAK && w > BREAK;
+          const crossedToMobile = lastW > BREAK && w <= BREAK;
+          if (crossedToDesktop) {
+            closePanel();
+            closeDD();
+          }
+          if (crossedToMobile) {
+            closeDD();
+          }
+          lastW = w;
+        },
+        { passive: true }
+      );
+    })();
+  </script>
+</header>

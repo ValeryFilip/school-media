@@ -1,0 +1,734 @@
+---
+interface Stat {
+  value: string;
+  text: string;
+}
+interface Pic {
+  src: string;
+  alt?: string;
+}
+interface Props {
+  id?: string;
+  titleHtml?: string;
+  hintHtml?: string;
+  stats?: Stat[];
+  speedTopSec?: number;
+  speedBottomSec?: number;
+  moreReviewsHref?: string;
+  moreReviewsText?: string;
+}
+
+const {
+  id = "reviews",
+  titleHtml = "Студенты довольны<br>обучением",
+  hintHtml = "нажми на картинку<br>для прочтения",
+  stats = [
+    {
+      value: "98%",
+      text: "выпускников отмечают, что курсы Валерия Филипенко помогли достичь поставленной цели и вырасти в баллах",
+    },
+    {
+      value: "90%",
+      text: "выпускников готовы рекомендовать обучение на курсе Валерия Филипенко",
+    },
+    {
+      value: "4,9 ⭐",
+      text: "средний рейтинг всех курсов Валерия Филипенко. На основании независимых отзывов на платформе Stepik",
+    },
+  ],
+  speedTopSec = 20,
+  speedBottomSec = 20,
+  moreReviewsHref = "#",
+  moreReviewsText = "больше отзывов",
+} = Astro.props as Props;
+
+// Локальные картинки отзывов (одинаковые для всех страниц)
+const topImages = [
+  {
+    src: "/images/stepik/reviews/Screenshot_1.webp",
+    alt: "Отзыв 1",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_2.webp",
+    alt: "Отзыв 2",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_3.webp",
+    alt: "Отзыв 3",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_4.webp",
+    alt: "Отзыв 4",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_5.webp",
+    alt: "Отзыв 5",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_6.webp",
+    alt: "Отзыв 6",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_7.webp",
+    alt: "Отзыв 7",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_8.webp",
+    alt: "Отзыв 8",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_9.webp",
+    alt: "Отзыв 9",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_10.webp",
+    alt: "Отзыв 10",
+  },
+];
+
+const bottomImages = [
+  {
+    src: "/images/stepik/reviews/Screenshot_11.webp",
+    alt: "Отзыв 11",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_12.webp",
+    alt: "Отзыв 12",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_13.webp",
+    alt: "Отзыв 13",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_14.webp",
+    alt: "Отзыв 14",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_15.webp",
+    alt: "Отзыв 15",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_16.webp",
+    alt: "Отзыв 16",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_17.webp",
+    alt: "Отзыв 17",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_18.webp",
+    alt: "Отзыв 18",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_19.webp",
+    alt: "Отзыв 19",
+  },
+  {
+    src: "/images/stepik/reviews/Screenshot_20.webp",
+    alt: "Отзыв 20",
+  },
+];
+
+const topDup = [...topImages, ...topImages];
+const bottomDup = [...bottomImages, ...bottomImages];
+---
+
+<section class="section reviews" id={id} aria-labelledby={`${id}-title`}>
+  <div class="reviews-card">
+    <div class="reviews-container">
+      <header class="reviews-header">
+        <div class="reviews-title">
+          <h2 id={`${id}-title`} set:html={titleHtml} />
+          <p class="reviews-hint" set:html={hintHtml} />
+        </div>
+
+        <ul class="reviews-stats" aria-label="Статистика отзывов">
+          {
+            stats.map((s) => (
+              <li class="stat">
+                <div class="stat-value">{s.value}</div>
+                <p class="stat-text">{s.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </header>
+
+      <div class="reviews-marquees">
+        <div class="marquee marquee-top" aria-label="Лента отзывов (верхняя)">
+          <div class="marquee-track" style={`--speed:${speedTopSec}s`}>
+            {
+              topDup.map((img, i) => (
+                <figure class="marquee-item">
+                  <img
+                    src={img.src}
+                    alt={img.alt ?? `Отзыв ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="marquee marquee-bottom" aria-label="Лента отзывов (нижняя)">
+          <div class="marquee-track" style={`--speed:${speedBottomSec}s`}>
+            {
+              bottomDup.map((img, i) => (
+                <figure class="marquee-item">
+                  <img
+                    src={img.src}
+                    alt={img.alt ?? `Отзыв ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Интерактивный текст с плашкой и ссылка -->
+      <div class="reviews-footer">
+        <div class="reviews-tooltip">
+          <span class="reviews-tooltip-trigger"
+            >Почему отзывам на stepik можно верить?</span
+          >
+          <div class="reviews-tooltip-content">
+            <p>
+              Отзывы на платформе можно оставить только после прохождения 80%
+              курса, в нашем случае это больше 1000 заданий. Поэтому все отзывы
+              честные и написаны реальными людьми.
+            </p>
+          </div>
+        </div>
+
+        <!-- Ссылка на больше отзывов -->
+        <div class="reviews-more">
+          <a href={moreReviewsHref} class="reviews-more-link"
+            >{moreReviewsText}</a
+          >
+        </div>
+      </div>
+
+      <!-- Попап внутри секции (стили точно применяются) -->
+      <div
+        class="popup"
+        data-popup
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+      >
+        <button class="popup-close" type="button" aria-label="Закрыть"
+          >&times;</button
+        >
+        <img class="popup-img" data-popup-img src="" alt="Просмотр отзыва" />
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .reviews {
+      overflow-x: clip;
+      inline-size: 100%;
+      color: var(--black);
+      font-family: var(--ff);
+    }
+
+    /* Десктоп: 1300 с радиусом; Планшет: с отступами; Мобайл: full-bleed */
+    .reviews-card {
+      max-width: var(--container);
+      margin: 0 auto;
+      border-radius: var(--radius-24);
+      overflow: hidden; /* клип по краям синей плашки */
+      background: linear-gradient(rgba(222, 221, 220, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(222, 221, 220, 0.2) 1px, transparent 1px),
+        var(--blue);
+      background-size:
+        100px 100px,
+        100px 100px,
+        100% 100%;
+      background-repeat: repeat, repeat, no-repeat;
+      box-shadow: var(--shadow-2);
+    }
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .reviews-card {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+      }
+
+      .reviews-container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-32) var(--page-padding-tablet);
+      }
+
+      .reviews-title {
+        font-size: var(--h2-size-tablet);
+        margin-bottom: var(--space-24);
+      }
+
+      .reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-20);
+      }
+
+      .review-item {
+        padding: var(--space-20);
+      }
+
+      .review-text {
+        font-size: var(--text-size-tablet);
+        line-height: 1.5;
+        margin-bottom: var(--space-16);
+      }
+
+      .review-author {
+        font-size: 14px;
+      }
+    }
+
+    /* Мобилка */
+    @media (max-width: 600px) {
+      .reviews-card {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+      }
+
+      .reviews-container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: var(--space-24) var(--page-padding-mobile);
+      }
+
+      .reviews-title {
+        font-size: var(--h2-size-mobile);
+        margin-bottom: var(--space-20);
+      }
+
+      .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-16);
+      }
+
+      .review-item {
+        padding: var(--space-16);
+      }
+
+      .review-text {
+        font-size: var(--text-size-mobile);
+        line-height: 1.4;
+        margin-bottom: var(--space-12);
+      }
+
+      .review-author {
+        font-size: 13px;
+      }
+    }
+
+    .reviews-container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: var(--space-50) var(--pad-desktop);
+    }
+
+    .reviews-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-16);
+      color: #fff;
+    }
+    .reviews-title > * {
+      min-width: 0;
+    }
+    .reviews-title h2 {
+      font: 700 var(--h2) / 1.2 var(--ff);
+      margin: 0;
+      color: #fff;
+    }
+    .reviews-hint {
+      font: 500 16px/1.35 var(--ff);
+      color: #fff;
+      text-align: right;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .reviews-stats {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-40) 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-16);
+    }
+    .stat {
+      flex: 1 1 300px;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .stat-value {
+      font: 700 32px/1 var(--ff);
+      color: #fff;
+    }
+    .stat-text {
+      font: 500 16px/1.5 var(--ff);
+      color: #fff;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    /* Ленты: выезд за контент на величину паддингов контейнера */
+    .reviews-marquees {
+      position: relative;
+      overflow: visible; /* Позволяем увеличенным элементам выходить за границы */
+    }
+    .marquee {
+      --bleed-x: var(--pad-desktop);
+      width: calc(100% + 2 * var(--bleed-x));
+      margin-inline: calc(-1 * var(--bleed-x));
+
+      position: relative;
+      height: 120px;
+      margin-top: var(--space-40);
+      overflow: visible; /* Позволяем увеличенным элементам выходить за границы */
+    }
+    @media (max-width: 600px) {
+      .marquee {
+        --bleed-x: var(--pad-mobile);
+      }
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: var(--space-8);
+      width: max-content;
+      will-change: transform;
+      animation: scroll-left var(--speed, 20s) linear infinite;
+      margin-inline-end: -2px;
+      transform: translateZ(0); /* предотвращаем «смазанность» на ховере */
+    }
+    .marquee-bottom .marquee-track {
+      animation-direction: reverse;
+    }
+
+    .marquee-item {
+      margin: 0;
+      padding: 0;
+      min-width: 120px;
+      height: 100px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition:
+        transform 0.28s var(--easing),
+        box-shadow 0.28s var(--easing);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1; /* базовый слой */
+    }
+    .marquee-item:hover {
+      transform: scale(1.35);
+      z-index: 1000; /* поверх всего контента */
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+    .marquee-item img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      /* без pointer-events:none — иначе клики не доходят */
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .reviews-title {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .reviews-title h2 {
+        font-size: 28px;
+        line-height: 1.3;
+      }
+      .reviews-hint {
+        font-size: 16px;
+        text-align: left;
+      }
+      .reviews-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-20);
+        margin-top: var(--space-40);
+      }
+      .reviews-stats .stat:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+      .stat-value {
+        font-size: 28px;
+      }
+      .stat-text {
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .marquee {
+        height: 140px;
+      }
+      .marquee-item {
+        min-width: 140px;
+        height: 120px;
+      }
+    }
+    @media (max-width: 600px) {
+      .reviews-stats {
+        grid-template-columns: 1fr;
+        gap: var(--space-16);
+        margin-top: var(--space-32);
+      }
+      .stat-value {
+        font-size: 26px;
+      }
+      .stat-text {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .reviews-title h2 {
+        font-size: 24px;
+        line-height: 1.35;
+      }
+      .reviews-hint {
+        font-size: 14px;
+      }
+      .marquee {
+        height: 120px;
+      }
+      .marquee-item {
+        min-width: 100px;
+        height: 100px;
+      }
+      .reviews-footer {
+        flex-direction: column;
+        gap: var(--space-16);
+        text-align: center;
+      }
+      .reviews-tooltip-trigger {
+        font-size: 14px;
+      }
+      .reviews-tooltip-content {
+        max-width: 280px;
+        font-size: 13px;
+        padding: 12px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .reviews-tooltip-content::after {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .reviews-more {
+        text-align: center;
+      }
+      .reviews-more-link {
+        font-size: 14px;
+      }
+    }
+
+    /* ФУТЕР С ИНТЕРАКТИВНЫМ ТЕКСТОМ И ССЫЛКОЙ */
+    .reviews-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-32);
+      padding: 0 var(--space-16);
+    }
+
+    /* ИНТЕРАКТИВНЫЙ ТЕКСТ С ПЛАШКОЙ */
+    .reviews-tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .reviews-tooltip-trigger {
+      color: #fff;
+      font: 500 16px/1.5 var(--ff);
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 4px;
+      transition: color 0.2s ease;
+    }
+    .reviews-tooltip-trigger:hover {
+      color: #ffd700;
+    }
+    .reviews-tooltip-content {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: #fff;
+      color: #333;
+      padding: var(--space-20);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      font: 500 14px/1.5 var(--ff);
+      max-width: 400px;
+      text-align: left;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+      z-index: 100;
+      margin-bottom: 8px;
+    }
+    .reviews-tooltip-content::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      border: 8px solid transparent;
+      border-top-color: #fff;
+    }
+    .reviews-tooltip:hover .reviews-tooltip-content {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ССЫЛКА НА БОЛЬШЕ ОТЗЫВОВ */
+    .reviews-more {
+      text-align: right;
+    }
+    .reviews-more-link {
+      color: #fff;
+      font: 500 16px/1.5 var(--ff);
+      text-decoration: none;
+      border-bottom: 1px solid #fff;
+      transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+    }
+    .reviews-more-link:hover {
+      color: #ffd700;
+      border-color: #ffd700;
+    }
+
+    /* POPUP */
+    .popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .popup[aria-hidden="false"] {
+      display: flex;
+    }
+    .popup-img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    .popup-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: 700;
+      cursor: pointer;
+      background: none;
+      border: 0;
+    }
+    .popup-close:hover {
+      color: #ddd;
+    }
+    html.is-modal-open,
+    body.is-modal-open {
+      overflow: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track {
+        animation-duration: 1ms !important;
+      }
+      .marquee-item:hover {
+        transform: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const popup = document.querySelector("[data-popup]");
+      const popupImg = document.querySelector("[data-popup-img]");
+      const closeBtn = popup.querySelector(".popup-close");
+      const images = document.querySelectorAll(
+        `#${popup.closest(".section").id} .marquee-item img`
+      );
+
+      function openPopup(src, alt) {
+        popup.setAttribute("aria-hidden", "false");
+        popupImg.src = src;
+        popupImg.alt = alt || "Просмотр отзыва";
+        document.documentElement.classList.add("is-modal-open");
+        document.body.classList.add("is-modal-open");
+      }
+
+      function closePopup() {
+        popup.setAttribute("aria-hidden", "true");
+        popupImg.src = "";
+        popupImg.alt = "";
+        document.documentElement.classList.remove("is-modal-open");
+        document.body.classList.remove("is-modal-open");
+      }
+
+      images.forEach((img) => {
+        img.addEventListener("click", () => openPopup(img.src, img.alt));
+      });
+
+      closeBtn.addEventListener("click", closePopup);
+
+      popup.addEventListener("click", (e) => {
+        if (e.target === popup) {
+          closePopup();
+        }
+      });
+
+      // Закрытие по ESC
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Escape" &&
+          popup.getAttribute("aria-hidden") === "false"
+        ) {
+          closePopup();
+        }
+      });
+    });
+  </script>
+</section>

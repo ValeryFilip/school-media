@@ -1,0 +1,375 @@
+---
+// src/pages/search.astro
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+// 1) Во время сборки собираем все статьи
+const posts = await getCollection("articles");
+const indexData = posts.map((p) => ({
+  slug: p.slug,
+  title: p.data.title,
+  description: p.data.description || "",
+  tags: Array.isArray(p.data.tags) ? p.data.tags : [],
+  category: p.data.category || "",
+  author: p.data.author || "",
+  date: new Date(p.data.date).toISOString(),
+  image: p.data.image || "", // картинка для выдачи
+}));
+---
+
+<Layout noindex={true}>
+  <div class="search-wrap">
+    <h1 class="search-title">Поиск по сайту</h1>
+
+    <!-- Поле ввода -->
+    <form action="search" method="get" class="search-form" role="search">
+      <input
+        id="search-input"
+        name="q"
+        type="search"
+        placeholder="Начните вводить текст…"
+        autocomplete="off"
+        class="search-input"
+        aria-label="Введите запрос для поиска по сайту"
+      />
+      <button type="submit" class="visually-hidden">Искать</button>
+    </form>
+
+    <!-- Шапка колонок -->
+    <div class="results-head" aria-hidden="true">
+      <span class="col-img">Изображение</span>
+      <span class="col-title">Заголовок</span>
+      <span class="col-date">Дата</span>
+      <span class="col-author">Автор</span>
+      <span class="col-cat">Категория</span>
+      <span class="col-tags">Теги</span>
+    </div>
+
+    <ul
+      id="search-results"
+      class="search-results"
+      aria-live="polite"
+      aria-relevant="additions removals"
+    >
+    </ul>
+  </div>
+
+  <!-- Встраиваем JSON-данные -->
+  <script
+    type="application/json"
+    id="__SEARCH_DATA__"
+    set:html={JSON.stringify(indexData)}
+  />
+
+  <script type="module">
+    // 2) Парсим индекс
+    const posts = JSON.parse(
+      document.getElementById("__SEARCH_DATA__").textContent
+    );
+
+    const input = document.getElementById("search-input");
+    const list = document.getElementById("search-results");
+
+    // 3) Читаем q из адресной строки
+    const params = new URL(window.location.href).searchParams;
+    const initialQuery = params.get("q") || "";
+    input.value = initialQuery;
+
+    const FALLBACK_IMG = "/images/placeholder.svg"; // подставь свой плейсхолдер
+
+    function formatDate(iso) {
+      try {
+        return new Date(iso).toLocaleDateString("ru-RU", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      } catch {
+        return "";
+      }
+    }
+
+    // экранизация
+    function esc(s = "") {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function renderTagChips(tags) {
+      if (!Array.isArray(tags) || tags.length === 0) return "";
+      return tags
+        .filter(Boolean)
+        .map((t) => `<span class="chip">${esc(t)}</span>`)
+        .join("");
+    }
+
+    function renderSuggestions(items) {
+      if (!items.length) {
+        list.innerHTML = '<li class="no-results">Ничего не найдено.</li>';
+        return;
+      }
+      list.innerHTML = items
+        .slice(0, 20)
+        .map((p) => {
+          // ✅ ссылка без /media/ - base href добавит автоматически
+          const href = `articles/${p.slug}/`;
+          const img = p.image || FALLBACK_IMG;
+          return `
+          <li class="result">
+            <a class="result-link" href="${esc(href)}">
+              <img class="result-image" src="${esc(img)}" alt=""
+                   width="150" height="150" loading="lazy" decoding="async">
+              <span class="result-title">${esc(p.title)}</span>
+              <span class="result-date">${esc(formatDate(p.date))}</span>
+              <span class="result-author">${esc(p.author)}</span>
+              <span class="result-category">${esc(p.category)}</span>
+              <span class="result-tags">${renderTagChips(p.tags)}</span>
+            </a>
+          </li>
+        `;
+        })
+        .join("");
+    }
+
+    // 4) Фильтрация
+    function handleInput(e) {
+      const q = e.target.value.trim().toLowerCase();
+      if (!q) return renderSuggestions([]);
+      const filtered = posts.filter((p) => {
+        const dateStr = formatDate(p.date).toLowerCase();
+        return (
+          (p.title || "").toLowerCase().includes(q) ||
+          (p.description || "").toLowerCase().includes(q) ||
+          (p.category || "").toLowerCase().includes(q) ||
+          (p.author || "").toLowerCase().includes(q) ||
+          dateStr.includes(q) ||
+          (Array.isArray(p.tags) ? p.tags : []).some((t) =>
+            (t || "").toLowerCase().includes(q)
+          )
+        );
+      });
+      renderSuggestions(filtered);
+    }
+
+    input.addEventListener("input", handleInput);
+
+    // 5) Если /search?q=... — сразу показать
+    if (initialQuery) {
+      handleInput({ target: input });
+    }
+  </script>
+
+  <!-- ВАЖНО: глобальные стили для динамически вставленных элементов -->
+  <style is:global>
+    /* Контейнер 1300 + паддинги 50 */
+    .search-wrap {
+      max-width: 1300px;
+      padding-inline: 50px;
+      margin-inline: auto;
+      box-sizing: border-box;
+    }
+
+    .search-title {
+      margin: 32px 0 16px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    /* Поисковая форма и инпут со скруглениями */
+    .search-form {
+      margin: 1rem 0 0.75rem;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      border: 1px solid #d0d7de;
+      border-radius: 12px; /* скругления */
+      background: #fff;
+      color: var(--text-color, #333);
+      outline: none;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+    .search-input:focus-visible {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+    .visually-hidden {
+      position: absolute;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      white-space: nowrap;
+      border: 0;
+      padding: 0;
+    }
+
+    /* Шапка колонок (десктоп) */
+    .results-head {
+      display: grid;
+      grid-template-columns: 150px 1fr 140px 180px 180px 220px; /* img | title | date | author | category | tags */
+      gap: 12px;
+      padding: 10px 12px;
+      color: #666;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #e6e6e6;
+      margin-top: 10px;
+      align-items: center;
+    }
+    @media (max-width: 1100px) {
+      .results-head {
+        display: none;
+      }
+    }
+
+    /* Список результатов */
+    .search-results {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .result + .result {
+      border-top: 1px solid #eee;
+    }
+
+    /* Строка результата — фикс 150px под превью */
+    .result-link {
+      display: grid;
+      grid-template-columns: 150px 1fr 140px 180px 180px 220px;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      min-height: 150px;
+      color: inherit;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .result-link:hover {
+      background: #f7f9fc;
+    }
+
+    /* Квадрат 150×150 с обрезкой */
+    .result-image {
+      inline-size: 150px; /* width */
+      block-size: 150px; /* height */
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 12px;
+      background: #f0f2f5;
+      border: 1px solid #eee;
+      display: block;
+      flex: 0 0 150px;
+    }
+
+    .result-title {
+      font-weight: 600;
+      color: #111;
+      line-height: 1.3;
+    }
+    .result-date,
+    .result-author,
+    .result-category {
+      color: #555;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Теги как чипсы */
+    .result-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      line-height: 1;
+      border: 1px solid #e0e0e0;
+      border-radius: 999px;
+      background: #f7f7f9;
+      color: #444;
+      white-space: nowrap;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .no-results {
+      padding: 14px 16px;
+      color: #666;
+      background: #fff;
+    }
+
+    /* Адаптив */
+    @media (max-width: 1400px) {
+      .result-link {
+        grid-template-columns: 150px 1fr 130px 160px 160px 1fr;
+      }
+    }
+    @media (max-width: 1100px) {
+      .result-link {
+        grid-template-columns: 150px 1fr;
+        grid-template-areas:
+          "img title"
+          "img meta";
+      }
+      .result-image {
+        grid-area: img;
+      }
+      .result-title {
+        grid-area: title;
+      }
+      .result-date,
+      .result-author,
+      .result-category,
+      .result-tags {
+        grid-area: meta;
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .result-date::after,
+      .result-author::after,
+      .result-category::after {
+        content: "•";
+        margin: 0 8px;
+        color: #999;
+      }
+      .result-category::after {
+        content: "";
+        margin: 0;
+      }
+    }
+    @media (max-width: 520px) {
+      .search-title {
+        font-size: 1.6rem;
+      }
+      .result-link {
+        gap: 10px;
+      }
+      .chip {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</Layout>

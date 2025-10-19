@@ -1,0 +1,695 @@
+---
+interface Badge {
+  text: string;
+}
+interface Bullet {
+  text: string;
+}
+interface Package {
+  title: string;
+  price: string;
+  oldPrice?: string;
+  discount?: string; // "-26%"
+  text?: string;
+  href?: string;
+  ctaText?: string;
+  buyWithDiscount?: {
+    text: string;
+    href: string;
+    target?: string;
+    rel?: string;
+    onClick?: string;
+  };
+  icon?: { src: string; alt?: string };
+}
+
+interface Props {
+  id?: string;
+  className?: string;
+
+  // Header
+  badges?: Badge[];
+  title?: string;
+  subtitle?: string;
+  bullets?: Bullet[];
+
+  price?: string;
+  oldPrice?: string;
+  buy?: {
+    text: string;
+    href: string;
+    target?: string;
+    rel?: string;
+    onClick?: string;
+  };
+  buyWithDiscount?: {
+    text: string;
+    href: string;
+    target?: string;
+    rel?: string;
+    onClick?: string;
+  };
+
+  headerImage?: { src: string; alt?: string }; // справа большая декорация
+  // Цвет CTA (локальная переменная для этого блока)
+  ctaColor?: string; // по умолчанию #FF725E
+
+  // Packages
+  packages?: [Package, Package];
+}
+
+const {
+  id = "offer",
+  className = "",
+  badges = [
+    { text: "Обучение онлайн" },
+    { text: "Доступ навсегда" },
+    { text: "Упор на практику" },
+  ],
+  title = "Полный курс по неорганической химии",
+  subtitle = "Что вы получите при покупке курса?",
+  bullets = [
+    { text: "Теория по всей неорганической химии" },
+    { text: "25 часов видео без воды" },
+    { text: "1000+ заданий ЕГЭ" },
+    { text: "Короткие видео 10–40 мин" },
+    { text: "Чат поддержки" },
+    { text: "Удобная платформа и приложение" },
+    { text: "Автопроверка заданий" },
+    { text: "Свободное расписание" },
+  ],
+
+  price = "5 490 ₽",
+  oldPrice = "7 490 ₽",
+  buy = { text: "Записаться", href: "#", target: "_self", rel: "noopener" },
+  buyWithDiscount,
+
+  headerImage = { src: "https://i.ibb.co/Vc6XwJYP/Science-pana.png", alt: "" },
+
+  ctaColor = "#FF725E",
+
+  packages = [
+    {
+      title: "Выгоднее взять пакет курсов",
+      price: "11 500 ₽",
+      oldPrice: "15 500 ₽",
+      discount: "-26%",
+      text: "Общая + неорганическая + органическая химии",
+      href: "#",
+      ctaText: "Подробнее",
+      icon: { src: "https://i.ibb.co/60z943MZ/planet.png", alt: "" },
+    },
+    {
+      title: "Еще один выгодный пакет курсов",
+      price: "7 500 ₽",
+      oldPrice: "10 000 ₽",
+      discount: "-25%",
+      text: "Общая + неорганическая химии",
+      href: "#",
+      ctaText: "Подробнее",
+      icon: { src: "https://i.ibb.co/qYPQTV8F/book.png", alt: "" },
+    },
+  ] as [Package, Package],
+} = Astro.props as Props;
+---
+
+<section
+  class={`section vet ${className}`.trim()}
+  id={id}
+  aria-labelledby={`${id}-h`}
+>
+  <div class="vet-inner">
+    <!-- HEADER -->
+    <header class="vet-header" role="region" aria-labelledby={`${id}-h`}>
+      <div class="vet-badges" aria-label="Основные преимущества">
+        {badges.map((b) => <span class="cap cap--light">{b.text}</span>)}
+      </div>
+
+      <h2 id={`${id}-h`}>{title}</h2>
+      <p class="vet-sub">{subtitle}</p>
+
+      <ul class="vet-list">
+        {bullets.map((b) => <li>{b.text}</li>)}
+      </ul>
+
+      <div class="vet-price" aria-label="Цена">
+        <div class="price-row">
+          <span class="current-price" aria-label="Цена со скидкой">{price}</span
+          >
+          {
+            oldPrice && (
+              <span class="old-price" aria-label="Старая цена">
+                {oldPrice}
+              </span>
+            )
+          }
+        </div>
+        <div class="vet-buttons">
+          <a
+            href={buy.href}
+            target={buy.target}
+            rel={buy.rel}
+            class="btn btn--primary vet-buy-btn"
+            aria-label="Перейти к курсу на Stepik"
+          >
+            {buy.text}
+          </a>
+          {
+            buyWithDiscount && (
+              <a
+                href="javascript:void(0)"
+                target={buyWithDiscount.target}
+                rel={buyWithDiscount.rel}
+                onclick={`${buyWithDiscount.onClick}; return false;`}
+                class="btn btn--blue vet-discount-btn"
+                aria-label="Оплатить со скидкой 5%"
+              >
+                {buyWithDiscount.text}
+              </a>
+            )
+          }
+        </div>
+
+        <!-- Дополнительная информация о скидке -->
+        <div class="vet-discount-info">
+          <p>Посмотрите курс на платформе и оплатите здесь. Будет +5% скидка</p>
+        </div>
+      </div>
+
+      <!-- декоративная картинка справа -->
+      {
+        headerImage?.src && (
+          <figure class="vet-image" aria-hidden="true">
+            <img
+              src={headerImage.src}
+              alt={headerImage.alt ?? ""}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        )
+      }
+    </header>
+
+    <!-- PACKAGES -->
+    <div class="vet-packages">
+      {
+        packages.map((p, i) => (
+          <article
+            class={`package ${i === 0 ? "package-left" : "package-right"}`}
+          >
+            <h3 class="pkg-title">{p.title}</h3>
+
+            <div class="price-row">
+              <span class="package-price">{p.price}</span>
+              {p.oldPrice && (
+                <span class="package-old-price">{p.oldPrice}</span>
+              )}
+              {p.discount && <span class="package-discount">{p.discount}</span>}
+            </div>
+
+            {p.text && <p class="pkg-text">{p.text}</p>}
+
+            <div class="package-buttons">
+              {p.href && (
+                <a
+                  href={p.href}
+                  target={p.target}
+                  rel={p.rel}
+                  class="btn btn--ghost details-btn"
+                  aria-label="Подробнее о пакете"
+                >
+                  {p.ctaText ?? "Подробнее"}
+                </a>
+              )}
+
+              {p.buyWithDiscount && (
+                <a
+                  href="javascript:void(0)"
+                  target={p.buyWithDiscount.target}
+                  rel={p.buyWithDiscount.rel}
+                  onclick={`${p.buyWithDiscount.onClick}; return false;`}
+                  class="package-discount-link"
+                  aria-label="Оплатить пакет со скидкой"
+                >
+                  {p.buyWithDiscount.text}
+                </a>
+              )}
+            </div>
+
+            {p.icon?.src && (
+              <img
+                class="package-icon"
+                src={p.icon.src}
+                alt={p.icon.alt ?? ""}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <style>
+    /* корень секции: ловим общий вертикальный ритм, центрируем как grid-item */
+    .vet {
+      justify-self: center;
+      inline-size: 100%;
+      font-family: var(--ff);
+      color: var(--black);
+      background: transparent;
+    }
+
+    .vet-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .vet-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--page-padding-tablet);
+      }
+
+      .vet-content {
+        padding: var(--space-32) var(--page-padding-tablet);
+      }
+
+      .vet-price {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-16);
+      }
+
+      .vet-buttons {
+        flex-direction: column;
+        gap: var(--space-12);
+        width: 100%;
+      }
+
+      .vet-discount-btn {
+        width: 100%;
+        padding: 16px 24px;
+        font-size: 16px;
+      }
+
+      .package-buttons {
+        flex-direction: column;
+        gap: var(--space-12);
+        align-items: flex-start;
+      }
+
+      .details-btn,
+      .package-discount-link {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    /* Мобилка */
+    @media (max-width: 600px) {
+      .vet-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--page-padding-mobile);
+      }
+
+      .vet-content {
+        padding: var(--space-24) var(--page-padding-mobile);
+      }
+
+      .vet-price {
+        gap: var(--space-12);
+      }
+
+      .vet-price-value {
+        font-size: clamp(24px, 8vw, 32px);
+      }
+
+      .vet-price-old {
+        font-size: clamp(16px, 5vw, 20px);
+      }
+
+      .vet-buttons {
+        gap: var(--space-8);
+      }
+
+      .vet-discount-btn {
+        padding: 14px 20px;
+        font-size: 14px;
+      }
+
+      .package-buttons {
+        gap: var(--space-8);
+      }
+
+      .vet-discount-info p {
+        font-size: 14px;
+        line-height: 1.4;
+      }
+    }
+
+    /* ==== HEADER ==== */
+    .vet-header {
+      background: var(--blue);
+      border-radius: 24px;
+      color: #fff;
+      position: relative;
+      padding: 50px 40px 40px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin-bottom: var(--space-32);
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+    }
+
+    .vet-badges {
+      margin-bottom: var(--space-20);
+      background-color: none;
+      display: flex;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+    }
+
+    .vet-header h2 {
+      font: 700 var(--h2) / 1.3 var(--ff);
+      margin: 0 0 12px;
+      color: #fff;
+    }
+    .vet-sub {
+      font: 500 20px/1.6 var(--ff);
+      margin: 0 0 16px;
+      color: #fff;
+    }
+
+    .vet-list {
+      margin: 0 0 24px 20px;
+      padding: 0;
+      list-style: disc;
+      font: 500 16px/1.6 var(--ff);
+      color: #fff;
+    }
+    .vet-list li {
+      margin-bottom: var(--space-8);
+    }
+
+    .vet-price {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-16);
+      margin-top: var(--space-8);
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-20);
+      flex-wrap: wrap;
+    }
+    .current-price {
+      font: 700 34px/1 var(--ff);
+    }
+    .old-price {
+      font: 400 20px/1 var(--ff);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    /* CTA кнопки */
+    .vet-buttons {
+      display: flex;
+      gap: var(--space-16);
+      margin-top: var(--space-20);
+      flex-wrap: wrap;
+    }
+
+    .vet-buy-btn,
+    .vet-discount-btn {
+      /* ширина по содержимому */
+    }
+
+    /* Информация о скидке */
+    .vet-discount-info {
+      margin-top: var(--space-16);
+      text-align: left;
+    }
+    .vet-discount-info p {
+      font: 500 14px/1.4 var(--ff);
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+      padding: 0 20px;
+    }
+
+    .vet-discount-btn {
+      background: #ff6b35 !important;
+      border: 2px solid #ff8c42 !important;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4) !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+    }
+    .vet-discount-btn:hover {
+      background: #ff8c42 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6) !important;
+    }
+
+    @media (max-width: 600px) {
+      .vet-buttons {
+        flex-direction: column;
+        gap: var(--space-12);
+      }
+
+      .vet-buy-btn,
+      .vet-discount-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .vet-discount-info p {
+        font-size: 13px;
+        padding: 0 10px;
+      }
+    }
+
+    .vet-image {
+      position: absolute;
+      inset: auto 0 -65px auto; /* right:0; bottom:-65px */
+      width: 600px;
+      height: 600px;
+      pointer-events: none;
+      display: block;
+    }
+    .vet-image img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* ==== PACKAGES ==== */
+    .vet-packages {
+      margin-top: var(--space-20);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-20);
+    }
+
+    .package {
+      --pkg-bg: #ff725e; /* локальная тема пакетов */
+      background: var(--orange);
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      border: 1.5px solid #e3edfb;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      color: #fff;
+    }
+    .pkg-title {
+      font: 600 20px/1.3 var(--ff);
+      margin: 0 0 8px;
+      color: #fff;
+    }
+    .pkg-text {
+      font: 500 15px/1.55 var(--ff);
+      margin: 0 0 14px;
+      color: #fff;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+      flex-wrap: wrap;
+    }
+    .package-price {
+      font: 700 22px/1 var(--ff);
+      color: #fff;
+    }
+    .package-old-price {
+      font: 400 18px/1 var(--ff);
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .package-discount {
+      background: #fff;
+      color: #ff725e;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .package-buttons {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--space-16);
+      margin-top: var(--space-16);
+    }
+
+    .details-btn {
+      text-align: center;
+      width: auto;
+    }
+
+    .package-discount-link {
+      color: #fff;
+      text-decoration: underline;
+      font-weight: 500;
+      font-size: 14px;
+      text-align: center;
+      display: inline-block;
+      margin-top: var(--space-8);
+    }
+    .package-discount-link:hover {
+      color: #ffed4e;
+    }
+
+    /* Иконка */
+    .package .package-icon {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.8;
+      width: 120px;
+      right: 10px;
+      bottom: 10px;
+    }
+
+    /* ====== АДАПТИВЫ — синхронизируем с остальными компонентами ====== */
+    @media (max-width: 1100px) {
+      .vet-inner {
+        padding: 0 var(--pad-mobile);
+      }
+      .vet-header {
+        padding: 30px 20px;
+        border-radius: 16px;
+      }
+      .vet-image {
+        display: none !important;
+      }
+
+      .vet-badges {
+        margin-bottom: var(--space-12);
+        font-size: 14px;
+      }
+      .vet-header h2 {
+        font-size: 28px;
+      }
+      .vet-sub {
+        font-size: 16px;
+      }
+      .vet-list {
+        font-size: 16px;
+      }
+
+      .vet-price {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-16);
+      }
+      .price-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+      }
+      .current-price {
+        font-size: 28px;
+      }
+
+      .vet-packages {
+        grid-template-columns: 1fr;
+        gap: var(--space-20);
+      }
+      .package .package-icon {
+        width: 80px;
+        right: 8px;
+        bottom: 8px;
+      }
+
+      .package-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-10);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .vet-header {
+        padding: 24px 20px;
+        border-radius: 16px;
+      }
+      .vet-badges {
+        margin-bottom: var(--space-24);
+      }
+      .vet-badges {
+        margin-bottom: 14px;
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+
+      .vet-header h2 {
+        font-size: 24px;
+        line-height: 1.35;
+      }
+      .vet-sub {
+        font-size: 16px;
+      }
+      .vet-list {
+        font-size: 16px;
+      }
+
+      .current-price {
+        font-size: 26px;
+      }
+      .vet-buy-btn {
+        text-align: center;
+      }
+
+      .vet-packages {
+        grid-template-columns: 1fr;
+        gap: var(--space-20);
+      }
+      .package .package-icon {
+        width: 70px;
+        right: 6px;
+        bottom: 6px;
+      }
+    }
+  </style>
+</section>

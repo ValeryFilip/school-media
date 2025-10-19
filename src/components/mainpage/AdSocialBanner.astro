@@ -1,0 +1,217 @@
+---
+interface Img {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
+interface Social {
+  href: string;
+  label: string;
+  icon: string;
+  width?: number;
+  height?: number;
+}
+interface Props {
+  id?: string;
+  title?: string;
+  socials?: Social[];
+  image?: Img;
+}
+const {
+  id = "ad-social",
+  title = "Подписывайся на наши соцсети и будь в курсе всего нового в мире ЕГЭ",
+  socials = [
+    {
+      href: "https://www.youtube.com/",
+      label: "YouTube",
+      icon: "images/technical/youtube.png",
+      width: 36,
+      height: 36,
+    },
+    {
+      href: "https://t.me/",
+      label: "Telegram",
+      icon: "images/technical/telegram.png",
+      width: 36,
+      height: 36,
+    },
+    {
+      href: "https://vk.com/",
+      label: "ВКонтакте",
+      icon: "images/technical/vk.png",
+      width: 36,
+      height: 36,
+    },
+  ],
+  image = {
+    src: "images/mainpage/social.webp",
+    width: 420,
+    height: 280,
+    alt: "Иллюстрация соцсетей",
+  },
+} = Astro.props as Props;
+---
+
+<section class="section ad-social" aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <div class="ad-social__card">
+      <header class="ad-social__text">
+        <h2 id={`${id}-title`} class="ad-social__title">{title}</h2>
+        <ul class="ad-social__list" aria-label="Наши социальные сети">
+          {
+            socials.map((s) => (
+              <li class="ad-social__item">
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                >
+                  <img
+                    src={s.icon}
+                    width={s.width ?? 36}
+                    height={s.height ?? 36}
+                    alt={s.label}
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </header>
+
+      <figure class="ad-social__figure">
+        <img
+          src={image.src}
+          width={image.width ?? 420}
+          height={image.height ?? 280}
+          alt={image.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </div>
+  </div>
+
+  <style>
+    /* локальный контейнер (стандартный паттерн) */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    .ad-social__card {
+      display: grid;
+      grid-template-columns: 1fr 0.7fr;
+      gap: var(--space-32);
+      align-items: center;
+      background: var(--blue);
+      color: #fff;
+      border-radius: var(--radius-24);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+      padding: var(--space-32);
+    }
+    .ad-social__text {
+      display: grid;
+      gap: var(--space-24);
+      max-width: 720px;
+    }
+    .ad-social__title {
+      font-size: var(--h2);
+      line-height: 1.25;
+      margin: 0;
+      color: #fff;
+    }
+
+    .ad-social__list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-24);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .ad-social__item a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      transition:
+        transform 0.15s var(--easing),
+        background 0.2s var(--easing);
+      overflow: hidden;
+    }
+    .ad-social__item a:hover {
+      transform: translateY(-2px);
+      background: #d8d8d8;
+    }
+    .ad-social__item img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .ad-social__figure {
+      margin: 0;
+      justify-self: end;
+      max-width: 100%;
+    }
+    .ad-social__figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    @media (max-width: 1100px) {
+      .ad-social__card {
+        grid-template-columns: 1fr;
+        gap: var(--space-24);
+        padding: var(--space-24);
+      }
+      .ad-social__text {
+        justify-items: center;
+        text-align: center;
+        max-width: 760px;
+        margin-inline: auto;
+      }
+      .ad-social__list {
+        justify-content: center;
+      }
+      .ad-social__figure {
+        display: none !important;
+      }
+    }
+    @media (max-width: 600px) {
+      .ad-social__text {
+        max-width: 100%;
+      }
+    }
+  </style>
+</section>

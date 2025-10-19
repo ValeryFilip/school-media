@@ -1,0 +1,344 @@
+---
+// SideCategoryScroller.astro (полный рефактор под desktop+mobile)
+
+export interface CategoryItem {
+  id: string;
+  label: string;
+  color: string;
+}
+export interface Props {
+  categories: CategoryItem[];
+}
+const { categories } = Astro.props;
+---
+
+<nav class="rail" aria-label="Навигация по категориям">
+  <ul class="rail__list">
+    {
+      categories.map((c) => (
+        <li class="rail__item">
+          <a
+            href={"#" + c.id}
+            class="rail__dot"
+            style={`--c:${c.color}`}
+            data-target={c.id}
+          >
+            <span class="rail__square" aria-hidden="true" />
+            <span class="rail__label">{c.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  /* Локальные переменные и базовая геометрия */
+  .rail {
+    /* desktop (слева) */
+    --bar-w: 50px; /* ширина вертикальной рейки */
+    --pad-y: 10px; /* вертикальные отступы внутри */
+    --gap: 5px; /* отступ между пунктами */
+    --sq: 14px; /* размер квадрата */
+    --sq-r: 4px; /* скругление квадрата */
+    --rail-bg: #27292f;
+    --txt: #d3d6de;
+
+    /* mobile/tablet (снизу) */
+    --bar-h: 56px; /* высота нижней полосы */
+    --pad-x: 10px; /* горизонтальные отступы внутри */
+  }
+
+  /* ===== Desktop: вертикальная рейка слева ===== */
+  .rail {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--bar-w);
+    background: var(--rail-bg);
+    z-index: 50;
+    overflow: visible;
+  }
+  .rail__list {
+    list-style: none;
+    margin: 0;
+    height: 100vh;
+    padding: var(--pad-y) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap);
+  }
+  .rail__item {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ячейка — высоту задаём переменной (JS), чтобы соседи «разъезжались» */
+  .rail__dot {
+    position: relative;
+    pointer-events: auto;
+    width: 100%;
+    height: var(--cell-h, 30px);
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+    color: var(--txt);
+    transition: height 0.22s ease;
+    overflow: visible;
+    --label-scale: 1;
+  }
+  .rail__square {
+    width: var(--sq);
+    height: var(--sq);
+    border-radius: var(--sq-r);
+    background: var(--c, #8a8a8a);
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease;
+  }
+  .rail__label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(180deg) scale(var(--label-scale));
+    transform-origin: 50% 50%;
+    writing-mode: vertical-rl;
+    font:
+      600 13px/1.1 "Montserrat",
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif;
+    letter-spacing: 0.6px;
+    color: var(--txt);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+    user-select: none;
+    pointer-events: none;
+    padding: 0 2px;
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  .rail__dot.is-active .rail__label {
+    opacity: 0.95;
+  }
+  .rail__dot.is-active .rail__square {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  /* ===== Mobile/Tablet: горизонтальная полоса снизу ===== */
+  @media (max-width: 1100px) {
+    .rail {
+      inset: auto 0 0 0; /* внизу */
+      width: auto;
+      height: var(--bar-h);
+      display: block;
+    }
+    .rail__list {
+      height: var(--bar-h);
+      padding: 0 var(--pad-x);
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: var(--gap);
+    }
+    /* теперь ширину ячейки даём переменной (JS) */
+    .rail__dot {
+      width: var(--cell-w, 48px);
+      height: 100%;
+      transition: width 0.22s ease;
+    }
+    /* квадрат остаётся по центру */
+    .rail__square {
+    }
+
+    /* подпись горизонтальная, без rotate */
+    .rail__label {
+      writing-mode: initial;
+      transform: translate(-50%, -50%) scale(var(--label-scale));
+      white-space: normal;
+      word-wrap: break-word;
+      text-align: center;
+    }
+  }
+
+  /* Анимации off для prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .rail__label,
+    .rail__square,
+    .rail__dot {
+      transition: none !important;
+    }
+  }
+
+  /* Чтобы полоса не перекрывала контент снизу на мобилках */
+  :global(body.has-rail-bottom) {
+    padding-bottom: var(--bar-h);
+  }
+</style>
+
+<script>
+  (() => {
+    const rail = document.querySelector(".rail");
+    if (!rail) return;
+
+    const links = Array.from(rail.querySelectorAll(".rail__dot"));
+    const sections = links
+      .map((a) => document.getElementById(a.dataset.target))
+      .filter(Boolean);
+
+    const mq = window.matchMedia("(max-width:1100px)");
+    const isH = () => mq.matches; // true = снизу (горизонтальная)
+    const pad = () => {
+      const v = getComputedStyle(rail)
+        .getPropertyValue(isH() ? "--pad-x" : "--pad-y")
+        .trim();
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : 10;
+    };
+
+    // подгон активной подписи под высоту/высоту бара (desktop) или ширину (mobile)
+    const fitLabel = (a) => {
+      const label = a.querySelector(".rail__label");
+      if (!label) return { size: 30, scale: 1 };
+
+      // сбрасываем масштаб
+      a.style.setProperty("--label-scale", "1");
+
+      if (!isH()) {
+        // ===== DESKTOP: ограничение по высоте бара (100vh - pad*2)
+        const available = window.innerHeight - pad() * 2;
+        const r1 = label.getBoundingClientRect();
+        let scale = 1;
+        if (r1.height > available) {
+          scale = Math.max(0.6, available / r1.height);
+          a.style.setProperty("--label-scale", String(scale));
+        }
+        const r2 = label.getBoundingClientRect();
+        const finalH = Math.max(30, Math.ceil(r2.height) + 10); // 5px сверху/снизу
+        a.style.setProperty("--cell-h", finalH + "px");
+        a.style.removeProperty("--cell-w");
+        return { size: finalH, scale };
+      } else {
+        // ===== MOBILE/TABLET: ограничение по высоте полосы, ширина — авто
+        const barH = rail.getBoundingClientRect().height || 56;
+        const available = barH - pad() * 2;
+        const r1 = label.getBoundingClientRect();
+        let scale = 1;
+        if (r1.height > available) {
+          scale = Math.max(0.6, available / r1.height);
+          a.style.setProperty("--label-scale", String(scale));
+        }
+        const r2 = label.getBoundingClientRect();
+        const finalW = Math.max(48, Math.ceil(r2.width) + 14); // +7px слева/справа
+        a.style.setProperty("--cell-w", finalW + "px");
+        a.style.removeProperty("--cell-h");
+        return { size: finalW, scale };
+      }
+    };
+
+    const setActive = (id) => {
+      links.forEach((a) => {
+        const on = a.dataset.target === id;
+        a.classList.toggle("is-active", on);
+        if (on) {
+          fitLabel(a);
+          a.setAttribute("aria-current", "true");
+        } else {
+          a.style.removeProperty("--cell-h");
+          a.style.removeProperty("--cell-w");
+          a.style.removeProperty("--label-scale");
+          a.removeAttribute("aria-current");
+        }
+      });
+    };
+
+    // клики — плавный скролл + мгновенная активация
+    links.forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const id = a.dataset.target;
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", `#${id}`);
+        setActive(id);
+      });
+    });
+
+    // выбор активной секции ближе к центру вьюпорта
+    const updateByViewportCenter = () => {
+      const vpCenter = window.scrollY + window.innerHeight / 2;
+      let bestId = null,
+        bestDist = Infinity;
+      sections.forEach((s) => {
+        const r = s.getBoundingClientRect();
+        const center = r.top + window.scrollY + r.height / 2;
+        const d = Math.abs(center - vpCenter);
+        if (d < bestDist) {
+          bestDist = d;
+          bestId = s.id;
+        }
+      });
+      if (bestId) setActive(bestId);
+    };
+
+    // IO — ещё один триггер
+    const io = new IntersectionObserver(
+      (entries) => {
+        let best = null;
+        for (const e of entries) {
+          const id = e.target.id;
+          const ratio = e.intersectionRatio;
+          if (!best || ratio > best.ratio) best = { id, ratio };
+        }
+        if (best) setActive(best.id);
+      },
+      {
+        root: null,
+        threshold: [0.25, 0.5, 0.75],
+        rootMargin: "-35% 0px -45% 0px",
+      }
+    );
+    sections.forEach((s) => io.observe(s));
+
+    // throttle scroll/resize
+    let raf = 0;
+    const onScrollOrResize = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        updateByViewportCenter();
+        raf = 0;
+      });
+    };
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize, { passive: true });
+
+    // режим и отступ снизу страницы для мобильной полосы
+    const applyMode = () => {
+      if (isH()) document.body.classList.add("has-rail-bottom");
+      else document.body.classList.remove("has-rail-bottom");
+      // перерасчёт активной метки под новый режим
+      const cur =
+        rail.querySelector(".rail__dot.is-active")?.dataset.target ||
+        links[0]?.dataset.target;
+      if (cur) setActive(cur);
+      else if (links[0]) setActive(links[0].dataset.target);
+    };
+    applyMode();
+    if (mq.addEventListener) mq.addEventListener("change", applyMode);
+    else mq.addListener(applyMode); // старые Safari
+
+    // первичная инициализация
+    updateByViewportCenter();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateByViewportCenter).catch(() => {});
+    }
+    window.addEventListener("load", updateByViewportCenter);
+  })();
+</script>

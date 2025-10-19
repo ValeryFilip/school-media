@@ -1,0 +1,361 @@
+---
+// Страница благодарности для отслеживания конверсий
+const seo = {
+  title: "Спасибо за заявку! | ЕГЭХИМ",
+  description:
+    "Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.",
+  noindex: true, // Не индексируем страницу благодарности
+};
+
+// Получаем UTM параметры из URL для аналитики
+const url = new URL(Astro.request.url);
+const utmSource = url.searchParams.get("utm_source") || "";
+const utmMedium = url.searchParams.get("utm_medium") || "";
+const utmCampaign = url.searchParams.get("utm_campaign") || "";
+const utmContent = url.searchParams.get("utm_content") || "";
+const utmTerm = url.searchParams.get("utm_term") || "";
+
+// Данные для отслеживания
+const conversionData = {
+  utmSource,
+  utmMedium,
+  utmCampaign,
+  utmContent,
+  utmTerm,
+  timestamp: new Date().toISOString(),
+  page: "thank-you",
+};
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Яндекс.Метрика -->
+    <script type="text/javascript">
+      (function (m, e, t, r, i, k, a) {
+        m[i] =
+          m[i] ||
+          function () {
+            (m[i].a = m[i].a || []).push(arguments);
+          };
+        m[i].l = 1 * new Date();
+        (k = e.createElement(t)),
+          (a = e.getElementsByTagName(t)[0]),
+          (k.async = 1),
+          (k.src = r),
+          a.parentNode.insertBefore(k, a);
+      })(
+        window,
+        document,
+        "script",
+        "https://mc.yandex.ru/metrika/tag.js",
+        "ym"
+      );
+
+      // Инициализация счетчика (замените на ваш ID)
+      ym(12345678, "init", {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+      });
+    </script>
+
+    <!-- Google Analytics (если используете) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "GA_MEASUREMENT_ID");
+
+      // Отправляем событие конверсии
+      gtag("event", "conversion", {
+        send_to: "AW-CONVERSION_ID/CONVERSION_LABEL",
+        value: 1.0,
+        currency: "RUB",
+      });
+    </script>
+
+    <!-- Facebook Pixel (если используете) -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+      fbq("init", "YOUR_PIXEL_ID");
+      fbq("track", "Lead");
+    </script>
+
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 60px 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 90%;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        font-size: 40px;
+        color: white;
+      }
+
+      h1 {
+        color: #1f2937;
+        font-size: 32px;
+        margin: 0 0 20px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: #6b7280;
+        font-size: 18px;
+        margin: 0 0 40px;
+        line-height: 1.6;
+      }
+
+      .next-steps {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        text-align: left;
+      }
+
+      .next-steps h3 {
+        color: #1f2937;
+        margin: 0 0 20px;
+        font-size: 20px;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        color: #4b5563;
+      }
+
+      .step-number {
+        background: #3b82f6;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 600;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #2563eb;
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .contact-info {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 40px 20px;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="success-icon">✓</div>
+
+      <h1>Спасибо за заявку!</h1>
+      <p class="subtitle">
+        Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время и
+        расскажем подробности о курсах подготовки к ЕГЭ по химии.
+      </p>
+
+      <div class="next-steps">
+        <h3>Что будет дальше?</h3>
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>Наш менеджер свяжется с вами в течение 15 минут</div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>Расскажем о программе курса и ответим на вопросы</div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>Запишем на бесплатное пробное занятие</div>
+        </div>
+      </div>
+
+      <div class="cta-buttons">
+        <a href="/" class="btn btn-primary">Вернуться на главную</a>
+        <a href="/allcourses" class="btn btn-secondary">Посмотреть курсы</a>
+      </div>
+
+      <div class="contact-info">
+        <p><strong>Есть вопросы?</strong></p>
+        <p>
+          Пишите в Telegram: <a
+            href="https://t.me/your_username"
+            style="color: #3b82f6;">@your_username</a
+          >
+        </p>
+        <p>
+          Или звоните: <a href="tel:+79991234567" style="color: #3b82f6;"
+            >+7 (999) 123-45-67</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Яндекс.Метрика (noscript) -->
+    <noscript>
+      <div>
+        <img
+          src="https://mc.yandex.ru/watch/12345678"
+          style="position:absolute; left:-9999px;"
+          alt=""
+        />
+      </div>
+    </noscript>
+
+    <!-- Facebook Pixel (noscript) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=Lead&noscript=1"
+      />
+    </noscript>
+
+    <!-- Отслеживание конверсий только через аналитику -->
+    <script>
+      // Отправляем событие конверсии в Яндекс.Метрику
+      if (typeof ym !== "undefined") {
+        ym(12345678, "reachGoal", "conversion");
+      }
+
+      // Отправляем событие конверсии в Google Analytics
+      if (typeof gtag !== "undefined") {
+        gtag("event", "conversion", {
+          event_category: "Lead",
+          event_label: "Form Submission",
+          value: 1,
+        });
+      }
+
+      // Отправляем событие конверсии в Facebook Pixel
+      if (typeof fbq !== "undefined") {
+        fbq("track", "Lead", {
+          content_name: "Form Submission",
+          content_category: "Education",
+        });
+      }
+    </script>
+  </body>
+</html>

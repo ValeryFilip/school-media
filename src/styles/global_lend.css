@@ -1,0 +1,191 @@
+/* ===== TOKENS (_lend) ===== */
+:root{
+  /* Цвета */
+  --blue:#366EF0; 
+  --orange:#F09936; 
+  --black:#111; 
+  --white:#FFF;
+  --bg:#ffffff; 
+  --border:#dfdfdf;
+
+  /* Фон страницы */
+  --page-bg: var(--bg);
+
+  /* Типографика */
+  --ff:'Inter Tight',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  --h1: clamp(35px, 6vw, 48px);
+  --h2: clamp(26px, 4vw, 42px);
+  --h3: clamp(14px, 3.2vw, 20px);
+  --h4: clamp(14px, 2.6vw, 20px);
+  --lead: clamp(18px, 1vw, 20px);
+  --text:clamp(14px, 1vw, 18px);
+
+  /* Радиусы и тени */
+  --radius-24:24px;
+  --shadow-1:0 1px 10px 2px rgba(0,0,0,.04);
+  --shadow-2:0 8px 22px rgba(0,0,0,.12);
+
+  /* Контейнер и отступы */
+  --container:1300px; 
+  --pad-desktop:50px; 
+  --pad-mobile:20px;
+  --space-8:8px; 
+  --space-12:12px; 
+  --space-16:16px; 
+  --space-20:20px; 
+  --space-24:24px; 
+  --space-32:32px; 
+  --space-40:40px; 
+  --space-50:50px;
+  --section-gap: clamp(120px, 6vw, 56px);
+
+  /* Прочее */
+  --easing: ease-in-out;
+}
+/* ===== GLOBALS ===== */
+*,*::before,*::after{ 
+  box-sizing:border-box; 
+}
+
+html{ 
+  color-scheme:light; 
+}
+
+body{
+  margin:0;
+  font-family:var(--ff);
+  font-size:var(--text);
+  color:var(--black);
+  background: var(--page-bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover{ 
+  text-decoration:underline; 
+}
+
+:focus-visible{ 
+  outline:3px solid rgba(54,110,240,.35); 
+  outline-offset:2px; 
+}
+
+
+/* Родитель страницы, который раздаёт ОДИН межблочный отступ всем секциям */
+.page-stack{
+  display: grid;
+  row-gap: var(--section-gap);/* ← меняешь тут — меняется везде */
+}
+
+/* Контейнер 1300 + паддинги */
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad-desktop);
+  box-sizing: border-box;
+}
+@media (min-width:601px) and (max-width:1100px){
+  .container{
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    max-width: none;
+    padding: 0 var(--pad-mobile);
+  }
+}
+@media (max-width:600px){
+  .container{
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    max-width: none;
+    padding: 0 var(--pad-mobile);
+  }
+}
+
+
+
+/* === ЕДИНЫЙ ВЕРТИКАЛЬНЫЙ РИТМ (исключаем схлопывание) === */
+.section{ 
+  margin:0; 
+  display:flow-root; 
+  margin-top: var(--section-gap); 
+}
+
+/* На курсах ритм задаёт только .page-stack → гасим локальные отступы секций */
+.page-stack .section{ 
+  margin-top: 0; 
+}
+
+/* Заголовки (единая шкала) */
+h1,.h1{ 
+  font-size:var(--h1); 
+  line-height:1.15; 
+  margin:0 0 var(--space-16); 
+  font-weight:700; 
+}
+
+h2,.h2{ 
+  font-size:var(--h2); 
+  line-height:1.2;  
+  margin:0 0 var(--space-16); 
+  font-weight:700; 
+}
+h3,.h3{ 
+  font-size:var(--h3); 
+  line-height:1.25; 
+  margin:0 0 var(--space-12); 
+  font-weight:700; 
+}
+.lead{ 
+  font-size:var(--lead); 
+  line-height:1.6; 
+  margin:0 0 var(--space-16); 
+}
+
+/* Карточки и кнопки (унифицированные) */
+.card{
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-24);
+  box-shadow: var(--shadow-1);
+}
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: 0;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 150ms var(--easing), filter 150ms var(--easing);
+}
+.btn:hover{ 
+  transform:translateY(-1px); 
+}
+.btn--primary{ 
+  background: var(--orange); 
+  color: #fff; 
+}
+.btn--blue{ 
+  background: var(--blue); 
+  color: #fff; 
+}
+.btn--ghost{ 
+  background: #fff; 
+  color: var(--black); 
+  border: 1px solid var(--border); 
+}
+
+
+
+
+
+
+/* flex-дети не распирают родителя */
+:where(.container, .blue-card, .platform__slider, .skills__row) > *{ min-width:0; }

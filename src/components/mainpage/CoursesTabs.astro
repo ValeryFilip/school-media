@@ -1,0 +1,364 @@
+---
+interface Price {
+  current: string;
+  old?: string;
+}
+interface Panel {
+  id: string;
+  tabLabel: string;
+  title: string;
+  lead: string;
+  features: string[];
+  price: Price;
+  ctaText: string;
+  ctaHref: string;
+  bg?: string;
+  illustration?: string;
+}
+interface Props {
+  id?: string;
+  sectionTitle?: string;
+  sectionSub?: string;
+  panels?: Panel[];
+  defaultTabId?: string;
+  contentMaxWidthPct?: number;
+  cardMinHeight?: number;
+}
+const {
+  id = "courses-tabs",
+  sectionTitle = "Уникальные годовые курсы в формате минигрупп",
+  sectionSub = "НЕ вебинары по 1000 человек — небольшие группы для максимальной эффективности.",
+  contentMaxWidthPct = 56,
+  cardMinHeight = 420,
+  defaultTabId,
+  panels = [
+    {
+      id: "ege",
+      tabLabel: "ЕГЭ",
+      title: "Полный курс подготовки к ЕГЭ по химии 2026",
+      lead: "Что входит в курс?",
+      features: [
+        "8 занятий в месяц по 1.5 часа",
+        "Минигруппа до 5 человек",
+        "Домашние задания и автопроверка",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "10 000 ₽/мес", old: "14 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#",
+      bg: "var(--blue)",
+      illustration: "https://i.ibb.co/Vc6XwJYP/Science-pana.png",
+    },
+    {
+      id: "oge",
+      tabLabel: "ОГЭ",
+      title: "Полный курс подготовки к ОГЭ по химии 2026",
+      lead: "Что входит в курс?",
+      features: [
+        "8 занятий в месяц по 1.5 часа",
+        "Минигруппа до 5 человек",
+        "Проверка и разбор ошибок",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "8 000 ₽/мес", old: "10 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#",
+      bg: "#2E7CF0",
+      illustration:
+        "https://images.unsplash.com/photo-1551861568-16a1c1b0b1a4?w=900&q=80",
+    },
+    {
+      id: "grade10",
+      tabLabel: "10 класс",
+      title: "Органическая химия. База для 10 класса",
+      lead: "Что входит в курс?",
+      features: [
+        "4 занятия в месяц по 1.5 часа",
+        "Минигруппа до 6 человек",
+        "Практика + проверка",
+        "Поддержка в чате",
+        "Платформа и приложение",
+      ],
+      price: { current: "6 000 ₽/мес", old: "8 000 ₽" },
+      ctaText: "Узнать подробнее",
+      ctaHref: "#",
+      bg: "#255AD6",
+      illustration:
+        "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=900&q=80",
+    },
+  ],
+} = Astro.props as Props;
+
+const initialIndex = Math.max(
+  0,
+  panels.findIndex((p) => p.id === (defaultTabId ?? panels[0]?.id))
+);
+---
+
+<section class="section courses-tabs" aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <header class="courses-head">
+      <h2 id={`${id}-title`} class="h2">{sectionTitle}</h2>
+      {sectionSub && <p class="courses-sub">{sectionSub}</p>}
+    </header>
+
+    <div class="tablist" role="tablist" aria-label="Тип курса">
+      {
+        panels.map((p, i) => (
+          <button
+            class="tab-btn"
+            role="tab"
+            aria-selected={i === initialIndex ? "true" : "false"}
+            aria-controls={`${id}-panel-${p.id}`}
+            id={`${id}-tab-${p.id}`}
+            tabindex={i === initialIndex ? 0 : -1}
+          >
+            {p.tabLabel}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="tab-panels">
+      {
+        panels.map((p, i) => (
+          <div
+            class="tab-panel"
+            id={`${id}-panel-${p.id}`}
+            role="tabpanel"
+            aria-labelledby={`${id}-tab-${p.id}`}
+            aria-hidden={i === initialIndex ? "false" : "true"}
+            style={`--card-bg:${p.bg ?? "var(--blue)"}; --card-illustration:url('${p.illustration ?? ""}')`}
+          >
+            <article
+              class="card course-card"
+              style={`--content-max:${contentMaxWidthPct}%; --card-minh:${cardMinHeight}px;`}
+            >
+              <div class="card-content">
+                <h3 class="card-title">{p.title}</h3>
+                {p.lead && <p class="card-lead">{p.lead}</p>}
+                {p.features?.length > 0 && (
+                  <ul class="course-list">
+                    {p.features.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                )}
+                <div class="price-row">
+                  <span class="price-new">{p.price.current}</span>
+                  {p.price.old && <span class="price-old">{p.price.old}</span>}
+                  <a href={p.ctaHref} class="btn btn--primary">
+                    {p.ctaText}
+                  </a>
+                </div>
+              </div>
+              <div class="card-illustration" aria-hidden="true" />
+            </article>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <style>
+    /* локальный контейнер (стандартный паттерн) */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    .courses-tabs {
+      font-family: var(--ff);
+      color: var(--black);
+    }
+
+    .courses-head {
+      margin-bottom: var(--space-24);
+    }
+    .courses-sub {
+      margin: 0;
+      line-height: 1.3;
+      font-size: var(--lead);
+      color: var(--black);
+    }
+
+    .tablist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-12);
+      margin: var(--space-32) 0 var(--space-24);
+    }
+    .tab-btn {
+      appearance: none;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--black);
+      font: 600 16px/1 var(--ff);
+      transition:
+        transform 0.15s var(--easing),
+        filter 0.15s var(--easing),
+        background 0.2s var(--easing);
+    }
+    .tab-btn:hover {
+      transform: translateY(-1px);
+    }
+    .tab-btn[aria-selected="true"] {
+      background: var(--blue);
+      color: #fff;
+      border-color: transparent;
+    }
+    .tab-btn:focus-visible {
+      outline: 3px solid rgba(54, 110, 240, 0.35);
+      outline-offset: 2px;
+    }
+
+    .tab-panels {
+      position: relative;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel[aria-hidden="false"] {
+      display: block;
+    }
+
+    .course-card {
+      position: relative;
+      padding: var(--space-32) var(--space-40);
+      min-height: var(--card-minh, 420px);
+      border-radius: var(--radius-24);
+      background: var(--card-bg, var(--blue));
+      color: var(--card-fg, #fff);
+      box-shadow: var(--shadow-1);
+    }
+
+    .card-content {
+      max-width: var(--content-max, 56%);
+    }
+    .card-title {
+      margin: 0 0 var(--space-16);
+      font-size: var(--h2);
+      line-height: 1.2;
+      font-weight: 700;
+    }
+    .card-lead {
+      margin: 0 0 var(--space-12);
+      font-weight: 600;
+      font-size: 20px;
+    }
+    .course-list {
+      margin: 0 0 var(--space-24) 20px;
+      padding: 0;
+      list-style: disc;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+      flex-wrap: wrap;
+    }
+    .price-new {
+      font-size: 28px;
+      font-weight: 800;
+    }
+    .price-old {
+      font-size: 18px;
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .price-row .btn {
+      padding: 12px 24px;
+    }
+
+    .card-illustration {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 48%;
+      max-width: 640px;
+      height: 100%;
+      pointer-events: none;
+      background: var(--card-illustration, none) right bottom/contain no-repeat;
+    }
+
+    /* Адаптивы (локально): как договаривались */
+    @media (max-width: 900px) {
+      .card-illustration {
+        display: none !important;
+      }
+      .card-content {
+        max-width: 100% !important;
+      }
+    }
+    @media (max-width: 600px) {
+      .courses-head {
+        text-align: center;
+      }
+      .tablist {
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const root = document.currentScript.closest(".courses-tabs");
+      const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+      const panels = tabs.map((t) =>
+        root.querySelector("#" + t.getAttribute("aria-controls"))
+      );
+      function selectTab(idx) {
+        tabs.forEach((t, i) => {
+          const sel = i === idx;
+          t.setAttribute("aria-selected", sel ? "true" : "false");
+          t.tabIndex = sel ? 0 : -1;
+          panels[i].setAttribute("aria-hidden", sel ? "false" : "true");
+        });
+      }
+      tabs.forEach((t, i) => {
+        t.addEventListener("click", () => selectTab(i));
+        t.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            const dir = e.key === "ArrowRight" ? 1 : -1;
+            const next = (i + dir + tabs.length) % tabs.length;
+            tabs[next].focus();
+            selectTab(next);
+          }
+        });
+      });
+      const defaultIdx = tabs.findIndex(
+        (t) => t.getAttribute("aria-selected") === "true"
+      );
+      selectTab(defaultIdx >= 0 ? defaultIdx : 0);
+    })();
+  </script>
+</section>

@@ -1,0 +1,408 @@
+---
+/* src/components/AboutSection.astro */
+
+interface Stat {
+  value: string;
+  text: string;
+}
+interface SituItem {
+  img: string;
+  alt: string;
+  badge: string;
+}
+type SituRow = [SituItem, SituItem];
+
+interface Props {
+  id?: string;
+  introTitle?: string;
+  introText?: string;
+
+  stats?: Stat[]; // 3 карточки
+
+  situationsTitle?: string;
+  situations?: [SituRow, SituRow]; // ровно 2 ряда по 2 карточки
+
+  solutionText?: string;
+  solutionImg?: { src: string; alt: string };
+
+  finalText?: string;
+}
+
+const {
+  id = "about",
+  introTitle = "Кто мы?",
+  introText = "Мы онлайн-школа химии. Уже 10 лет помогаем ребятам достигать крутых результатов на ЕГЭ благодаря понятной методике подготовки.",
+
+  stats = [
+    { value: "2000", text: "учеников прошли наши курсы" },
+    { value: "10 лет", text: "опыт подготовки к экзаменам" },
+    { value: "97%", text: "поступают в топ-30 вузов" },
+  ],
+
+  situationsTitle = "90% выпускников узнают себя в этих ситуациях",
+  situations = [
+    [
+      {
+        img: "https://via.placeholder.com/685x300",
+        alt: "Пробник на низкие баллы",
+        badge:
+          "Ты написал пробник на низкие баллы (30–40) и кажется, что до бюджета не дотянуть.",
+      },
+      {
+        img: "https://via.placeholder.com/475x300",
+        alt: "Репетитор без результата",
+        badge:
+          "Уже занимаешься с репетитором или в онлайн-школе, но результата нет.",
+      },
+    ],
+    [
+      {
+        img: "https://via.placeholder.com/475x300",
+        alt: "Сложно заниматься самому",
+        badge:
+          "Трудно заставить себя заниматься самостоятельно — нужен чёткий график и контроль.",
+      },
+      {
+        img: "https://via.placeholder.com/685x300",
+        alt: "Учитель идёт слишком быстро",
+        badge:
+          "Учитель в школе не объясняет или идёт слишком быстро — остаются «дыры» в темах.",
+      },
+    ],
+  ] as [SituRow, SituRow],
+
+  solutionText = "Боишься завалить химию и потерять шанс поступить на бюджет? Нужен понятный пошаговый путь — чтобы чувствовать уверенность в результате.",
+  solutionImg = {
+    src: "https://via.placeholder.com/420x240",
+    alt: "Поддержка в обучении",
+  },
+
+  finalText = "На все эти ситуации у нас есть решение!",
+} = Astro.props as Props;
+---
+
+<section class="about-section" aria-labelledby={`${id}-title`}>
+  <style>
+    /* ==== МЕЖБЛОЧНЫЙ РИТМ — «НЕУБИВАЕМЫЙ» ==== */
+
+    /* 1) По умолчанию (когда НЕТ .page-stack): даём наружный отступ */
+    .about-section {
+      margin-top: var(--section-gap, 56px);
+    }
+
+    /* 2) Если РОДИТЕЛЬ — .page-stack: наружные маргины детей обнуляются → используем ВНУТРЕННИЙ отступ
+        ВАЖНО: .page-stack снаружи компонента → селектор должен быть global */
+    :global(.page-stack) > .about-section {
+      margin: 0 auto !important;
+      margin-top: 0 !important;
+      padding-top: 20px;
+    }
+
+    /* === ОСТАЛЬНАЯ СТИЛИСТИКА БЛОКА (как у тебя) === */
+    .about-section {
+      margin-top: var(--section-gap, 56px) !important;
+      display: flow-root;
+      border-radius: var(--radius-24, 24px);
+      overflow: hidden;
+      color: #fff;
+      max-width: var(--container, 1300px);
+      margin-left: auto;
+      margin-right: auto;
+
+      /* Синий фон + сетка */
+      --grid: 50px;
+      --line: rgba(255, 255, 255, 0.12);
+      background-color: var(--blue, #366ef0);
+      background-image: repeating-linear-gradient(
+          0deg,
+          var(--line) 0,
+          var(--line) 1px,
+          transparent 1px,
+          transparent var(--grid)
+        ),
+        repeating-linear-gradient(
+          90deg,
+          var(--line) 0,
+          var(--line) 1px,
+          transparent 1px,
+          transparent var(--grid)
+        );
+    }
+
+    .about-section .container {
+      max-width: var(--container, 1300px);
+      padding: 24px var(--pad-desktop, 50px) var(--space-32, 32px);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .about-section {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+      }
+      .about-section .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 32px 24px;
+      }
+    }
+    @media (max-width: 600px) {
+      .about-section {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+      }
+      .about-section .container {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 24px var(--pad-mobile, 20px);
+      }
+    }
+
+    /* Внутренний ритм ТОЛЬКО внутри блока */
+    .about-section .container > section {
+      margin-bottom: var(--space-32, 32px);
+    }
+    .about-section .container > section:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Белые карточки (унифицированный стиль) */
+    .card {
+      background: #fff;
+      color: #000;
+      border: 1px solid var(--border, #d3d3d3);
+      border-radius: var(--radius-24, 24px);
+      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
+      box-sizing: border-box;
+    }
+
+    /* Интро — уменьшенные шрифты */
+    .about-intro {
+      padding: var(--space-24, 24px);
+      display: grid;
+      gap: 12px;
+      color: #000;
+    }
+    .about-intro h2 {
+      margin: 0;
+      font: 700 clamp(22px, 3.2vw, 32px) / 1.25
+        var(
+          --ff,
+          "Montserrat",
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif
+        );
+    }
+    .about-intro p {
+      margin: 0;
+      font: 500 clamp(16px, 2.4vw, 22px) / 1.4 var(--ff);
+    }
+
+    /* Цифры */
+    .about-stats h3 {
+      margin: 0 0 var(--space-16, 16px);
+      font: 700 clamp(22px, 3.2vw, 32px) / 1.2 var(--ff);
+      color: #eaf0ff;
+    }
+    .stats-grid-3-2-1 {
+      display: grid;
+      gap: var(--space-24, 24px);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .stat-card {
+      padding: var(--space-24, 24px);
+      min-height: 160px;
+      display: grid;
+      align-content: space-between;
+      color: #000;
+    }
+    .stat-value {
+      margin: 0;
+      font: 700 clamp(28px, 4.6vw, 56px) / 1.1 var(--ff);
+    }
+    .stat-text {
+      margin: 0;
+      font: 500 16px/1.35 var(--ff);
+    }
+
+    /* Ситуации */
+    .about-situations h3 {
+      margin: 0 0 var(--space-16, 16px);
+      font: 700 clamp(22px, 3.2vw, 32px) / 1.2 var(--ff);
+      color: #eaf0ff;
+    }
+    .situ-row {
+      display: grid;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .situ-row:last-child {
+      margin-bottom: 0;
+    }
+    @media (min-width: 1101px) {
+      .situ-row.row-1 {
+        grid-template-columns: 1.44fr 1fr;
+      }
+      .situ-row.row-2 {
+        grid-template-columns: 1fr 1.44fr;
+      }
+    }
+    @media (max-width: 1100px) {
+      .situ-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    figure.situ-card {
+      position: relative;
+      height: 300px;
+      margin: 0;
+      border-radius: var(--radius-24, 24px);
+      overflow: hidden;
+      border: 1px solid var(--border, #d3d3d3);
+      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
+      background: #000;
+    }
+    .situ-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.72);
+    }
+    .situ-badge {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      max-width: min(85%, 560px);
+      background: #fff;
+      color: #000;
+      padding: 14px 16px;
+      border-radius: var(--radius-24, 24px);
+      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
+    }
+    .situ-badge p {
+      margin: 0;
+      font: 500 clamp(14px, 2.2vw, 18px) / 1.35 var(--ff);
+    }
+
+    /* Решение */
+    .about-solution {
+      padding: var(--space-24, 24px);
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: var(--space-24, 24px);
+      align-items: center;
+      color: #000;
+    }
+    .about-solution p {
+      margin: 0;
+      font: 500 clamp(16px, 2.6vw, 22px) / 1.4 var(--ff);
+    }
+    .about-solution figure {
+      margin: 0;
+      height: 240px;
+      border-radius: var(--radius-24, 24px);
+      overflow: hidden;
+      border: 1px solid var(--border, #d3d3d3);
+      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
+      background: #000;
+    }
+    .about-solution img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Финал */
+    .about-final {
+      margin: 0;
+      text-align: center;
+      font: 700 clamp(22px, 4vw, 42px) / 1.2 var(--ff);
+      color: #eaf0ff;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid-3-2-1 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .stats-grid-3-2-1 {
+        grid-template-columns: 1fr;
+      }
+      figure.situ-card {
+        height: 220px;
+      }
+      .about-solution {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .about-solution figure {
+        height: 200px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <section class="card about-intro">
+      <h2 id={`${id}-title`}>{introTitle}</h2>
+      <p>{introText}</p>
+    </section>
+
+    <section class="about-stats">
+      <h3>О нас в цифрах:</h3>
+      <div class="stats-grid-3-2-1">
+        {
+          stats.map((s) => (
+            <div class="card stat-card">
+              <p class="stat-value">{s.value}</p>
+              <p class="stat-text">{s.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="about-situations">
+      <h3>{situationsTitle}</h3>
+
+      {
+        situations.map((row, i) => (
+          <div class={`situ-row row-${i + 1}`}>
+            {row.map((item) => (
+              <figure class="situ-card">
+                <img src={item.img} alt={item.alt} />
+                <figcaption class="situ-badge">
+                  <p>{item.badge}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="card about-solution">
+      <p>{solutionText}</p>
+      <figure><img src={solutionImg.src} alt={solutionImg.alt} /></figure>
+    </section>
+
+    <section>
+      <h3 class="about-final">{finalText}</h3>
+    </section>
+  </div>
+</section>

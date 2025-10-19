@@ -1,0 +1,247 @@
+---
+/* Университетская лента логотипов — контейнер как у оффера */
+
+interface UniLogo {
+  src: string;
+  alt?: string;
+}
+
+interface Props {
+  id?: string;
+  title?: string;
+  logos?: UniLogo[]; // основной набор (лента 1)
+  speedSec?: number; // скорость прокрутки (сек)
+  heightPx?: number; // высота зоны (px)
+  pauseOnHover?: boolean; // ставить на паузу при hover/focus
+  className?: string;
+}
+
+const {
+  id = "unis",
+  title = "Выпускники учатся в лучших вузах страны",
+  speedSec = 38,
+  heightPx = 110,
+  pauseOnHover = true,
+  className = "",
+  logos = [
+    { src: "/images/uni/rhtu.webp", alt: "РХТУ им. Д.И. Менделеева" },
+    { src: "/images/uni/Spbgu.webp", alt: "СПбГУ" },
+    { src: "/images/uni/pirigova.webp", alt: "РНИМУ им. Н.И. Пирогова" },
+    { src: "/images/uni/pharm.webp", alt: "СПХФУ (Фармакадемия)" },
+    { src: "/images/uni/pavlova.webp", alt: "ПСПбГМУ им. акад. И.П. Павлова" },
+    { src: "/images/uni/politekh.webp", alt: "СПбПУ Петра Великого" },
+    { src: "/images/uni/VMA.webp", alt: "ВМА имени С.М. Кирова" },
+    { src: "/images/uni/mechnikova.webp", alt: "СЗГМУ им. И.И. Мечникова" },
+    {
+      src: "/images/uni/gubkin.webp",
+      alt: "РГУ нефти и газа им. И.М. Губкина",
+    },
+    { src: "/images/uni/gorniy.webp", alt: "СПГУ (Горный)" },
+    { src: "/images/uni/almazova.webp", alt: "НМИЦ им. В.А. Алмазова" },
+  ],
+} = Astro.props as Props;
+---
+
+<section
+  class={`section unis ${className}`.trim()}
+  id={id}
+  aria-labelledby={`${id}-title`}
+  style={`--unis-height:${heightPx}px; --unis-speed:${speedSec}s;`}
+>
+  <div class="unis-inner">
+    <h2 id={`${id}-title`} class="unis__title">{title}</h2>
+
+    <div
+      class="unis__marquee"
+      role="region"
+      aria-label="Логотипы университетов (автопрокрутка)"
+    >
+      <div class="unis__track" data-pause-on-hover={pauseOnHover ? "1" : "0"}>
+        <!-- Лента 1 -->
+        <ul class="unis__lane" aria-label="Список логотипов">
+          {
+            logos.map((l) => (
+              <li>
+                <img
+                  src={l.src}
+                  alt={l.alt ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))
+          }
+        </ul>
+        <!-- Лента 2 (дубликат для бесшовной прокрутки) -->
+        <ul class="unis__lane" aria-hidden="true">
+          {
+            logos.map((l) => (
+              <li>
+                <img
+                  src={l.src}
+                  alt={l.alt ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ===== Контейнер как у оффера ===== */
+    .unis {
+      font-family: var(--ff);
+    }
+    .unis-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop);
+      box-sizing: border-box;
+    }
+    @media (max-width: 1100px) {
+      .unis-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+    @media (max-width: 600px) {
+      .unis-inner {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+        padding: 0 var(--pad-mobile);
+      }
+    }
+
+    /* ===== Стили компонента ===== */
+    .unis__title {
+      font-size: var(--h2);
+      line-height: 1.25;
+      margin: 0 0 var(--space-16);
+      font-weight: 700;
+      color: var(--black);
+      text-wrap: balance;
+    }
+
+    .unis__marquee {
+      width: 100%;
+      height: var(--unis-height, 110px);
+      overflow: hidden;
+      position: relative;
+      border-radius: var(--radius-24);
+    }
+
+    /* мягкие затухания по краям — цвет берем из фоновых токенов */
+    .unis__marquee::before,
+    .unis__marquee::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      width: 80px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .unis__marquee::before {
+      inset-inline-start: 0;
+      background: linear-gradient(
+        to right,
+        var(--page-bg, var(--bg, #fff)),
+        transparent
+      );
+    }
+    .unis__marquee::after {
+      inset-inline-end: 0;
+      background: linear-gradient(
+        to left,
+        var(--page-bg, var(--bg, #fff)),
+        transparent
+      );
+    }
+
+    .unis__track {
+      display: flex;
+      width: max-content;
+      animation: unis-scroll var(--unis-speed, 38s) linear infinite;
+      will-change: transform;
+    }
+    .unis__lane {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .unis__lane img {
+      height: calc(var(--unis-height, 110px) - 26px);
+      margin: 0 var(--space-24);
+      filter: grayscale(1);
+      opacity: 0.9;
+      transition:
+        transform 0.25s var(--easing),
+        filter 0.25s var(--easing),
+        opacity 0.25s var(--easing);
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+    .unis__lane img:hover {
+      transform: scale(1.08);
+      filter: none;
+      opacity: 1;
+      z-index: 1000;
+    }
+
+    /* Пауза по hover/focus — опционально */
+    [data-pause-on-hover="1"]:hover,
+    [data-pause-on-hover="1"]:focus-within {
+      animation-play-state: paused;
+    }
+
+    @keyframes unis-scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Адаптивы */
+    @media (max-width: 1100px) {
+      .unis__title {
+        text-align: center;
+      }
+      .unis__marquee {
+        --unis-height: 96px;
+      }
+      .unis__lane img {
+        height: calc(var(--unis-height) - 8px) !important;
+        margin: 0 var(--space-20);
+      }
+    }
+    @media (max-width: 600px) {
+      .unis__marquee {
+        --unis-height: 84px;
+      }
+      .unis__lane img {
+        height: calc(var(--unis-height) - 6px) !important;
+        margin: 0 var(--space-16);
+      }
+    }
+
+    /* Доступность: уважать prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      .unis__track {
+        animation: none !important;
+      }
+    }
+  </style>
+</section>

@@ -1,0 +1,519 @@
+---
+/* CourseWhy.astro — секция без своих внешних отступов, ритм даёт .page-stack */
+interface Card {
+  title: string;
+  text: string;
+}
+interface FooterCfg {
+  title: string;
+  text: string;
+  ctaText: string;
+  ctaHref?: string;
+  target?: string;
+  rel?: string;
+}
+interface Img {
+  src: string;
+  alt?: string;
+}
+
+interface Props {
+  id?: string;
+  className?: string; // напр. "somic-font"
+  image?: Img; // плавающая картинка
+  title?: string;
+  topCards?: [Card, Card];
+  bottomCards?: [Card, Card];
+  verticalCard?: Card;
+  footer?: FooterCfg;
+}
+
+const {
+  id = "course-why",
+  className = "somic-font",
+  image = { src: "https://i.ibb.co/Y4DQwZX9/science.png", alt: "Наука" },
+  title = "Курс, который работает <br>и вот почему",
+  topCards = [
+    {
+      title: "Структура",
+      text: "Только нужная для ЕГЭ информация, ничего лишнего на курсе нет!",
+    },
+    {
+      title: "Видео",
+      text: "Никаких пустых разговоров, только короткие ролики с концентратом информации.",
+    },
+  ] as [Card, Card],
+  bottomCards = [
+    {
+      title: "Практика",
+      text: "Больше 1000 заданий пратики. Как развернутые, так и тестовые задания с автопроверкой.",
+    },
+    {
+      title: "График",
+      text: "Расписания нет, курс самостоятельный. Сколько хочешь, столько и занимаешься. Можно начинать когда угодно!",
+    },
+  ] as [Card, Card],
+  verticalCard = {
+    title: "Постоянная поддержка!",
+    text: "Всегда можно задать вопрос в общем чате или на платформе stepik. Мы всегда придем к Вам на помощь и не оставим один на один с проблемами!",
+  },
+  footer = {
+    title: "Полный курс неорганической химии!",
+    text: "В данном курсе есть все необходимое для подготовки с 0. Не нужно ничего искать дополнительно.",
+    ctaText: "Приобрести курс",
+    ctaHref: "#",
+    target: "_self",
+    rel: "noopener",
+  },
+} = Astro.props as Props;
+---
+
+<!-- ВАЖНО: класс 'section' чтобы секция участвовала в глобальном ритме .page-stack -->
+<section
+  class={`section course-block ${className}`}
+  id={id}
+  aria-labelledby={`${id}-title`}
+>
+  <!-- Абсолютная картинка (привязана к секции, без влияния на поток) -->
+  <figure class="floating-image" aria-hidden="true">
+    <img
+      src={image.src}
+      alt={image.alt ?? ""}
+      loading="lazy"
+      decoding="async"
+    />
+  </figure>
+
+  <!-- Внутренний контейнер: центрирует контент и даёт только горизонтальные паддинги -->
+  <div class="course-inner">
+    <header class="course-top">
+      <div class="course-header">
+        <h2 id={`${id}-title`} set:html={title} />
+      </div>
+      <div class="course-cards-top">
+        {
+          topCards.map((c) => (
+            <article class="course-card">
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </header>
+
+    <div class="course-middle">
+      <div class="course-cards-bottom">
+        {
+          bottomCards.map((c) => (
+            <article class="course-card">
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <article class="course-card-vertical">
+        <h3>{verticalCard.title}</h3>
+        <p>{verticalCard.text}</p>
+      </article>
+    </div>
+
+    <footer class="course-footer">
+      <div class="footer-text">
+        <h2>{footer.title}</h2>
+        <p>{footer.text}</p>
+      </div>
+
+      {
+        footer.ctaHref ? (
+          <a
+            href={footer.ctaHref}
+            target={footer.target}
+            rel={footer.rel}
+            class="btn btn--primary"
+          >
+            {footer.ctaText}
+          </a>
+        ) : (
+          <button type="button" class="btn btn--primary">
+            {footer.ctaText}
+          </button>
+        )
+      }
+    </footer>
+  </div>
+
+  <style>
+    /* СЕКЦИЯ: без собственных внешних отступов, центрируется как grid-child .page-stack */
+    .course-block {
+      position: relative;
+      justify-self: center; /* центр в .page-stack (grid) */
+      width: 100%;
+      /* НЕТ margin-top/bottom — вертикальный ритм даёт .page-stack */
+      color: var(--black);
+      font-family: var(--ff);
+      background: none;
+    }
+
+    /* Планшет и мобилка - растягиваем секцию на всю ширину */
+    @media (max-width: 1100px) {
+      .course-block {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+      }
+    }
+
+    /* Внутренний контейнер — центр, боковые паддинги по токенам */
+    .course-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 var(--pad-desktop); /* только горизонтальные */
+      box-sizing: border-box;
+    }
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .course-inner {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
+        max-width: none;
+        padding: 0 var(--page-padding-tablet);
+      }
+
+      .course-content {
+        padding: var(--space-40) var(--page-padding-tablet);
+      }
+
+      .course-title {
+        font-size: var(--h2-size-tablet);
+        margin-bottom: var(--space-24);
+      }
+
+      .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-24);
+      }
+
+      .course-item {
+        padding: var(--space-20);
+      }
+
+      .course-item-title {
+        font-size: var(--h3-size-tablet);
+        margin-bottom: var(--space-12);
+      }
+
+      .course-item-text {
+        font-size: var(--text-size-tablet);
+        line-height: 1.5;
+      }
+    }
+
+    /* Мобилка */
+    @media (max-width: 600px) {
+      .course-inner {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
+        max-width: none;
+        padding: 0 var(--page-padding-mobile);
+      }
+
+      .course-content {
+        padding: var(--space-32) var(--page-padding-mobile);
+      }
+
+      .course-title {
+        font-size: var(--h2-size-mobile);
+        margin-bottom: var(--space-20);
+      }
+
+      .course-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-16);
+      }
+
+      .course-item {
+        padding: var(--space-16);
+      }
+
+      .course-item-title {
+        font-size: var(--h3-size-mobile);
+        margin-bottom: var(--space-8);
+      }
+
+      .course-item-text {
+        font-size: var(--text-size-mobile);
+        line-height: 1.4;
+      }
+    }
+
+    /* Абсолютная картинка поверх секции */
+    .floating-image {
+      position: absolute;
+      top: 65px;
+      left: 42%;
+      transform: translateX(-50%);
+      width: 150px;
+      max-width: 25%;
+      height: auto;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .floating-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    /* ВЕРХНЯЯ ЧАСТЬ */
+    .course-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--card-gap, 20px);
+      margin-bottom: var(--card-gap, 20px);
+    }
+    .course-top > * {
+      min-width: 0;
+    }
+
+    .course-header {
+      flex: 0 0 var(--left-block-width, 640px);
+      max-width: var(--left-block-width, 640px);
+    }
+    .course-header h2 {
+      font: 700 var(--h2) / 1.2 var(--ff);
+      color: #000;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    /* Правая часть сверху */
+    .course-cards-top {
+      display: flex;
+      gap: var(--card-gap, 20px);
+      width: var(--right-block-width, 540px);
+      flex: 0 0 var(--right-block-width, 540px);
+    }
+
+    /* НИЖНЯЯ ЧАСТЬ */
+    .course-middle {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--card-gap, 20px);
+      margin-bottom: var(--card-gap, 20px);
+    }
+    .course-middle > * {
+      min-width: 0;
+    }
+
+    .course-cards-bottom {
+      display: flex;
+      gap: var(--card-gap, 20px);
+      flex: 0 0 var(--left-block-width, 640px);
+      max-width: var(--left-block-width, 640px);
+    }
+
+    /* Карточки */
+    .course-card,
+    .course-card-vertical {
+      background: var(--white);
+      border-radius: var(--radius-24);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+      padding: var(--space-20);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: box-shadow 0.2s var(--easing);
+      overflow: hidden;
+    }
+    .course-card h3,
+    .course-card-vertical h3 {
+      font: 700 var(--h3) / 1.3 var(--ff);
+      margin: 0 0 var(--space-12);
+      color: #000;
+      overflow-wrap: anywhere;
+    }
+    .course-card p,
+    .course-card-vertical p {
+      font: 500 var(--text) / 1.55 var(--ff);
+      color: #222;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    /* Верхние правые карточки */
+    .course-cards-top .course-card {
+      width: calc(
+        (var(--right-block-width, 540px) - var(--card-gap, 20px)) / 2
+      );
+      height: 200px;
+    }
+
+    /* Нижние левые карточки */
+    .course-cards-bottom .course-card {
+      width: calc((var(--left-block-width, 640px) - var(--card-gap, 20px)) / 2);
+      height: 200px;
+    }
+
+    /* Нижний большой блок справа */
+    .course-card-vertical {
+      flex: 0 0 var(--right-block-width, 540px);
+      width: var(--right-block-width, 540px);
+      height: 200px;
+    }
+
+    /* FOOTER */
+    .course-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--blue);
+      border-radius: var(--radius-24);
+      padding: 30px var(--pad-desktop);
+      color: #fff;
+      gap: var(--card-gap, 20px);
+      margin-top: var(--card-gap, 20px);
+      box-shadow: var(--shadow-1);
+      box-sizing: border-box;
+    }
+    .footer-text h2 {
+      font: 700 24px/1.25 var(--ff);
+      margin: 0 0 5px;
+      color: #fff;
+    }
+    .footer-text p {
+      font: 500 var(--text) / 1.55 var(--ff);
+      margin: 0;
+      color: #fff;
+    }
+    .course-footer .btn {
+      white-space: nowrap;
+    }
+
+    /* === Планшеты (до 1100px) — синхронизируем с остальными компонентами === */
+    @media screen and (max-width: 1100px) {
+      .floating-image {
+        display: none !important;
+      }
+
+      .course-inner {
+        max-width: 100%;
+        padding: var(--pad-mobile);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .course-header {
+        grid-column: 1 / -1;
+        margin-bottom: 0;
+      }
+      .course-header h2 {
+        font-size: 28px;
+        line-height: 1.3;
+      }
+
+      /* сетка карточек — как было: contents */
+      .course-top,
+      .course-middle,
+      .course-cards-top,
+      .course-cards-bottom {
+        display: contents;
+      }
+
+      .course-card,
+      .course-card-vertical {
+        width: 100% !important;
+        height: auto !important;
+      }
+      .course-card-vertical {
+        grid-column: 1 / -1;
+      }
+
+      .course-footer {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 20px;
+        border-radius: 16px;
+        margin-top: 0;
+      }
+      .footer-text h2 {
+        font-size: 24px;
+        margin-bottom: 12px;
+      }
+      .footer-text p {
+        font-size: 16px;
+        line-height: 1.55;
+        margin-bottom: 20px;
+      }
+      .course-footer .btn {
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        padding: 16px 24px;
+      }
+    }
+
+    /* === Телефоны (до 600px) — как в исходнике === */
+    @media screen and (max-width: 600px) {
+      .course-inner {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: var(--pad-mobile);
+      }
+
+      .course-card,
+      .course-card-vertical {
+        padding: var(--space-20);
+      }
+      .course-card h3,
+      .course-card-vertical h3 {
+        font-size: 18px;
+      }
+      .course-card p,
+      .course-card-vertical p {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .course-footer {
+        width: 100%;
+        padding: 20px;
+        margin-top: 0;
+      }
+      .footer-text h2 {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+      .footer-text p {
+        font-size: 16px;
+      }
+      .course-footer .btn {
+        font-size: 16px;
+        padding: 14px 20px;
+        width: 100%;
+      }
+    }
+  </style>
+</section>

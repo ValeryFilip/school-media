@@ -1,0 +1,148 @@
+---
+interface Props {
+  imageSrc: string;
+  imageAlt?: string;
+  calendarIconSrc?: string;
+  timeIconSrc?: string;
+  date?: string;
+  timeToRead?: string;
+  title?: string;
+  text?: string;
+  categoryLabel?: string;
+  category?: string;
+  wrapperClass?: string;
+}
+
+const {
+  imageSrc,
+  imageAlt,
+  date,
+  timeToRead,
+  title,
+  text,
+  category,
+  wrapperClass,
+}: Props = Astro.props;
+---
+
+<style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .card__wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .card__wrapper {
+    transition: all 0.3s ease;
+    transform: none;
+  }
+  .card__wrapper:hover {
+    transform: translateY(-5px) rotate(1deg);
+  }
+  .card__top-img {
+    padding-bottom: 16px;
+  }
+  .card__top-img img {
+    max-width: 100%;
+    border-radius: 12px;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+  .card__body {
+    padding: 0px;
+  }
+  .card__body-title {
+    font-size: clamp(18px, 2.5vw, 22px);
+    margin: 0 0 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card__body-text {
+    font-size: clamp(14px, 2.5vw, 16px);
+    color: #666;
+    margin: 0 0 15px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card__body-tags {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+  .card__body-tags-label {
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: #666;
+  }
+  .card__body-tag {
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: rgb(66, 126, 255);
+  }
+  .card__body-tag:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .card__body-meta {
+    display: flex;
+    font-size: clamp(10px, 2.5vw, 12px);
+    color: #666;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .card__body-meta-date,
+  .card__body-meta-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>
+
+<article class="card123 card-vertical">
+  <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
+    <div class="card__top-img">
+      <img src={imageSrc} alt={imageAlt ?? "Card Image"} />
+    </div>
+    <div class="card__body">
+      <div class="card__body-meta">
+        <div class="card__body-meta-date">
+          <img
+            src="/images/technical/calendar.png"
+            alt="Date Icon"
+            width="14"
+            height="14"
+          />
+          {date}
+        </div>
+        <div class="card__body-meta-time">
+          <img
+            src="/images/technical/time.png"
+            alt="Time Icon"
+            width="14"
+            height="14"
+          />
+          {timeToRead}
+        </div>
+      </div>
+      <h3 class="card__body-title">
+        {title}
+      </h3>
+      <p class="card__body-text">
+        {text}
+      </p>
+      <div class="card__body-tags">
+        <div class="card__body-tags-label">Категория:</div>
+        <div class="card__body-tag">{category}</div>
+      </div>
+    </div>
+  </div>
+</article>
