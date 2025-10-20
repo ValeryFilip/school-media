@@ -1,11 +1,11 @@
 ---
 /**
  * ExternalScripts.astro - Загрузчик внешних скриптов
- * 
+ *
  * Загружает критичные внешние скрипты проекта:
  * - popup.js - управление модальными окнами
  * - leadcapture.js - обработка форм лидов и UTM меток
- * 
+ *
  * Все скрипты загружаются асинхронно для оптимизации производительности.
  */
 
@@ -24,9 +24,9 @@ const {
 } = Astro.props;
 ---
 
-<!-- 1. Popup.js - управление модальными окнами -->
-{loadPopup && <script src={popupPath} defer></script>}
+<!-- 1. Popup.js - управление модальными окнами -->{
+  loadPopup && <script src={popupPath} defer />
+}
 
 <!-- 2. LeadCapture.js - обработка форм и UTM меток -->
-{loadLeadCapture && <script src={leadCapturePath} async></script>}
-
+{loadLeadCapture && <script src={leadCapturePath} async />}

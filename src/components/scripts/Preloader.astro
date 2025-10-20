@@ -1,7 +1,7 @@
 ---
 /**
  * Preloader.astro - Компонент прелоадера страницы
- * 
+ *
  * Показывает спиннер при загрузке страницы и скрывает его после полной загрузки.
  * Автоматически скрывается через 5 секунд в любом случае.
  */
@@ -62,7 +62,7 @@
 <script>
   (function () {
     const preloader = document.getElementById("preloader");
-    
+
     const hide = () => {
       preloader?.classList.add("preloader--hidden");
       document.body.classList.remove("is-loading");
@@ -74,7 +74,7 @@
     } else {
       // Скрыть после загрузки
       window.addEventListener("load", hide, { once: true });
-      
+
       // Принудительно скрыть через 5 секунд
       setTimeout(hide, 5000);
     }
@@ -85,4 +85,3 @@
     });
   })();
 </script>
-

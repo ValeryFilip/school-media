@@ -1,6 +1,6 @@
 ---
 // src/pages/search.astro
-import Layout from "../../layouts/Layout.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 
 // 1) Во время сборки собираем все статьи
@@ -17,7 +17,7 @@ const indexData = posts.map((p) => ({
 }));
 ---
 
-<Layout noindex={true}>
+<MainLayout noindex={true}>
   <div class="search-wrap">
     <h1 class="search-title">Поиск по сайту</h1>
 
@@ -372,4 +372,4 @@ const indexData = posts.map((p) => ({
       }
     }
   </style>
-</Layout>
+</MainLayout>

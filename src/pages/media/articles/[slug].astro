@@ -1,6 +1,6 @@
 ---
 // src/pages/articles/[slug].astro
-import Layout from "../../../layouts/Layout.astro";
+import MainLayout from "../../../layouts/MainLayout.astro";
 import ArticleLayout from "../../../layouts/ArticleLayout.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
@@ -44,7 +44,7 @@ const breadcrumbs = [
 ];
 ---
 
-<Layout
+<MainLayout
   title={fm.title}
   description={fm.description}
   image={fm.image}
@@ -59,4 +59,4 @@ const breadcrumbs = [
   <ArticleLayout fm={fm} slug={slug} headings={headings}>
     <Content />
   </ArticleLayout>
-</Layout>
+</MainLayout>

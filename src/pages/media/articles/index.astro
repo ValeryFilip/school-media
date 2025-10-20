@@ -1,6 +1,6 @@
 ---
 // src/pages/articles/index.astro
-import Layout from "../../../layouts/Layout.astro";
+import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
 import Card from "../../../components/Card.astro";
@@ -53,7 +53,7 @@ const currentPageServer = Math.max(
 );
 ---
 
-<Layout
+<MainLayout
   title={pageTitle}
   description={pageDesc}
   url={`${pageUrl}${currentPageServer > 1 ? `?page=${currentPageServer}` : ""}`}
@@ -282,7 +282,7 @@ const currentPageServer = Math.max(
       })();
     })();
   </script>
-</Layout>
+</MainLayout>
 
 <style>
   .sr-only {

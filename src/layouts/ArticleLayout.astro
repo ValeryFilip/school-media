@@ -6,7 +6,7 @@ import Card from "../components/Card.astro";
 import CatBadge from "../components/CatBadge.astro";
 import JsonLd from "../components/JsonLd.astro";
 import { slugify } from "../lib/slugify";
-import "../styles/media.css";
+import "../styles/global_lend.css";
 
 // типы пропсов
 interface Props {
@@ -1355,10 +1355,7 @@ const sameCategoryTop = allArticles
     }
   }
 </style>
-<!-- подключаем стили типографики для текста статьи -->
-<style is:global>
-  @import "../styles/global_media.css";
-</style>
+<!-- Стили типографики для текста статьи подключены через global_lend.css -->
 
 <script is:inline>
   // Прогресс чтения

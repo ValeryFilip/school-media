@@ -1,28 +1,72 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import { slugify } from "../../lib/slugify";
+import { getCategoryHex } from "../../lib/categoryColors";
+
 interface Props {
-  imageSrc: string;
+  // Либо передаем post из коллекции
+  post?: CollectionEntry<"articles">;
+
+  // Либо вручную
+  imageSrc?: string;
   imageAlt?: string;
-  calendarIconSrc?: string;
-  timeIconSrc?: string;
   date?: string;
   timeToRead?: string;
   title?: string;
   text?: string;
-  categoryLabel?: string;
   category?: string;
+  href?: string;
+
+  // Базовый путь для ссылок (например /media)
+  basePath?: string;
   wrapperClass?: string;
 }
 
 const {
-  imageSrc,
-  imageAlt,
-  date,
-  timeToRead,
-  title,
-  text,
-  category,
+  post,
+  imageSrc: manualImageSrc,
+  imageAlt: manualImageAlt,
+  date: manualDate,
+  timeToRead: manualTimeToRead,
+  title: manualTitle,
+  text: manualText,
+  category: manualCategory,
+  href: manualHref,
+  basePath = "/media",
   wrapperClass,
 }: Props = Astro.props;
+
+// Извлекаем данные из post или используем ручные
+const imageSrc =
+  manualImageSrc ?? post?.data.image ?? "/images/placeholder.jpg";
+const imageAlt = manualImageAlt ?? post?.data.title ?? "Card Image";
+const title = manualTitle ?? post?.data.title ?? "";
+const text = manualText ?? post?.data.description ?? "";
+const category = manualCategory ?? post?.data.category ?? "";
+
+// Дата
+let date = manualDate;
+if (!date && post?.data.date) {
+  const d = new Date(post.data.date);
+  date = d.toLocaleDateString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+// Время чтения
+const timeToRead = manualTimeToRead ?? post?.data.readingTime ?? "";
+
+// Ссылка
+let href = manualHref;
+if (!href && post) {
+  const slug = post.slug;
+  href = `${basePath}/articles/${slug}`;
+}
+
+// Цвет категории (только текст, без обводки)
+const categoryColor = category ? getCategoryHex(category) : "#427eff";
 ---
 
 <style>
@@ -70,7 +114,7 @@ const {
     color: #666;
     margin: 0 0 15px 0;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -86,7 +130,7 @@ const {
   }
   .card__body-tag {
     font-size: clamp(10px, 2.5vw, 12px);
-    color: rgb(66, 126, 255);
+    /* Цвет задается через inline style */
   }
   .card__body-tag:hover {
     text-decoration: underline;
@@ -109,40 +153,60 @@ const {
 
 <article class="card123 card-vertical">
   <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
-    <div class="card__top-img">
-      <img src={imageSrc} alt={imageAlt ?? "Card Image"} />
-    </div>
-    <div class="card__body">
-      <div class="card__body-meta">
-        <div class="card__body-meta-date">
-          <img
-            src="/images/technical/calendar.png"
-            alt="Date Icon"
-            width="14"
-            height="14"
-          />
-          {date}
-        </div>
-        <div class="card__body-meta-time">
-          <img
-            src="/images/technical/time.png"
-            alt="Time Icon"
-            width="14"
-            height="14"
-          />
-          {timeToRead}
-        </div>
+    <a
+      href={href}
+      style="text-decoration: none; color: inherit; display: contents;"
+    >
+      <div class="card__top-img">
+        <img src={imageSrc} alt={imageAlt} loading="lazy" />
       </div>
-      <h3 class="card__body-title">
-        {title}
-      </h3>
-      <p class="card__body-text">
-        {text}
-      </p>
-      <div class="card__body-tags">
-        <div class="card__body-tags-label">Категория:</div>
-        <div class="card__body-tag">{category}</div>
+      <div class="card__body">
+        <div class="card__body-meta">
+          {
+            date && (
+              <div class="card__body-meta-date">
+                <img
+                  src="/images/technical/calendar.png"
+                  alt="Date Icon"
+                  width="14"
+                  height="14"
+                />
+                {date}
+              </div>
+            )
+          }
+          {
+            timeToRead && (
+              <div class="card__body-meta-time">
+                <img
+                  src="/images/technical/time.png"
+                  alt="Time Icon"
+                  width="14"
+                  height="14"
+                />
+                {timeToRead}
+              </div>
+            )
+          }
+        </div>
+        <h3 class="card__body-title">{title}</h3>
+        <p class="card__body-text">{text}</p>
+        {
+          category && (
+            <div class="card__body-tags">
+              <div class="card__body-tags-label">Категория:</div>
+              <a
+                href={`${basePath}/category/${slugify(category)}`}
+                class="card__body-tag"
+                style={`color: ${categoryColor};`}
+                onclick="event.stopPropagation();"
+              >
+                {category}
+              </a>
+            </div>
+          )
+        }
       </div>
-    </div>
+    </a>
   </div>
 </article>

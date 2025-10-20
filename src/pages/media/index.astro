@@ -1,118 +1,80 @@
 ---
-// src/pages/index.astro
-import Layout from "../../layouts/Layout.astro";
+// src/pages/media/index.astro
+import MainLayout from "../../layouts/MainLayout.astro";
 import config from "../../config.ts";
-import { getCollection, type CollectionEntry } from "astro:content";
-import { slugify } from "../../lib/slugify.ts";
+import { getCollection } from "astro:content";
 import { getCategoryHex } from "../../lib/categoryColors.ts";
-
-import Card from "../../components/Card.astro";
-import CTAfreeForm1 from "../../components/CTAfreeForm1.astro";
+import { slugify } from "../../lib/slugify.ts";
+import CardNew from "../../components/cards/cardNew.astro";
+import CardHorizontal from "../../components/cards/CardHorizontal.astro";
 import LeadCapture from "../../components/mainpage/LeadCapture.astro";
 import AdFreeBanner from "../../components/mainpage/AdFreeBanner.astro";
 import SideCategoryScroller from "../../components/SideCategoryScroller.astro";
 
-/* ===== данные ===== */
-const posts = await getCollection("articles");
-const toDate = (d: Date | string) => new Date(d);
-const byDateDesc = (a: CollectionEntry<"articles">, b: CollectionEntry<"articles">) =>
-  toDate(b.data.date as any).getTime() - toDate(a.data.date as any).getTime();
-posts.sort(byDateDesc);
+// Получаем все статьи и сортируем по дате (от новых к старым)
+const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
+const allPosts = (await getCollection("articles")).sort(
+  (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime()
+);
 
-/* — секция 1: Новости (580 + 270 + 270) — */
-const newsOnly = posts.filter((p) => String(p.data.category || "").toLowerCase() === "новости");
-const leftCards_1  = newsOnly.slice(0, 3);
-const used_1       = new Set(leftCards_1.map((p) => p.slug));
-const remaining_1  = posts.filter((p) => !used_1.has(p.slug)).sort(byDateDesc);
-const middleCard_1 = remaining_1[0] ?? null;
-const rightCard_1  = remaining_1[1] ?? null;
+// Функция для фильтрации по категории
+const filterByCategory = (category: string) =>
+  allPosts.filter(
+    (p) =>
+      String(p.data.category || "").toLowerCase() === category.toLowerCase()
+  );
 
-
-
-/* — секция 3: Школьникам (580 + 270 + 270) — */
-const CAT_3 = "школьникам";
-const skol = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_3);
-const leftCards_3 = skol.slice(0, 3);
-const used_3 = new Set(leftCards_3.map((p) => p.slug));
-const right2_3 = skol.filter((p) => !used_3.has(p.slug)).slice(0, 2);
-
-/* — секция 4: Родителям — зеркальный блок 3 (270 + 270 + 580) — */
-const CAT_4 = "родителям";
-const rodit = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_4);
-const leftTall_4   = rodit.slice(0, 2);
-const rightHoriz_4 = rodit.slice(2, 5);
-
-/* — секция 5: Поступление — как блок 3 — */
-const CAT_5 = "поступление";
-const enrol = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_5);
-const leftCards_5 = enrol.slice(0, 3);
-const used_5 = new Set(leftCards_5.map((p) => p.slug));
-const right2_5 = enrol.filter((p) => !used_5.has(p.slug)).slice(0, 2);
-
-/* — секция 6: Психология — зеркальный блок 2 (404 + 753) — */
-const CAT_6 = "психология";
-const psych = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_6);
-const leftWide_6  = psych[0] ?? null;
-const rightHoriz_6 = psych.slice(1, 4);
-
-/* — секция 7: Как быть взрослым — как блок 3 — */
-const CAT_7 = "как быть взрослым";
-const adult = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_7);
-const leftCards_7 = adult.slice(0, 3);
-const used_7 = new Set(leftCards_7.map((p) => p.slug));
-const right2_7 = adult.filter((p) => !used_7.has(p.slug)).slice(0, 2);
-
-/* — секция 8: Материалы для ЕГЭ и ОГЭ по химии — зеркальный блок 2 (404 + 753) — */
-const CAT_8 = "материалы по химии";
-const chemistry = posts.filter((p) => String(p.data.category || "").toLowerCase() === CAT_8);
-const leftWide_8  = chemistry[0] ?? null;
-const rightHoriz_8 = chemistry.slice(1, 4);
-
-/* — утилита контраста для кнопок — */
-function textOn(hex: string) {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!m) return "#111";
-  const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
-  const lum = 0.2126*Math.pow(r/255,2.2)+0.7152*Math.pow(g/255,2.2)+0.0722*Math.pow(b/255,2.2);
-  return lum > 0.57 ? "#111111" : "#ffffff";
-}
-
-/* — показываем секцию/категорию только если в ней есть статьи — */
-const HAS = {
-  news: newsOnly.length > 0,
-  school: skol.length > 0,
-  parents: rodit.length > 0,
-  enrol: enrol.length > 0,
-  psych: psych.length > 0,
-  adults: adult.length > 0,
-  chemistry: chemistry.length > 0,
-};
-
-/* — список для бокового скролла (фильтр по HAS) — */
+// Категории
 const categories = [
-  { id: "news",   label: "Новости" },
-  { id: "school", label: "Школьникам" },
-  { id: "parents",label: "Родителям" },
-  { id: "enrol",  label: "Поступление" },
-  { id: "psych",  label: "Психология" },
-  { id: "adults", label: "Как быть взрослым" },
-  { id: "chemistry", label: "Материалы по химии" },
-].filter(c => (HAS as any)[c.id]).map((c) => ({ ...c, color: getCategoryHex(c.label) }));
+  { id: "news", label: "Новости", slug: "новости" },
+  { id: "school", label: "Школьникам", slug: "школьникам" },
+  { id: "parents", label: "Родителям", slug: "родителям" },
+  { id: "enrol", label: "Поступление", slug: "поступление" },
+  { id: "psych", label: "Психология", slug: "психология" },
+  { id: "adults", label: "Как быть взрослым", slug: "как быть взрослым" },
+  { id: "chemistry", label: "Материалы по химии", slug: "материалы по химии" },
+]
+  .filter((cat) => filterByCategory(cat.slug).length > 0)
+  .map((c) => ({ ...c, color: getCategoryHex(c.label) }));
 
-/* — SEO: ItemList для разделов — */
-const site = config.siteUrl.replace(/\/$/,"");
-const urlOf = (p: CollectionEntry<"articles">) => `${site}/media/articles/${p.slug}/`;
-const listLdFor = (name: string, items: CollectionEntry<"articles">[]) => ({
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": name,
-  "itemListElement": items.slice(0, 10).map((p, i) => ({
-    "@type": "ListItem",
-    "position": i + 1,
-    "url": urlOf(p)
-  }))
-});
+// Секция 1: home-grid (1 CardNew + 8 CardHorizontal)
+const section1Posts = filterByCategory("новости");
+const section1Main = section1Posts.slice(0, 1);
+const section1Horizontal = section1Posts.slice(1, 8);
 
+// Секция 2: home-grid-2 (1 CardNew + 8 CardHorizontal)
+const section2Posts = filterByCategory("школьникам");
+const section2Main = section2Posts.slice(0, 1);
+const section2Horizontal = section2Posts.slice(1, 8);
+
+// Секция 3: home-grid-3 (2 CardNew + 6 CardHorizontal)
+const section3Posts = filterByCategory("родителям");
+const section3Vertical = section3Posts.slice(0, 2);
+const section3Horizontal = section3Posts.slice(2, 8);
+
+// Секция 4: home-grid-4 (6 CardNew)
+const section4Posts = filterByCategory("поступление");
+const section4Vertical = section4Posts.slice(0, 8);
+
+// Секция 5: home-grid-5 (2 CardNew + остальные CardNew)
+const section5Posts = filterByCategory("психология");
+const section5Vertical = section5Posts.slice(0, 6);
+
+// Секция 6: Как быть взрослым (6 CardNew)
+const section6Posts = filterByCategory("как быть взрослым");
+const section6Vertical = section6Posts.slice(0, 6);
+
+// Секция 7: Материалы по химии (6 CardNew)
+const section7Posts = filterByCategory("материалы по химии");
+const section7Vertical = section7Posts.slice(0, 6);
+
+// SEO
+const site = config.siteUrl.replace(/\/$/, "");
+const pageTitle = "Главная — ЕГЭХИМ";
+const pageDesc =
+  "Главный экран с подборками статей по химии, подготовке к ЕГЭ и ОГЭ.";
+
+// Пропсы для рекламного баннера
 const adFreeProps = {
   id: "ad-free",
   title: "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
@@ -127,714 +89,552 @@ const adFreeProps = {
 };
 ---
 
-<Layout
-  title="Главная — Мой Блог"
-  description="Главный экран с подборками статей."
+<MainLayout
+  title={pageTitle}
+  description={pageDesc}
   url={`${site}/media/`}
+  seoType="website"
+  showBreadcrumbs={false}
 >
-  <!-- Предзагрузка критических изображений -->
-  <link rel="preload" as="image" href="/images/girl-lead.webp" />
   <SideCategoryScroller categories={categories} />
 
-  {HAS.news && (
-    <section id="news" class="ms" aria-labelledby="ms-left-h">
-      <div class="ms__container">
-        <div class="ms__grid">
-          <section aria-labelledby="ms-left-h">
-            <h2 id="ms-left-h" class="ms__h2">Свежие новости из мира образования</h2>
-            <ul class="ms__leftList ms__leftList--news">
-              {leftCards_1.map((post) => (
-                <li class="ms__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section aria-labelledby="ms-mid-h">
-            <h2 id="ms-mid-h" class="ms__h2">Популярное</h2>
-            <ul class="ms__colList">
-              {middleCard_1 && (
-                <li class="ms__li">
-                  <Card
-                    preset="v-270x492"
-                    post={middleCard_1}
-                    basePath="/media"
-                    clampTitle={4}
-                    clampDesc={2}
-                    show={{ image: true, description: Boolean((middleCard_1.data as any).description), category: true, date: true, readingTime: Boolean((middleCard_1.data as any).readingTime) }}
-                  />
-                </li>
-              )}
-            </ul>
-          </section>
-
-          <section aria-labelledby="ms-right-h">
-            <h2 id="ms-right-h" class="ms__h2">Самое новое</h2>
-            <ul class="ms__colList">
-              {rightCard_1 && (
-                <li class="ms__li">
-                  <Card
-                    preset="v-270x492"
-                    post={rightCard_1}
-                    basePath="/media"
-                    clampTitle={4}
-                    clampDesc={2}
-                    show={{ image: true, description: Boolean((rightCard_1.data as any).description), category: true, date: true, readingTime: Boolean((rightCard_1.data as any).readingTime) }}
-                  />
-                </li>
-              )}
-            </ul>
-          </section>
-
-          <div class="ms__blue" aria-hidden="true"></div>
-        </div>
-      </div>
-
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Новости — подборка на главной", [
-          ...leftCards_1,
-          ...(middleCard_1 ? [middleCard_1] : []),
-          ...(rightCard_1 ? [rightCard_1] : []),
-        ]))}
-      </script>
-    </section>
-  )}
-
-
-  {HAS.school && (
-    <section id="school" class="ms3" aria-labelledby="ms3-h">
-      <div class="ms3__container">
-        <h2 id="ms3-h" class="ms3__h2">Подборка «Школьникам»</h2>
-        <div class="ms3__grid">
-          <div>
-            <ul class="ms3__leftList" aria-label="Статьи для школьников">
-              {leftCards_3.map((post) => (
-                <li class="ms3__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms3__li">
-                <a
-                  class="ms3__more"
-                  href={`category/${slugify(CAT_3)}`}
-                  role="button"
-                  style={`--bg:${getCategoryHex(CAT_3)}; --fg:${textOn(getCategoryHex(CAT_3))};`}
-                >Читать ещё</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            {right2_3[0] && (
-              <Card preset="v-270x613" post={right2_3[0]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_3[0].data as any).description), category: true, date: true, readingTime: Boolean((right2_3[0].data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            {right2_3[1] && (
-              <Card preset="v-270x613" post={right2_3[1]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_3[1].data as any).description), category: true, date: true, readingTime: Boolean((right2_3[1].data as any).readingTime) }} />
-            )}
+  <!-- Секция 1: home-grid -->
+  {
+    section1Main.length > 0 && (
+      <section id="news">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("новости")}`}
+              class="category-title-link"
+            >
+              Новости
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
+        <div class="home-grid container">
+          {section1Main.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+          {section1Horizontal.map((post) => (
+            <CardHorizontal post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("новости")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("новости")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
 
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Школьникам — подборка на главной", [
-          ...right2_3,
-          ...leftCards_3,
-        ]))}
-      </script>
-    </section>
-  )}
-
-  <div class="cta-wrap">
-    <AdFreeBanner {...adFreeProps}/>
-  </div>
-
-  {HAS.parents && (
-    <section id="parents" class="ms4" aria-labelledby="ms4-h">
-      <div class="ms4__container">
-        <h2 id="ms4-h" class="ms4__h2">Подборка «Родителям»</h2>
-        <div class="ms4__grid">
-          <div>
-            {leftTall_4[0] && (
-              <Card preset="v-270x613" post={leftTall_4[0]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((leftTall_4[0].data as any).description), category: true, date: true, readingTime: Boolean((leftTall_4[0].data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            {leftTall_4[1] && (
-              <Card preset="v-270x613" post={leftTall_4[1]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((leftTall_4[1].data as any).description), category: true, date: true, readingTime: Boolean((leftTall_4[1].data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            <ul class="ms4__rightList" aria-label="Статьи для родителей">
-              {rightHoriz_4.map((post) => (
-                <li class="ms4__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms4__li">
-                <a class="ms4__more" href={`category/${slugify(CAT_4)}`} role="button"
-                   style={`--bg:${getCategoryHex(CAT_4)}; --fg:${textOn(getCategoryHex(CAT_4))};`}>Читать ещё</a>
-              </li>
-            </ul>
+  <!-- Секция 2: home-grid-2 -->
+  {
+    section2Main.length > 0 && (
+      <section id="school">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("школьникам")}`}
+              class="category-title-link"
+            >
+              Школьникам
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
-
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Родителям — подборка на главной", [
-          ...leftTall_4,
-          ...rightHoriz_4,
-        ]))}
-      </script>
-    </section>
-  )}
-
-  {HAS.enrol && (
-    <section id="enrol" class="ms5" aria-labelledby="ms5-h">
-      <div class="ms5__container">
-        <h2 id="ms5-h" class="ms5__h2">Подборка «Поступление»</h2>
-        <div class="ms5__grid">
-          <div>
-            <ul class="ms5__leftList" aria-label="Статьи по поступлению">
-              {leftCards_5.map((post) => (
-                <li class="ms5__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms5__li">
-                <a class="ms5__more" href={`category/${slugify(CAT_5)}`} role="button"
-                   style={`--bg:${getCategoryHex(CAT_5)}; --fg:${textOn(getCategoryHex(CAT_5))};`}>Читать ещё</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            {right2_5[0] && (
-              <Card preset="v-270x613" post={right2_5[0]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_5[0].data as any).description), category: true, date: true, readingTime: Boolean((right2_5[0].data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            {right2_5[1] && (
-              <Card preset="v-270x613" post={right2_5[1]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_5[1].data as any).description), category: true, date: true, readingTime: Boolean((right2_5[1].data as any).readingTime) }} />
-            )}
+        <div class="home-grid-2 container">
+          {section2Main.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+          {section2Horizontal.map((post) => (
+            <CardHorizontal post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("школьникам")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("школьникам")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
+  <!-- Рекламный баннер -->
+  <AdFreeBanner {...adFreeProps} />
+  <!-- Секция 3: home-grid-3 -->
+  {
+    section3Vertical.length > 0 && (
+      <section id="parents">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("родителям")}`}
+              class="category-title-link"
+            >
+              Родителям
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
+        <div class="home-grid-3 container">
+          {section3Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+          {section3Horizontal.map((post) => (
+            <CardHorizontal post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("родителям")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("родителям")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
 
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Поступление — подборка на главной", [
-          ...right2_5,
-          ...leftCards_5,
-        ]))}
-      </script>
-    </section>
-  )}
-
-  <div class="cta-wrap">
-    <LeadCapture 
-      formAction="https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec"
-      utmSource="media-home"
-      utmMedium="form"
-      utmCampaign="lead"
-    />
-  </div>
-
-  {HAS.psych && (
-    <section id="psych" class="ms6" aria-labelledby="ms6-h">
-      <div class="ms6__container">
-        <h2 id="ms6-h" class="ms6__h2">Подборка «Психология»</h2>
-        <div class="ms6__grid">
-          <div>
-            {leftWide_6 && (
-              <Card preset="v-404x613" post={leftWide_6} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((leftWide_6.data as any).description), category: true, date: true, readingTime: Boolean((leftWide_6.data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            <ul class="ms6__rightList" aria-label="Статьи по психологии">
-              {rightHoriz_6.map((post) => (
-                <li class="ms6__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms6__li">
-                <a class="ms6__more" href={`category/${slugify(CAT_6)}`} role="button"
-                   style={`--bg:${getCategoryHex(CAT_6)}; --fg:${textOn(getCategoryHex(CAT_6))};`}>Читать ещё</a>
-              </li>
-            </ul>
+  <!-- Секция 4: home-grid-4 -->
+  {
+    section4Vertical.length > 0 && (
+      <section id="enrol">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("поступление")}`}
+              class="category-title-link"
+            >
+              Поступление
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
+        <div class="home-grid-4 container">
+          {section4Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("поступление")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("поступление")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
 
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Психология — подборка на главной", [
-          ...(leftWide_6 ? [leftWide_6] : []),
-          ...rightHoriz_6,
-        ]))}
-      </script>
-    </section>
-  )}
-
-  {HAS.chemistry && (
-    <section id="chemistry" class="ms8" aria-labelledby="ms8-h">
-      <div class="ms8__container">
-        <h2 id="ms8-h" class="ms8__h2">Подборка «Материалы по химии»</h2>
-        <div class="ms8__grid">
-          <div>
-            {leftWide_8 && (
-              <Card preset="v-404x613" post={leftWide_8} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((leftWide_8.data as any).description), category: true, date: true, readingTime: Boolean((leftWide_8.data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            <ul class="ms8__rightList" aria-label="Статьи по химии">
-              {rightHoriz_8.map((post) => (
-                <li class="ms8__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms8__li">
-                <a class="ms8__more" href={`category/${slugify(CAT_8)}`} role="button"
-                   style={`--bg:${getCategoryHex(CAT_8)}; --fg:${textOn(getCategoryHex(CAT_8))};`}>Читать ещё</a>
-              </li>
-            </ul>
+  <!-- Секция 5: home-grid-5 -->
+  {
+    section5Vertical.length > 0 && (
+      <section id="psych">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("психология")}`}
+              class="category-title-link"
+            >
+              Психология
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
+        <div class="home-grid-5 container">
+          {section5Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("психология")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("психология")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
 
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Материалы по химии — подборка на главной", [
-          ...(leftWide_8 ? [leftWide_8] : []),
-          ...rightHoriz_8,
-        ]))}
-      </script>
-    </section>
-  )}
-
-  {HAS.adults && (
-    <section id="adults" class="ms7" aria-labelledby="ms7-h">
-      <div class="ms7__container">
-        <h2 id="ms7-h" class="ms7__h2">Подборка «Как быть взрослым»</h2>
-        <div class="ms7__grid">
-          <div>
-            <ul class="ms7__leftList" aria-label="Статьи: как быть взрослым">
-              {leftCards_7.map((post) => (
-                <li class="ms7__li">
-                  <Card
-                    preset="h-compact-150"
-                    post={post}
-                    basePath="/media"
-                    clampTitle={2}
-                    clampDesc={2}
-                    show={{
-                      image: true,
-                      description: Boolean((post.data as any).description),
-                      category: true,
-                      date: true,
-                      readingTime: Boolean((post.data as any).readingTime),
-                    }}
-                  />
-                </li>
-              ))}
-              <li class="ms7__li">
-                <a class="ms7__more" href={`category/${slugify(CAT_7)}`} role="button"
-                   style={`--bg:${getCategoryHex(CAT_7)}; --fg:${textOn(getCategoryHex(CAT_7))};`}>Читать ещё</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            {right2_7[0] && (
-              <Card preset="v-270x613" post={right2_7[0]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_7[0].data as any).description), category: true, date: true, readingTime: Boolean((right2_7[0].data as any).readingTime) }} />
-            )}
-          </div>
-          <div>
-            {right2_7[1] && (
-              <Card preset="v-270x613" post={right2_7[1]} basePath="/media" clampTitle={4} clampDesc={2}
-                show={{ image: true, description: Boolean((right2_7[1].data as any).description), category: true, date: true, readingTime: Boolean((right2_7[1].data as any).readingTime) }} />
-            )}
+  <!-- Секция 6: Как быть взрослым -->
+  {
+    section6Vertical.length > 0 && (
+      <section id="adults">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("как быть взрослым")}`}
+              class="category-title-link"
+            >
+              Как быть взрослым
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
           </div>
         </div>
-      </div>
+        <div class="home-grid-5 container">
+          {section6Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("как быть взрослым")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("как быть взрослым")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
 
-      <script type="application/ld+json">
-        {JSON.stringify(listLdFor("Как быть взрослым — подборка на главной", [
-          ...right2_7,
-          ...leftCards_7,
-        ]))}
-      </script>
-    </section>
-  )}
-</Layout>
+  <!-- Секция 7: Материалы по химии -->
+  {
+    section7Vertical.length > 0 && (
+      <section id="chemistry">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("материалы по химии")}`}
+              class="category-title-link"
+            >
+              Материалы по химии
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
+          </div>
+        </div>
+        <div class="home-grid-5 container">
+          {section7Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+        </div>
+        <div class="container">
+          <a
+            href={`/media/category/${slugify("материалы по химии")}`}
+            class="category-button"
+            style={`background-color: ${getCategoryHex("материалы по химии")};`}
+          >
+            Посмотреть все
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Форма лид-захвата -->
+  <LeadCapture
+    id="lead-capture-form"
+    title="Запишись на бесплатную консультацию по подготовке к ЕГЭ"
+    subtitle="Узнай, как эффективно подготовиться к экзамену и получить высокий балл"
+    image={{
+      src: "/images/girl-lead.webp",
+      alt: "Студентка с книгами",
+      width: 400,
+      height: 500,
+    }}
+  />
+</MainLayout>
+
 <style>
-section, .cta-wrap { margin-bottom: 100px; }
-.content > :is(section, .cta-wrap):last-child { margin-bottom: 0; }
-
-#news, #school, #parents, #enrol, #psych, #adults, #chemistry { scroll-margin-top: 84px; }
-
-/* ====== ДЕСКТОП (фикс, как было) ====== */
-.ms { padding-top: 28px; padding-bottom: 0; }
-.ms__container { 
-  max-width: var(--container, var(--page-max-width, 1300px)); 
-  margin: 0 auto; 
-  padding: 0 var(--pad-desktop, var(--page-padding, 50px));
-  box-sizing: border-box;
-}
-.ms__grid { display: grid; grid-template-columns: 580px 270px 270px; column-gap: 40px; align-items: start; }
-.ms__h2 { margin: 0 0 30px; font: 700 26px/1.2 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#222; letter-spacing: .2px; }
-.ms__leftList, .ms__colList { list-style: none; margin:0; padding:0; display:grid; gap:19px; }
-.ms__leftList--news { gap: 21px; }
-.ms__li { margin:0; padding:0; }
-
-.ms__blue {
-  grid-column: 1 / -1; margin-top: 0; height: 116px; border-radius: 24px;
-  background: linear-gradient(90deg, #1d4eff 0%, #2c69ff 35%, #4fa8ff 100%);
-  box-shadow: 0 10px 30px rgba(0, 80, 255, .25) inset, 0 6px 16px rgba(0,0,0,.05);
-}
-
-.ms3, .ms4, .ms5, .ms6, .ms7, .ms8 { padding-top:0; padding-bottom:0; }
-.ms3__container, .ms4__container, .ms5__container, .ms6__container, .ms7__container, .ms8__container { 
-  max-width: var(--container, var(--page-max-width, 1300px)); 
-  margin:0 auto; 
-  padding: 0 var(--pad-desktop, var(--page-padding, 50px));
-  box-sizing: border-box;
-}
-
-/* Заголовки секций */
-.ms3__h2, .ms4__h2, .ms5__h2, .ms6__h2, .ms7__h2, .ms8__h2 {
-  margin: 0 0 30px;
-  font: 700 26px/1.2 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: #222;
-  letter-spacing: .2px;
-}
-
-
-.ms3__grid, .ms5__grid, .ms7__grid { display:grid; grid-template-columns: 580px 270px 270px; column-gap:40px; align-items:start; }
-.ms3__leftList, .ms5__leftList, .ms7__leftList { list-style:none; margin:0; padding:0; display:grid; gap:21px; }
-.ms3__li, .ms5__li, .ms7__li { margin:0; padding:0; }
-.ms3__more, .ms5__more, .ms7__more {
-  display:grid; place-items:center; width:100%;
-  height: calc(613px - (3 * 150px + 3 * 21px));
-  border-radius:24px; background: var(--bg,#fff); color: var(--fg,#111);
-  font: 700 28px/1 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  text-decoration:none; transition: transform .18s ease; border:none;
-}
-.ms3__more:hover, .ms5__more:hover, .ms7__more:hover { transform: translateY(-4px); }
-
-.ms4__grid { display:grid; grid-template-columns: 270px 270px 580px; column-gap:40px; align-items:start; }
-.ms4__rightList { list-style:none; margin:0; padding:0; display:grid; gap:21px; }
-.ms4__li { margin:0; padding:0; }
-.ms4__more {
-  display:grid; place-items:center; width:100%;
-  height: calc(613px - (3 * 150px + 3 * 21px));
-  border-radius:24px; background: var(--bg,#fff); color: var(--fg,#111);
-  font: 700 28px/1 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  text-decoration:none; transition: transform .18s ease; border:none;
-}
-.ms4__more:hover { transform: translateY(-4px); }
-
-.ms6__grid { display:grid; grid-template-columns: 404px 753px; column-gap:43px; align-items:start; }
-.ms6__rightList { list-style:none; margin:0; padding:0; display:grid; gap:21px; }
-.ms6__li { margin:0; padding:0; }
-.ms6__more {
-  display:grid; place-items:center; width:100%;
-  height: calc(613px - (3 * 150px + 3 * 21px));
-  border-radius:24px; background: var(--bg,#fff); color: var(--fg,#111);
-  font: 700 28px/1 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  text-decoration:none; transition: transform .18s ease; border:none;
-}
-.ms6__more:hover { transform: translateY(-4px); }
-
-.ms8__grid { display:grid; grid-template-columns: 404px 753px; column-gap:43px; align-items:start; }
-.ms8__rightList { list-style:none; margin:0; padding:0; display:grid; gap:21px; }
-.ms8__li { margin:0; padding:0; }
-.ms8__more {
-  display:grid; place-items:center; width:100%;
-  height: calc(613px - (3 * 150px + 3 * 21px));
-  border-radius:24px; background: var(--bg,#fff); color: var(--fg,#111);
-  font: 700 28px/1 "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  text-decoration:none; transition: transform .18s ease; border:none;
-}
-.ms8__more:hover { transform: translateY(-4px); }
-
-
-/* ====== ПЛАНШЕТ 601–1100px ====== */
-@media (min-width:601px) and (max-width:1100px){
-  /* Контейнеры растягиваются на всю ширину - как у LeadCapture/AdFreeBanner */
-  .ms__container, .ms3__container, .ms4__container, .ms5__container, .ms6__container, .ms7__container, .ms8__container {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    max-width: none;
-    padding: 0 var(--pad-mobile, 20px);
+  .grid1__title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+    gap: 30px;
   }
-  
-  /* общая логика: один столбец — ТОЛЬКО для блоков без пары вертикалок */
-  .ms__grid { grid-template-columns: 1fr; }
-  .ms6__grid, .ms8__grid { grid-template-columns: 1fr; row-gap: 28px; }
-  
-  /* Секция 6 и 8: большая карточка сверху, мелкие снизу в 2 колонки */
-  .ms6__rightList, .ms8__rightList { gap: 16px; }
-
-  /* для блоков с 2 вертикальными карточками — держим 2 колонки */
-  .ms3__grid, .ms4__grid, .ms5__grid, .ms7__grid {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 24px;
-    row-gap: 28px;
+  .grid1__title h2 {
+    font-weight: 700;
+    margin: 0;
   }
 
-  /* === Блок 3/5/7: структура
-     child(2) и child(3) — вертикальные карточки → остаются сверху в два столбца
-     child(1) — список горизонтальных → уходит НА СЛЕДУЮЩУЮ СТРОКУ и на всю ширину */
-  .ms3__grid > div:nth-child(2),
-  .ms3__grid > div:nth-child(3),
-  .ms5__grid > div:nth-child(2),
-  .ms5__grid > div:nth-child(3),
-  .ms7__grid > div:nth-child(2),
-  .ms7__grid > div:nth-child(3){
-    order: 0;              /* переопределяем любые прежние order:-1 */
-  }
-  .ms3__grid > div:first-child,
-  .ms5__grid > div:first-child,
-  .ms7__grid > div:first-child{
-    order: 1;
-    grid-column: 1 / -1;  /* горизонтальный список + кнопка на всю ширину */
+  /* Стили для кликабельных заголовков категорий */
+  .category-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      opacity 0.2s ease;
+    display: inline-block;
+    position: relative;
   }
 
-  /* === Блок 4: структура
-     child(1) и child(2) — вертикальные → остаются сверху в два столбца
-     child(3) — список горизонтальных → вниз, на всю ширину */
-  .ms4__grid > div:nth-child(1),
-  .ms4__grid > div:nth-child(2){
-    order: 0;
-  }
-  .ms4__grid > div:nth-child(3){
-    order: 1;
-    grid-column: 1 / -1;
+  .category-title-link:hover {
+    opacity: 0.7;
   }
 
-  /* большие CTA-кнопки в колонках — больше НЕ фиксируем по высоте */
-  .ms3__more, .ms4__more, .ms5__more, .ms6__more, .ms7__more, .ms8__more{
-    height: auto;
-    min-height: 56px;
-    padding: 16px 18px;
-    border-radius: 16px;
+  .category-title-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: width 0.3s ease;
   }
 
-  /* делаем вертикальные карточки «резиновыми» (Card.astro пресеты) */
-  :global(.preset-v-270x613),
-  :global(.preset-v-404x613),
-  :global(.preset-v-270x492){
-    height: auto !important;
-    width: 100% !important;
-    min-height: 0;
-  }
-  :global(.preset-v-270x613 .ucard__media),
-  :global(.preset-v-404x613 .ucard__media),
-  :global(.preset-v-270x492 .ucard__media){
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1; /* чтобы картинка не «плыла» */
+  .category-title-link:hover::after {
+    width: 100%;
   }
 
-  /* списки делаем чуть плотнее на планшете */
-  .ms3__leftList,
-  .ms4__rightList,
-  .ms5__leftList,
-  .ms6__rightList,
-  .ms7__leftList,
-  .ms8__rightList{ gap: 16px; }
-
-  /* заголовки секций на планшете */
-  .ms__h2, .ms3__h2, .ms4__h2, .ms5__h2, .ms6__h2, .ms7__h2, .ms8__h2 {
-    font-size: 22px;
-    margin-bottom: 24px;
+  .arrow {
+    transition: all 0.3s ease;
+    transform: rotate(270deg);
   }
-  
-  /* Кнопки "Читать ещё" на планшете */
-  .ms3__more, .ms4__more, .ms5__more, .ms6__more, .ms7__more, .ms8__more {
-    font-size: 24px;
-    padding: 12px 16px;
-    height: 60px;
+  .grid1__title:hover .arrow {
+    transform: rotate(225deg);
   }
-}
-
-/* ====== МОБИЛЬНЫЙ ≤600px ====== */
-@media (max-width:600px){
-  .ms__container, .ms2__container, .ms3__container, .ms4__container, .ms5__container, .ms6__container, .ms7__container, .ms8__container{ 
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    max-width: none;
-    padding: 0 var(--pad-mobile, 20px); /* как у LeadCapture/AdFreeBanner */
+  :global(.home-grid) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
   }
 
-  /* Все сетки становятся одной колонкой */
-  .ms__grid, .ms3__grid, .ms4__grid, .ms5__grid, .ms6__grid, .ms7__grid, .ms8__grid {
-    grid-template-columns: 1fr;
-    row-gap: 16px;
+  /* первая карточка тянется на 2 колонки */
+  :global(.home-grid > *:nth-child(1)) {
+    grid-row: 1 / span 4;
+    grid-column: 2 / span 2;
+  }
+  @media (max-width: 1000px) {
+    :global(.home-grid) {
+      grid-template-columns: 1fr 1fr;
+    }
+    :global(.home-grid > *:nth-child(1)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
+  }
+  @media (max-width: 600px) {
+    :global(.home-grid) {
+      grid-template-columns: 1fr;
+    }
+    :global(.home-grid > *:nth-child(1)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
   }
 
-  .ms__colList, .ms__leftList,
- .ms4__rightList,
-  .ms3__leftList, .ms5__leftList, .ms7__leftList,
-  .ms6__rightList, .ms8__rightList{ grid-template-columns: 1fr; }
-  
-  /* Секция 6 и 8: на мобилке все в одну колонку */
- .ms6__rightList, .ms8__rightList { 
-    grid-template-columns: 1fr; 
-    gap: 16px; 
+  :global(.home-grid-2) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+  }
+  :global(.home-grid-2 > *:nth-child(1)) {
+    grid-row: 1 / span 4;
+    grid-column: 1 / span 2;
+  }
+  @media (max-width: 1000px) {
+    :global(.home-grid-2) {
+      grid-template-columns: 1fr 1fr;
+    }
+    :global(.home-grid-2 > *:nth-child(1)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
+  }
+  @media (max-width: 600px) {
+    :global(.home-grid-2) {
+      grid-template-columns: 1fr;
+    }
+    :global(.home-grid-2 > *:nth-child(1)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
   }
 
-  /* вертикалки — полноширинные и авто-высоты, как на планшете */
-  :global(.preset-v-270x613),
-  :global(.preset-v-404x613),
-  :global(.preset-v-270x492){
-    height: auto !important;
-    width: 100% !important;
+  :global(.home-grid-3) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+  }
+  :global(.home-grid-3 > :nth-child(1)) {
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 1;
+  }
+  :global(.home-grid-3 > :nth-child(2)) {
+    grid-row: 1 / span 3;
+    grid-column: 2 / span 1;
   }
 
-  /* списки делаем плотнее на мобилке */
-  .ms__colList, .ms__leftList,
- .ms4__rightList,
-  .ms3__leftList, .ms5__leftList, .ms7__leftList,
-  .ms6__rightList, .ms8__rightList{ gap: 14px; }
-
-  /* синяя плашка компактнее */
-  .ms__blue{ height: 84px; }
-
-  .ms__h2, .ms3__h2, .ms4__h2, .ms5__h2, .ms6__h2, .ms7__h2, .ms8__h2 {
-    font-size: 21px;
-    margin-bottom: 22px;
+  @media (max-width: 1000px) {
+    :global(.home-grid-3) {
+      grid-template-columns: 1fr 1fr;
+    }
+    :global(.home-grid-3 > *:nth-child(1)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
+    :global(.home-grid-3 > *:nth-child(2)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
   }
-  
-  .ms3__more, .ms4__more, .ms5__more, .ms6__more, .ms7__more, .ms8__more {
-    font-size: 22px;
-    padding: 10px 15px;
-    height: 50px;
+  @media (max-width: 600px) {
+    :global(.home-grid-3) {
+      grid-template-columns: 1fr;
+    }
+    :global(.home-grid-3 > *:nth-child(1)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
+    :global(.home-grid-3 > *:nth-child(2)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
   }
-}
-
-/* Дополнительные стили для мобильных устройств уже включены в основной блок @media (max-width:600px) выше */
-
-
-/* ====== ОЧЕНЬ УЗКИЕ ЭКРАНЫ ≤420px ====== */
-@media (max-width: 420px) {
-  .ms__container, .ms2__container, .ms3__container, .ms4__container, .ms5__container, .ms6__container, .ms7__container, .ms8__container{ 
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    max-width: none;
-    padding: 0 var(--pad-mobile, 20px); /* как у LeadCapture/AdFreeBanner */
+  :global(.home-grid-4) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
   }
-
-  /* Заголовки секций на очень узких экранах */
-  .ms__h2, .ms3__h2, .ms4__h2, .ms5__h2, .ms6__h2, .ms7__h2, .ms8__h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-  
-  /* Кнопки "Читать ещё" на очень узких экранах */
-  .ms3__more, .ms4__more, .ms5__more, .ms6__more, .ms7__more, .ms8__more {
+  .category-button {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
     font-size: 16px;
-    padding: 5px 12px;
-    height: 32px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+      opacity 0.2s ease,
+      transform 0.15s ease;
+    margin-top: 30px;
+  }
+  .category-button:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+  .category-button:active {
+    transform: translateY(0);
+  }
+  @media (max-width: 1000px) {
+    :global(.home-grid-4) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    :global(.home-grid-4) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  /* Уменьшаем отступы между карточками */
-  .ms__colList, .ms__leftList,
- .ms4__rightList,
-  .ms3__leftList, .ms5__leftList, .ms7__leftList,
-  .ms6__rightList, .ms8__rightList{ gap: 12px; }
+  :global(.home-grid-5) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
+  }
+  :global(.home-grid-5 > :nth-child(1)) {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 2;
+  }
+  :global(.home-grid-5 > :nth-child(2)) {
+    grid-row: 1 / span 1;
+    grid-column: 3 / span 2;
+  }
 
-  /* Синяя плашка еще компактнее */
-  .ms__blue{ height: 70px; }
-}
-
-
+  @media (max-width: 1000px) {
+    :global(.home-grid-5) {
+      grid-template-columns: 1fr 1fr;
+    }
+    :global(.home-grid-5 > *:nth-child(1)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
+    :global(.home-grid-5 > *:nth-child(2)) {
+      grid-row: 1 / span 3;
+      grid-column: 1 / span 1;
+    }
+  }
+  @media (max-width: 600px) {
+    :global(.home-grid-5) {
+      grid-template-columns: 1fr;
+    }
+    :global(.home-grid-5 > *:nth-child(1)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
+    :global(.home-grid-5 > *:nth-child(2)) {
+      grid-row: 1 / span 1;
+      grid-column: 1 / span 1;
+    }
+  }
 </style>
-
