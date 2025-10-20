@@ -32,7 +32,7 @@ const inMedia = Astro.url.pathname.startsWith("/media");
  *  - хост равен config.siteUrl (часто это и есть example.com в dev).
  */
 function isInternalAbsolute(u: URL): boolean {
-  return u.host === siteHost || (configHost && u.host === configHost);
+  return u.host === siteHost || Boolean(configHost && u.host === configHost);
 }
 
 /** Нормализация href в АБСОЛЮТНЫЙ URL на текущем домене (+/media при необходимости) */
@@ -64,7 +64,8 @@ function normalizeHref(h?: string): string | undefined {
 }
 
 /* ===== Рендер ===== */
-const rendered: Crumb[] = [{ name: "home-icon", href: `${siteOrigin}/` }, ...items];
+const homeHref = inMedia ? `${siteOrigin}/media/` : `${siteOrigin}/`;
+const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
 
 const breadcrumbsLd = {
   "@context": "https://schema.org",
