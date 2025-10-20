@@ -1,11 +1,9 @@
 ---
-import "../styles/global_media.css";
 import "../styles/global_lend.css";
 
 import config from "../config.ts";
 import PopupForm from "../components/PopupForm.astro";
-import Menu from "../components/Menu.astro";
-import Footer from "../components/Footer.astro";
+import UnifiedMenu from "../components/UnifiedMenu.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import Seo from "../components/Seo.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
@@ -422,11 +420,14 @@ if ((!categories || categories.length === 0) && autoCategories) {
 
     <a class="skip-link" href="#main">К содержимому</a>
 
-    <!-- Меню медиа-раздела (как было) -->
-    <Menu
+    <!-- Меню медиа-раздела (UnifiedMenu) -->
+    <UnifiedMenu
+      variant="media"
       categories={menuCategories}
       logoSrc={logoSrc}
       ctaHref={ctaHrefNormalized}
+      showSearch={true}
+      searchAction="/media/search"
     />
 
     {

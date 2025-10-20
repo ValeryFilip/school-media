@@ -1,0 +1,1163 @@
+---
+import config from "../config.ts";
+import { slugify } from "../lib/slugify";
+import { getCategoryHex } from "../lib/categoryColors";
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface DropdownItem {
+  label: string;
+  href: string;
+  sub?: string;
+}
+
+interface ContactItem {
+  label: string;
+  href: string;
+  imgSrc: string;
+  alt?: string;
+}
+
+interface Props {
+  // Вариант меню
+  variant?: "media" | "landing";
+
+  // Логотип
+  logoSrc?: string;
+  logoAlt?: string;
+  logoText?: string;
+  logoHref?: string;
+
+  // Навигация
+  navItems?: NavItem[];
+  dropdownLabel?: string;
+  dropdownItems?: DropdownItem[];
+
+  // CTA кнопка
+  ctaText?: string;
+  ctaHref?: string;
+
+  // Медиа-специфика
+  categories?: string[];
+  showSearch?: boolean;
+  searchAction?: string;
+
+  // Лендинг-специфика
+  contacts?: ContactItem[];
+  contactsLabel?: string;
+
+  // Адаптив
+  breakpoint?: number;
+}
+
+const {
+  variant = "media",
+  logoSrc,
+  logoAlt,
+  logoText = config.siteName,
+  logoHref = "/",
+  navItems = [],
+  dropdownLabel = "Курсы",
+  dropdownItems = [],
+  ctaText = "Бесплатные курсы ЕГЭ",
+  ctaHref = "/courses/free",
+  categories = [],
+  showSearch = variant === "media",
+  searchAction = "/media/search",
+  contacts = [],
+  contactsLabel = "Напишите нам",
+  breakpoint = 1100,
+} = Astro.props;
+
+const isMedia = variant === "media";
+const isLanding = variant === "landing";
+
+// Проверка внешней ссылки
+const isExternal = (href: string) => /^(https?:)?\/\//i.test(href);
+
+// Контраст текста на цветном фоне
+function textOn(hex: string) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!m) return "#111";
+  const r = parseInt(m[1], 16),
+    g = parseInt(m[2], 16),
+    b = parseInt(m[3], 16);
+  const lum =
+    0.2126 * Math.pow(r / 255, 2.2) +
+    0.7152 * Math.pow(g / 255, 2.2) +
+    0.0722 * Math.pow(b / 255, 2.2);
+  return lum > 0.57 ? "#111111" : "#ffffff";
+}
+---
+
+<header
+  class={`unified-menu ${isMedia ? "variant-media" : "variant-landing"}`}
+  role="banner"
+  style={`--breakpoint: ${breakpoint}px;`}
+>
+  <div class="menu-container">
+    <!-- Логотип -->
+    <a href={logoHref} class="logo" aria-label={logoAlt || logoText}>
+      {
+        logoSrc ? (
+          <img
+            src={logoSrc}
+            alt={logoAlt || logoText}
+            width="50"
+            height="50"
+            loading="eager"
+            decoding="async"
+          />
+        ) : (
+          <span class="logo-text">{logoText}</span>
+        )
+      }
+    </a>
+
+    <!-- Desktop навигация -->
+    <nav class="nav" role="navigation" aria-label="Основная навигация">
+      <ul class="nav-list" role="menubar">
+        <!-- CTA первой (для медиа) -->
+        {
+          isMedia && (
+            <li class="nav-cta">
+              <a
+                class="btn-cta"
+                href={ctaHref}
+                target={isExternal(ctaHref) ? "_blank" : undefined}
+                rel={isExternal(ctaHref) ? "noopener noreferrer" : undefined}
+              >
+                {ctaText}
+              </a>
+            </li>
+          )
+        }
+
+        <!-- Обычные пункты -->
+        {
+          navItems.map((item) => (
+            <li role="none">
+              <a
+                role="menuitem"
+                class="nav-link"
+                href={item.href}
+                target={isExternal(item.href) ? "_blank" : undefined}
+                rel={isExternal(item.href) ? "noopener noreferrer" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+
+        <!-- Dropdown (если есть) -->
+        {
+          dropdownItems.length > 0 && (
+            <li class="nav-dropdown" data-dropdown role="none">
+              <button
+                type="button"
+                class="nav-link nav-btn"
+                id="dropdown-btn"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="dropdown-menu"
+              >
+                {dropdownLabel} <span class="caret" aria-hidden="true" />
+              </button>
+
+              <div id="dropdown-menu" class="dropdown-panel" role="menu" hidden>
+                <ul class="dropdown-list" role="none">
+                  {dropdownItems.map((item) => (
+                    <li role="none">
+                      <a role="menuitem" class="dropdown-link" href={item.href}>
+                        <span class="dropdown-title">{item.label}</span>
+                        {item.sub && (
+                          <span class="dropdown-sub">{item.sub}</span>
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          )
+        }
+      </ul>
+    </nav>
+
+    <!-- Поиск (только медиа, desktop) -->
+    {
+      showSearch && (
+        <form
+          action={searchAction}
+          method="get"
+          class="search"
+          role="search"
+          aria-label="Поиск по сайту"
+        >
+          <label class="visually-hidden" for="search-input">
+            Поиск по сайту
+          </label>
+          <input
+            id="search-input"
+            type="search"
+            name="q"
+            placeholder="Поиск…"
+            aria-label="Поиск по сайту"
+            required
+          />
+          <button type="submit" aria-label="Искать">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+      )
+    }
+
+    <!-- Соцсети (только лендинг, desktop) -->
+    {
+      contacts.length > 0 && (
+        <div class="contacts">
+          <div class="contacts-label">{contactsLabel}</div>
+          <div class="socials" aria-label="Соцсети">
+            {contacts.map((c) => (
+              <a
+                class="social-link"
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.label}
+              >
+                <img
+                  src={c.imgSrc}
+                  alt={c.alt ?? c.label}
+                  width="20"
+                  height="20"
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <!-- CTA кнопка (для лендинга) -->
+    {
+      isLanding && (
+        <a
+          class="btn-cta"
+          href={ctaHref}
+          target={isExternal(ctaHref) ? "_blank" : undefined}
+          rel={isExternal(ctaHref) ? "noopener noreferrer" : undefined}
+        >
+          {ctaText}
+        </a>
+      )
+    }
+
+    <!-- Бургер (mobile) -->
+    <button
+      id="menu-toggle"
+      class="burger"
+      aria-label="Открыть меню"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path
+          d="M4 6h16M4 12h16M4 18h16"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Категории (только медиа, desktop) -->
+{
+  isMedia && categories.length > 0 && (
+    <div class="categories-wrap" aria-label="Категории">
+      <div class="categories-container">
+        <div class="categories-row" role="list">
+          {categories.map((cat) => {
+            const bg = getCategoryHex(cat);
+            const fg = textOn(bg);
+            return (
+              <a
+                role="listitem"
+                class="category-chip"
+                href={`/media/category/${slugify(cat)}`}
+                style={`--hover-bg:${bg}; --hover-fg:${fg};`}
+                aria-label={`Категория: ${cat}`}
+              >
+                {cat}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<!-- Мобильное меню -->
+<div id="mobile-backdrop" class="mobile-backdrop" hidden></div>
+<aside
+  id="mobile-menu"
+  class="mobile-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Мобильное меню"
+  hidden
+>
+  <div class="mobile-head">
+    <span class="mobile-brand">{logoText}</span>
+    <button id="menu-close" class="mobile-close" aria-label="Закрыть меню">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path
+          d="M6 6l12 12M18 6l-12 12"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="mobile-body">
+    <!-- Поиск (mobile) -->
+    {
+      showSearch && (
+        <form
+          action={searchAction}
+          method="get"
+          role="search"
+          aria-label="Поиск по сайту"
+          class="mobile-search"
+        >
+          <label class="visually-hidden" for="mobile-search-input">
+            Поиск по сайту
+          </label>
+          <input
+            id="mobile-search-input"
+            type="search"
+            name="q"
+            placeholder="Поиск…"
+            aria-label="Поиск по сайту"
+          />
+          <button type="submit" aria-label="Искать">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+      )
+    }
+
+    <!-- Навигация (mobile) -->
+    <ul
+      class="mobile-nav"
+      role="menubar"
+      aria-label="Разделы сайта (мобильное меню)"
+    >
+      <!-- CTA -->
+      <li class="mobile-cta">
+        <a
+          class="btn-cta"
+          href={ctaHref}
+          target={isExternal(ctaHref) ? "_blank" : undefined}
+          rel={isExternal(ctaHref) ? "noopener noreferrer" : undefined}
+        >
+          {ctaText}
+        </a>
+      </li>
+
+      <!-- Обычные пункты -->
+      {
+        navItems.map((item) => (
+          <li role="none">
+            <a
+              role="menuitem"
+              href={item.href}
+              target={isExternal(item.href) ? "_blank" : undefined}
+              rel={isExternal(item.href) ? "noopener noreferrer" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+
+      <!-- Dropdown (mobile) -->
+      {
+        dropdownItems.length > 0 && (
+          <li class="mobile-group">
+            <details>
+              <summary class="mobile-summary">{dropdownLabel}</summary>
+              <ul class="mobile-sub">
+                {dropdownItems.map((item) => (
+                  <li>
+                    <a class="mobile-sublink" href={item.href}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+        )
+      }
+    </ul>
+
+    <!-- Категории (mobile) -->
+    {
+      isMedia && categories.length > 0 && (
+        <>
+          <h3 class="mobile-subhead">Категории</h3>
+          <div class="mobile-categories" role="list">
+            {categories.map((cat) => {
+              const bg = getCategoryHex(cat);
+              const fg = textOn(bg);
+              return (
+                <a
+                  role="listitem"
+                  class="category-chip"
+                  href={`/media/category/${slugify(cat)}`}
+                  style={`--hover-bg:${bg}; --hover-fg:${fg};`}
+                  aria-label={`Категория: ${cat}`}
+                >
+                  {cat}
+                </a>
+              );
+            })}
+          </div>
+        </>
+      )
+    }
+
+    <!-- Соцсети (mobile) -->
+    {
+      contacts.length > 0 && (
+        <>
+          <h3 class="mobile-subhead">{contactsLabel}</h3>
+          <div class="mobile-socials">
+            {contacts.map((c) => (
+              <a
+                class="social-link"
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={c.label}
+              >
+                <img
+                  src={c.imgSrc}
+                  alt={c.alt ?? c.label}
+                  width="20"
+                  height="20"
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </>
+      )
+    }
+  </div>
+</aside>
+
+<style>
+  :root {
+    --menu-max-width: 1300px;
+    --menu-padding: 50px;
+    --menu-accent: #0d6efd;
+  }
+
+  /* ===== HEADER ===== */
+  .unified-menu {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+  }
+
+  .variant-landing {
+    position: relative;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    border-bottom: none;
+  }
+
+  .menu-container {
+    max-width: var(--menu-max-width);
+    padding: 12px var(--menu-padding);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* ===== LOGO ===== */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .logo img {
+    width: auto;
+    height: 50px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  .logo-text {
+    font-weight: 700;
+    font-size: 18px;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .nav {
+    display: block;
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-link,
+  .nav-btn {
+    color: #111;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 10px 12px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible,
+  .nav-btn:hover,
+  .nav-btn:focus-visible {
+    background: #f4f6f8;
+    outline: none;
+  }
+
+  .nav-btn {
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .nav-cta {
+    margin-right: 6px;
+  }
+
+  .btn-cta {
+    display: inline-block;
+    background: var(--menu-accent);
+    color: #fff !important;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    border: 1px solid var(--menu-accent);
+    transition: all 0.15s ease;
+  }
+
+  .btn-cta:hover {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+  }
+
+  /* ===== DROPDOWN ===== */
+  .caret {
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+
+  .nav-btn.is-open .caret {
+    transform: rotate(-135deg);
+  }
+
+  .dropdown-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 280px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    z-index: 100;
+  }
+
+  .dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dropdown-link {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #111;
+  }
+
+  .dropdown-link:hover {
+    background: #f4f6f8;
+  }
+
+  .dropdown-title {
+    display: block;
+    font-weight: 700;
+  }
+
+  .dropdown-sub {
+    display: block;
+    font-size: 13px;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  /* ===== SEARCH ===== */
+  .search {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search input {
+    width: 220px;
+    max-width: 40vw;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+  }
+
+  .search input:focus {
+    outline: 2px solid rgba(13, 110, 253, 0.2);
+  }
+
+  .search button {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .search button:hover {
+    border-color: var(--menu-accent);
+    color: var(--menu-accent);
+    background: #f8faff;
+  }
+
+  /* ===== CONTACTS ===== */
+  .contacts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .contacts-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+  }
+
+  .socials {
+    display: flex;
+    gap: 8px;
+  }
+
+  .social-link {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d8dee4;
+    display: grid;
+    place-items: center;
+    transition: all 0.15s;
+  }
+
+  .social-link:hover {
+    transform: translateY(-1px);
+    border-color: var(--menu-accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .social-link img {
+    width: 18px;
+    height: 18px;
+    filter: grayscale(1);
+    transition: filter 0.15s;
+  }
+
+  .social-link:hover img {
+    filter: none;
+  }
+
+  /* ===== BURGER ===== */
+  .burger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  /* ===== CATEGORIES (media) ===== */
+  .categories-wrap {
+    background: transparent;
+  }
+
+  .categories-container {
+    max-width: var(--menu-max-width);
+    padding: 8px var(--menu-padding) 0;
+    margin: 0 auto;
+  }
+
+  .categories-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+  }
+
+  .categories-row::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .categories-row::-webkit-scrollbar-thumb {
+    background: #e1e5ea;
+    border-radius: 999px;
+  }
+
+  .category-chip {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 24px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    border: 1px solid #e6e6e6;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .category-chip:hover,
+  .category-chip:focus-visible {
+    background: var(--hover-bg, var(--menu-accent));
+    color: var(--hover-fg, #fff);
+    outline: none;
+    transform: translateY(-1px);
+    border-color: transparent;
+  }
+
+  /* ===== MOBILE MENU ===== */
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 80;
+    backdrop-filter: blur(2px);
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(92vw, 420px);
+    background: #fff;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.22s ease;
+    border-left: 1px solid #eaeaea;
+  }
+
+  .mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  .mobile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .mobile-brand {
+    font-weight: 700;
+    font-size: 16px;
+    color: #111;
+  }
+
+  .mobile-close {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .mobile-body {
+    padding: 14px 16px 24px;
+    overflow: auto;
+  }
+
+  .mobile-search {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .mobile-search input {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+  }
+
+  .mobile-search button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #d8dee4;
+    border-radius: 10px;
+    background: #fff;
+    color: #333;
+  }
+
+  .mobile-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-nav a {
+    display: block;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #111;
+    font-weight: 500;
+  }
+
+  .mobile-nav a:hover {
+    background: #f8f9fb;
+  }
+
+  .mobile-cta {
+    margin-bottom: 4px;
+  }
+
+  .mobile-cta .btn-cta {
+    display: block;
+    text-align: center;
+  }
+
+  .mobile-group details {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .mobile-summary {
+    display: block;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-sub {
+    list-style: none;
+    margin: 6px;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  .mobile-sublink {
+    display: block;
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #111;
+    font-weight: 500;
+  }
+
+  .mobile-sublink:hover {
+    background: #f4f6f8;
+  }
+
+  .mobile-subhead {
+    margin: 10px 2px 8px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #666;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .mobile-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mobile-categories .category-chip {
+    padding: 9px 12px;
+  }
+
+  .mobile-socials {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* ===== UTILS ===== */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  /* ===== ADAPTIVE ===== */
+  @media (max-width: 1100px) {
+    .menu-container {
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      padding: 10px 24px;
+    }
+
+    .nav,
+    .search,
+    .contacts {
+      display: none;
+    }
+
+    .burger {
+      display: inline-flex;
+    }
+
+    .logo-text {
+      display: none;
+    }
+
+    .categories-wrap {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .menu-container {
+      padding: 10px 16px;
+    }
+
+    .btn-cta {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const btn = document.getElementById("menu-toggle");
+    const panel = document.getElementById("mobile-menu");
+    const closeBtn = document.getElementById("menu-close");
+    const backdrop = document.getElementById("mobile-backdrop");
+
+    if (!btn || !panel || !backdrop || !closeBtn) return;
+
+    const focusableSelectors =
+      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function openMenu() {
+      panel?.removeAttribute("hidden");
+      backdrop?.removeAttribute("hidden");
+      panel?.classList.add("is-open");
+      btn?.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+
+      const firstFocusable = panel?.querySelector(focusableSelectors);
+      if (firstFocusable && "focus" in firstFocusable) {
+        (firstFocusable as HTMLElement).focus();
+      }
+    }
+
+    function closeMenu() {
+      panel?.setAttribute("hidden", "");
+      backdrop?.setAttribute("hidden", "");
+      panel?.classList.remove("is-open");
+      btn?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      btn?.focus();
+    }
+
+    btn?.addEventListener("click", openMenu);
+    closeBtn?.addEventListener("click", closeMenu);
+    backdrop?.addEventListener("click", closeMenu);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && panel && !panel.hasAttribute("hidden")) {
+        closeMenu();
+      }
+    });
+
+    panel?.addEventListener("keydown", function (e) {
+      if (e.key === "Tab" && panel) {
+        const focusableElements = panel.querySelectorAll(focusableSelectors);
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            if ("focus" in lastElement) {
+              (lastElement as HTMLElement).focus();
+            }
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            if ("focus" in firstElement) {
+              (firstElement as HTMLElement).focus();
+            }
+          }
+        }
+      }
+    });
+
+    // Dropdown (desktop)
+    const ddBtn = document.getElementById("dropdown-btn");
+    const ddMenu = document.getElementById("dropdown-menu");
+    const ddWrap = document.querySelector("[data-dropdown]");
+
+    if (ddBtn && ddMenu && ddWrap) {
+      let isOpen = false;
+
+      function openDD() {
+        isOpen = true;
+        ddBtn?.setAttribute("aria-expanded", "true");
+        ddBtn?.classList.add("is-open");
+        ddMenu?.removeAttribute("hidden");
+      }
+
+      function closeDD() {
+        isOpen = false;
+        ddBtn?.setAttribute("aria-expanded", "false");
+        ddBtn?.classList.remove("is-open");
+        ddMenu?.setAttribute("hidden", "");
+      }
+
+      ddBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (isOpen) closeDD();
+        else openDD();
+      });
+
+      document.addEventListener("click", (e) => {
+        if (e.target && e.target instanceof Node && !ddWrap.contains(e.target)) {
+          closeDD();
+        }
+      });
+    }
+  })();
+</script>

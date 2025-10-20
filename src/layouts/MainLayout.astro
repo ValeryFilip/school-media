@@ -1,10 +1,7 @@
 ---
 import "../styles/global_lend.css";
-
 import config from "../config.ts";
-
-import Menu_lend from "../components/Menu_lend.astro";
-
+import UnifiedMenu from "../components/UnifiedMenu.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
@@ -161,7 +158,46 @@ const websiteJsonLd = {
   <body class="page">
     <a class="skip-link" href="#main">К содержимому</a>
 
-    <Menu_lend logoSrc={logoSrc} ctaHref={ctaHref} />
+    <UnifiedMenu
+      variant="landing"
+      logoSrc="/images/logo_media.svg"
+      logoAlt="ЕГЕХИМ"
+      logoHref="/"
+      navItems={[
+        { label: "Главная", href: "/" },
+        { label: "Медиа", href: "/media" },
+      ]}
+      dropdownLabel="Курсы"
+      dropdownItems={[
+        {
+          label: "Самостоятельные курсы",
+          href: "/allcourses",
+          sub: "Идёшь в своём темпе",
+        },
+        { label: "Годовые курсы", href: "/", sub: "Группа и контроль" },
+      ]}
+      ctaText="Записаться"
+      ctaHref={ctaHref}
+      contacts={[
+        {
+          label: "Telegram",
+          href: "https://t.me/valery_chemistry",
+          imgSrc: "/images/technical/telegram.png",
+        },
+        {
+          label: "WhatsApp",
+          href: "https://wa.me/79818364992",
+          imgSrc: "/images/technical/whatsapp.png",
+        },
+        {
+          label: "VK",
+          href: "https://vk.me/valeryfilip",
+          imgSrc: "/images/technical/vk.png",
+        },
+      ]}
+      contactsLabel="Напишите нам"
+      showSearch={false}
+    />
     {
       showBreadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} />
