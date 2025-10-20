@@ -8,6 +8,8 @@ import SiteFooter from "../components/SiteFooter.astro";
 import PopupForm from "../components/PopupForm.astro";
 import SupportFab from "../components/ui/SupportFab.astro";
 import JsonLd from "../components/JsonLd.astro";
+import RecaptchaLoader from "../components/scripts/RecaptchaLoader.astro";
+import ExternalScripts from "../components/scripts/ExternalScripts.astro";
 
 interface Crumb {
   name: string;
@@ -112,17 +114,9 @@ const websiteJsonLd = {
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Google reCAPTCHA v3 - только для продакшна -->
-    <script>
-      if (!window.location.hostname.includes("localhost")) {
-        const script = document.createElement("script");
-        script.src =
-          "https://www.google.com/recaptcha/api.js?render=6LdH2McrAAAAAAjXZeXVKTAtKoGwJCjS4d9wVe4Z";
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      }
-    </script>
+    <!-- Google reCAPTCHA v3 -->
+    <RecaptchaLoader />
+    
     <meta name="theme-color" content="#0d6efd" />
     <meta name="color-scheme" content="light" />
     <style>
@@ -231,10 +225,7 @@ const websiteJsonLd = {
       zIndex={9999}
     />
 
-    <!-- ===== СКРИПТЫ (в правильном порядке) ===== -->
-
-    <!-- 1. Внешние библиотеки -->
-    <script src="/js/popup.js" defer></script>
-    <script src="/js/leadcapture.js" async></script>
+    <!-- Внешние скрипты -->
+    <ExternalScripts />
   </body>
 </html>

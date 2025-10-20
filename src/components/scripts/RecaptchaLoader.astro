@@ -1,0 +1,31 @@
+---
+/**
+ * RecaptchaLoader.astro - Загрузчик Google reCAPTCHA v3
+ * 
+ * Загружает reCAPTCHA только на продакшн окружении (не на localhost).
+ * Скрипт загружается асинхронно и не блокирует рендеринг страницы.
+ */
+
+interface Props {
+  siteKey?: string;
+}
+
+const { siteKey = "6LdH2McrAAAAAAjXZeXVKTAtKoGwJCjS4d9wVe4Z" } = Astro.props;
+---
+
+<script
+  define:vars={{ siteKey }}
+  is:inline
+>
+  (function() {
+    // Загружаем reCAPTCHA только на продакшне (не на localhost)
+    if (!window.location.hostname.includes("localhost")) {
+      const script = document.createElement("script");
+      script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  })();
+</script>
+
