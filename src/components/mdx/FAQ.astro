@@ -1,0 +1,120 @@
+---
+/**
+ * FAQ (Вопрос-ответ) с аккордеоном
+ * Использование в MDX:
+ * <FAQ question="Как подготовиться к ЕГЭ?">
+ *   Начните с изучения кодификатора...
+ * </FAQ>
+ */
+interface Props {
+  question: string;
+  open?: boolean; // открыт по умолчанию
+}
+
+const { question, open = false } = Astro.props;
+const id = `faq-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<details class="faq-item" open={open}>
+  <summary class="faq-question">
+    <span class="faq-icon" aria-hidden="true">?</span>
+    <span class="faq-text">{question}</span>
+    <svg
+      class="faq-arrow"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+    >
+      <path
+        d="M4 6l4 4 4-4"
+        stroke="currentColor"
+        stroke-width="2"
+        fill="none"
+        stroke-linecap="round"></path>
+    </svg>
+  </summary>
+  <div class="faq-answer">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .faq-item {
+    margin: 1.5rem 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .faq-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    font-weight: 600;
+    color: #111;
+    background: #f9f9f9;
+    transition: background 0.2s ease;
+  }
+
+  .faq-question:hover {
+    background: #f0f7ff;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #366ef0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .faq-text {
+    flex: 1;
+  }
+
+  .faq-arrow {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-arrow {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 20px;
+    color: #444;
+    line-height: 1.7;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .faq-answer :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  .faq-answer :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
+

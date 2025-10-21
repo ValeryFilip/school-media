@@ -1,10 +1,11 @@
 ---
 // src/pages/category/[category].astro
-import Layout from "../../../layouts/Layout.astro";
-import config from "../../../config.ts";
+import MainLayout from "../../../layouts/MainLayout.astro";
+import config, { categoryDescriptions } from "../../../config.ts";
 import { getCollection } from "astro:content";
-import BigArticleCard from "../../../components/BigArticleCard.astro";
-import Card from "../../../components/Card.astro";
+import CardNew from "../../../components/cards/cardNew.astro";
+import CardHorizontal from "../../../components/cards/CardHorizontal.astro";
+import Pagination from "../../../components/Pagination.astro";
 import { slugify } from "../../../lib/slugify";
 
 export async function getStaticPaths() {
@@ -38,17 +39,21 @@ const posts = (
     : []
 ).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
 
-const featured = posts[0];
-const horizontal = posts.slice(1, 4);
-const gridAll = posts.slice(4);
+// Левая колонка - основные статьи
+const leftCards = posts;
 
-const PER_PAGE = 8;
+// Правая колонка - случайные 5 статей
+const shuffled = [...posts].sort(() => Math.random() - 0.5);
+const rightCards = shuffled.slice(0, 5);
+
+// Пагинация для левой колонки
+const PER_PAGE = 6; // 6 карточек на странице (как в tags.astro)
 const currentPage = Math.max(
   1,
   Number(Astro.url.searchParams.get("page") || "1")
 );
-const totalPages = Math.max(1, Math.ceil(gridAll.length / PER_PAGE));
-const paged = gridAll.slice(
+const totalPages = Math.max(1, Math.ceil(leftCards.length / PER_PAGE));
+const pagedLeftCards = leftCards.slice(
   (currentPage - 1) * PER_PAGE,
   currentPage * PER_PAGE
 );
@@ -56,535 +61,113 @@ const paged = gridAll.slice(
 const siteUrl = config.siteUrl.replace(/\/$/, "");
 const pageTitle = `${originalCategory ?? ""}`;
 const catKey = String(originalCategory || "").toLowerCase();
-const catDescriptions: Record<string, string> = {
-  новости:
-    "Свежие новости об образовании, экзаменах, олимпиадах и поступлении. Важные изменения, сроки, рекомендации — всё, что нужно знать сейчас.",
-  "материалы для егэ и огэ по химии":
-    "Материалы для подготовки к ЕГЭ и ОГЭ по химии: теория простым языком, разборы заданий, тренажёры, чек‑листы и стратегии повышения баллов.",
-  школьникам:
-    "Полезные материалы для школьников: понятные объяснения, практические задания и советы по учёбе, экзаменам и развитию интереса к химии.",
-  родителям:
-    "Родителям: как поддержать ребёнка в учёбе, подготовке к экзаменам и выборе образовательной траектории. Простые рекомендации и ответы на вопросы.",
-  поступление:
-    "Поступление: правила приёма, сроки, выбор вуза и программы, подготовка портфолио и экзаменов. Практические советы и актуальная информация.",
-  психология:
-    "Психология учёбы: мотивация, концентрация, режим, борьба с прокрастинацией. Научно обоснованные техники и простые шаги к результатам.",
-  "как быть взрослым":
-    "Как быть взрослым: финансовая грамотность, самоорганизация, коммуникации, навыки принятия решений. Практика для реальной жизни.",
-};
 const pageDesc =
-  (catKey && catDescriptions[catKey]) ||
+  (catKey && categoryDescriptions[catKey]) ||
   `Все статьи в категории «${originalCategory ?? ""}»: понятные объяснения, примеры, советы и подборки материалов по теме.`;
 const pageUrl = `${siteUrl}/media/category/${encodeURIComponent(slug)}/`;
 
 const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
 
-const breadcrumbsLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: config.siteName, item: siteUrl },
-    { "@type": "ListItem", position: 2, name: pageTitle, item: pageUrl },
-  ],
-};
+// Для отображения количества статей
+const totalArticles = posts.length;
 ---
 
-<Layout
+<MainLayout
   title={pageTitle}
   description={pageDesc}
   url={`${pageUrl}${currentPage > 1 ? `?page=${currentPage}` : ""}`}
-  image={featured?.data?.image ||
-    (featured ? featured.data.image : undefined) ||
-    "/images/technical/og-home.png"}
+  image={posts[0]?.data?.image || "/images/technical/og-home.png"}
   prevUrl={currentPage > 1 ? `${pageUrl}?page=${currentPage - 1}` : undefined}
   nextUrl={currentPage < totalPages
     ? `${pageUrl}?page=${currentPage + 1}`
     : undefined}
   breadcrumbs={breadcrumbs}
 >
-  {/* Breadcrumbs JSON-LD уже рендерится компонентом <Breadcrumbs/> в Layout */}
-
-  <div class="page-container">
-    <header class="page-head">
-      <h1 class="page-title">{pageTitle}</h1>
-      <p class="page-desc">{pageDesc}</p>
-    </header>
-  </div>
-
-  <section class="cat-section" aria-labelledby="cat-title">
-    <div class="cat-container">
-      <h2 id="cat-title" class="sr-only">
-        Список статей категории {originalCategory ?? ""}
-      </h2>
-
-      {
-        featured && (
-          <div class="top">
-            <div class="top-left" aria-label="Последние статьи">
-              {horizontal.map((p) => (
-                <Card
-                  preset="h-compact-150"
-                  post={p}
-                  basePath="/media"
-                  clampTitle={2}
-                  clampDesc={2}
-                  show={{
-                    description: Boolean(p.data.description),
-                    category: true,
-                    date: true,
-                    readingTime: Boolean(p.data.readingTime),
-                    image: true,
-                  }}
-                />
-              ))}
-            </div>
-
-            <div class="top-featured">
-              <BigArticleCard
-                post={featured}
-                priority={true}
-                basePath="/media"
-              />
-            </div>
-          </div>
-        )
-      }
-
-      <div class="grid" id="grid-initial" aria-label="Статьи">
-        {
-          paged.map((p) => (
-            <Card
-              preset="v-270x492"
-              post={p}
-              basePath="/media"
-              clampTitle={4}
-              clampDesc={3}
-              show={{
-                description: Boolean(p.data.description),
-                category: true,
-                date: true,
-                readingTime: false,
-                image: true,
-              }}
-            />
-          ))
-        }
-      </div>
-
-      {/* Шаблоны карточек для клиентской пагинации */}
-      {
-        posts.slice(4).map((p) => (
-          <template id={`tmpl-${p.slug}`}>
-            <Card
-              preset="v-270x492"
-              post={p}
-              basePath="/media"
-              clampTitle={4}
-              clampDesc={3}
-              show={{
-                description: Boolean(p.data.description),
-                category: true,
-                date: true,
-                readingTime: false,
-                image: true,
-              }}
-            />
-          </template>
-        ))
-      }
-
-      <nav class="pager" aria-label="Навигация по страницам">
-        <!-- pagination rendered by script: buttons and numbers -->
-      </nav>
-
-      <!-- noscript fallback -->
-      <noscript>
-        <nav class="pager" aria-label="Навигация по страницам">
-          {
-            currentPage > 1 && (
-              <a
-                class="pager__link"
-                href={`${Astro.url.pathname}?page=${currentPage - 1}`}
-                aria-label="Предыдущая страница"
-              >
-                ←
-              </a>
-            )
-          }
-          {
-            Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-              <a
-                class={`pager__link ${n === currentPage ? "is-active" : ""}`}
-                href={`${Astro.url.pathname}?page=${n}`}
-                aria-current={n === currentPage ? "page" : undefined}
-                aria-label={`Страница ${n}`}
-              >
-                {n}
-              </a>
-            ))
-          }
-          {
-            currentPage < totalPages && (
-              <a
-                class="pager__link"
-                href={`${Astro.url.pathname}?page=${currentPage + 1}`}
-                aria-label="Следующая страница"
-              >
-                →
-              </a>
-            )
-          }
-        </nav>
-      </noscript>
+  <section class="header">
+    <div class="header__wrapper">
+      <h1 class="header__title" data-count={totalArticles}>{pageTitle}</h1>
+      <p class="header__description">{pageDesc}</p>
     </div>
   </section>
 
-  <script is:inline define:vars={{ PER_PAGE, posts, gridAll }}>
-    (function () {
-      const grid = document.getElementById("grid-initial");
-      const pager = document.querySelector(".pager");
-      const path = location.pathname;
-      const templates = Array.from(
-        document.querySelectorAll('template[id^="tmpl-"]')
-      );
+  <section class="main-cards">
+    <div class="left-block__grid" id="grid-initial">
+      {pagedLeftCards.map((post) => <CardNew post={post} basePath="/media" />)}
+    </div>
 
-      console.log("Debug pagination:", {
-        PER_PAGE,
-        grid: !!grid,
-        pager: !!pager,
-        templatesCount: templates.length,
-        path,
-        postsLength: posts.length,
-        gridAllLength: gridAll.length,
-      });
-
-      function renderPage(pageIndex) {
-        grid.innerHTML = "";
-        const start = (pageIndex - 1) * PER_PAGE;
-        const slice = templates.slice(start, start + PER_PAGE);
-        slice.forEach(
-          (t) => t?.content && grid.appendChild(t.content.cloneNode(true))
-        );
-      }
-
-      function renderPager(currentPage) {
-        if (!pager) {
-          console.log("No pager element found!");
-          return;
+    <div class="popular">
+      <h2 class="popular__title">Популярное</h2>
+      <div class="popular__cards">
+        {
+          rightCards.map((post) => (
+            <CardHorizontal post={post} basePath="/media" />
+          ))
         }
-        const totalPages = Math.max(1, Math.ceil(templates.length / PER_PAGE));
-        console.log("Rendering pager:", {
-          currentPage,
-          totalPages,
-          templatesLength: templates.length,
-        });
+      </div>
+    </div>
+  </section>
 
-        const btn = (label, n, aria) =>
-          `<a class="pager__link${n === currentPage ? " is-active" : ""}" ${n === currentPage ? 'aria-current="page"' : ""} href="${path}?page=${n}" aria-label="${aria}">${label}</a>`;
-        const numbers = Array.from({ length: totalPages }, (_, i) => i + 1)
-          .map((n) => btn(String(n), n, `Страница ${n}`))
-          .join("");
-        const prev =
-          currentPage > 1
-            ? btn("←", currentPage - 1, "Предыдущая страница")
-            : "";
-        const next =
-          currentPage < totalPages
-            ? btn("→", currentPage + 1, "Следующая страница")
-            : "";
-        pager.innerHTML = prev + numbers + next;
+  {/* Шаблоны карточек для клиентской пагинации */}
+  {
+    leftCards.map((post) => (
+      <template id={`tmpl-${post.slug}`}>
+        <CardNew post={post} basePath="/media" />
+      </template>
+    ))
+  }
 
-        // SPA-поведение для ссылок
-        pager.querySelectorAll("a").forEach((a) => {
-          a.addEventListener("click", (e) => {
-            if (a.pathname === path) {
-              e.preventDefault();
-              const u = new URL(a.href);
-              const n = Number(u.searchParams.get("page") || "1");
-              renderPage(n);
-              renderPager(n);
-              window.history.replaceState({}, "", a.href);
-            }
-          });
-        });
-      }
-
-      const initial = Number(
-        new URL(location.href).searchParams.get("page") || "1"
-      );
-      const startPage = initial > 1 ? initial : 1;
-      console.log("Initializing pagination:", { initial, startPage });
-      renderPage(startPage);
-      renderPager(startPage);
-
-      // поддержка навигации по истории/ручного ввода
-      window.addEventListener("popstate", () => {
-        const n = Number(
-          new URL(location.href).searchParams.get("page") || "1"
-        );
-        renderPage(n > 0 ? n : 1);
-        renderPager(n > 0 ? n : 1);
-      });
-    })();
-  </script>
-</Layout>
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    pathname={Astro.url.pathname}
+    perPage={PER_PAGE}
+  />
+</MainLayout>
 
 <style>
-  /* ===== БАЗОВЫЕ СТИЛИ ===== */
-  .page-container,
-  .cat-container {
-    max-width: var(--page-max-width, 1300px);
-    padding: 0 var(--page-padding, 50px);
-    margin: 0 auto;
-    box-sizing: border-box;
+  .header__wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    margin-bottom: 60px;
   }
-
-  .page-head {
-    margin-bottom: 32px;
+  .header__wrapper p {
+    margin: 0;
   }
-
-  .page-title {
-    margin: 0 0 25px;
+  .header__title::after {
+    content: attr(data-count);
+    margin-left: 8px;
+    color: #929292;
     font-weight: 700;
-    font-size: 64px;
-    line-height: 1.1;
+    font-size: 32px;
   }
-
-  .page-desc {
-    margin: 0 0 50px;
-    font-size: 24px;
-    color: #222;
-    line-height: 1.4;
-  }
-
-  /* Верхняя секция с featured статьей и горизонтальными карточками */
-  .top {
+  .main-cards {
     display: grid;
-    grid-template-columns: minmax(480px, 1fr) minmax(480px, 1fr);
-    gap: 40px;
+    grid-template-columns: 1fr 0.3fr;
+    gap: 30px;
     align-items: start;
-    margin-bottom: 40px;
   }
-
-  .top-left {
+  .left-block__grid {
     display: grid;
-    gap: 62px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+  .popular__title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    margin-bottom: 20px;
   }
 
-  /* Сетка статей */
-  .grid {
+  .popular__cards {
     display: grid;
-    gap: 40px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
+    gap: 30px;
   }
 
-  .grid + .grid {
-    margin-top: 40px;
-  }
-
-  /* Пагинация */
-  .pager {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin: 28px 0 6px;
-  }
-
-  .pager__link {
-    display: inline-grid;
-    place-items: center;
-    min-width: 38px;
-    height: 38px;
-    padding: 0 10px;
-    border: 1px solid #d0d7de;
-    border-radius: 10px;
-    background: #fff;
-    color: #111;
-    text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .pager__link:hover {
-    background: #f7f9fc;
-  }
-
-  .pager__link.is-active {
-    background: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
-    cursor: default;
-  }
-
-  /* Утилиты */
-  [hidden] {
-    display: none !important;
-  }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-  }
-
-  .loadmore-wrap {
-    display: flex;
-    justify-content: center;
-    margin: 40px 0 60px;
-  }
-  .btn {
-    appearance: none;
-    border: 1px solid #222;
-    background: #fff;
-    color: #222;
-    padding: 12px 20px;
-    border-radius: 999px;
-    cursor: pointer;
-    font: inherit;
-    transition: 0.2s;
-  }
-  .btn:hover {
-    transform: translateY(-1px);
-    background: #fefefe;
-  }
-
-  /* ===== АДАПТИВЫ ===== */
-
-  /* Планшет (601px - 1100px) */
-  @media (min-width: 601px) and (max-width: 1100px) {
-    .page-container,
-    .cat-container {
-      padding: 0 24px;
-    }
-
-    .page-title {
-      font-size: clamp(32px, 5vw, 48px);
-      margin-bottom: 20px;
-    }
-
-    .page-desc {
-      font-size: clamp(18px, 3vw, 22px);
-      margin-bottom: 40px;
-    }
-
-    .top {
+  @media (max-width: 1100px) {
+    .main-cards {
       grid-template-columns: 1fr;
-      gap: 32px;
-      margin-bottom: 32px;
-    }
-
-    .top-left {
-      gap: 24px;
-    }
-
-    .grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-
-    .pager {
-      margin: 24px 0 6px;
-    }
-
-    .pager__link {
-      min-width: 36px;
-      height: 36px;
-      font-size: 14px;
-    }
-  }
-
-  /* Мобилка (≤600px) */
-  @media (max-width: 600px) {
-    .page-container,
-    .cat-container {
-      padding: 0 20px;
-    }
-
-    .page-title {
-      font-size: clamp(24px, 6vw, 36px);
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .page-desc {
-      font-size: clamp(16px, 4vw, 20px);
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-
-    .top {
-      grid-template-columns: 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    .top-left {
-      gap: 16px;
-    }
-
-    .grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .pager {
-      margin: 20px 0 6px;
-      gap: 6px;
-    }
-
-    .pager__link {
-      min-width: 32px;
-      height: 32px;
-      font-size: 13px;
-      padding: 0 8px;
-    }
-  }
-
-  /* Очень маленькие экраны (≤420px) */
-  @media (max-width: 420px) {
-    .page-container,
-    .cat-container {
-      padding: 0 16px;
-    }
-
-    .page-title {
-      font-size: clamp(20px, 7vw, 28px);
-      margin-bottom: 12px;
-    }
-
-    .page-desc {
-      font-size: clamp(14px, 4.5vw, 18px);
-      margin-bottom: 24px;
-    }
-
-    .top {
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .top-left {
-      gap: 12px;
-    }
-
-    .grid {
-      gap: 12px;
-    }
-
-    .pager {
-      margin: 16px 0 6px;
-      gap: 4px;
-    }
-
-    .pager__link {
-      min-width: 28px;
-      height: 28px;
-      font-size: 12px;
-      padding: 0 6px;
     }
   }
 </style>

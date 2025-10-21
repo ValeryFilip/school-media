@@ -1,5 +1,6 @@
 // В этом файле НУЖЕН defineConfig
 import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
 
 export default defineConfig({
     // Ваш публичный URL (для sitemap, og:url и т. д.)
@@ -15,6 +16,6 @@ export default defineConfig({
 
     // Здесь можно подключать интеграции (RSS, sitemap, tailwind и т. д.)
     integrations: [
-        // Например: require('@astrojs/sitemap')(),
+        mdx(), // Поддержка MDX (Markdown + JSX)
     ],
 });

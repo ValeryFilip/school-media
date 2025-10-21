@@ -64,7 +64,9 @@ function normalizeHref(h?: string): string | undefined {
 }
 
 /* ===== Рендер ===== */
-const rendered: Crumb[] = [{ name: "home-icon", href: `${siteOrigin}/` }, ...items];
+// Домик ведёт на ТЕКУЩИЙ домен (localhost в dev, egehim.ru в prod)
+const homeHref = inMedia ? `${siteOrigin}/media/` : `${siteOrigin}/`;
+const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
 
 const breadcrumbsLd = {
   "@context": "https://schema.org",

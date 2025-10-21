@@ -1,0 +1,119 @@
+---
+/**
+ * Баннер/Алерт для важной информации
+ * Использование в MDX:
+ * <Banner type="info">Важная информация!</Banner>
+ * <Banner type="warning">Внимание!</Banner>
+ * <Banner type="success">Отлично!</Banner>
+ * <Banner type="danger">Ошибка!</Banner>
+ */
+interface Props {
+  type?: "info" | "warning" | "success" | "danger";
+  title?: string;
+}
+
+const { type = "info", title } = Astro.props;
+
+const config = {
+  info: {
+    icon: "ℹ️",
+    color: "#366ef0",
+    bg: "#e6f2ff",
+    border: "#b3d9ff",
+  },
+  warning: {
+    icon: "⚠️",
+    color: "#f09936",
+    bg: "#fff3e6",
+    border: "#ffe0b3",
+  },
+  success: {
+    icon: "✓",
+    color: "#2aa5a1",
+    bg: "#e6f9f8",
+    border: "#b3eceb",
+  },
+  danger: {
+    icon: "✕",
+    color: "#c05b66",
+    bg: "#ffe6e9",
+    border: "#ffb3bd",
+  },
+};
+
+const { icon, color, bg, border } = config[type];
+---
+
+<div
+  class="banner"
+  style={`--banner-color: ${color}; --banner-bg: ${bg}; --banner-border: ${border};`}
+  role="alert"
+>
+  <div class="banner-icon" aria-hidden="true">{icon}</div>
+  <div class="banner-content">
+    {title && <div class="banner-title">{title}</div>}
+    <div class="banner-text">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .banner {
+    display: flex;
+    gap: 14px;
+    margin: 1.5rem 0;
+    padding: 16px 20px;
+    border-left: 4px solid var(--banner-color);
+    border-radius: 8px;
+    background: var(--banner-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .banner-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .banner-content {
+    flex: 1;
+  }
+
+  .banner-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--banner-color);
+    margin-bottom: 6px;
+  }
+
+  .banner-text {
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .banner-text :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  .banner-text :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .banner-text :global(a) {
+    color: var(--banner-color);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .banner {
+      padding: 14px 16px;
+      gap: 12px;
+    }
+
+    .banner-icon {
+      font-size: 20px;
+    }
+  }
+</style>
+

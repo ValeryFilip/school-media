@@ -1,0 +1,136 @@
+---
+/**
+ * Цитата для статей
+ * Использование в MDX:
+ * <Quote author="Альберт Эйнштейн" role="Физик">
+ *   Воображение важнее знания
+ * </Quote>
+ */
+interface Props {
+  author?: string;
+  role?: string;
+  image?: string; // аватар автора
+}
+
+const { author, role, image } = Astro.props;
+---
+
+<blockquote class="quote">
+  <div class="quote-mark" aria-hidden="true">"</div>
+  <div class="quote-content">
+    <slot />
+  </div>
+  {
+    (author || role || image) && (
+      <footer class="quote-footer">
+        {image && (
+          <img
+            class="quote-avatar"
+            src={image}
+            alt={author || "Автор"}
+            width="48"
+            height="48"
+            loading="lazy"
+          />
+        )}
+        <div class="quote-author">
+          {author && <cite class="quote-name">{author}</cite>}
+          {role && <span class="quote-role">{role}</span>}
+        </div>
+      </footer>
+    )
+  }
+</blockquote>
+
+<style>
+  .quote {
+    position: relative;
+    margin: 2rem 0;
+    padding: 24px 28px 24px 60px;
+    border-left: 4px solid #366ef0;
+    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(54, 110, 240, 0.08);
+  }
+
+  .quote-mark {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 48px;
+    font-weight: 700;
+    color: #366ef0;
+    opacity: 0.3;
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+
+  .quote-content {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #222;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .quote-content :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  .quote-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .quote-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(54, 110, 240, 0.15);
+  }
+
+  .quote-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .quote-author {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .quote-name {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    color: #111;
+  }
+
+  .quote-role {
+    font-size: 13px;
+    color: #666;
+  }
+
+  @media (max-width: 768px) {
+    .quote {
+      padding: 20px 20px 20px 50px;
+    }
+
+    .quote-mark {
+      left: 12px;
+      top: 16px;
+      font-size: 36px;
+    }
+
+    .quote-content {
+      font-size: 16px;
+    }
+  }
+</style>
+
