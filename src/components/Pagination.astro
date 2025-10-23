@@ -1,0 +1,226 @@
+---
+/**
+ * Pagination.astro - Пагинация с SPA-навигацией и noscript fallback
+ *
+ * Props:
+ * - currentPage: текущая страница (серверная)
+ * - totalPages: всего страниц
+ * - pathname: путь страницы
+ * - perPage: элементов на странице (для клиентской пагинации)
+ * - templates: массив ID шаблонов карточек для клиентской пагинации
+ */
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  pathname: string;
+  perPage?: number;
+  templates?: string[];
+}
+
+const {
+  currentPage,
+  totalPages,
+  pathname,
+  perPage = 8,
+  templates = [],
+} = Astro.props;
+---
+
+<!-- Пагинация (рендерится клиентом) -->
+<nav class="pager" aria-label="Навигация по страницам" data-pathname={pathname}>
+  <!-- заполнится скриптом -->
+</nav>
+
+<!-- noscript fallback -->
+<noscript>
+  <nav class="pager" aria-label="Навигация по страницам">
+    {
+      currentPage > 1 && (
+        <a
+          class="pager__link"
+          href={`${pathname}?page=${currentPage - 1}`}
+          aria-label="Предыдущая страница"
+        >
+          ←
+        </a>
+      )
+    }
+    {
+      Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+        <a
+          class={`pager__link ${n === currentPage ? "is-active" : ""}`}
+          href={`${pathname}?page=${n}`}
+          aria-current={n === currentPage ? "page" : undefined}
+          aria-label={`Страница ${n}`}
+        >
+          {n}
+        </a>
+      ))
+    }
+    {
+      currentPage < totalPages && (
+        <a
+          class="pager__link"
+          href={`${pathname}?page=${currentPage + 1}`}
+          aria-label="Следующая страница"
+        >
+          →
+        </a>
+      )
+    }
+  </nav>
+</noscript>
+
+<style>
+  .pager {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 28px 0 6px;
+  }
+
+  .pager__link {
+    display: inline-grid;
+    place-items: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pager__link:hover {
+    background: #f7f9fc;
+  }
+
+  .pager__link.is-active {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    cursor: default;
+  }
+
+  /* Планшет */
+  @media (min-width: 601px) and (max-width: 1100px) {
+    .pager {
+      margin: 24px 0 6px;
+    }
+
+    .pager__link {
+      min-width: 36px;
+      height: 36px;
+      font-size: 14px;
+    }
+  }
+
+  /* Мобилка */
+  @media (max-width: 600px) {
+    .pager {
+      margin: 20px 0 6px;
+      gap: 6px;
+    }
+
+    .pager__link {
+      min-width: 32px;
+      height: 32px;
+      font-size: 13px;
+      padding: 0 8px;
+    }
+  }
+
+  /* Очень маленькие экраны */
+  @media (max-width: 420px) {
+    .pager {
+      margin: 16px 0 6px;
+      gap: 4px;
+    }
+
+    .pager__link {
+      min-width: 28px;
+      height: 28px;
+      font-size: 12px;
+      padding: 0 6px;
+    }
+  }
+</style>
+
+<script define:vars={{ perPage }}>
+  (function () {
+    const pager = document.querySelector(".pager[data-pathname]");
+    const grid = document.getElementById("grid-initial");
+    if (!pager || !grid) return;
+
+    const path = pager.getAttribute("data-pathname");
+    const templates = Array.from(
+      document.querySelectorAll('template[id^="tmpl-"]')
+    );
+
+    if (templates.length === 0) return;
+
+    function renderPage(pageIndex) {
+      grid.innerHTML = "";
+      const start = (pageIndex - 1) * perPage;
+      const slice = templates.slice(start, start + perPage);
+      slice.forEach(
+        (t) => t?.content && grid.appendChild(t.content.cloneNode(true))
+      );
+    }
+
+    function renderPager(currentPage) {
+      const totalPages = Math.max(1, Math.ceil(templates.length / perPage));
+
+      const btn = (label, n, aria) =>
+        `<a class="pager__link${n === currentPage ? " is-active" : ""}" ${n === currentPage ? 'aria-current="page"' : ""} href="${path}?page=${n}" aria-label="${aria}">${label}</a>`;
+
+      const numbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+        .map((n) => btn(String(n), n, `Страница ${n}`))
+        .join("");
+
+      const prev =
+        currentPage > 1 ? btn("←", currentPage - 1, "Предыдущая страница") : "";
+
+      const next =
+        currentPage < totalPages
+          ? btn("→", currentPage + 1, "Следующая страница")
+          : "";
+
+      pager.innerHTML = prev + numbers + next;
+
+      // SPA-поведение для ссылок
+      pager.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          if (a.pathname === path) {
+            e.preventDefault();
+            const u = new URL(a.href);
+            const n = Number(u.searchParams.get("page") || "1");
+            renderPage(n);
+            renderPager(n);
+            window.history.replaceState({}, "", a.href);
+          }
+        });
+      });
+    }
+
+    const initial = Number(
+      new URL(location.href).searchParams.get("page") || "1"
+    );
+    const startPage = initial > 1 ? initial : 1;
+
+    renderPage(startPage);
+    renderPager(startPage);
+
+    // Поддержка навигации по истории
+    window.addEventListener("popstate", () => {
+      const n = Number(new URL(location.href).searchParams.get("page") || "1");
+      renderPage(n > 0 ? n : 1);
+      renderPager(n > 0 ? n : 1);
+    });
+  })();
+</script>

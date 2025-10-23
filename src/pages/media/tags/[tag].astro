@@ -96,45 +96,51 @@ const totalArticles = posts.length;
     : undefined}
   breadcrumbs={breadcrumbs}
 >
-  <section class="header">
-    <div class="header__wrapper">
-      <h1 class="header__title" data-count={totalArticles}>{pageTitle}</h1>
-      <p class="header__description">{pageDesc}</p>
-    </div>
-  </section>
+  <main class="main container">
+    <section class="header">
+      <div class="header__wrapper">
+        <h1 class="header__title" data-count={totalArticles}>{pageTitle}</h1>
+        <p class="header__description">{pageDesc}</p>
+      </div>
+    </section>
 
-  <section class="main-cards">
-    <div class="left-block__grid" id="grid-initial">
-      {pagedLeftCards.map((post) => <CardNew post={post} basePath="/media" />)}
-    </div>
-
-    <div class="popular">
-      <h2 class="popular__title">Популярное</h2>
-      <div class="popular__cards">
+    <section class="main-cards">
+      <div class="left-block__grid" id="grid-initial">
         {
-          rightCards.map((post) => (
-            <CardHorizontal post={post} basePath="/media" />
+          pagedLeftCards.map((post) => (
+            <CardNew post={post} basePath="/media" />
           ))
         }
       </div>
-    </div>
-  </section>
 
-  {/* Шаблоны карточек для клиентской пагинации */}
-  {
-    leftCards.map((post) => (
-      <template id={`tmpl-${post.slug}`}>
-        <CardNew post={post} basePath="/media" />
-      </template>
-    ))
-  }
+      <div class="popular">
+        <h2 class="popular__title">Популярное</h2>
+        <div class="popular__cards">
+          {
+            rightCards.map((post) => (
+              <CardHorizontal post={post} basePath="/media" />
+            ))
+          }
+        </div>
+      </div>
+    </section>
 
-  <Pagination
-    currentPage={currentPage}
-    totalPages={totalPages}
-    pathname={Astro.url.pathname}
-    perPage={PER_PAGE}
-  />
+    {/* Шаблоны карточек для клиентской пагинации */}
+    {
+      leftCards.map((post) => (
+        <template id={`tmpl-${post.slug}`}>
+          <CardNew post={post} basePath="/media" />
+        </template>
+      ))
+    }
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      pathname={Astro.url.pathname}
+      perPage={PER_PAGE}
+    />
+  </main>
 </MainLayout>
 
 <style>
