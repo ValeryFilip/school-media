@@ -3,7 +3,7 @@
 import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
-import Card from "../../../components/Card.astro";
+import CardNew from "../../../components/cards/cardNew.astro";
 
 // Данные
 const entries = await getCollection("articles");
@@ -87,10 +87,8 @@ const currentPageServer = Math.max(
       {
         entries.map((p) => (
           <template id={`tmpl-${p.slug}`}>
-            {/* Универсальная карточка.
-             preset берём «медийный» вертикальный без жёсткой ширины,
-             ссылки внутренние — через /media */}
-            <Card post={p} preset="m-vertical-25em" basePath="/media" />
+            {/* Универсальная карточка CardNew для медиа-раздела */}
+            <CardNew post={p} basePath="/media" />
           </template>
         ))
       }

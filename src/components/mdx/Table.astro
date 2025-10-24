@@ -1,11 +1,11 @@
 ---
 /**
- * Таблица для статей
+ * Таблица для статей (жёсткий перенос «по буквам»)
  * Использование в MDX:
  * <Table>
  *   | Название | Описание |
  *   |----------|----------|
- *   | Пункт 1  | Текст 1  |
+ *   | Пункт 1  | Оченьдлинноесловобезпробеловкотороенадоразбивать |
  * </Table>
  */
 interface Props {
@@ -25,22 +25,29 @@ const { striped = true, bordered = true } = Astro.props;
 <style>
   .table-wrapper {
     overflow-x: auto;
-    margin: 2rem 0;
-    border-radius: 8px;
+    margin: clamp(1rem, 3vw, 2rem) 0;
+    border-radius: clamp(6px, 0.8vw, 8px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: #fff;
   }
 
+  /* Буквенные переносы: фиксируем раскладку колонок и ломаем последовательности где угодно */
   .table-wrapper :global(table) {
     width: 100%;
     border-collapse: collapse;
-    font-size: 15px;
+    table-layout: fixed; /* критично для равномерных колонок и переносов */
     background: #fff;
   }
 
   .table-wrapper :global(th),
   .table-wrapper :global(td) {
-    padding: 12px 16px;
+    padding: clamp(8px, 1.2vw, 12px) clamp(12px, 1.6vw, 16px);
     text-align: left;
+
+    white-space: normal; /* разрешаем переносы */
+    word-break: break-all; /* ломаем слова по буквам */
+    overflow-wrap: anywhere; /* можно рвать где угодно */
+    line-break: anywhere; /* доп. агрессивный перенос (если поддерживается) */
   }
 
   .table-wrapper :global(th) {
@@ -50,24 +57,43 @@ const { striped = true, bordered = true } = Astro.props;
     border-bottom: 2px solid #ddd;
   }
 
+  /* Зебра */
   .table-wrapper.striped :global(tbody tr:nth-child(even)) {
     background: #f9f9f9;
   }
 
+  /* Границы */
   .table-wrapper.bordered :global(td),
   .table-wrapper.bordered :global(th) {
     border: 1px solid #e5e5e5;
   }
 
+  /* Hover строки */
   .table-wrapper :global(tbody tr:hover) {
     background: #f0f7ff;
   }
 
-  @media (max-width: 768px) {
+  /* Насильно переносим и внутри ссылок / кодовых элементов */
+  .table-wrapper :global(td a),
+  .table-wrapper :global(th a),
+  .table-wrapper :global(td code),
+  .table-wrapper :global(th code),
+  .table-wrapper :global(td kbd),
+  .table-wrapper :global(th kbd) {
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    line-break: anywhere;
+  }
+
+  @media (max-width: 600px) {
     .table-wrapper :global(th),
     .table-wrapper :global(td) {
-      padding: 8px 12px;
-      font-size: 14px;
+      padding: 8px 10px;
+      font-size: 10px;
+    }
+    .table-wrapper :global(th) {
+      font-size: 10px;
     }
   }
 </style>

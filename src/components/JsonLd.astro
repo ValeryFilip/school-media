@@ -34,24 +34,28 @@ interface ArticleData {
       name: string;
     };
   };
-  publisher: {
-    "@type": "Organization";
-    name: string;
-    url?: string;
-    logo: {
-      "@type": "ImageObject";
-      url: string;
-      width?: string;
-      height?: string;
-    };
-    description?: string;
-    contactPoint?: {
-      "@type": "ContactPoint";
-      contactType?: string;
-      url?: string;
-    };
-    sameAs?: string[];
-  };
+  publisher:
+    | {
+        "@id": string; // ссылка на Organization через @id
+      }
+    | {
+        "@type": "Organization";
+        name: string;
+        url?: string;
+        logo: {
+          "@type": "ImageObject";
+          url: string;
+          width?: string;
+          height?: string;
+        };
+        description?: string;
+        contactPoint?: {
+          "@type": "ContactPoint";
+          contactType?: string;
+          url?: string;
+        };
+        sameAs?: string[];
+      };
   mainEntityOfPage: {
     "@type": "WebPage";
     "@id"?: string;
@@ -66,6 +70,7 @@ interface ArticleData {
 interface OrganizationData {
   "@context": "https://schema.org";
   "@type": "Organization";
+  "@id"?: string; // для поддержки ссылок между JSON-LD объектами
   name: string;
   url: string;
   logo: {

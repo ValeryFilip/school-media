@@ -1,0 +1,67 @@
+---
+/**
+ * ArticleHero - Hero изображение для статьи
+ * Если не указано в frontmatter, берет первое изображение из контента
+ */
+interface Props {
+  heroSrc?: string | null;
+  heroAlt?: string;
+}
+
+const { heroSrc, heroAlt = "" } = Astro.props;
+---
+
+<div id="heroBox" class="hero">
+  {
+    heroSrc && (
+      <img
+        class="hero__img"
+        src={heroSrc}
+        alt={heroAlt}
+        loading="eager"
+        decoding="async"
+        width={300}
+        height={300}
+      />
+    )
+  }
+</div>
+
+<style>
+  .hero {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero__img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+</style>
+
+<script is:inline>
+  // HERO: если нет картинки в FM — взять первую из контента
+  (function () {
+    const box = document.getElementById("heroBox");
+    if (!box) return;
+    if (box.querySelector("img")) return;
+
+    const content = document.querySelector(".content");
+    if (!content) return;
+
+    const img = content.querySelector("img[data-hero], img");
+    if (img && img.src) {
+      const el = document.createElement("img");
+      el.className = "hero__img";
+      el.src = img.currentSrc || img.src;
+      el.alt = "";
+      el.loading = "lazy";
+      el.decoding = "async";
+      el.width = 300;
+      el.height = 300;
+      box.appendChild(el);
+    }
+  })();
+</script>

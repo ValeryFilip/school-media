@@ -1,7 +1,7 @@
 ---
 // src/pages/articles/[slug].astro
 import MainLayout from "../../../layouts/MainLayout.astro";
-import ArticleLayout from "../../../layouts/ArticleLayout.astro";
+import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
@@ -56,7 +56,7 @@ const breadcrumbs = [
     : new Date(fm.date as any).toISOString()}
   breadcrumbs={breadcrumbs}
 >
-  <ArticleLayout fm={fm} slug={slug} headings={headings}>
+  <ArticleLayoutNew fm={fm} slug={slug} headings={headings}>
     <Content />
-  </ArticleLayout>
+  </ArticleLayoutNew>
 </MainLayout>

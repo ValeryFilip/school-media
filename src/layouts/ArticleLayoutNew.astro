@@ -1,0 +1,703 @@
+---
+// src/layouts/ArticleLayoutNew.astro
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import CardNew from "../components/cards/cardNew.astro";
+import CatBadge from "../components/CatBadge.astro";
+import JsonLd from "../components/JsonLd.astro";
+import ProgressBar from "../components/article/ProgressBar.astro";
+import ArticleHero from "../components/article/ArticleHero.astro";
+import CopyLinkButton from "../components/article/CopyLinkButton.astro";
+import { slugify } from "../lib/slugify";
+import {
+  buildArticlePublisher,
+  absAsset,
+  ORGANIZATION_DATA,
+} from "../lib/seoData";
+import "../styles/global_lend.css";
+
+// типы пропсов
+interface Props {
+  fm: CollectionEntry<"articles">["data"] & {
+    toc?: { id: string; text: string }[];
+    authorName?: string;
+    authorRole?: string;
+    authorPhoto?: string;
+    authorImage?: string;
+    heroImage?: string;
+    hero?: string;
+    cover?: string;
+    headerImage?: string;
+    imageAlt?: string;
+    heroAlt?: string;
+    updated?: string | Date;
+    articleBody?: string;
+  };
+  slug: string;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+const { fm, slug, headings = [] } = Astro.props;
+
+/* === окружение и базовый префикс (/media) === */
+const origin = Astro.url.origin;
+const inMedia = Astro.url.pathname.startsWith("/media");
+const base = inMedia ? "/media" : "";
+
+/* === абсолютные URL === */
+const articleUrl = `${origin}${base}/articles/${slug}`;
+const categorySlug = slugify(String(fm.category || ""));
+
+/* === утилиты === */
+function toDate(value: unknown): Date | null {
+  if (value instanceof Date) return value;
+  if (typeof value === "string" || typeof value === "number") {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+const dateObj = toDate(fm.date);
+const updatedObj = toDate((fm as any).updated) || dateObj;
+
+function formatDate(d: Date | null) {
+  if (!d) return "";
+  return d.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function resolveSrc(input: unknown): string | null {
+  if (!input) return null;
+  const s = String(input).trim();
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.startsWith("/")) return s;
+  return "/" + s.replace(/^\.?\//, "");
+}
+
+/* === автор === */
+const authorName = fm.authorName || fm.author || "Без имени";
+const authorRole = fm.authorRole || "Эксперт по теме";
+const authorPhoto =
+  resolveSrc((fm as any).authorPhoto) ||
+  resolveSrc((fm as any).authorImage) ||
+  "/images/stepik/researcher.webp";
+
+/* === HERO === */
+const heroFromFM =
+  resolveSrc((fm as any).heroImage) ||
+  resolveSrc((fm as any).hero) ||
+  resolveSrc((fm as any).cover) ||
+  resolveSrc((fm as any).headerImage) ||
+  resolveSrc((fm as any).image) ||
+  null;
+const heroAlt = fm.heroAlt ?? fm.imageAlt ?? fm.title;
+
+/* === TOC === */
+const tocFromFM = Array.isArray(fm.toc) && fm.toc.length ? fm.toc : null;
+const tocFromMD = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ id: h.slug, text: h.text, depth: h.depth }));
+const tocItems = tocFromFM || tocFromMD;
+
+// Строим вложенную структуру для TOC
+function buildNestedToc(items: any[]) {
+  const result: any[] = [];
+  let currentH2: any = null;
+
+  items.forEach((item: any) => {
+    if (item.depth === 2) {
+      currentH2 = { ...item, children: [] };
+      result.push(currentH2);
+    } else if (item.depth === 3 && currentH2) {
+      currentH2.children.push(item);
+    }
+  });
+
+  return result;
+}
+
+const nestedTocItems = buildNestedToc(tocItems || []);
+
+/* === JSON-LD статьи === */
+const jsonLdArticle = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: fm.title,
+  description: fm.description,
+  image: heroFromFM
+    ? {
+        "@type": "ImageObject",
+        url: absAsset(origin, heroFromFM),
+        width: "1200",
+        height: "630",
+      }
+    : undefined,
+  url: articleUrl,
+  inLanguage: "ru-RU",
+  keywords: Array.isArray(fm.tags) ? fm.tags : [],
+  articleSection: fm.category || undefined,
+  author: {
+    "@type": "Person",
+    name: authorName,
+    url: `${origin}/about`,
+    ...(authorPhoto ? { image: absAsset(origin, authorPhoto) } : {}),
+    jobTitle: authorRole,
+    worksFor: {
+      "@type": "Organization",
+      name: "EGEHIM",
+    },
+  },
+  publisher: buildArticlePublisher(origin),
+  ...(dateObj ? { datePublished: dateObj.toISOString() } : {}),
+  ...(updatedObj ? { dateModified: updatedObj.toISOString() } : {}),
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": articleUrl,
+  },
+  ...(fm.articleBody ? { articleBody: fm.articleBody } : {}),
+};
+
+/* === «Ещё по теме»: та же категория === */
+const allArticles = await getCollection("articles");
+function getTimeSafe(p: CollectionEntry<"articles">): number {
+  const v = (p.data as any)?.date;
+  const d = v instanceof Date ? v : new Date(v);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+const currentCategory = String(fm.category ?? "").toLowerCase();
+const sameCategoryTop = allArticles
+  .filter(
+    (p) =>
+      p.slug !== slug &&
+      String(p.data?.category ?? "").toLowerCase() === currentCategory
+  )
+  .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
+  .slice(0, 3);
+---
+
+<!-- JSON-LD структурированные данные -->
+<JsonLd type="article" data={jsonLdArticle as any} />
+
+<!-- Прогресс чтения -->
+<ProgressBar />
+
+<section class="article__section container">
+  <div class="article__wrapper">
+    <article class="article">
+      <header class="article__header">
+        <div class="article__meta">
+          {
+            dateObj && (
+              <div class="article__meta-date">
+                <img
+                  src="/images/technical/calendar.png"
+                  alt="Calendar"
+                  width="14"
+                  height="14"
+                />
+                <span>{formatDate(dateObj)}</span>
+              </div>
+            )
+          }
+          {
+            fm.readingTime && (
+              <time class="article__meta-time">
+                <img
+                  src="/images/technical/time.png"
+                  alt="Time"
+                  width="14"
+                  height="14"
+                />
+                <span>{fm.readingTime}</span>
+              </time>
+            )
+          }
+          <div class="article__meta-category">
+            <CatBadge
+              name={fm.category}
+              href={`${base}/category/${categorySlug}`}
+              variant="soft"
+              size="sm"
+            />
+          </div>
+          <div class="article__meta-author">
+            <img src={authorPhoto} alt={authorName} width="14" height="14" />
+            <span>{authorName}</span>
+          </div>
+        </div>
+
+        <h1 class="article__header-title">{fm.title}</h1>
+        {
+          fm.description && (
+            <p class="article__header-description">{fm.description}</p>
+          )
+        }
+        <div class="article__header-image-wrapper">
+          <figure class="article__header-image">
+            <ArticleHero heroSrc={heroFromFM} heroAlt={heroAlt} />
+            <figcaption class="caption">
+              {(fm as any).imageCaption ?? fm.title}
+            </figcaption>
+          </figure>
+        </div>
+        {
+          nestedTocItems && nestedTocItems.length > 0 && (
+            <div class="article__inside-content">
+              <h3 class="article__content-title">Содержание статьи</h3>
+              <ul class="article__content-list">
+                {nestedTocItems.map((item) => (
+                  <li>
+                    <a href={`#${item.id}`}>{item.text}</a>
+                    {item.children && item.children.length > 0 && (
+                      <ul class="article__content-sublist">
+                        {item.children.map((child: any) => (
+                          <li>
+                            <a href={`#${child.id}`}>{child.text}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </header>
+      <div class="article__content">
+        <slot />
+      </div>
+      {
+        fm.tags && fm.tags.length > 0 && (
+          <div class="article__tags-block">
+            <div class="article__tags-block-title">Теги:</div>
+            <div class="article__tags-block-tags">
+              {fm.tags.map((tag) => (
+                <a href={`${base}/tags/${slugify(String(tag))}`}>#{tag}</a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+      <div class="article__divider"></div>
+      <div class="article__footer">
+        <div class="article__footer-repost">
+          <span class="article__footer-repost-title">Поделиться:</span>
+          <div class="article__footer-repost-buttons">
+            <a
+              href={`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(fm.title)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="Telegram"
+            >
+              <img src="/images/technical/telegram.png" alt="Telegram" />
+            </a>
+            <a
+              href={`https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="VK"
+            >
+              <img src="/images/technical/vk.png" alt="VK" />
+            </a>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(fm.title + " " + articleUrl)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="WhatsApp"
+            >
+              <img src="/images/technical/whatsapp.png" alt="WhatsApp" />
+            </a>
+            <CopyLinkButton />
+            <a
+              href={`mailto:?subject=${encodeURIComponent(fm.title)}&body=${encodeURIComponent(articleUrl)}`}
+              aria-label="Email"
+            >
+              <img src="/images/technical/mail.png" alt="Email" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+    <aside class="article__sidebar">
+      <div class="article__sidebar-sticky-wrapper">
+        <div class="article__sidebar-tg">
+          <a
+            href={ORGANIZATION_DATA.social.telegram}
+            target="_blank"
+            rel="noopener"
+            class="article__sidebar-tg-button"
+          >
+            Подписаться на Telegram
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+{
+  sameCategoryTop.length > 0 && (
+    <section class="article__more-section container">
+      <div class="article__more">
+        <div class="article__more-header">
+          <h2 class="article__more-title">Ещё по теме</h2>
+          <p class="article__more-description">
+            Продолжайте изучать тему с другими статьями из категории «
+            {fm.category}»
+          </p>
+        </div>
+        <div class="article__more-content">
+          {sameCategoryTop.map((post) => (
+            <CardNew post={post} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* ===== ARTICLE MAIN GRID ===== */
+  .article__wrapper {
+    display: grid;
+    gap: var(--space-20);
+    grid-template-columns: 1fr 0.3fr;
+    margin-bottom: clamp(60px, 10vw, 100px);
+  }
+
+  .article {
+    width: 100%;
+    background-color: var(--white);
+    padding: clamp(16px, 2vw, 24px);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+  }
+
+  /* ===== ARTICLE HEADER ===== */
+  .article__meta {
+    display: flex;
+    gap: clamp(12px, 2vw, 20px);
+    align-items: center;
+    margin-bottom: var(--space-20);
+    flex-wrap: wrap;
+  }
+
+  .article__meta-date,
+  .article__meta-time,
+  .article__meta-category,
+  .article__meta-author {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+    color: var(--gray);
+    font-size: clamp(13px, 1vw, 14px);
+  }
+
+  .article__header-title {
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.2;
+    font-weight: 700;
+    margin: 0 0 var(--space-20) 0;
+    color: var(--black);
+  }
+
+  .article__header-description {
+    font-size: clamp(15px, 1.2vw, 18px);
+    line-height: 1.6;
+    margin: 0 0 var(--space-24) 0;
+    color: var(--gray);
+  }
+
+  .article__header-image {
+    margin: 0 0 clamp(32px, 5vw, 50px) 0;
+    padding: 0;
+  }
+
+  .article__header-image :global(img) {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+    border-radius: var(--radius-24);
+  }
+
+  figcaption {
+    font-size: clamp(12px, 1vw, 14px);
+    font-weight: 400;
+    color: var(--gray);
+    text-align: center;
+    margin-top: var(--space-12);
+    font-style: italic;
+  }
+
+  /* ===== TABLE OF CONTENTS (обтекание) ===== */
+  .article__inside-content {
+    float: left;
+    max-width: 50%;
+    min-width: 0; /* важно для корректного сжатия */
+    margin: 0 var(--space-24) var(--space-20) 0;
+    background-color: #e3fdff;
+    padding: var(--space-20);
+    border-radius: var(--radius-24);
+  }
+
+  .article__content-title {
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+    margin: 0 0 var(--space-16) 0;
+    color: var(--black);
+  }
+
+  .article__content-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--gray);
+    font-size: clamp(13px, 1vw, 14px);
+    font-weight: 400;
+  }
+
+  .article__content-list li {
+    margin-bottom: var(--space-8);
+  }
+
+  .article__content-list a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    transition: color 0.2s var(--easing);
+  }
+
+  .article__content-list a:hover {
+    color: var(--blue);
+  }
+
+  /* Вложенный список для h3 */
+  .article__content-sublist {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-8) 0 0 var(--space-20);
+  }
+
+  .article__content-sublist li {
+    margin-bottom: var(--space-8);
+  }
+
+  /* Очистка float после контента */
+  .article__content::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* ===== TAGS BLOCK ===== */
+  .article__tags-block {
+    margin: var(--space-32) 0;
+  }
+
+  .article__tags-block-title {
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 700;
+    margin-bottom: var(--space-12);
+    color: var(--black);
+  }
+
+  .article__tags-block-tags {
+    display: flex;
+    gap: var(--space-8);
+    flex-wrap: wrap;
+  }
+
+  .article__tags-block-tags a {
+    display: inline-block;
+    padding: var(--space-8) var(--space-16);
+    background-color: #f0f0f0;
+    color: var(--black);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: clamp(13px, 1vw, 14px);
+    transition: all 0.2s var(--easing);
+  }
+
+  .article__tags-block-tags a:hover {
+    background-color: var(--blue);
+    color: var(--white);
+  }
+
+  /* ===== SIDEBAR ===== */
+  .article__sidebar-sticky-wrapper {
+    position: sticky;
+    top: var(--space-20);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+  }
+
+  .article__sidebar-tg {
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: var(--radius-24);
+    background-image: url("/images/chemistry.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: var(--space-20);
+  }
+
+  .article__sidebar-tg-button {
+    background-color: var(--white);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: clamp(13px, 1vw, 15px);
+    transition: transform 0.2s var(--easing);
+    text-decoration: none;
+    color: var(--black);
+    display: inline-block;
+  }
+
+  .article__sidebar-tg-button:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ===== FOOTER REPOST ===== */
+  .article__divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border);
+    margin: clamp(20px, 3vw, 32px) 0;
+  }
+
+  .article__footer-repost {
+    display: flex;
+    gap: var(--space-16);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .article__footer-repost-title {
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .article__footer-repost-buttons {
+    display: flex;
+    gap: var(--space-12);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .article__footer-repost-buttons img {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: var(--space-8);
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.2s var(--easing);
+  }
+
+  .article__footer-repost-buttons a:hover img,
+  .article__footer-repost-buttons button:hover img {
+    transform: translateY(-2px);
+    border-color: var(--black);
+  }
+
+  /* ===== MORE ARTICLES ===== */
+  .article__more-header {
+    margin: clamp(32px, 5vw, 60px) 0 var(--space-32) 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(20px, 5vw, 60px);
+    align-items: center;
+  }
+
+  .article__more-title {
+    font-size: var(--h2);
+    font-weight: 700;
+    margin: 0;
+    color: var(--black);
+  }
+
+  .article__more-description {
+    margin: 0;
+    font-size: var(--text);
+    line-height: 1.6;
+    color: #666;
+  }
+
+  .article__more-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-20);
+  }
+
+  /* ===== АДАПТИВ ===== */
+
+  /* Планшеты */
+  @media (max-width: 1100px) {
+    body {
+      padding: var(--pad-mobile);
+    }
+
+    .article__wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .article__sidebar-sticky-wrapper {
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-20);
+    }
+
+    .article__inside-content {
+      float: none;
+      max-width: 100%;
+      margin: 0 0 var(--space-20) 0;
+    }
+
+    .article__more-header {
+      grid-template-columns: 1fr;
+      gap: var(--space-16);
+    }
+  }
+
+  /* Мобилки */
+  @media (max-width: 600px) {
+    .article__wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .article__sidebar-sticky-wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .article__inside-content {
+      float: none;
+      max-width: 100%;
+      margin: 0 0 var(--space-20) 0;
+      padding: var(--space-16);
+    }
+
+    .article__more-header {
+      grid-template-columns: 1fr;
+      gap: var(--space-12);
+    }
+
+    .article__more-content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

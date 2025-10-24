@@ -84,40 +84,14 @@ if (inMedia) {
   }
 }
 
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "../lib/seoData";
+
 const origin = Astro.url.origin;
 const siteUrl = (config as any)?.siteUrl || origin;
-const orgJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: (config as any)?.siteName || "EGEHIM",
-  url: siteUrl,
-  description: "Подготовка к ЕГЭ по химии: курсы, разборы и материалы",
-  logo: {
-    "@type": "ImageObject",
-    url: `${siteUrl}/images/technical/logo.png`,
-    width: "60",
-    height: "60",
-  },
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer service",
-    url: `${siteUrl}/contact`,
-  },
-  sameAs: [
-    "https://t.me/valery_chemistry",
-    "https://vk.me/valeryfilip",
-    "https://wa.me/79818364992",
-  ],
-};
+const configSiteName = (config as any)?.siteName || "EGEHIM";
 
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: (config as any)?.siteName || "EGEHIM",
-  url: siteUrl,
-  description: "Подготовка к ЕГЭ по химии: курсы, разборы и материалы",
-  inLanguage: "ru",
-};
+const orgJsonLd = buildOrganizationJsonLd(siteUrl);
+const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
 ---
 
 <!doctype html>

@@ -61,35 +61,37 @@ const { icon, color, bg, border } = config[type];
 <style>
   .banner {
     display: flex;
-    gap: 14px;
-    margin: 1.5rem 0;
-    padding: 16px 20px;
+    gap: clamp(10px, 1.4vw, 14px);
+    margin: clamp(1rem, 2vw, 1.5rem) 0;
+    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
     border-left: 4px solid var(--banner-color);
-    border-radius: 8px;
+    border-radius: clamp(6px, 0.8vw, 8px);
     background: var(--banner-bg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .banner-icon {
-    font-size: 24px;
+    font-size: clamp(20px, 2.4vw, 24px);
     flex-shrink: 0;
     line-height: 1;
   }
 
   .banner-content {
     flex: 1;
+    min-width: 0;
   }
 
   .banner-title {
     font-weight: 700;
-    font-size: 16px;
+    font-size: clamp(14px, 1.6vw, 16px);
     color: var(--banner-color);
-    margin-bottom: 6px;
+    margin-bottom: clamp(4px, 0.6vw, 6px);
   }
 
   .banner-text {
     color: #333;
     line-height: 1.6;
+    font-size: clamp(14px, 1.5vw, 15px);
   }
 
   .banner-text :global(p:first-child) {
@@ -105,15 +107,22 @@ const { icon, color, bg, border } = config[type];
     text-decoration: underline;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
     .banner {
-      padding: 14px 16px;
-      gap: 12px;
+      padding: 12px 16px;
+      gap: 10px;
     }
 
     .banner-icon {
       font-size: 20px;
     }
+
+    .banner-title {
+      font-size: 14px;
+    }
+
+    .banner-text {
+      font-size: 14px;
+    }
   }
 </style>
-

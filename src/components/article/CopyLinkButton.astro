@@ -1,0 +1,108 @@
+---
+// CopyLinkButton.astro - кнопка копирования ссылки на статью
+---
+
+<div class="copy-link-wrapper">
+  <button
+    id="copyLink"
+    class="copy-link-button"
+    aria-label="Скопировать ссылку"
+  >
+    <img src="/images/technical/copy-link.png" alt="Copy" />
+  </button>
+  <span id="copyTooltip" class="copy-tooltip">Ссылка скопирована!</span>
+</div>
+
+<style>
+  .copy-link-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .copy-link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .copy-link-button img {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: var(--space-8);
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.2s var(--easing);
+  }
+
+  .copy-link-button:hover img {
+    transform: translateY(-2px);
+    border-color: var(--black);
+  }
+
+  .copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--black);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--easing);
+    z-index: 1000;
+  }
+
+  .copy-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--black);
+  }
+
+  .copy-tooltip.show {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Копирование ссылки
+  (function () {
+    const btn = document.getElementById("copyLink");
+    const tooltip = document.getElementById("copyTooltip");
+    if (!btn || !tooltip) return;
+
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+
+        // Анимация иконки
+        const img = btn.querySelector("img");
+        if (img) {
+          img.style.opacity = "0.5";
+          setTimeout(() => {
+            img.style.opacity = "1";
+          }, 300);
+        }
+
+        // Показываем подсказку
+        tooltip.classList.add("show");
+
+        // Скрываем подсказку через 2 секунды
+        setTimeout(() => {
+          tooltip.classList.remove("show");
+        }, 1000);
+      } catch (e) {
+        console.error("Failed to copy link:", e);
+      }
+    });
+  })();
+</script>

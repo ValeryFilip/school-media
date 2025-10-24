@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/global_lend.css" />
+    <style>
+      /* ===== LAYOUT WRAPPER ===== */
+      body {
+        padding: var(--pad-desktop);
+        margin: 0 auto;
+        max-width: var(--container);
+      }
+
+      /* ===== ARTICLE MAIN GRID ===== */
+      .article__wrapper {
+        display: grid;
+        gap: var(--space-20);
+        grid-template-columns: 1fr 0.3fr;
+        margin-bottom: clamp(60px, 10vw, 100px);
+      }
+
+      .article {
+        width: 100%;
+        background-color: var(--white);
+        padding: clamp(16px, 2vw, 24px);
+        border-radius: var(--radius-24);
+        box-shadow: var(--shadow-1);
+      }
+
+      /* ===== ARTICLE HEADER ===== */
+      .article__meta {
+        display: flex;
+        gap: clamp(12px, 2vw, 20px);
+        align-items: center;
+        margin-bottom: var(--space-20);
+        flex-wrap: wrap;
+      }
+
+      .article__meta-date,
+      .article__meta-time,
+      .article__meta-category,
+      .article__meta-author {
+        display: flex;
+        gap: var(--space-8);
+        align-items: center;
+        color: var(--gray);
+        font-size: clamp(13px, 1vw, 14px);
+      }
+
+      .article__header-title {
+        font-size: clamp(28px, 5vw, 42px);
+        line-height: 1.2;
+        font-weight: 700;
+        margin: 0 0 var(--space-20) 0;
+        color: var(--black);
+      }
+
+      .article__header-description {
+        font-size: clamp(15px, 1.2vw, 18px);
+        line-height: 1.6;
+        margin: 0 0 var(--space-24) 0;
+        color: var(--gray);
+      }
+
+      .article__header-image {
+        margin: 0 0 clamp(32px, 5vw, 50px) 0;
+        padding: 0;
+      }
+
+      .article__header-image img {
+        width: 100%;
+        object-fit: cover;
+        aspect-ratio: 16/9;
+        border-radius: var(--radius-24);
+      }
+
+      figcaption {
+        font-size: clamp(12px, 1vw, 14px);
+        font-weight: 400;
+        color: var(--gray);
+        text-align: center;
+        margin-top: var(--space-12);
+        font-style: italic;
+      }
+
+      /* ===== TABLE OF CONTENTS (обтекание) ===== */
+      .article__inside-content {
+        float: left;
+        max-width: 50%;
+        min-width: 0; /* важно для корректного сжатия */
+        margin: 0 var(--space-24) var(--space-20) 0;
+        background-color: #e3fdff;
+        padding: var(--space-20);
+        border-radius: var(--radius-24);
+      }
+
+      .article__content-title {
+        font-size: clamp(18px, 2vw, 24px);
+        font-weight: 700;
+        margin: 0 0 var(--space-16) 0;
+        color: var(--black);
+      }
+
+      .article__content-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        color: var(--gray);
+        font-size: clamp(13px, 1vw, 14px);
+        font-weight: 400;
+      }
+
+      .article__content-list li {
+        margin-bottom: var(--space-8);
+      }
+
+      .article__content-list a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        transition: color 0.2s var(--easing);
+      }
+
+      .article__content-list a:hover {
+        color: var(--blue);
+      }
+
+      /* Очистка float после контента */
+      .article__content::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      /* ===== SIDEBAR ===== */
+      .article__sidebar-sticky-wrapper {
+        position: sticky;
+        top: var(--space-20);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-20);
+      }
+
+      .article__sidebar-tg {
+        width: 100%;
+        background-color: #f0f0f0;
+        border-radius: var(--radius-24);
+        background-image: url("../../public/images/chemistry.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        padding: var(--space-20);
+      }
+
+      .article__sidebar-tg-button {
+        background-color: var(--white);
+        padding: 12px 24px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: clamp(13px, 1vw, 15px);
+        transition: transform 0.2s var(--easing);
+      }
+
+      .article__sidebar-tg-button:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ===== FOOTER REPOST ===== */
+      .article__divider {
+        width: 100%;
+        height: 1px;
+        background-color: var(--border);
+        margin: clamp(20px, 3vw, 32px) 0;
+      }
+
+      .article__footer-repost {
+        display: flex;
+        gap: var(--space-16);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .article__footer-repost-title {
+        font-size: clamp(18px, 2vw, 24px);
+        font-weight: 700;
+        color: var(--black);
+      }
+
+      .article__footer-repost-buttons {
+        display: flex;
+        gap: var(--space-12);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .article__footer-repost-buttons img {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: var(--space-8);
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: all 0.2s var(--easing);
+      }
+
+      .article__footer-repost-buttons img:hover {
+        transform: translateY(-2px);
+        border-color: var(--black);
+      }
+
+      /* ===== MORE ARTICLES ===== */
+      .article__more-header {
+        margin: clamp(32px, 5vw, 60px) 0 var(--space-32) 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(20px, 5vw, 60px);
+        align-items: center;
+      }
+
+      .article__more-title {
+        font-size: var(--h2);
+        font-weight: 700;
+        margin: 0;
+        color: var(--black);
+      }
+
+      .article__more-description {
+        margin: 0;
+        font-size: var(--text);
+        line-height: 1.6;
+        color: #666;
+      }
+
+      .article__more-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: var(--space-20);
+      }
+
+      /* ===== АДАПТИВ ===== */
+
+      /* Планшеты */
+      @media (max-width: 1100px) {
+        body {
+          padding: var(--pad-mobile);
+        }
+
+        .article__wrapper {
+          grid-template-columns: 1fr;
+        }
+
+        .article__sidebar-sticky-wrapper {
+          position: static;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: var(--space-20);
+        }
+
+        .article__inside-content {
+          float: none;
+          max-width: 100%;
+          margin: 0 0 var(--space-20) 0;
+        }
+
+        .article__more-header {
+          grid-template-columns: 1fr;
+          gap: var(--space-16);
+        }
+      }
+
+      /* Мобилки */
+      @media (max-width: 600px) {
+        .article__wrapper {
+          grid-template-columns: 1fr;
+        }
+
+        .article__sidebar-sticky-wrapper {
+          grid-template-columns: 1fr;
+        }
+
+        .article__inside-content {
+          float: none;
+          max-width: 100%;
+          margin: 0 0 var(--space-20) 0;
+          padding: var(--space-16);
+        }
+
+        .article__more-header {
+          grid-template-columns: 1fr;
+          gap: var(--space-12);
+        }
+
+        .article__more-content {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="article__section">
+      <div class="article__wrapper">
+        <article class="article">
+          <header class="article__header">
+            <div class="article__meta">
+              <div class="article__meta-date">
+                <img
+                  src="../../public/images/technical/calendar.png"
+                  alt="Calendar"
+                  width="14"
+                  height="14"
+                />
+                <span>2025-01-01</span>
+              </div>
+              <time class="article__meta-time">
+                <img
+                  src="../../public/images/technical/time.png"
+                  alt="Time"
+                  width="14"
+                  height="14"
+                />
+                <span>10min</span>
+              </time>
+              <div class="article__meta-category">
+                <span> Category</span>
+              </div>
+              <div class="article__meta-author">
+                <img
+                  src="../../public/images/stepik/researcher.webp"
+                  alt="Author"
+                  width="14"
+                  height="14"
+                />
+                <span>Valery Filip</span>
+              </div>
+            </div>
+
+            <h1 class="article__header-title">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quos.
+            </h1>
+            <p class="article__header-description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quos. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quos.
+            </p>
+            <div class="article__header-image-wrapper">
+              <figure class="article__header-image">
+                <img
+                  src="../../public/images/chemistry.png"
+                  alt="Ученики проводят опыт по химии в школьной лаборатории"
+                />
+                <figcaption class="caption">
+                  Ученики проводят опыт по химии в школьной лаборатории
+                </figcaption>
+              </figure>
+            </div>
+            <div class="article__inside-content">
+              <h3 class="article__content-title">Содержание статьи</h3>
+              <ul class="article__content-list">
+                <li>
+                  <a href="#section1">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.</a
+                  >
+                </li>
+                <li>
+                  <a href="#section2">Section 2</a>
+                </li>
+                <li>
+                  <a href="#section3">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.</a
+                  >
+                </li>
+                <li>
+                  <a href="#section3">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </header>
+          <div class="article__content">
+            <h2 id="section1">Основной раздел статьи</h2>
+
+            <p>
+              At vero eos et accusamus et iusto odio dignissimos ducimus qui
+              blanditiis praesentium voluptatum deleniti atque corrupti quos
+              dolores et quas molestias excepturi sint occaecati cupiditate non
+              provident.
+            </p>
+
+            <h3>Подраздел с маркированным списком</h3>
+
+            <p>
+              Temporibus autem quibusdam et aut officiis debitis aut rerum
+              necessitatibus saepe eveniet ut et voluptates repudiandae sint et
+              molestiae non recusandae.
+            </p>
+
+            <ul>
+              <li>Первый пункт списка с важной информацией</li>
+              <li>
+                Второй пункт может быть длиннее и содержать больше текста для
+                проверки переноса
+              </li>
+              <li>Третий пункт со <strong>выделением</strong> внутри</li>
+              <li>Четвертый пункт с <a href="#">ссылкой внутри</a> списка</li>
+            </ul>
+
+            <h3>Нумерованный список</h3>
+
+            <ol>
+              <li>Первый шаг инструкции</li>
+              <li>Второй шаг с подробным описанием того, что нужно сделать</li>
+              <li>Третий шаг с кодом: <code>npm install</code></li>
+              <li>Четвертый завершающий шаг</li>
+            </ol>
+          </div>
+          <div class="article__tags-block">
+            <div class="article__tags-block-title">Теги:</div>
+            <div class="article__tags-block-tags">
+              <a href="#">#технологии</a>
+              <a href="#">#программирование</a>
+              <a href="#">#javascript</a>
+              <a href="#">#webdevelopment</a>
+              <a href="#">#frontend</a>
+            </div>
+          </div>
+          <div class="article__divider"></div>
+          <div class="article__footer">
+            <div class="article__footer-repost">
+              <span class="article__footer-repost-title">Поделиться:</span>
+              <div class="article__footer-repost-buttons">
+                <img
+                  src="../../public/images/technical/telegram.png"
+                  alt="Telegram"
+                />
+                <img src="../../public/images/technical/vk.png" alt="VK" />
+                <img
+                  src="../../public/images/technical/whatsapp.png"
+                  alt="WhatsApp"
+                />
+                <img
+                  src="../../public/images/technical/copy-link.png"
+                  alt="Copy"
+                />
+                <img src="../../public/images/technical/mail.png" alt="Email" />
+              </div>
+            </div>
+          </div>
+        </article>
+        <aside class="article__sidebar">
+          <div class="article__sidebar-sticky-wrapper">
+            <div class="article__sidebar-tg">
+              <button class="article__sidebar-tg-button">
+                Подписаться на Telegram
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <section class="article__more-section">
+      <div class="article__more">
+        <div class="article__more-header">
+          <h2 class="article__more-title">Ещё по теме</h2>
+          <p class="article__more-description">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit
+            amet consectetur adipisicing elit. Lorem ipsum dolor sit amet
+            consectetur adipisicing elit.
+          </p>
+        </div>
+        <div class="article__more-content">
+          <div class="article__more-content-item">
+            <img
+              src="../../public/images/chemistry.png"
+              alt="Химия"
+              width="100"
+              height="100"
+            />
+            <h3 class="article__more-content-item-title">Химия</h3>
+            <p class="article__more-content-item-description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quos. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

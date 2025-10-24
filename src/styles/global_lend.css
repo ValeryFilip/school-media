@@ -5,8 +5,9 @@
   --orange:#F09936; 
   --black:#111; 
   --white:#FFF;
-  --bg:#ffffff; 
+  --bg:#e7eff6; 
   --border:#dfdfdf;
+  --gray:#888;
 
   /* Фон страницы */
   --page-bg: var(--bg);
@@ -48,15 +49,13 @@
 }
 
 html{ 
-  color-scheme:light; 
+  color-scheme:light;
 }
 
 body{
   margin:0;
   font-family:var(--ff);
   font-size:var(--text);
-  color:var(--black);
-  background: var(--page-bg);
 }
 
 a {
@@ -189,3 +188,190 @@ h3,.h3{
 
 /* flex-дети не распирают родителя */
 :where(.container, .blue-card, .platform__slider, .skills__row) > *{ min-width:0; }
+
+
+/* ===== СТИЛИ ДЛЯ СТАТЬИ ===== */
+
+/* Основной контейнер контента статьи */
+.article__content {
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.75;
+  color: #2c2c2c;
+}
+
+/* Заголовки в статье */
+.article__content h2 {
+  font-size: clamp(24px, 3.5vw, 36px);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--black);
+  margin: clamp(32px, 5vw, 48px) 0 clamp(16px, 2vw, 24px) 0;
+}
+
+.article__content h3 {
+  font-size: clamp(20px, 2.8vw, 28px);
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--black);
+  margin: clamp(28px, 4vw, 40px) 0 clamp(14px, 1.8vw, 20px) 0;
+}
+
+.article__content h4 {
+  font-size: clamp(18px, 2.2vw, 24px);
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--black);
+  margin: clamp(24px, 3.5vw, 36px) 0 clamp(12px, 1.6vw, 18px) 0;
+}
+
+.article__content h5 {
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--black);
+  margin: clamp(20px, 3vw, 32px) 0 clamp(10px, 1.4vw, 16px) 0;
+}
+
+.article__content h6 {
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.45;
+  font-weight: 600;
+    color: var(--black);
+  margin: clamp(18px, 2.5vw, 28px) 0 clamp(8px, 1.2vw, 14px) 0;
+}
+
+/* Параграфы */
+.article__content p {
+  margin: 0 0 clamp(16px, 2vw, 24px) 0;
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.2;
+  color: var(--black);
+}
+
+/* Ссылки в статье */
+.article__content a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-decoration-color: rgba(54, 110, 240, 0.3);
+  text-underline-offset: 2px;
+  transition: all 0.2s var(--easing);
+}
+
+.article__content a:hover {
+  color: #2554c7;
+  text-decoration-color: rgba(54, 110, 240, 0.8);
+}
+
+/* Списки */
+.article__content ul,
+.article__content ol {
+  margin: 0 0 clamp(20px, 2.5vw, 28px) 0;
+  padding-left: clamp(24px, 3vw, 36px);
+}
+
+.article__content li {
+  margin-bottom: clamp(8px, 1.2vw, 12px);
+  line-height: 1.7;
+  font-size: clamp(15px, 1.15vw, 17px);
+}
+
+.article__content li:last-child {
+  margin-bottom: 0;
+}
+
+/* Цитаты */
+.article__content blockquote {
+  border-left: 4px solid var(--blue);
+  padding: clamp(16px, 2vw, 24px) clamp(20px, 2.5vw, 32px);
+  margin: clamp(24px, 3.5vw, 36px) 0;
+  background-color: #f7f9fc;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #555;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.7;
+}
+
+/* Код */
+.article__content code {
+  background-color: #f4f4f6;
+  color: #d63384;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(14px, 1vw, 16px);
+}
+
+.article__content pre {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: clamp(16px, 2vw, 24px);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: clamp(24px, 3vw, 32px) 0;
+  line-height: 1.5;
+}
+
+.article__content pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: clamp(13px, 1vw, 15px);
+}
+
+/* Картинки */
+.article__content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: clamp(20px, 3vw, 32px) 0;
+  display: block;
+}
+
+.article__content figure {
+  margin: clamp(28px, 4vw, 40px) 0;
+}
+
+.article__content figcaption {
+  font-size: clamp(13px, 1vw, 15px);
+  color: #666;
+  text-align: center;
+  margin-top: clamp(8px, 1.2vw, 12px);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Горизонтальная линия */
+.article__content hr {
+  border: none;
+  border-top: 2px solid #e8e8e8;
+  margin: clamp(32px, 5vw, 56px) 0;
+}
+
+/* Выделение текста */
+.article__content strong {
+  font-weight: 700;
+  color: #111;
+}
+
+.article__content em {
+  font-style: italic;
+  color: #444;
+}
+
+
+/* Адаптив для мобилок */
+@media (max-width: 768px) {
+  .article__content {
+    line-height: 1.7;
+  }
+  
+  .article__content ul,
+  .article__content ol {
+    padding-left: 20px;
+  }
+  
+  .article__content pre {
+    font-size: 13px;
+  }
+}

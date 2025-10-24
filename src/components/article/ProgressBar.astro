@@ -1,0 +1,68 @@
+---
+/**
+ * Progress Bar - индикатор прогресса чтения статьи
+ */
+---
+
+<div class="progress" aria-hidden="true">
+  <div class="progress__track"></div>
+  <div id="progressBar" class="progress__bar"></div>
+</div>
+
+<style>
+  .progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 4px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .progress__track {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .progress__bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      var(--accent, #0d6efd),
+      #6ea8fe 50%,
+      var(--accent, #0d6efd)
+    );
+    transition: width 0.1s ease;
+  }
+</style>
+
+<script>
+  // Прогресс чтения
+  (function () {
+    const bar = document.getElementById("progressBar");
+    if (!bar) return;
+    const docEl = document.documentElement;
+    const onScroll = () => {
+      const h = docEl.scrollHeight - docEl.clientHeight;
+      const y = window.scrollY || window.pageYOffset || 0;
+      const p = Math.max(0, Math.min(1, h ? y / h : 0));
+      bar.style.width = (p * 100).toFixed(2) + "%";
+    };
+    let ticking = false;
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            onScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+

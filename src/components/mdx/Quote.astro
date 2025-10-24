@@ -45,19 +45,20 @@ const { author, role, image } = Astro.props;
 <style>
   .quote {
     position: relative;
-    margin: 2rem 0;
-    padding: 24px 28px 24px 60px;
+    margin: clamp(1rem, 3vw, 2rem) 0;
+    padding: clamp(16px, 2vw, 24px) clamp(20px, 2.5vw, 28px)
+      clamp(16px, 2vw, 24px) clamp(44px, 5vw, 60px);
     border-left: 4px solid #366ef0;
     background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-    border-radius: 12px;
+    border-radius: clamp(8px, 1vw, 12px);
     box-shadow: 0 4px 12px rgba(54, 110, 240, 0.08);
   }
 
   .quote-mark {
     position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 48px;
+    left: clamp(10px, 2vw, 20px);
+    top: clamp(12px, 2vw, 20px);
+    font-size: clamp(24spx, 4vw, 48px);
     font-weight: 700;
     color: #366ef0;
     opacity: 0.3;
@@ -66,11 +67,11 @@ const { author, role, image } = Astro.props;
   }
 
   .quote-content {
-    font-size: 18px;
+    font-size: clamp(8px, 1.8vw, 18px);
     line-height: 1.7;
     color: #222;
     font-style: italic;
-    margin-bottom: 16px;
+    margin-bottom: clamp(12px, 1.5vw, 16px);
   }
 
   .quote-content :global(p:first-child) {
@@ -84,15 +85,15 @@ const { author, role, image } = Astro.props;
   .quote-footer {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 16px;
-    padding-top: 16px;
+    gap: clamp(8px, 1vw, 12px);
+    margin-top: clamp(12px, 1.5vw, 16px);
+    padding-top: clamp(12px, 1.5vw, 16px);
     border-top: 1px solid rgba(54, 110, 240, 0.15);
   }
 
   .quote-avatar {
-    width: 48px;
-    height: 48px;
+    width: clamp(40px, 5vw, 48px);
+    height: clamp(40px, 5vw, 48px);
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #fff;
@@ -108,29 +109,27 @@ const { author, role, image } = Astro.props;
   .quote-name {
     font-style: normal;
     font-weight: 600;
-    font-size: 15px;
+    font-size: clamp(10px, 1.5vw, 15px);
     color: #111;
   }
 
   .quote-role {
-    font-size: 13px;
+    font-size: clamp(8px, 1.3vw, 13px);
     color: #666;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 600px) {
     .quote {
-      padding: 20px 20px 20px 50px;
+      padding: 16px 16px 16px 44px;
     }
 
     .quote-mark {
-      left: 12px;
-      top: 16px;
-      font-size: 36px;
+      left: 10px;
+      top: 12px;
     }
-
-    .quote-content {
-      font-size: 16px;
+    .quote-avatar {
+      width: 40px;
+      height: 40px;
     }
   }
 </style>
-
