@@ -1,18 +1,14 @@
 ---
 import "../styles/global_lend.css";
 import config from "../config.ts";
-import Menu from "../components/Menu.astro";
-import Menu_lend from "../components/Menu_lend.astro";
+import UnifiedMenu from "../components/UnifiedMenu.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import PopupForm from "../components/PopupForm.astro";
-import SupportFab from "../components/ui/SupportFab.astro";
 import JsonLd from "../components/JsonLd.astro";
 import Preloader from "../components/scripts/Preloader.astro";
 import RecaptchaLoader from "../components/scripts/RecaptchaLoader.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
-import { getCollection } from "astro:content";
 
 interface Crumb {
   name: string;
@@ -34,8 +30,6 @@ interface Props {
   nextUrl?: string;
 
   /* меню */
-  categories?: string[];
-  autoCategories?: boolean;
   logoSrc?: string;
   ctaHref?: string;
 
@@ -58,8 +52,6 @@ const {
   prevUrl,
   nextUrl,
 
-  categories,
-  autoCategories = true,
   logoSrc,
   ctaHref = "/egecourse",
 
@@ -67,24 +59,13 @@ const {
   showBreadcrumbs = true,
 } = Astro.props as Props;
 
-/* ——— Определение /media ——— */
 const inMedia = Astro.url.pathname.startsWith("/media");
 
-/* ——— Категории для меню (только для /media) ——— */
-let menuCategories: string[] = [];
-if (inMedia) {
-  menuCategories = Array.isArray(categories) ? categories : [];
-  if ((!categories || categories.length === 0) && autoCategories) {
-    const posts = await getCollection("articles");
-    menuCategories = Array.from(
-      new Set(
-        posts.map((p) => String(p.data.category || "").trim()).filter(Boolean)
-      )
-    );
-  }
-}
-
-import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "../lib/seoData";
+import {
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+  buildBreadcrumbsJsonLd,
+} from "../lib/seoData";
 
 const origin = Astro.url.origin;
 const siteUrl = (config as any)?.siteUrl || origin;
@@ -92,6 +73,17 @@ const configSiteName = (config as any)?.siteName || "EGEHIM";
 
 const orgJsonLd = buildOrganizationJsonLd(siteUrl);
 const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
+
+const breadcrumbsJsonLd =
+  showBreadcrumbs && breadcrumbs.length > 0
+    ? buildBreadcrumbsJsonLd(
+        origin,
+        configSiteName,
+        breadcrumbs,
+        inMedia,
+        Astro.url.pathname
+      )
+    : null;
 ---
 
 <!doctype html>
@@ -99,8 +91,6 @@ const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Base href (только для медиа) -->
     {inMedia && <base href="/media/" />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -110,7 +100,6 @@ const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
       rel="stylesheet"
     />
 
-    <!-- Preload критичных ресурсов (для медиа) -->
     {
       inMedia && (
         <>
@@ -148,7 +137,6 @@ const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
     {prevUrl && <link rel="prev" href={prevUrl} />}
     {nextUrl && <link rel="next" href={nextUrl} />}
 
-    <!-- RSS -->
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -156,96 +144,34 @@ const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
       href="/rss.xml"
     />
 
-    <!-- JSON-LD структурированные данные -->
     <JsonLd type="organization" data={orgJsonLd} />
     <JsonLd type="website" data={websiteJsonLd} />
+    {breadcrumbsJsonLd && <JsonLd type="breadcrumb" data={breadcrumbsJsonLd} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Google reCAPTCHA v3 -->
     <RecaptchaLoader />
-
-    <!-- Прелоадер -->
-    <Preloader />
-
-    <meta name="theme-color" content="#0d6efd" />
-    <meta name="color-scheme" content="light" />
-    <style>
-      .page {
-        min-height: 100dvh;
-        display: flex;
-        flex-direction: column;
-        background: var(--page-bg, #f1f5fb);
-      }
-      .content {
-        flex: 1 0 auto;
-      }
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
-      .skip-link:focus {
-        position: fixed;
-        left: 16px;
-        top: 12px;
-        background: #fff;
-        color: #000;
-        border: 2px solid #1a73e8;
-        border-radius: 6px;
-        padding: 8px 12px;
-        z-index: 10000;
-      }
-    </style>
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
-    <a class="skip-link" href="#main">К содержимому</a>
-
-    <!-- Меню: Media или Landing -->
-    {
-      inMedia ? (
-        <Menu categories={menuCategories} logoSrc={logoSrc} ctaHref={ctaHref} />
-      ) : (
-        <Menu_lend ctaHref={ctaHref} />
-      )
-    }
-    {
-      showBreadcrumbs && breadcrumbs.length > 0 && (
-        <Breadcrumbs items={breadcrumbs} />
-      )
-    }
+    <Preloader />
+    <UnifiedMenu
+      context={inMedia ? "media" : "landing"}
+      logoSrc={logoSrc}
+      ctaHref={ctaHref}
+    />
 
     <main id="main" class="content page-stack">
+      {
+        showBreadcrumbs && breadcrumbs.length > 0 && (
+          <Breadcrumbs items={breadcrumbs} />
+        )
+      }
       <slot />
     </main>
 
     <SiteFooter />
 
-    <!-- Единый попап -->
-    <PopupForm
-      popupId="lead-popup"
-      title="Оставьте заявку — перезвоним"
-      submitText="Отправить"
-      action="https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec"
-      utmSource="global-popup"
-      utmMedium="organic"
-      utmCampaign="default"
-    />
-
-    <!-- Плавающая кнопка поддержки -->
-    <SupportFab
-      telegramUrl="https://t.me/valery_chemistry"
-      whatsappUrl="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
-      vkUrl="https://vk.me/valeryfilip"
-      bottomOffset={108}
-      rightOffset={20}
-      zIndex={9999}
-    />
-
-    <!-- Внешние скрипты -->
     <ExternalScripts />
   </body>
 </html>

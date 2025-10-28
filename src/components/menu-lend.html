@@ -1,318 +1,214 @@
----
-import { getCollection } from "astro:content";
-import { slugify } from "../lib/slugify";
-
-interface Props {
-  context?: "landing" | "media";
-  logoSrc?: string;
-  logoAlt?: string;
-  ctaText?: string;
-  ctaHref?: string;
-}
-
-const {
-  context = "landing",
-  logoSrc = "/images/logo_media.svg",
-  logoAlt = "ЕГЕХИМ",
-  ctaText = "Записаться на пробный урок",
-  ctaHref = "#signup",
-} = Astro.props;
-
-// Получаем категории из коллекций для медиа
-let mediaCategories: Array<{ label: string; href: string }> = [];
-if (context === "media") {
-  try {
-    const allArticles = await getCollection("articles");
-    const categories = [
-      ...new Set(allArticles.map((article) => article.data.category)),
-    ];
-    mediaCategories = categories.map((category) => ({
-      label: category,
-      href: `/media/category/${slugify(category)}`,
-    }));
-  } catch (error) {
-    console.warn("Could not load categories:", error);
-    mediaCategories = [
-      {
-        label: "Материалы для ЕГЭ и ОГЭ по химии",
-        href: "/media/category/ege-oge",
-      },
-      { label: "материалы по химии", href: "/media/category/materials" },
-    ];
-  }
-}
----
-
-<header class="menu">
-  <div class="menu__wrapper">
-    <div class="menu__left">
-      <div class="menu__logo">
-        <a href="/">
-          <img
-            src={logoSrc}
-            alt={logoAlt}
-            class="menu__logo-img"
-            height="50px"
-            loading="eager"
-            decoding="async"
-          />
-        </a>
-      </div>
-      <nav class="menu__nav">
-        <ul class="menu__list">
-          <li class="menu__item">
-            <a href="/" class="menu__link">Главная</a>
-          </li>
-
-          {
-            context === "media" && (
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu</title>
+  </head>
+  <body>
+    <header class="menu">
+      <div class="menu__wrapper">
+        <div class="menu__left">
+          <div class="menu__logo">
+            <a href="/">
+              <img
+                src="../../public/images/logo_media.svg"
+                alt="logo"
+                class="menu__logo-img"
+                height="50px"
+                loading="eager"
+                decoding="async"
+              />
+            </a>
+          </div>
+          <nav class="menu__nav">
+            <ul class="menu__list">
               <li class="menu__item">
-                <a href="/media" class="menu__link">
-                  Все статьи
-                </a>
+                <a href="#" class="menu__link">Главная </a>
               </li>
-            )
-          }
-
-          {
-            context === "landing" && (
               <li class="menu__item">
                 <details class="menu__details">
                   <summary class="menu__summary">Наши курсы</summary>
                   <ul class="menu__sublist">
                     <div class="menu__sublist-left">
                       <li class="menu__subitem">
-                        <a href="#" class="menu__sublink">
-                          Годовые курсы
-                        </a>
+                        <a href="#" class="menu__sublink">Годовые курсы</a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/egekurs" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Годовой курс ЕГЭ
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Полный курс подготовки к ЕГЭ
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Годовой курс ЕГЭ</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Полный курс подготовки к ЕГЭ</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/organikakurs" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Годовой курс для 10 класса
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Подготовка к ЕГЭ с 10 класса
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Годовой курс для 10 класса</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Подготовка к ЕГЭ с 10 класса</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/ogekurs" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Годовой курс ОГЭ
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Подготовка к ОГЭ
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Годовой курс ОГЭ</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Подготовка к ОГЭ</span
+                          >
                         </a>
                       </li>
                     </div>
                     <div class="menu__sublist-right">
                       <li class="menu__subitem">
-                        <a href="#" class="menu__sublink">
-                          Самостоятельные курсы
-                        </a>
+                        <a href="#" class="menu__sublink"
+                          >Самостоятельные курсы</a
+                        >
                       </li>
                       <li class="menu__subitem">
                         <a href="/obschaya" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Курс по общей химии
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Курс по общей химии</span
+                          >
                           <span class="menu__sublink-sub">Основы химии</span>
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/organika" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Курс по органической химии
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Органическая химия
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Курс по органической химии</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Органическая химия</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/neorganika" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Курс по неорганической химии
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Неорганическая химия
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Курс по неорганической химии</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Неорганическая химия</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/ovr" class="menu__sublink">
                           <span class="menu__sublink-title">Курс по ОВР</span>
-                          <span class="menu__sublink-sub">
-                            Окислительно-восстановительные реакции
-                          </span>
+                          <span class="menu__sublink-sub"
+                            >Окислительно-восстановительные реакции</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/app/neorg" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Авторские варианты ЕГЭ
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Практические задания ЕГЭ
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Авторские варианты ЕГЭ</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Практические задания ЕГЭ</span
+                          >
                         </a>
                       </li>
                       <li class="menu__subitem">
                         <a href="/allcourses" class="menu__sublink">
-                          <span class="menu__sublink-title">
-                            Авторские варианты ОГЭ
-                          </span>
-                          <span class="menu__sublink-sub">
-                            Практические задания ОГЭ
-                          </span>
+                          <span class="menu__sublink-title"
+                            >Авторские варианты ОГЭ</span
+                          >
+                          <span class="menu__sublink-sub"
+                            >Практические задания ОГЭ</span
+                          >
                         </a>
                       </li>
                     </div>
                   </ul>
                 </details>
               </li>
-            )
-          }
-
-          {
-            context === "media" && (
-              <li class="menu__item">
-                <details class="menu__details">
-                  <summary class="menu__summary">Категории</summary>
-                  <ul class="menu__sublist">
-                    {mediaCategories.map((category) => (
-                      <li class="menu__subitem">
-                        <a href={category.href} class="menu__sublink">
-                          {category.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
+              <li class="menu__item menu__item-courses">
+                <a href="#" class="menu__link">Медиа</a>
               </li>
-            )
-          }
-
-          <li class="menu__item menu__item-courses">
-            <a
-              href={context === "landing" ? "/media" : "/allcourses"}
-              class="menu__link"
-            >
-              {context === "landing" ? "Медиа" : "Курсы"}
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-    <div class="menu__right">
-      <div class="menu__social-icons">
-        <div class="call-to-us">Напишите нам</div>
-        <div class="social-icons">
-          <a
-            href="https://t.me/valery_chemistry"
-            class="menu__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
+            </ul>
+          </nav>
+        </div>
+        <div class="menu__right">
+          <div class="menu__social-icons">
+            <div class="call-to-us">Напишите нам</div>
+            <div class="social-icons">
+              <a href="#" class="menu__social-link">
+                <img
+                  src="../../public/images/technical/whatsapp.png"
+                  alt="instagram"
+                  class="menu__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+              <a href="#" class="menu__social-link">
+                <img
+                  src="../../public/images/technical/telegram.png"
+                  alt="telegram"
+                  class="menu__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+              <a href="#" class="menu__social-link">
+                <img
+                  src="../../public/images/technical/vk.png"
+                  alt="vk"
+                  class="menu__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+            </div>
+          </div>
+          <div class="menu__cta">
+            <button class="menu__cta-button">Записаться на пробный урок</button>
+          </div>
+        </div>
+        <div class="menu__burger">
+          <button
+            id="openMenu"
+            class="burger"
+            aria-label="Открыть меню"
+            aria-controls="mDialog"
+            aria-expanded="false"
           >
-            <img
-              src="/images/technical/telegram.png"
-              alt="Telegram"
-              class="menu__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
-          <a
-            href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
-            class="menu__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/technical/whatsapp.png"
-              alt="WhatsApp"
-              class="menu__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
-          <a
-            href="https://vk.me/valeryfilip"
-            class="menu__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/technical/vk.png"
-              alt="VK"
-              class="menu__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
+            ☰
+          </button>
         </div>
       </div>
-      <div class="menu__cta">
-        <button class="menu__cta-button">{ctaText}</button>
-      </div>
-    </div>
-    <div class="menu__burger">
-      <button
-        id="openMenu"
-        class="burger"
-        aria-label="Открыть меню"
-        aria-controls="mDialog"
-        aria-expanded="false"
-      >
-        ☰
-      </button>
-    </div>
-  </div>
-</header>
+    </header>
 
-<dialog id="mDialog" class="sheet" aria-label="Мобильное меню">
-  <div class="sheet__panel">
-    <div class="sheet__head">
-      <div class="mnav__logo">
-        <img
-          src={logoSrc}
-          alt={logoAlt}
-          class="mnav__logo-img"
-          height="50px"
-          loading="eager"
-          decoding="async"
-        />
-      </div>
-      <button id="closeMenu" class="sheet__close" aria-label="Закрыть">
-        ✕
-      </button>
-    </div>
-    <nav>
-      <ul class="mnav">
-        <li class="mnav__item"><a href="/">Главная</a></li>
+    <dialog id="mDialog" class="sheet" aria-label="Мобильное меню">
+      <div class="sheet__panel">
+        <div class="sheet__head">
+          <div class="mnav__logo">
+            <img
+              src="../../public/images/logo_media.svg"
+              alt="logo"
+              class="mnav__logo-img"
+              height="50px"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <button id="closeMenu" class="sheet__close" aria-label="Закрыть">
+            ✕
+          </button>
+        </div>
+        <nav>
+          <ul class="mnav">
+            <li class="mnav__item"><a href="/">Главная</a></li>
 
-        {
-          context === "media" && (
-            <li class="mnav__item">
-              <a href="/media">Все статьи</a>
-            </li>
-          )
-        }
-
-        {
-          context === "landing" && (
             <li class="mnav__item mnav__item-courses">
               <details class="mnav__details">
                 <summary class="mnav__summary">Наши курсы</summary>
@@ -322,32 +218,32 @@ if (context === "media") {
                     <ul class="mnav__sublist">
                       <li class="mnav__subitem">
                         <a href="/egekurs" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Годовой курс ЕГЭ
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Полный курс подготовки к ЕГЭ
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Годовой курс ЕГЭ</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Полный курс подготовки к ЕГЭ</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/organikakurs" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Годовой курс для 10 класса
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Подготовка к ЕГЭ с 10 класса
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Годовой курс для 10 класса</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Подготовка к ЕГЭ с 10 класса</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/ogekurs" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Годовой курс ОГЭ
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Подготовка к ОГЭ
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Годовой курс ОГЭ</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Подготовка к ОГЭ</span
+                          >
                         </a>
                       </li>
                     </ul>
@@ -358,58 +254,58 @@ if (context === "media") {
                     <ul class="mnav__sublist">
                       <li class="mnav__subitem">
                         <a href="/obschaya" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Курс по общей химии
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Курс по общей химии</span
+                          >
                           <span class="mnav__sublink-sub">Основы химии</span>
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/organika" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Курс по органической химии
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Органическая химия
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Курс по органической химии</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Органическая химия</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/neorganika" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Курс по неорганической химии
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Неорганическая химия
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Курс по неорганической химии</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Неорганическая химия</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/ovr" class="mnav__sublink">
                           <span class="mnav__sublink-title">Курс по ОВР</span>
-                          <span class="mnav__sublink-sub">
-                            Окислительно-восстановительные реакции
-                          </span>
+                          <span class="mnav__sublink-sub"
+                            >Окислительно-восстановительные реакции</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/app/neorg" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Авторские варианты ЕГЭ
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Практические задания ЕГЭ
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Авторские варианты ЕГЭ</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Практические задания ЕГЭ</span
+                          >
                         </a>
                       </li>
                       <li class="mnav__subitem">
                         <a href="/allcourses" class="mnav__sublink">
-                          <span class="mnav__sublink-title">
-                            Авторские варианты ОГЭ
-                          </span>
-                          <span class="mnav__sublink-sub">
-                            Практические задания ОГЭ
-                          </span>
+                          <span class="mnav__sublink-title"
+                            >Авторские варианты ОГЭ</span
+                          >
+                          <span class="mnav__sublink-sub"
+                            >Практические задания ОГЭ</span
+                          >
                         </a>
                       </li>
                     </ul>
@@ -417,97 +313,66 @@ if (context === "media") {
                 </div>
               </details>
             </li>
-          )
-        }
 
-        {
-          context === "media" && (
-            <li class="mnav__item mnav__item-courses">
-              <a href="/allcourses">Курсы</a>
-            </li>
-          )
-        }
+            <li class="mnav__item"><a href="/media">Медиа</a></li>
+          </ul>
+        </nav>
 
-        {
-          context === "media" && (
-            <li class="mnav__item mnav__item-courses">
-              <details class="mnav__details">
-                <summary class="mnav__summary">Категории</summary>
-                <ul class="mnav__sub">
-                  {mediaCategories.map((category) => (
-                    <li class="mnav__subitem">
-                      <a href={category.href} class="mnav__sublink">
-                        {category.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            </li>
-          )
-        }
-
-        <li class="mnav__item">
-          <a href={context === "landing" ? "/media" : "/allcourses"}
-            >{context === "landing" ? "Медиа" : "Курсы"}</a
-          >
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Социальные контакты и CTA в мобильном меню -->
-    <div class="mnav__footer">
-      <div class="mnav__contacts">
-        <div class="mnav__contacts-label">Напишите нам</div>
-        <div class="mnav__social-icons">
-          <a
-            href="https://t.me/valery_chemistry"
-            class="mnav__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/technical/telegram.png"
-              alt="Telegram"
-              class="mnav__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
-          <a
-            href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
-            class="mnav__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/technical/whatsapp.png"
-              alt="WhatsApp"
-              class="mnav__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
-          <a
-            href="https://vk.me/valeryfilip"
-            class="mnav__social-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/technical/vk.png"
-              alt="VK"
-              class="mnav__social-img"
-              width="20"
-              height="20"
-            />
-          </a>
+        <!-- Социальные контакты и CTA в мобильном меню -->
+        <div class="mnav__footer">
+          <div class="mnav__contacts">
+            <div class="mnav__contacts-label">Напишите нам</div>
+            <div class="mnav__social-icons">
+              <a
+                href="https://t.me/valery_chemistry"
+                class="mnav__social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="../../public/images/technical/telegram.png"
+                  alt="Telegram"
+                  class="mnav__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+              <a
+                href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
+                class="mnav__social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="../../public/images/technical/whatsapp.png"
+                  alt="WhatsApp"
+                  class="mnav__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+              <a
+                href="https://vk.me/valeryfilip"
+                class="mnav__social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="../../public/images/technical/vk.png"
+                  alt="VK"
+                  class="mnav__social-img"
+                  width="20"
+                  height="20"
+                />
+              </a>
+            </div>
+          </div>
+          <button class="mnav__cta-button">Записаться на пробный урок</button>
         </div>
       </div>
-      <button class="mnav__cta-button">{ctaText}</button>
-    </div>
-  </div>
-</dialog>
+    </dialog>
+  </body>
+</html>
 
 <style>
   body {
@@ -524,9 +389,6 @@ if (context === "media") {
   a {
     text-decoration: none;
     color: #111;
-  }
-  .menu {
-    margin-bottom: 50px;
   }
   .menu__wrapper {
     max-width: 1300px;
@@ -765,10 +627,6 @@ if (context === "media") {
     font-size: 16px;
     transition: all 0.2s ease;
   }
-  .mnav__item > a:hover {
-    background: #f4f4f4;
-    border-color: #3376e0;
-  }
 
   /* Стили для выпадающего меню курсов */
   .mnav__details {
@@ -790,13 +648,6 @@ if (context === "media") {
   }
   .mnav__summary:hover {
     background: #f4f4f4;
-  }
-  .mnav__arrow {
-    font-size: 14px;
-    transition: transform 0.2s ease;
-  }
-  .mnav__details[open] .mnav__arrow {
-    transform: rotate(90deg);
   }
 
   .mnav__submenu {
@@ -951,7 +802,6 @@ if (context === "media") {
     }
   }
 </style>
-
 <script>
   // Мини-логика для off-canvas меню
   const dlg = document.getElementById("mDialog");

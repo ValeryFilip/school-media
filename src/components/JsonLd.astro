@@ -10,131 +10,12 @@
  * - Person (для авторов)
  */
 
-interface ArticleData {
-  "@context": "https://schema.org";
-  "@type": "Article";
-  headline: string;
-  description?: string;
-  datePublished?: string;
-  dateModified?: string;
-  image?: {
-    "@type": "ImageObject";
-    url: string;
-    height?: string;
-    width?: string;
-  };
-  author: {
-    "@type": "Person";
-    name: string;
-    url?: string;
-    image?: string;
-    jobTitle?: string;
-    worksFor?: {
-      "@type": "Organization";
-      name: string;
-    };
-  };
-  publisher:
-    | {
-        "@id": string; // ссылка на Organization через @id
-      }
-    | {
-        "@type": "Organization";
-        name: string;
-        url?: string;
-        logo: {
-          "@type": "ImageObject";
-          url: string;
-          width?: string;
-          height?: string;
-        };
-        description?: string;
-        contactPoint?: {
-          "@type": "ContactPoint";
-          contactType?: string;
-          url?: string;
-        };
-        sameAs?: string[];
-      };
-  mainEntityOfPage: {
-    "@type": "WebPage";
-    "@id"?: string;
-  };
-  articleBody?: string;
-  keywords?: string[];
-  articleSection?: string;
-  inLanguage?: string;
-  url?: string;
-}
-
-interface OrganizationData {
-  "@context": "https://schema.org";
-  "@type": "Organization";
-  "@id"?: string; // для поддержки ссылок между JSON-LD объектами
-  name: string;
-  url: string;
-  logo: {
-    "@type": "ImageObject";
-    url: string;
-    width?: string;
-    height?: string;
-  };
-  description?: string;
-  contactPoint?: {
-    "@type": "ContactPoint";
-    telephone?: string;
-    contactType?: string;
-    url?: string;
-  };
-  sameAs?: string[];
-}
-
-interface WebSiteData {
-  "@context": "https://schema.org";
-  "@type": "WebSite";
-  name: string;
-  url: string;
-  description?: string;
-  inLanguage?: string;
-  potentialAction?: {
-    "@type": "SearchAction";
-    target: string;
-    "query-input": string;
-  };
-}
-
-interface BreadcrumbData {
-  "@context": "https://schema.org";
-  "@type": "BreadcrumbList";
-  itemListElement: Array<{
-    "@type": "ListItem";
-    position: number;
-    name: string;
-    item: string;
-  }>;
-}
-
-interface PersonData {
-  "@context": "https://schema.org";
-  "@type": "Person";
-  name: string;
-  url?: string;
-  image?: string;
-  jobTitle?: string;
-  worksFor?: {
-    "@type": "Organization";
-    name: string;
-  };
-}
+import type { JsonLdData, JsonLdType } from "../lib/seoData";
+import { formatJsonLd } from "../lib/seoData";
 
 interface Props {
-  type: "article" | "organization" | "website" | "breadcrumb" | "person";
-  data:
-    | ArticleData
-    | OrganizationData
-    | WebSiteData
-    | BreadcrumbData
-    | PersonData;
+  type: JsonLdType;
+  data: JsonLdData;
 }
 
 const { type, data } = Astro.props;
@@ -143,11 +24,6 @@ const { type, data } = Astro.props;
 if (!data || !type) {
   throw new Error("JsonLd component requires type and data props");
 }
-
-// Форматирование JSON с правильными отступами для читаемости
-const formatJsonLd = (obj: any) => {
-  return JSON.stringify(obj, null, 2);
-};
 ---
 
 <script type="application/ld+json" set:html={formatJsonLd(data)} />

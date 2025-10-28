@@ -78,6 +78,15 @@ a:hover{
   display: grid;
   row-gap: var(--section-gap);/* ← меняешь тут — меняется везде */
 }
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-bg, #f1f5fb);
+}
+.content {
+  flex: 1 0 auto;
+}
 
 /* Контейнер 1300 + паддинги */
 .container{

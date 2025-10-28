@@ -7,7 +7,6 @@
  */
 ---
 
-<!-- HTML разметка прелоадера -->
 <div
   id="preloader"
   class="preloader"
@@ -18,7 +17,6 @@
   <div class="spinner" aria-hidden="true"></div>
 </div>
 
-<!-- Критичные стили прелоадера -->
 <style>
   .preloader {
     position: fixed;
@@ -58,7 +56,6 @@
   }
 </style>
 
-<!-- Логика прелоадера -->
 <script>
   (function () {
     const preloader = document.getElementById("preloader");
@@ -68,18 +65,14 @@
       document.body.classList.remove("is-loading");
     };
 
-    // Скрыть если страница уже загружена
     if (document.readyState === "complete") {
       hide();
     } else {
-      // Скрыть после загрузки
       window.addEventListener("load", hide, { once: true });
 
-      // Принудительно скрыть через 5 секунд
       setTimeout(hide, 5000);
     }
 
-    // Скрыть при возврате через кнопку "назад" (bfcache)
     window.addEventListener("pageshow", (e) => {
       if (e.persisted) hide();
     });

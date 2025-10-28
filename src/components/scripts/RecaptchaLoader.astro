@@ -15,7 +15,6 @@ const { siteKey = "6LdH2McrAAAAAAjXZeXVKTAtKoGwJCjS4d9wVe4Z" } = Astro.props;
 
 <script define:vars={{ siteKey }} is:inline>
   (function () {
-    // Загружаем reCAPTCHA только на продакшне (не на localhost)
     if (!window.location.hostname.includes("localhost")) {
       const script = document.createElement("script");
       script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;

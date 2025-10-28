@@ -39,25 +39,19 @@ const {
 } = Astro.props as Props;
 
 import config from "../config.ts";
+import { absUrl, getSiteName } from "../lib/seoData";
 
 /** Базовый origin: в dev -> http://localhost:4321, в проде -> реальный домен */
 const origin = Astro.url.origin;
 
-/** Абсолютизатор: http(s) — как есть; '/x' -> origin + /x; 'x' -> origin + /x */
-function abs(u?: string) {
-  if (!u) return undefined;
-  if (/^(https?:)?\/\//i.test(u)) return u; // http(s):// или //cdn...
-  return `${origin}${u.startsWith("/") ? u : "/" + u}`;
-}
-
 /** Каноникал: явный url -> abs(); иначе текущий путь без query/hash */
-const canonical = url ? abs(url) : `${origin}${Astro.url.pathname}`;
+const canonical = url ? absUrl(origin, url) : `${origin}${Astro.url.pathname}`;
 
 /** OG image — абсолютный */
-const ogImage = abs(image);
+const ogImage = absUrl(origin, image);
 
-/** Название сайта: пропс > config.siteName > 'Site' */
-const siteName = siteNameProp || (config as any)?.siteName || "Site";
+/** Название сайта: пропс > config.siteName > 'EGEHIM' */
+const siteName = getSiteName(siteNameProp, (config as any)?.siteName);
 
 /** <title> с суффиксом */
 const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;

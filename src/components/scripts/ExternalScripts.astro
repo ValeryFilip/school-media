@@ -24,9 +24,6 @@ const {
 } = Astro.props;
 ---
 
-<!-- 1. Popup.js - управление модальными окнами -->{
-  loadPopup && <script src={popupPath} defer />
-}
+{loadPopup && <script src={popupPath} defer />}
 
-<!-- 2. LeadCapture.js - обработка форм и UTM меток -->
 {loadLeadCapture && <script src={leadCapturePath} async />}
