@@ -1,0 +1,388 @@
+---
+interface Props {
+  // Данные карточки
+  entranceScore: number; // Входные баллы
+  egeScore: number; // Результат на ЕГЭ
+  university: string; // Название университета
+  studentName: string; // Имя студента
+  studentPhoto: string; // Путь к фото студента
+  telegramLink: string; // Ссылка на Telegram (например, "@bazaarsena" или "https://t.me/...")
+  telegramUrl?: string; // Полный URL (если отличается от telegramLink)
+  reviewText: string; // Текст отзыва студента
+  footerPhoto1: string; // Путь к первой фото в футере
+  footerPhoto2: string; // Путь ко второй фото в футере
+
+  // Опциональные иконки
+  playIcon?: string; // Путь к иконке стрелки (по умолчанию "play.png")
+  tgIcon?: string; // Путь к иконке Telegram (по умолчанию "tg-icon.png")
+
+  // Опциональные классы
+  wrapperClass?: string; // Дополнительный класс для обёртки
+}
+
+const {
+  entranceScore,
+  egeScore,
+  university,
+  studentName,
+  studentPhoto,
+  telegramLink,
+  telegramUrl,
+  reviewText,
+  footerPhoto1,
+  footerPhoto2,
+  wrapperClass = "",
+} = Astro.props;
+
+// Формируем URL для Telegram
+const tgUrl =
+  telegramUrl ||
+  (telegramLink.startsWith("@")
+    ? `https://t.me/${telegramLink.slice(1)}`
+    : telegramLink);
+---
+
+<article class={`caseCard ${wrapperClass}`}>
+  <div class="caseCard__wrapper">
+    <div class="caseCard__top">
+      <div class="caseCard__top-left">
+        <p class="caseCard__top-text">Входные баллы</p>
+        <p class="caseCard__top-number">{entranceScore}</p>
+      </div>
+      <div class="caseCard__top-arrow">
+        <img class="triangle" src="/images/play.png" alt="arrow-right" />
+        <img class="triangle" src="/images/play.png" alt="arrow-right" />
+        <img class="triangle" src="/images/play.png" alt="arrow-right" />
+      </div>
+      <div class="caseCard__top-right">
+        <p class="caseCard__top-text">Результат на ЕГЭ</p>
+        <p class="caseCard__top-number">{egeScore}</p>
+      </div>
+    </div>
+    <div class="caseCard__middle">
+      <p class="caseCard__middle-uni">{university}</p>
+    </div>
+    <div class="caseCard__bottom">
+      <div class="caseCard__bottom-photo">
+        <img src={studentPhoto} alt={studentName} />
+      </div>
+      <div class="caseCard__bottom-info">
+        <p class="caseCard__bottom-name">{studentName}</p>
+        <div class="caseCard__bottom-tginfo">
+          <img src="/images/technical/telegram.png" alt="tg-icon" />
+          <p class="caseCard__bottom-tg">
+            <a href={tgUrl}>{telegramLink}</a>
+          </p>
+        </div>
+        <p class="caseCard__bottom-text">{reviewText}</p>
+      </div>
+    </div>
+    <div class="caseCard__footer">
+      <div class="caseCard__footer-photo-1">
+        <img src={footerPhoto1} alt="certificate" />
+      </div>
+      <div class="caseCard__footer-photo-2">
+        <img src={footerPhoto2} alt="certificate" />
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- Lightbox для просмотра фото -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <img class="lightbox__img" id="lightboxImg" alt="" />
+  <button class="lightbox__close" id="lightboxClose" type="button">
+    Закрыть
+  </button>
+</div>
+
+<style>
+  .caseCard {
+    container-type: inline-size;
+  }
+  .caseCard__wrapper {
+    max-width: 100%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px 20px 160px 20px;
+    position: relative;
+  }
+  .caseCard__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .caseCard__top-left,
+  .caseCard__top-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .caseCard__top-arrow {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .caseCard__top-number {
+    font-size: clamp(32px, 4vw, 64px);
+    font-weight: 500;
+    border: 2px solid #000;
+    border-radius: 50%;
+    padding: 12px 20px;
+    margin: 0;
+  }
+  .caseCard__top-text {
+    margin: 0;
+  }
+  .caseCard__middle-uni {
+    text-align: start;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 400;
+    border-bottom: 1px solid #000;
+    padding-bottom: 4px;
+  }
+  .caseCard__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+  .caseCard__bottom-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 4px;
+  }
+  .caseCard__bottom-tginfo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    margin-bottom: 8px;
+    padding: 0;
+    height: fit-content;
+  }
+  .caseCard__bottom-tginfo img {
+    width: 16px;
+    height: 16px;
+  }
+  .caseCard__bottom-tg {
+    font-size: 14px;
+    font-weight: 400;
+    color: #1a0dab;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+    height: fit-content;
+  }
+  .caseCard__bottom-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    margin: 0 0 20px 0;
+  }
+
+  .caseCard__bottom-photo {
+    align-self: flex-start;
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+  .caseCard__bottom-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    object-position: center;
+    overflow: hidden;
+  }
+  .caseCard__footer {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: -10px;
+    display: flex;
+    gap: -100px;
+    align-items: center;
+    justify-content: center;
+  }
+  .caseCard__footer-photo-1 {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 300px;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    transform: rotate(-10deg);
+    transition: transform 0.3s ease;
+  }
+
+  .caseCard__footer-photo-2 {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 300px;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    transform: rotate(10deg);
+    transition: transform 0.3s ease;
+  }
+  .caseCard__footer-photo-1:hover,
+  .caseCard__footer-photo-2:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+  }
+
+  .caseCard__footer-photo-1 img,
+  .caseCard__footer-photo-2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .triangle {
+    width: 16px;
+    height: 16px;
+    margin: 0 4px;
+  }
+
+  /* Оверлей (по умолчанию скрыт) */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* скрыт */
+    align-items: center;
+    justify-content: center;
+    padding: 4vh 4vw;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* когда открыт */
+  .lightbox.is-open {
+    display: flex;
+    opacity: 1;
+  }
+
+  /* Картинка внутри оверлея */
+  .lightbox__img {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    background: #111; /* на случай прозрачных PNG */
+  }
+
+  /* Иконка закрытия (опционально) */
+  .lightbox__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font:
+      600 16px/1 system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  @container (max-width: 350px) {
+    .caseCard__wrapper {
+      padding: 20px 20px 30px 20px;
+    }
+    .caseCard__top-arrow {
+      display: none;
+    }
+    .caseCard__bottom {
+      flex-direction: column;
+      align-items: start;
+      text-align: start;
+      gap: 5px;
+    }
+    .caseCard__footer {
+      flex-direction: column;
+      gap: 20px;
+      position: static;
+      margin-top: 20px;
+    }
+    .caseCard__footer-photo-1,
+    .caseCard__footer-photo-2 {
+      width: 100%;
+      transform: rotate(0deg);
+    }
+  }
+</style>
+
+<script>
+  // Инициализация после загрузки DOM
+  document.addEventListener("DOMContentLoaded", () => {
+    const lb = document.getElementById("lightbox");
+    const lbImg = document.getElementById(
+      "lightboxImg"
+    ) as HTMLImageElement | null;
+    const lbClose = document.getElementById("lightboxClose");
+
+    if (!lb || !lbImg || !lbClose) return;
+
+    function closeLightbox() {
+      if (!lb || !lbImg) return;
+      lb.classList.remove("is-open");
+      lb.setAttribute("aria-hidden", "true");
+      // Чуть позже очищаем src, чтобы не мигало при открытии другой
+      setTimeout(() => {
+        lbImg.removeAttribute("src");
+      }, 200);
+    }
+
+    // Делегируем клики от всех превью в .caseCard__footer-photo
+    document.addEventListener("click", (e) => {
+      if (!e.target) return;
+      const target = e.target as HTMLElement;
+      const img = target.closest(
+        ".caseCard__footer-photo-1 img, .caseCard__footer-photo-2 img"
+      ) as HTMLImageElement | null;
+      if (!img) return;
+
+      const full = img.dataset.full || img.src; // если есть data-full — используем её
+
+      lbImg.src = full;
+      lbImg.alt = img.alt || "";
+      lb.classList.add("is-open");
+      lb.setAttribute("aria-hidden", "false");
+    });
+
+    lb.addEventListener("click", (e) => {
+      // клики по фону (не по картинке) — закрываем
+      if (e.target === lb) closeLightbox();
+    });
+    lbClose.addEventListener("click", closeLightbox);
+
+    // Закрытие по Esc
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lb.classList.contains("is-open")) {
+        closeLightbox();
+      }
+    });
+  });
+</script>

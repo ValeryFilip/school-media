@@ -1,887 +1,418 @@
 ---
-/* src/components/CasesSlider.astro */
+import CaseCard from "../cards/caseCard.astro";
+
+interface CaseCardData {
+  entranceScore: number;
+  egeScore: number;
+  university: string;
+  studentName: string;
+  studentPhoto: string;
+  telegramLink: string;
+  telegramUrl?: string;
+  reviewText: string;
+  footerPhoto1: string;
+  footerPhoto2: string;
+  playIcon?: string;
+  tgIcon?: string;
+}
+
+interface Props {
+  title?: string;
+  cases?: CaseCardData[];
+}
+
+const {
+  title = "Истории успеха наших учеников",
+  cases = [
+    {
+      entranceScore: 31,
+      egeScore: 99,
+      university: "СПБГУ",
+      studentName: "Иван Иванов",
+      studentPhoto: "/images/1234.jpg",
+      telegramLink: "@bazaarsena",
+      reviewText:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.",
+      footerPhoto1: "./spec.png",
+      footerPhoto2: "./spec.png",
+    },
+    {
+      entranceScore: 45,
+      egeScore: 92,
+      university: "МГУ",
+      studentName: "Мария Петрова",
+      studentPhoto: "/images/1234.jpg",
+      telegramLink: "@student2",
+      reviewText:
+        "Очень благодарна за качественную подготовку. Преподаватели объясняют всё очень доступно и понятно.",
+      footerPhoto1: "./spec.png",
+      footerPhoto2: "./spec.png",
+    },
+    {
+      entranceScore: 38,
+      egeScore: 88,
+      university: "ВШЭ",
+      studentName: "Алексей Сидоров",
+      studentPhoto: "/images/1234.jpg",
+      telegramLink: "@student3",
+      reviewText:
+        "Поступил на бюджет благодаря курсам. Материал подаётся структурированно и легко усваивается.",
+      footerPhoto1: "./spec.png",
+      footerPhoto2: "./spec.png",
+    },
+    {
+      entranceScore: 42,
+      egeScore: 95,
+      university: "МГМУ",
+      studentName: "Анна Козлова",
+      studentPhoto: "/images/1234.jpg",
+      telegramLink: "@student4",
+      reviewText:
+        "Химия всегда давалась сложно, но здесь всё изменилось. Отличные результаты на экзамене!",
+      footerPhoto1: "./spec.png",
+      footerPhoto2: "./spec.png",
+    },
+    {
+      entranceScore: 35,
+      egeScore: 90,
+      university: "СПбГМУ",
+      studentName: "Дмитрий Волков",
+      studentPhoto: "/images/1234.jpg",
+      telegramLink: "@student5",
+      reviewText:
+        "Начал с низких баллов, но упорство и правильная методика привели к успеху на ЕГЭ.",
+      footerPhoto1: "./spec.png",
+      footerPhoto2: "./spec.png",
+    },
+  ],
+} = Astro.props as Props;
+
+const SLIDER_ID = "cases-slider";
+const SLIDER_PREV = "cases-slider-prev";
+const SLIDER_NEXT = "cases-slider-next";
 ---
 
-<section class="section cases-slider" aria-labelledby="cases-title">
-  <style>
-    /* Геометрия / расположение. Цвета/шрифты — из глобалки */
-    .cases-slider {
-      --nav-size: 48px; /* диаметр кнопки */
-      --nav-gap: 24px; /* от окна до кнопки */
-      --nav-gutter: calc(
-        var(--nav-size) + var(--nav-gap)
-      ); /* внутренние поля окна под стрелки */
-      --child-overhang: 120px; /* «свес» нижних мини-картинок */
-      --child-space: -120px; /* перекрытие мини-картинок */
-      --card-scale: 1; /* меняет JS при 1 карточке */
+<section class="cases-slider-section container">
+  {title && <h2 class="cases-slider__title">{title}</h2>}
 
-      position: relative;
-      font-family: var(--ff);
-      color: var(--black);
-    }
-
-    /* Заголовок внутри контейнера — типографика берётся из глобального h2/.h2 (== 42 на десктопе) */
-    .cases-header .h2,
-    .cases-header h2 {
-      margin: 0 0 var(--space-16);
-    }
-
-    /* Окно и трек */
-    .cases-viewport {
-      position: relative;
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      /* поле под стрелки, чтобы контент не залезал под них */
-      box-sizing: content-box;
-    }
-    @media (max-width: 1100px) {
-      .cases-viewport {
-        width: 100vw;
-        margin-inline: calc(50% - 50vw);
-        max-width: none;
-      }
-      @supports (width: 100dvw) {
-        .cases-viewport {
-          width: 100dvw;
-          margin-inline: calc(50% - 50dvw);
+  <div class="cases-slider" id={SLIDER_ID}>
+    <div class="cases-slider__viewport">
+      <div class="cases-slider__wrapper">
+        {
+          cases.map((caseData) => (
+            <div class="cases-slider__slide">
+              <CaseCard {...caseData} />
+            </div>
+          ))
         }
-      }
-    }
-    .cases-viewport-inner {
-      overflow: hidden;
-      margin: 0 var(--nav-gutter);
-    }
-    .cases-track {
-      display: flex;
-      gap: 70px; /* JS поставит 0 при одной карточке */
-      will-change: transform;
-      transition: transform 0.35s var(--easing);
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+      </div>
+    </div>
 
-    /* Слайд: высота = высоте карточки + «свесу» */
-    .cases-slide {
-      flex: 0 0 auto;
-      position: relative;
-      min-height: calc((480px + var(--child-overhang)) * var(--card-scale));
-    }
-
-    /* Кнопки навигации — выровнены по краям контейнера */
-    .cases-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: var(--nav-size);
-      height: var(--nav-size);
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: #fff;
-      box-shadow: var(--shadow-1);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      z-index: 3;
-    }
-    .cases-nav.prev {
-      left: var(--pad-desktop);
-    }
-    .cases-nav.next {
-      right: var(--pad-desktop);
-    }
-    .cases-nav::before {
-      content: "";
-      width: 12px;
-      height: 12px;
-      border-top: 2px solid var(--blue);
-      border-right: 2px solid var(--blue);
-      transform: rotate(45deg);
-    }
-    .cases-nav.prev::before {
-      transform: rotate(-135deg);
-    }
-    .cases-nav[disabled] {
-      opacity: 0.45;
-      pointer-events: none;
-    }
-
-    /* Карточка кейса — центр + масштаб из JS */
-    .case-card {
-      width: 550px;
-      height: 480px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-24);
-      box-shadow: var(--shadow-1);
-      padding: var(--space-24);
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) scale(var(--card-scale));
-      transform-origin: top center;
-      overflow: visible;
-    }
-
-    .case-top {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      column-gap: 24px;
-      margin-bottom: 16px;
-    }
-    .case-label {
-      font-size: 16px;
-      font-weight: 400;
-      text-align: center;
-      margin: 0 0 8px;
-    }
-    .circle-score {
-      width: 130px;
-      height: 130px;
-      border: 2px solid #cfcfcf;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-    }
-    .circle-score strong {
-      font-size: 60px;
-      font-weight: 500;
-      line-height: 1;
-    }
-    .arrow-tris {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .arrow-tris .tri {
-      width: 0;
-      height: 0;
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
-      border-left: 18px solid #a7a7a7;
-    }
-
-    .uni {
-      font-size: 16px;
-      font-weight: 400;
-      margin: 8px 0;
-    }
-    .divider {
-      height: 1px;
-      background: #cfcfcf;
-      margin-bottom: 12px;
-    }
-
-    /* Автор */
-    .case-card .author {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .case-card figure.avatar {
-      margin: 0;
-      flex: 0 0 50px;
-    }
-    .case-card .avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #e9e9e9;
-      border: 1px solid var(--border);
-    }
-    .case-card .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .case-card .author-info {
-      margin-left: 0;
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .case-card .author-name {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0 0 4px 0;
-    }
-    .case-card .tg-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin: 0 0 8px 0;
-    }
-    .case-card .tg-line img {
-      width: 14px;
-      height: 14px;
-    }
-    .case-card .tg-handle {
-      font-size: 12px;
-      font-weight: 400;
-      color: #6f6f6f;
-    }
-    .case-card .review {
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    /* Нижние мини-карточки */
-    .child-cards {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: calc(-1 * var(--child-overhang));
-      display: flex;
-      justify-content: center;
-      z-index: 5;
-      pointer-events: auto;
-    }
-    .child {
-      width: 300px;
-      height: 170px;
-      box-sizing: border-box;
-      flex-shrink: 0;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow-1);
-      overflow: hidden;
-      background: #fff;
-      cursor: pointer;
-      transition:
-        transform 0.25s var(--easing),
-        box-shadow 0.25s var(--easing);
-    }
-    .child + .child {
-      margin-left: var(--child-space);
-    }
-    .child img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .child.left {
-      transform: rotate(-6deg);
-      z-index: 1;
-    }
-    .child.right {
-      transform: rotate(8deg);
-      z-index: 2;
-    }
-    .child:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: var(--shadow-2);
-    }
-
-    /* Попап */
-    .popup-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .popup-overlay.active {
-      display: flex;
-    }
-    .popup-content {
-      position: relative;
-      background: #fff;
-      padding: 10px;
-      border-radius: 14px;
-      max-width: 90vw;
-      max-height: 90vh;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-    .popup-content img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 10px;
-    }
-    .popup-close {
-      position: absolute;
-      top: -12px;
-      right: -12px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: #fff;
-      box-shadow: var(--shadow-1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Адаптив */
-    @media (max-width: 1100px) {
-      .cases-viewport {
-        padding: 0 var(--pad-mobile);
-      }
-      .cases-viewport-inner {
-        margin: 0;
-      } /* стрелки станут поверх, без внутренних полей */
-      .cases-nav {
-        width: 44px;
-        height: 44px;
-      }
-      .cases-nav.prev {
-        left: var(--pad-mobile);
-      }
-      .cases-nav.next {
-        right: var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .cases-nav {
-        width: 40px;
-        height: 40px;
-      }
-      .cases-nav.prev {
-        left: var(--pad-mobile);
-      }
-      .cases-nav.next {
-        right: var(--pad-mobile);
-      }
-    }
-  </style>
-
-  <div class="container">
-    <div class="cases-header">
-      <h2 id="cases-title" class="h2">Кейсы наших учеников</h2>
+    <!-- Кнопки навигации внизу -->
+    <div class="cases-slider__controls">
+      <button
+        id={SLIDER_PREV}
+        class="cases-slider__button cases-slider__button--prev"
+        type="button"
+        aria-label="Предыдущая карточка"
+      >
+      </button>
+      <button
+        id={SLIDER_NEXT}
+        class="cases-slider__button cases-slider__button--next"
+        type="button"
+        aria-label="Следующая карточка"
+      >
+      </button>
     </div>
   </div>
-
-  <!-- Стрелки позиционируются относительно секции, но выровнены по паддингам контейнера -->
-  <button class="cases-nav prev" type="button" aria-label="Предыдущие кейсы"
-  ></button>
-
-  <div
-    class="cases-viewport"
-    role="region"
-    aria-roledescription="карусель"
-    aria-labelledby="cases-title"
-  >
-    <div class="cases-viewport-inner">
-      <ul class="cases-track">
-        <!-- слайды — твои без изменений -->
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>12</strong>
-                </div>
-              </div>
-              <div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div>
-              <div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>99</strong>
-                </div>
-              </div>
-            </div>
-            <p class="uni">Нижегородский Мед. Университет (бюджет)</p>
-            <div class="divider"></div>
-            <div class="author">
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-              <div class="author-info">
-                <p class="author-name">Максим Иванов</p>
-                <p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@maxttn</span>
-                </p>
-                <p class="review">
-                  “Входной пробник был низким, но за курс подтянул теорию и
-                  задачи. На финальном пробнике держал высокий результат, а на
-                  ЕГЭ получил 99.”
-                </p>
-              </div>
-            </div>
-            <div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-              <figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-
-        <!-- … остальные твои <li class="cases-slide"> как были … -->
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>18</strong>
-                </div>
-              </div><div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div><div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>92</strong>
-                </div>
-              </div>
-            </div><p class="uni">СПбГУ (бюджет)</p><div class="divider">
-            </div><div class="author">
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><div class="author-info">
-                <p class="author-name">Алина Сергеева</p><p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@alinase</span>
-                </p><p class="review">
-                  “Самый понятный разбор задач. Итог — 92.”
-                </p>
-              </div>
-            </div><div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1484417894907-623942c8ee29?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>22</strong>
-                </div>
-              </div><div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div><div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>95</strong>
-                </div>
-              </div>
-            </div><p class="uni">МГУ (договор)</p><div class="divider">
-            </div><div class="author">
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1527980965255-d3d416303d12?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><div class="author-info">
-                <p class="author-name">Влад Жуков</p><p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@vladz</span>
-                </p><p class="review">“Системный план и ОВР вывели на 95.”</p>
-              </div>
-            </div><div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>10</strong>
-                </div>
-              </div><div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div><div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>90</strong>
-                </div>
-              </div>
-            </div><p class="uni">НГУ (бюджет)</p><div class="divider"></div><div
-              class="author"
-            >
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><div class="author-info">
-                <p class="author-name">Мария Лебедева</p><p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@mlebedev</span>
-                </p><p class="review">“Много практики, чёткие конспекты.”</p>
-              </div>
-            </div><div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1517433456452-f9633a875f6f?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>20</strong>
-                </div>
-              </div><div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div><div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>93</strong>
-                </div>
-              </div>
-            </div><p class="uni">НИТУ МИСИС</p><div class="divider"></div><div
-              class="author"
-            >
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><div class="author-info">
-                <p class="author-name">Никита Орлов</p><p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@orlov</span>
-                </p><p class="review">
-                  “Разобрался с расчётными задачами — это решило исход.”
-                </p>
-              </div>
-            </div><div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1484807352052-23338990c6c6?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-        <li class="cases-slide">
-          <article class="case-card">
-            <div class="case-top">
-              <div>
-                <p class="case-label">входной пробник</p><div
-                  class="circle-score"
-                >
-                  <strong>25</strong>
-                </div>
-              </div><div class="arrow-tris" aria-hidden="true">
-                <span class="tri"></span><span class="tri"></span><span
-                  class="tri"></span>
-              </div><div>
-                <p class="case-label">результат на ЕГЭ</p><div
-                  class="circle-score"
-                >
-                  <strong>96</strong>
-                </div>
-              </div>
-            </div><p class="uni">ВШЭ</p><div class="divider"></div><div
-              class="author"
-            >
-              <figure class="avatar">
-                <img
-                  loading="lazy"
-                  src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=240&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><div class="author-info">
-                <p class="author-name">Даша Коваль</p><p class="tg-line">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
-                    alt=""
-                  /><span class="tg-handle">@dashak</span>
-                </p><p class="review">
-                  “Поддержка в чате и еженедельные разборы — топ.”
-                </p>
-              </div>
-            </div><div class="child-cards">
-              <figure class="child left">
-                <img
-                  src="https://images.unsplash.com/photo-1513258496099-48168024aec0?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure><figure class="child right">
-                <img
-                  src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=900&q=80&auto=format&fit=crop"
-                  alt=""
-                />
-              </figure>
-            </div>
-          </article>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <button class="cases-nav next" type="button" aria-label="Следующие кейсы"
-  ></button>
-
-  <!-- попап -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup-content">
-      <button class="popup-close" aria-label="Закрыть">×</button>
-      <img src="" alt="Просмотр изображения" id="popup-img" />
-    </div>
-  </div>
-
-  <!-- JS оставлен без изменений -->
-  <script is:inline>
-    (function () {
-      const slider = document.currentScript.closest(".cases-slider");
-      const viewport = slider.querySelector(
-        ".cases-viewport-inner"
-      ); /* ИЗМЕНЕНО: трекаем внутреннее окно */
-      const track = slider.querySelector(".cases-track");
-      const slides = [...slider.querySelectorAll(".cases-slide")];
-      const prevBtn = slider.querySelector(".cases-nav.prev");
-      const nextBtn = slider.querySelector(".cases-nav.next");
-      const popup = slider.querySelector("#popup");
-      const popupImg = slider.querySelector("#popup-img");
-      const popupClose = slider.querySelector(".popup-close");
-
-      let perView = 2,
-        gap = 24,
-        index = 0,
-        slideW = 0,
-        maxIndex = 0;
-
-      function computePerView() {
-        perView = window.innerWidth <= 1100 ? 1 : 2;
-        gap = perView === 1 ? 0 : 70;
-        track.style.gap = gap + "px";
-      }
-
-      function layout() {
-        computePerView();
-
-        const vw = viewport.clientWidth;
-        slideW = (vw - gap * (perView - 1)) / perView;
-
-        let cardScale = 1;
-        if (perView === 1) {
-          cardScale = Math.min(1, slideW / 550);
-        }
-        slider.style.setProperty("--card-scale", cardScale);
-
-        slides.forEach((s) => (s.style.width = Math.round(slideW) + "px"));
-
-        maxIndex = Math.max(0, slides.length - perView);
-        index = Math.min(index, maxIndex);
-        apply();
-      }
-
-      function apply() {
-        const shift = -(index * (slideW + gap));
-        track.style.transform = `translateX(${shift}px)`;
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === maxIndex;
-      }
-
-      prevBtn.addEventListener("click", () => {
-        index = Math.max(0, index - 1);
-        apply();
-      });
-      nextBtn.addEventListener("click", () => {
-        index = Math.min(maxIndex, index + 1);
-        apply();
-      });
-
-      window.addEventListener("resize", layout, { passive: true });
-      layout();
-
-      /* свайпы */
-      let startX = 0,
-        startY = 0,
-        currentX = 0,
-        isDragging = false,
-        lockedAxis = null;
-      const THRESHOLD = 50;
-      const MAX_SLOPE = 0.57;
-
-      function onPointerDown(e) {
-        const t = e.touches ? e.touches[0] : e;
-        startX = currentX = t.clientX;
-        startY = t.clientY;
-        isDragging = true;
-        lockedAxis = null;
-        track.style.transition = "none";
-      }
-      function onPointerMove(e) {
-        if (!isDragging) return;
-        const t = e.touches ? e.touches[0] : e;
-        const dx = t.clientX - startX;
-        const dy = t.clientY - startY;
-
-        if (lockedAxis === null) {
-          if (Math.abs(dx) > 8) {
-            const slope = Math.abs(dy / dx);
-            lockedAxis = slope <= MAX_SLOPE ? "x" : "y";
-          }
-        }
-        if (lockedAxis === "x") {
-          e.preventDefault();
-          currentX = t.clientX;
-          const base = -(index * (slideW + gap));
-          track.style.transform = `translateX(${base + (currentX - startX)}px)`;
-        }
-      }
-      function onPointerUp() {
-        if (!isDragging) return;
-        isDragging = false;
-        track.style.transition = "transform .35s var(--easing)";
-        if (lockedAxis !== "x") {
-          apply();
-          return;
-        }
-
-        const dx = currentX - startX;
-        if (Math.abs(dx) > THRESHOLD) {
-          if (dx < 0 && index < maxIndex) index += 1;
-          if (dx > 0 && index > 0) index -= 1;
-        }
-        apply();
-      }
-
-      const outerViewport = slider.querySelector(".cases-viewport");
-      outerViewport.addEventListener("touchstart", onPointerDown, {
-        passive: true,
-      });
-      outerViewport.addEventListener("touchmove", onPointerMove, {
-        passive: false,
-      });
-      outerViewport.addEventListener("touchend", onPointerUp, {
-        passive: true,
-      });
-      outerViewport.addEventListener("touchcancel", onPointerUp, {
-        passive: true,
-      });
-      outerViewport.addEventListener("mousedown", (e) => {
-        onPointerDown(e);
-        const mm = (ev) => onPointerMove(ev);
-        const mu = () => {
-          onPointerUp();
-          window.removeEventListener("mousemove", mm);
-        };
-        window.addEventListener("mousemove", mm);
-        window.addEventListener("mouseup", mu, { once: true });
-      });
-
-      /* попап */
-      slider.querySelectorAll(".child img").forEach((img) => {
-        img.addEventListener("click", () => {
-          popupImg.src = img.src;
-          popup.classList.add("active");
-        });
-      });
-      popupClose.addEventListener("click", () =>
-        popup.classList.remove("active")
-      );
-      popup.addEventListener("click", (e) => {
-        if (e.target === popup) popup.classList.remove("active");
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") popup.classList.remove("active");
-      });
-    })();
-  </script>
 </section>
+
+<style>
+  .cases-slider-section {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0px 50px;
+  }
+
+  .cases-slider__title {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 40px;
+    color: #111;
+  }
+
+  .cases-slider {
+    position: relative;
+    width: 100%;
+  }
+
+  .cases-slider__viewport {
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .cases-slider__wrapper {
+    display: flex;
+    will-change: transform;
+    transition: transform 0.4s ease;
+    gap: 30px;
+  }
+
+  .cases-slider__slide {
+    flex: 0 0 calc(50% - 15px);
+    min-width: 0;
+  }
+
+  .cases-slider__controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .cases-slider__button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .cases-slider__button:hover:not(.cases-slider__button--disabled) {
+    background: #f5f5f5;
+    transform: scale(1.05);
+  }
+
+  .cases-slider__button--disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .cases-slider__button::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    display: block;
+    border-top: 2.5px solid #222;
+    border-right: 2.5px solid #222;
+  }
+
+  .cases-slider__button--next::after {
+    transform: rotate(45deg);
+  }
+
+  .cases-slider__button--prev::after {
+    transform: rotate(-135deg);
+  }
+
+  @media (max-width: 1100px) {
+    .cases-slider-section {
+      padding: 40px var(--pad-desktop, 20px) 60px;
+    }
+
+    .cases-slider__title {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    .cases-slider__wrapper {
+      gap: 20px;
+    }
+
+    .cases-slider__slide {
+      flex: 0 0 calc(100% - 20px);
+    }
+
+    .cases-slider__viewport {
+      margin-bottom: 24px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cases-slider-section {
+      padding: 30px var(--pad-mobile, 16px) 50px;
+    }
+
+    .cases-slider__title {
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+
+    .cases-slider__viewport {
+      margin-bottom: 20px;
+    }
+
+    .cases-slider__button {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const container = document.getElementById("cases-slider");
+    if (!container) return;
+
+    const wrapper = container.querySelector(".cases-slider__wrapper");
+    const slides = Array.from(wrapper ? wrapper.children : []) as HTMLElement[];
+    const prevBtn = container.querySelector("#cases-slider-prev");
+    const nextBtn = container.querySelector("#cases-slider-next");
+
+    if (!wrapper || slides.length === 0 || !prevBtn || !nextBtn) return;
+
+    let currentIndex = 0;
+    let slidesPerView = 2;
+
+    function updateSlidesPerView() {
+      slidesPerView = window.matchMedia("(max-width: 1100px)").matches ? 1 : 2;
+    }
+
+    function getMaxIndex() {
+      return Math.max(0, slides.length - slidesPerView);
+    }
+
+    function getGap() {
+      // gap соответствует CSS: 30px на десктопе, 20px на мобильных
+      return window.matchMedia("(max-width: 1100px)").matches ? 20 : 30;
+    }
+
+    function updateSlider() {
+      const maxIndex = getMaxIndex();
+      currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+
+      // Вычисляем смещение
+      if (slides.length === 0) return;
+
+      const slideWidth = slides[0].getBoundingClientRect().width;
+      const gap = getGap();
+      const translateX = -(currentIndex * (slideWidth + gap));
+
+      (wrapper as HTMLElement).style.transform = `translateX(${translateX}px)`;
+
+      // Обновляем состояние кнопок
+      if (prevBtn && nextBtn) {
+        prevBtn.classList.toggle(
+          "cases-slider__button--disabled",
+          currentIndex === 0
+        );
+        nextBtn.classList.toggle(
+          "cases-slider__button--disabled",
+          currentIndex >= maxIndex
+        );
+      }
+    }
+
+    function goToSlide(index: number) {
+      const maxIndex = getMaxIndex();
+      currentIndex = Math.max(0, Math.min(index, maxIndex));
+      updateSlider();
+    }
+
+    function nextSlide() {
+      const maxIndex = getMaxIndex();
+      if (currentIndex < maxIndex) goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) goToSlide(currentIndex - 1);
+    }
+
+    // Обработчики кнопок
+    if (nextBtn && prevBtn) {
+      nextBtn.addEventListener("click", nextSlide);
+      prevBtn.addEventListener("click", prevSlide);
+    }
+
+    // Обработчик изменения размера окна
+    function handleResize() {
+      updateSlidesPerView();
+      updateSlider();
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    // Инициализация
+    updateSlidesPerView();
+    updateSlider();
+
+    // Добавляем поддержку свайпа на мобильных
+    if (!container) return;
+
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+
+    function onPointerDown(e: Event) {
+      let clientX: number;
+      if (e instanceof TouchEvent && e.touches[0]) {
+        clientX = e.touches[0].clientX;
+      } else if (e instanceof MouseEvent) {
+        clientX = e.clientX;
+      } else {
+        return;
+      }
+
+      startX = currentX = clientX;
+      isDragging = true;
+      if (container) {
+        container.style.cursor = "grabbing";
+      }
+    }
+
+    function onPointerMove(e: Event) {
+      if (!isDragging) return;
+      e.preventDefault();
+
+      let clientX: number;
+      if (e instanceof TouchEvent && e.touches[0]) {
+        clientX = e.touches[0].clientX;
+      } else if (e instanceof MouseEvent) {
+        clientX = e.clientX;
+      } else {
+        return;
+      }
+
+      currentX = clientX;
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+      if (container) {
+        container.style.cursor = "";
+      }
+
+      const diff = startX - currentX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          // свайп влево - следующий слайд
+          nextSlide();
+        } else {
+          // свайп вправо - предыдущий слайд
+          prevSlide();
+        }
+      }
+    }
+
+    container.addEventListener("touchstart", onPointerDown, { passive: true });
+    container.addEventListener("touchmove", onPointerMove, { passive: false });
+    container.addEventListener("touchend", onPointerUp, { passive: true });
+    container.addEventListener("mousedown", onPointerDown);
+    container.addEventListener("mousemove", onPointerMove);
+    container.addEventListener("mouseup", onPointerUp);
+    container.addEventListener("mouseleave", onPointerUp);
+  })();
+</script>
