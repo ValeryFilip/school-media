@@ -2,6 +2,7 @@
 /** SiteFooter.astro — 3 → 2 → 1 колонки, мобильный порядок: Right → Center → Left */
 const year = new Date().getFullYear();
 import SupportFab from "./ui/SupportFab.astro";
+import ScrollToTop from "./ui/ScrollToTop.astro";
 ---
 
 <footer class="contact-bottom" role="contentinfo" aria-label="Подвал сайта">
@@ -115,11 +116,7 @@ import SupportFab from "./ui/SupportFab.astro";
   </div>
 
   <!-- Кнопка «Наверх» -->
-  <button class="scrolltop" type="button" aria-label="Прокрутить вверх">
-    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 5l-7 7h4v7h6v-7h4z" fill="currentColor"></path>
-    </svg>
-  </button>
+  <ScrollToTop />
 
   <!-- Плавающая кнопка поддержки -->
   <SupportFab
@@ -273,40 +270,6 @@ import SupportFab from "./ui/SupportFab.astro";
     display: block;
   }
 
-  /* Scroll-to-top */
-  .scrolltop {
-    position: fixed;
-    right: 20px;
-    bottom: clamp(12px, 2vw, 24px);
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 0;
-    background: var(--blue, #366ef0);
-    color: #fff;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 8px 24px rgba(54, 110, 240, 0.35);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(8px);
-    transition:
-      opacity 0.2s,
-      transform 0.2s;
-    z-index: 9998;
-    /* Гарантируем что кнопка всегда остается в пределах экрана */
-    max-width: calc(100vw - 24px);
-    max-height: calc(100vh - 24px);
-    /* Предотвращаем влияние на layout других элементов */
-    contain: layout style paint;
-  }
-  .scrolltop.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
   /* ≤1100px: 2 колонки, порядок (left | right) / (center | extra) */
   @media (max-width: 1100px) {
     .contact-inner {
@@ -363,20 +326,3 @@ import SupportFab from "./ui/SupportFab.astro";
     }
   }
 </style>
-
-<script is:inline>
-  (function () {
-    const btn =
-      document.currentScript.parentElement.querySelector(".scrolltop");
-    const onScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop;
-      if (y > 300) btn.classList.add("is-visible");
-      else btn.classList.remove("is-visible");
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    btn.addEventListener("click", () =>
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    );
-  })();
-</script>

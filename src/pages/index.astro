@@ -18,6 +18,20 @@ import Faq from "../components/mainpage/Faq.astro";
 import LeadCapture from "../components/mainpage/LeadCapture.astro";
 import CoursesTabs from "../components/mainpage/CoursesTabs.astro";
 import CourseCards from "../components/mainpage/CourseCards.astro";
+import { getCollection } from "astro:content";
+
+// Получаем самые новые 3 статьи для AdMediaBanner
+// Сортируем по дате публикации от новых к старым
+const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
+const allArticles = await getCollection("articles");
+const latestArticles = allArticles
+  .sort((a, b) => {
+    // Сортируем по дате: сначала самые новые (большая дата идет первой)
+    const dateA = toDate(a.data.date).getTime();
+    const dateB = toDate(b.data.date).getTime();
+    return dateB - dateA; // от новых к старым
+  })
+  .slice(0, 4); // Берем только первые 4 самые новые статьи
 
 /* ===================== SEO ===================== */
 const seo = {
@@ -428,13 +442,6 @@ const courseCardsProps = {
       price: { current: "7 990 ₽", old: "10 300 ₽", discount: "–22%" },
       image: "/images/flasks/CE-BEISET__57187.jpg",
     },
-    {
-      href: "/allcourses",
-      variant: "all",
-      title: "Все наши курсы по химии",
-      image:
-        "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop",
-    },
   ],
 };
 
@@ -489,7 +496,7 @@ const leadProps = {
   <link slot="head" rel="preload" as="image" href="/images/girl-lead.webp" />
   <KursiHero {...heroProps} />
 
-  <AboutSection {...aboutProps} />
+  <!-- <AboutSection {...aboutProps} /> -->
 
   <KursiFormat {...formatProps} />
 
@@ -503,7 +510,7 @@ const leadProps = {
 
   <CourseCards {...courseCardsProps} />
 
-  <AdMediaBanner {...adMediaProps} />
+  <AdMediaBanner posts={latestArticles} />
 
   <UnisMarquee />
 

@@ -7,7 +7,6 @@ import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import JsonLd from "../components/JsonLd.astro";
 import Preloader from "../components/scripts/Preloader.astro";
-import RecaptchaLoader from "../components/scripts/RecaptchaLoader.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
 import YandexMetrika from "../components/analytics/YandexMetrika.astro";
 
@@ -152,11 +151,9 @@ const breadcrumbsJsonLd =
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <RecaptchaLoader />
     <YandexMetrika />
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
-    <Preloader />
     <UnifiedMenu
       context={inMedia ? "media" : "landing"}
       logoSrc={logoSrc}

@@ -97,10 +97,25 @@ const heroFromFM =
 const heroAlt = fm.heroAlt ?? fm.imageAlt ?? fm.title;
 
 /* === TOC === */
-const tocFromFM = Array.isArray(fm.toc) && fm.toc.length ? fm.toc : null;
+const tocFromFM =
+  Array.isArray(fm.toc) && fm.toc.length
+    ? fm.toc.map((item: any) => ({
+        ...item,
+        id: slugify(item.id || item.text),
+      }))
+    : null;
 const tocFromMD = headings
   .filter((h) => h.depth === 2 || h.depth === 3)
-  .map((h) => ({ id: h.slug, text: h.text, depth: h.depth }));
+  .map((h) => {
+    // Всегда слагифицируем текст заголовка для транслитерации кириллицы
+    // Это гарантирует, что id будет на транслите
+    const id = slugify(h.text);
+    return {
+      id,
+      text: h.text,
+      depth: h.depth,
+    };
+  });
 const tocItems = tocFromFM || tocFromMD;
 
 // Строим вложенную структуру для TOC
@@ -256,7 +271,9 @@ const sameCategoryTop = allArticles
                       <ul class="article__content-sublist">
                         {item.children.map((child: any) => (
                           <li>
-                            <a href={`${articlePath}#${child.id}`}>{child.text}</a>
+                            <a href={`${articlePath}#${child.id}`}>
+                              {child.text}
+                            </a>
                           </li>
                         ))}
                       </ul>
@@ -271,6 +288,62 @@ const sameCategoryTop = allArticles
       <div class="article__content">
         <slot />
       </div>
+      <script is:inline>
+        // Устанавливаем транслитерированные id для всех заголовков
+        (function () {
+          const content = document.querySelector(".article__content");
+          if (!content) return;
+
+          const headings = content.querySelectorAll("h2, h3");
+          const slugify = (text) => {
+            const map = {
+              а: "a",
+              б: "b",
+              в: "v",
+              г: "g",
+              д: "d",
+              е: "e",
+              ё: "e",
+              ж: "zh",
+              з: "z",
+              и: "i",
+              й: "y",
+              к: "k",
+              л: "l",
+              м: "m",
+              н: "n",
+              о: "o",
+              п: "p",
+              р: "r",
+              с: "s",
+              т: "t",
+              у: "u",
+              ф: "f",
+              х: "h",
+              ц: "c",
+              ч: "ch",
+              ш: "sh",
+              щ: "sch",
+              ъ: "",
+              ы: "y",
+              ь: "",
+              э: "e",
+              ю: "yu",
+              я: "ya",
+            };
+            return text
+              .toLowerCase()
+              .replace(/[а-яё]/g, (ch) => map[ch] || ch)
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-+|-+$/g, "");
+          };
+
+          headings.forEach((h) => {
+            const text = h.textContent || "";
+            h.id = slugify(text);
+          });
+        })();
+      </script>
       {
         fm.tags && fm.tags.length > 0 && (
           <div class="article__tags-block">
