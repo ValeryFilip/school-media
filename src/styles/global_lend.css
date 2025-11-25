@@ -253,7 +253,7 @@ h3,.h3{
 .article__content p {
   margin: 0 0 clamp(16px, 2vw, 24px) 0;
   font-size: clamp(16px, 1.2vw, 18px);
-  line-height: 1.2;
+  line-height: 1.6;
   color: var(--black);
 }
 

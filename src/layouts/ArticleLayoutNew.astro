@@ -45,6 +45,7 @@ const base = inMedia ? "/media" : "";
 
 /* === абсолютные URL === */
 const articleUrl = `${origin}${base}/articles/${slug}`;
+const articlePath = `${base}/articles/${slug}`;
 const categorySlug = slugify(String(fm.category || ""));
 
 /* === утилиты === */
@@ -250,12 +251,12 @@ const sameCategoryTop = allArticles
               <ul class="article__content-list">
                 {nestedTocItems.map((item) => (
                   <li>
-                    <a href={`#${item.id}`}>{item.text}</a>
+                    <a href={`${articlePath}#${item.id}`}>{item.text}</a>
                     {item.children && item.children.length > 0 && (
                       <ul class="article__content-sublist">
                         {item.children.map((child: any) => (
                           <li>
-                            <a href={`#${child.id}`}>{child.text}</a>
+                            <a href={`${articlePath}#${child.id}`}>{child.text}</a>
                           </li>
                         ))}
                       </ul>

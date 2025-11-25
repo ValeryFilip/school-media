@@ -12,9 +12,10 @@ interface TocItem {
 interface Props {
   items?: TocItem[];
   levels?: string; // например "h2,h3"
+  articlePath?: string; // путь к статье, например "/media/articles/slug"
 }
 
-const { items = [], levels = "h2,h3" } = Astro.props;
+const { items = [], levels = "h2,h3", articlePath } = Astro.props;
 
 // Строим вложенную структуру
 function buildNestedToc(items: TocItem[]) {
@@ -36,20 +37,27 @@ function buildNestedToc(items: TocItem[]) {
 const nestedItems = buildNestedToc(items);
 ---
 
-<aside class="toc" data-toc-levels={levels}>
+<aside
+  class="toc"
+  data-toc-levels={levels}
+  data-article-path={articlePath || ""}
+>
   <h2 class="toc__title">Содержание</h2>
   <ul id="tocList" class="toc__list">
     {
       nestedItems.map((item) => (
         <li class="toc__item">
-          <a href={`#${item.id}`} class="toc__link">
+          <a href={`${articlePath || ""}#${item.id}`} class="toc__link">
             {item.text}
           </a>
           {item.children && item.children.length > 0 && (
             <ul class="toc__sublist">
               {item.children.map((child: TocItem) => (
                 <li class="toc__subitem">
-                  <a href={`#${child.id}`} class="toc__link">
+                  <a
+                    href={`${articlePath || ""}#${child.id}`}
+                    class="toc__link"
+                  >
                     {child.text}
                   </a>
                 </li>
@@ -115,6 +123,10 @@ const nestedItems = buildNestedToc(items);
       .map((s) => s.trim().toUpperCase())
       .filter(Boolean);
 
+    const articlePath =
+      tocBox.getAttribute("data-article-path") || window.location.pathname;
+    const basePath = articlePath || window.location.pathname;
+
     const heads = content.querySelectorAll(levels.join(","));
     let currentH2Li: HTMLLIElement | null = null;
     let currentSublist: HTMLUListElement | null = null;
@@ -134,7 +146,7 @@ const nestedItems = buildNestedToc(items);
         li.className = "toc__item";
         const a = document.createElement("a");
         a.className = "toc__link";
-        a.href = location.pathname + "#" + h.id;
+        a.href = basePath + "#" + h.id;
         a.textContent = h.textContent || "";
         li.appendChild(a);
         list.appendChild(li);
@@ -155,7 +167,7 @@ const nestedItems = buildNestedToc(items);
         li.className = "toc__subitem";
         const a = document.createElement("a");
         a.className = "toc__link";
-        a.href = location.pathname + "#" + h.id;
+        a.href = basePath + "#" + h.id;
         a.textContent = h.textContent || "";
         li.appendChild(a);
         currentSublist.appendChild(li);

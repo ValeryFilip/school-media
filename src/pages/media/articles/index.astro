@@ -67,18 +67,18 @@ const currentPageServer = Math.max(
 >
   {/* Breadcrumbs JSON-LD уже рендерится компонентом <Breadcrumbs/> в Layout */}
 
-  <div class="page-container">
-    <header class="page-head">
-      <h1 class="page-title">{pageTitle}</h1>
-      <p class="page-desc">{pageDesc}</p>
-    </header>
-  </div>
-
   <main
     id="articles-main"
     class="articles-section"
     aria-labelledby="articles-title"
   >
+    <div class="page-container">
+      <header class="page-head">
+        <h1 class="page-title">{pageTitle}</h1>
+        <p class="page-desc">{pageDesc}</p>
+      </header>
+    </div>
+
     <div class="articles-container">
       <h2 id="articles-title" class="articles-title">
         Список статей с фильтрами

@@ -37,12 +37,8 @@ import SupportFab from "./ui/SupportFab.astro";
 
     <!-- 2) Центр (разделы — 5 ссылок) -->
     <nav class="footer-center" aria-label="Разделы сайта">
-      <a href="#">Химия ЕГЭ</a>
-      <a href="#">Курсы для 10 класса</a>
-      <a href="#">Химия ОГЭ</a>
-      <a href="#">Преподаватель</a>
-      <a href="#">Блог</a>
       <a href="/refer">Реферальная программа</a>
+      <a href="/allcourses">Все курсы stepik</a>
     </nav>
 
     <!-- 3) Правая (кнопка + соцсети) -->
@@ -60,6 +56,7 @@ import SupportFab from "./ui/SupportFab.astro";
           ><img
             src="https://i.ibb.co/B2sgbb2r/003-telegram.png"
             alt="Telegram"
+            loading="lazy"
           /></a
         >
         <a
@@ -69,6 +66,7 @@ import SupportFab from "./ui/SupportFab.astro";
           ><img
             src="https://i.ibb.co/9HcX9bXv/whatsapp.webp"
             alt="WhatsApp"
+            loading="lazy"
           /></a
         >
         <a
@@ -85,15 +83,21 @@ import SupportFab from "./ui/SupportFab.astro";
           ><img
             src="https://i.ibb.co/N6xJKVrh/002-youtube.png"
             alt="YouTube"
+            loading="lazy"
           /></a
         >
         <a href="https://vk.com/chemistry_exam"
-          ><img src="https://i.ibb.co/4wPdvNQp/001-vk.png" alt="VK" /></a
+          ><img
+            src="https://i.ibb.co/4wPdvNQp/001-vk.png"
+            alt="VK"
+            loading="lazy"
+          /></a
         >
         <a href="https://t.me/+KznfEhtzkeNlZjIy"
           ><img
             src="https://i.ibb.co/B2sgbb2r/003-telegram.png"
             alt="Telegram"
+            loading="lazy"
           /></a
         >
       </div>
@@ -101,9 +105,12 @@ import SupportFab from "./ui/SupportFab.astro";
 
     <!-- 3.5) Доп.колонка (между центр и правой): медиа / rss / авторство -->
     <nav class="footer-extra" aria-label="Медиа и RSS">
-      <a href="/media/">Медиа</a>
-      <a href="rss.xml">RSS</a>
-      <a href="/become-author">Хочу стать автором</a>
+      <a href="/media">Медиа</a>
+      <a
+        href="https://t.me/valery_chemistry"
+        target="_blank"
+        rel="noopener noreferrer">Хочу стать автором</a
+      >
     </nav>
   </div>
 

@@ -9,6 +9,7 @@ import JsonLd from "../components/JsonLd.astro";
 import Preloader from "../components/scripts/Preloader.astro";
 import RecaptchaLoader from "../components/scripts/RecaptchaLoader.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
+import YandexMetrika from "../components/analytics/YandexMetrika.astro";
 
 interface Crumb {
   name: string;
@@ -99,7 +100,7 @@ const breadcrumbsJsonLd =
       href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-
+    <meta name="robots" content="noindex, nofollow" />
     {
       inMedia && (
         <>
@@ -152,6 +153,7 @@ const breadcrumbsJsonLd =
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <RecaptchaLoader />
+    <YandexMetrika />
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
     <Preloader />
@@ -161,13 +163,15 @@ const breadcrumbsJsonLd =
       ctaHref={ctaHref}
     />
 
-    <main id="main" class="content page-stack">
+    <main id="main" class="content">
       {
         showBreadcrumbs && breadcrumbs.length > 0 && (
           <Breadcrumbs items={breadcrumbs} />
         )
       }
-      <slot />
+      <div class="page-stack">
+        <slot />
+      </div>
     </main>
 
     <SiteFooter />

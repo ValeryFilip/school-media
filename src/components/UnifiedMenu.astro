@@ -67,7 +67,7 @@ if (context === "media") {
           {
             context === "media" && (
               <li class="menu__item">
-                <a href="/media" class="menu__link">
+                <a href="/media/articles" class="menu__link">
                   Все статьи
                 </a>
               </li>
@@ -232,6 +232,7 @@ if (context === "media") {
               class="menu__social-img"
               width="20"
               height="20"
+              loading="lazy"
             />
           </a>
           <a
@@ -246,6 +247,7 @@ if (context === "media") {
               class="menu__social-img"
               width="20"
               height="20"
+              loading="lazy"
             />
           </a>
           <a
@@ -260,6 +262,7 @@ if (context === "media") {
               class="menu__social-img"
               width="20"
               height="20"
+              loading="lazy"
             />
           </a>
         </div>
@@ -306,7 +309,7 @@ if (context === "media") {
         {
           context === "media" && (
             <li class="mnav__item">
-              <a href="/media">Все статьи</a>
+              <a href="/media/articles">Все статьи</a>
             </li>
           )
         }
@@ -518,9 +521,7 @@ if (context === "media") {
     line-height: 1.5;
     background-color: #ffffff;
   }
-  * {
-    box-sizing: border-box;
-  }
+
   a {
     text-decoration: none;
     color: #111;
@@ -529,7 +530,7 @@ if (context === "media") {
     margin-bottom: 50px;
   }
   .menu__wrapper {
-    max-width: 1300px;
+    max-width: 1200px;
     padding: 12px 20px;
     margin: 0 auto;
     display: flex;
@@ -561,7 +562,7 @@ if (context === "media") {
   .menu__item-courses {
     position: relative;
   }
-  .menu__item-courses:after {
+  /* .menu__item-courses:after {
     content: "➔";
     position: absolute;
     top: 1px;
@@ -572,7 +573,7 @@ if (context === "media") {
   }
   .menu__item-courses:hover:after {
     transform: translateY(-2px) translateX(2px) rotate(-45deg);
-  }
+  } */
   .menu__left {
     display: flex;
     align-items: center;
@@ -605,7 +606,7 @@ if (context === "media") {
     gap: 0.35rem;
     cursor: pointer;
   }
-  details > summary::after {
+  /* details > summary::after {
     display: flex;
     align-items: center;
     content: "❯";
@@ -617,7 +618,7 @@ if (context === "media") {
   }
   details[open] > summary::after {
     transform: rotate(90deg);
-  }
+  } */
   .menu__sublist-right,
   .menu__sublist-left {
     display: flex;

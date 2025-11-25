@@ -1,7 +1,10 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
 import { slugify } from "../../lib/slugify";
 import { getCategoryHex } from "../../lib/categoryColors";
+import calendarIcon from "../../assets/icons/calendar.png";
+import timeIcon from "../../assets/icons/time.png";
 
 interface Props {
   // Либо передаем post из коллекции
@@ -169,11 +172,12 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
           {
             date && (
               <div class="card__body-meta-date">
-                <img
-                  src="/images/technical/calendar.png"
+                <Image
+                  src={calendarIcon}
                   alt="Date Icon"
-                  width="14"
-                  height="14"
+                  width={14}
+                  height={14}
+                  loading="lazy"
                 />
                 {date}
               </div>
@@ -182,11 +186,12 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
           {
             time && (
               <div class="card__body-meta-time">
-                <img
-                  src="/images/technical/time.png"
+                <Image
+                  src={timeIcon}
                   alt="Time Icon"
-                  width="14"
-                  height="14"
+                  width={14}
+                  height={14}
+                  loading="lazy"
                 />
                 {time}
               </div>

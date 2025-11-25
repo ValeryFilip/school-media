@@ -679,13 +679,15 @@ const megaSectionProps = {
   <section id="faq">
     <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
     <Faq {...faqProps} />
-  </section>
-  <div {...faqProps.singleOpen ? {} : { "data-faq-singleopen": "0" }}></div>
+    <div data-faq-singleopen={faqProps.singleOpen ? "1" : "0"}></div>
 
-  {/* Попап для оплаты */}
-  <PaymentPopup
-    stepikUrl="https://stepik.org/a/134777/pay?promo=90c9f6c96cad6e37"
-    title="Оплата курса со скидкой"
-    closeText="Закрыть"
-  />
+  </section>
+      {/* Попап для оплаты */}
+      <PaymentPopup
+      stepikUrl="https://stepik.org/a/134777/pay?promo=90c9f6c96cad6e37"
+      title="Оплата курса со скидкой"
+      closeText="Закрыть"
+    />
+
+
 </MainLayout>
