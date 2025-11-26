@@ -1,457 +1,58 @@
 ---
-/* src/components/CourseCards.astro (refactor: локальный контейнер + локальные адаптивы) */
+import CursCard from "../cards/cursCard.astro";
 
-interface Label {
-  text: string;
-}
-interface Price {
-  current: string;
-  old?: string;
-  discount?: string;
-}
-interface Card {
-  href: string;
-  labels?: Label[];
-  title: string;
+interface CourseCard {
+  pins?: string[];
+  title?: string;
   features?: string[];
-  price?: Price;
-  image?: string;
-  variant?: "default" | "all";
+  priceNew?: string;
+  priceOld?: string;
+  priceDisc?: string;
+  priceNote?: string;
+  buttonText?: string;
+  href?: string;
 }
+
 interface Props {
-  id?: string;
   heading?: string;
-  sub?: string;
-  cards?: Card[];
-  barRightGapPx?: number; // отступ справа у price-bar
-  minHeightPx?: number; // min-height карточки
+  cards?: CourseCard[];
 }
-const {
-  id = "course-cards",
-  heading = "Наши самостоятельные курсы на stepik",
-  sub = "Для тех, кто хочет готовиться самостоятельно или закрыть пробелы по конкретным разделам!",
-  barRightGapPx = 48,
-  minHeightPx = 440,
-  cards = [],
-} = Astro.props as Props;
+
+const { heading = "Наши курсы", cards = [] } = Astro.props;
 ---
 
-<section
-  id={id}
-  class="section course-cards"
-  aria-labelledby={`${id}-title`}
-  style={`--cards-bar-gap:${barRightGapPx}px; --cards-card-minh:${minHeightPx}px`}
->
-  <div class="cards-inner">
-    <header class="cards-head">
-      <h2 id={`${id}-title`} class="cards-title">{heading}</h2>
-      {sub && <p class="cards-sub">{sub}</p>}
-    </header>
-
-    <div class="course-cards__grid" role="list">
+<section class="section course-cards">
+  <div class="course-grid__wrapper container">
+    <h2 class="section-title">{heading}</h2>
+    <div class="course-cards__grid">
       {
-        cards.map((c) => {
-          const isAll = c.variant === "all";
-          return (
-            <a
-              class={`course-card ${isAll ? "course-card--all" : ""}`}
-              href={c.href}
-              role="listitem"
-              aria-label={c.title}
-            >
-              {!isAll && (
-                <>
-                  <header class="card-top">
-                    {c.labels?.length ? (
-                      <ul class="label-list" aria-label="Категории курса">
-                        {c.labels!.map((l) => (
-                          <li class="label-item">
-                            <span>{l.text}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </header>
-
-                  <section class="card-body">
-                    <h3 class="card-title">{c.title}</h3>
-                    {c.features?.length ? (
-                      <ul class="feat-list">
-                        {c.features!.map((f) => (
-                          <li set:html={f}></li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-
-                  {c.price && (
-                    <div class="price-bar" aria-label="Цена и скидка">
-                      <strong class="price-current">{c.price.current}</strong>
-                      <span class="price-col">
-                        {c.price.old && (
-                          <span class="price-old">{c.price.old}</span>
-                        )}
-                        {c.price.discount && (
-                          <span class="price-discount">{c.price.discount}</span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-
-                  {c.image && (
-                    <figure class="card-figure" aria-hidden="true">
-                      <img
-                        src={c.image}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </figure>
-                  )}
-                </>
-              )}
-
-              {isAll && (
-                <div class="all-card">
-                  <h3 class="all-title">{c.title}</h3>
-                  {c.image && (
-                    <figure class="all-figure" aria-hidden="true">
-                      <img
-                        src={c.image}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </figure>
-                  )}
-                </div>
-              )}
-            </a>
-          );
-        })
+        cards.map((card) => (
+          <CursCard
+            pins={card.pins}
+            title={card.title}
+            features={card.features}
+            priceNew={card.priceNew}
+            priceOld={card.priceOld}
+            priceDisc={card.priceDisc}
+            priceNote={card.priceNote}
+            buttonText={card.buttonText}
+            href={card.href}
+          />
+        ))
       }
     </div>
   </div>
-
-  <style>
-    /* ========================
-       ЛОКАЛЬНЫЕ ПЕРЕМЕННЫЕ
-       ======================== */
-    .course-cards {
-      /* контейнер */
-      --cards-container: var(--container, 1300px);
-      --cards-pad: var(--page-padding, 50px);
-
-      /* типографика */
-      --cards-h2: var(--h2-size, 32px);
-      --cards-lead: var(--text-size, 18px);
-      --cards-title-fs: 26px;
-      --cards-feat-fs: 16px;
-
-      /* сетка/отступы */
-      --cards-grid-gap: 15px;
-      --cards-gap: var(--space-16, 16px);
-
-      /* карточка и price-bar */
-      --cards-card-minh: var(--cards-card-minh, 440px);
-      --cards-bar-gap: var(--cards-bar-gap, 48px);
-      --cards-radius: var(--radius-24, 24px);
-    }
-    /* ===== Контейнер (как у Unis, FAQ, Author) ===== */
-    .cards-inner {
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      box-sizing: border-box;
-    }
-    @media (max-width: 1100px) {
-      .cards-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .cards-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-
-    /* ===== Секция ===== */
-    .course-cards {
-      font-family: var(--ff, system-ui);
-      color: var(--black, #111);
-      background: var(--page-bg, #fff);
-    }
-
-    /* Заголовок секции */
-    .cards-head {
-      margin-bottom: var(--space-24, 24px);
-    }
-    .cards-title {
-      font-size: var(--cards-h2);
-      line-height: 1.2;
-      margin: 0 0 var(--space-12, 12px);
-      text-wrap: balance;
-    }
-    .cards-sub {
-      font-size: var(--cards-lead);
-      line-height: 1.4;
-      margin: 0;
-      opacity: 0.9;
-    }
-
-    /* Сетка: 3 → 2 → 1 */
-    .course-cards__grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--cards-grid-gap);
-    }
-    .course-cards__grid > * {
-      min-width: 0;
-    }
-
-    /* Карточка */
-    .course-card {
-      position: relative;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: var(--cards-gap);
-      padding: var(--space-24, 24px);
-      min-height: var(--cards-card-minh);
-      background: var(--white, #fff);
-      color: var(--black, #111);
-      border: 1px solid var(--border, #e5e7eb);
-      border-radius: var(--cards-radius);
-      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
-      text-decoration: none;
-      overflow: hidden;
-      transition:
-        border-color 0.2s var(--easing, ease),
-        box-shadow 0.2s var(--easing, ease),
-        transform 0.1s var(--easing, ease);
-    }
-    .course-card:hover {
-      border-color: var(--blue, #366ef0);
-      box-shadow: var(--shadow-2, 0 8px 22px rgba(0, 0, 0, 0.12));
-      transform: translateY(-1px);
-    }
-
-    /* Капсулы */
-    .card-top {
-      z-index: 1;
-    }
-    .label-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: var(--space-16, 16px);
-      flex-wrap: wrap;
-    }
-    .label-item span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 12px;
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-      color: var(--blue, #366ef0);
-      border: 1px solid var(--blue, #366ef0);
-      border-radius: 999px;
-      background: #f4f8ff;
-    }
-
-    /* Контент */
-    .card-body {
-      display: grid;
-      gap: calc(var(--cards-gap) + 20px);
-      align-content: start;
-      z-index: 1;
-    }
-    .card-title {
-      margin: 0;
-      font-weight: 700;
-      font-size: var(--cards-title-fs);
-      line-height: 1.25;
-      color: var(--blue);
-    }
-    .feat-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 15px;
-      font-size: var(--cards-feat-fs);
-      line-height: 1.3;
-      font-weight: 400;
-    }
-    .feat-list li {
-      position: relative;
-      padding-left: 30px;
-    }
-    .feat-list li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--blue, #366ef0);
-    }
-
-    /* Плашка цены (от края) */
-    .price-bar {
-      background: var(--blue, #366ef0);
-      color: var(--white, #fff);
-      border-top-right-radius: var(--cards-radius);
-      border-bottom-right-radius: var(--cards-radius);
-      margin-left: calc(-1 * var(--space-24, 24px));
-      padding: var(--space-16, 16px) var(--space-24, 24px);
-      box-shadow: var(--shadow-1, 0 1px 10px 2px rgba(0, 0, 0, 0.04));
-      display: flex;
-      align-items: center;
-      gap: var(--space-16, 16px);
-      width: calc(100% - var(--cards-bar-gap));
-      z-index: 1;
-    }
-    .price-current {
-      font-size: 32px;
-      font-weight: 600;
-      line-height: 1;
-      white-space: nowrap;
-    }
-    .price-col {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .price-old {
-      font-size: 16px;
-      color: #c4b9b9;
-      text-decoration: line-through;
-      white-space: nowrap;
-    }
-    .price-discount {
-      font-size: 16px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    /* Декор справа внизу */
-    .card-figure {
-      position: absolute;
-      right: -8px;
-      bottom: -6px;
-      margin: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .card-figure img {
-      width: 170px;
-      height: auto;
-      object-fit: cover;
-      opacity: 0.9;
-      display: block;
-      filter: drop-shadow(0 8px 18px rgba(52, 40, 214, 0.2)); /* лёгкая тень под картинкой */
-    }
-
-    /* Подсветка теперь задаётся в background самой карточки (см. выше) */
-
-    /* Вариант "Все наши курсы" */
-    .course-card--all {
-      background: var(--blue, #366ef0);
-      color: var(--white, #fff);
-      border-color: var(--blue, #366ef0);
-      grid-template-rows: 1fr;
-      padding: var(--space-24, 24px);
-      min-height: var(--cards-card-minh);
-    }
-    .course-card--all:hover {
-      border-color: var(--white, #fff);
-      box-shadow: var(--shadow-2, 0 8px 22px rgba(0, 0, 0, 0.12));
-    }
-    .all-card {
-      position: relative;
-      display: grid;
-      align-content: space-between;
-      height: 100%;
-    }
-    .all-title {
-      margin: 0;
-      font-weight: 700;
-      line-height: 1.25;
-      max-width: 18ch;
-      font-size: clamp(22px, 3vw, 28px);
-    }
-    .all-figure {
-      margin: 0;
-      align-self: end;
-    }
-    .all-figure img {
-      width: min(80%, 520px);
-      height: auto;
-      display: block;
-      filter: brightness(1.05) saturate(1.02);
-    }
-
-    /* ========================
-       АДАПТИВЫ (локальные)
-       ======================== */
-
- /* сетка */
-@media (max-width:1100px){
-  .course-cards .course-cards__grid{ grid-template-columns: repeat(2,1fr); }
-}
-@media (max-width:600px){
-  .course-cards .cards-head{ text-align:center; }
-  .course-cards .course-cards__grid{ grid-template-columns: 1fr; }
-  .course-cards .course-card{ min-height: auto; }
-
-  /* плашка цены на всю ширину карточки, без отриц. маргинов */
-  .course-cards .price-bar{
-    margin-left: 0;
-    width: 100%;
-    border-radius: 12px;
-  }
-
-  /* декоративную картинку убираем, чтобы не сдвигала контент */
-  .course-cards .card-figure{ display:none; }
-
-  /* при необходимости подсветку на мобилках можно ослабить/убрать отдельно */
-}
-
-      /* синяя карточка — высота по контенту, центрируем картинку */
-      .course-card--all {
-        min-height: auto;
-        height: auto;
-        padding: var(--space-24, 24px);
-      }
-      .course-card--all .all-card {
-        height: auto;
-        align-content: start;
-        gap: var(--space-16, 16px);
-      }
-      .course-card--all .all-title {
-        text-align: center;
-        margin-inline: auto;
-      }
-      .course-card--all .all-figure {
-        align-self: start;
-        justify-self: center;
-      }
-      .course-card--all .all-figure img {
-        width: min(100%, 420px);
-        height: auto;
-        display: block;
-      }
-    }
-  </style>
 </section>
+
+<style>
+  .course-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .section-title {
+    font-size: var(--h2);
+    margin: 0 0 var(--space-12, 12px);
+    text-wrap: balance;
+  }
+</style>

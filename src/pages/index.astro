@@ -345,15 +345,11 @@ const tabsProps = {
 
 /* 7) Самостоятельные курсы (карточки) */
 const courseCardsProps = {
-  id: "course-cards",
   heading: "Наши самостоятельные курсы на stepik",
-  sub: "Для тех, кто хочет готовиться самостоятельно или закрыть пробелы по конкретным разделам!",
-  barRightGapPx: 48,
-  minHeightPx: 440,
   cards: [
     {
       href: "/neorganika",
-      labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
+      pins: ["Химия ЕГЭ", "Вечный доступ"],
       title: "Неорганическая химия с нуля до 80+",
       features: [
         "<b>Гарантированный рост</b>: только на неорганике можно взять +40 баллов",
@@ -366,12 +362,15 @@ const courseCardsProps = {
         "<b>Обновлен под ЕГЭ-2026</b>",
         "<b>Проверено учениками</b>: результаты 80+ баллов",
       ],
-      price: { current: "5 490 ₽", old: "7 300 ₽", discount: "скидка 26%" },
-      image: "/images/flasks/CE-BEISET__57187.png",
+      priceNew: "5 490 ₽",
+      priceOld: "7 300 ₽",
+      priceDisc: "скидка 26%",
+      priceNote: "цена указана за весь курс сразу",
+      buttonText: "Подробнее",
     },
     {
       href: "/organika",
-      labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
+      pins: ["Химия ЕГЭ", "Вечный доступ"],
       title: "Органическая химия с нуля до 80+",
       features: [
         "<b>50% ЕГЭ — органика</b>: закрываем всю теорию и практику",
@@ -386,12 +385,15 @@ const courseCardsProps = {
         "<b>Обновлен под ЕГЭ-2026</b>",
         "<b>Результаты учеников</b> — 80+ баллов",
       ],
-      price: { current: "5 490 ₽", old: "7 300 ₽", discount: "скидка 25%" },
-      image: "/images/flasks/CE-FLAISET__44996.png",
+      priceNew: "5 490 ₽",
+      priceOld: "7 300 ₽",
+      priceDisc: "скидка 25%",
+      priceNote: "цена указана за весь курс сразу",
+      buttonText: "Подробнее",
     },
     {
       href: "/obschaya",
-      labels: [{ text: "Химия ЕГЭ" }, { text: "Легкие 35 баллов " }],
+      pins: ["Химия ЕГЭ", "Легкие 35 баллов"],
       title: "Общая химия с нуля до 80+",
       features: [
         "<b>33% ЕГЭ — общая химия</b> (16 заданий)",
@@ -404,12 +406,15 @@ const courseCardsProps = {
         "<b>Результаты учеников</b> — 80+ баллов",
         "<b>Выгодная цена</b>",
       ],
-      price: { current: "2 190 ₽", old: "2 600 ₽", discount: "скидка 16%" },
-      image: "/images/flasks/CE-SEPF250_1__97109.png",
+      priceNew: "2 190 ₽",
+      priceOld: "2 600 ₽",
+      priceDisc: "скидка 16%",
+      priceNote: "цена указана за весь курс сразу",
+      buttonText: "Подробнее",
     },
     {
       href: "/ovr",
-      labels: [{ text: "Химия ЕГЭ" }, { text: "ОВР и реакции" }],
+      pins: ["Химия ЕГЭ", "ОВР и реакции"],
       title: "ОВР и 29 задание",
       features: [
         "<b>ОВР — ключ к заданиям 19 и 29</b>",
@@ -421,12 +426,15 @@ const courseCardsProps = {
         "<b>Соответствует ЕГЭ-2026</b>",
         "<b>Выгодная стоимость</b>",
       ],
-      price: { current: "990 ₽", old: "1 200 ₽", discount: "скидка 17%" },
-      image: "/images/flasks/ce-fdis250_1__98982.png",
+      priceNew: "990 ₽",
+      priceOld: "1 200 ₽",
+      priceDisc: "скидка 17%",
+      priceNote: "цена указана за весь курс сразу",
+      buttonText: "Подробнее",
     },
     {
       href: "https://stepik.org/a/238138?utm_source=cite&utm_medium=mainpage",
-      labels: [{ text: "Пакет курсов" }, { text: "Вечный доступ" }],
+      pins: ["Пакет курсов", "Вечный доступ"],
       title: "Пакет из 4 курсов",
       features: [
         "<b>Пакет из 4 курсов</b>: неорганика, органика, общая химия + авторские варианты",
@@ -439,8 +447,11 @@ const courseCardsProps = {
         "<b>Готовность к ЕГЭ на максимум</b>: любые реакции и задания по плечу",
         "<b>Подходит и для ЕГЭ, и для ОГЭ</b>",
       ],
-      price: { current: "7 990 ₽", old: "10 300 ₽", discount: "–22%" },
-      image: "/images/flasks/CE-BEISET__57187.jpg",
+      priceNew: "7 990 ₽",
+      priceOld: "10 300 ₽",
+      priceDisc: "–22%",
+      priceNote: "цена указана за весь курс сразу",
+      buttonText: "Подробнее",
     },
   ],
 };
