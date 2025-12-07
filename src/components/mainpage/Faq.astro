@@ -1,4 +1,6 @@
 ---
+import { undefined } from "astro:schema";
+import H2Zag from "../text/h2zag.astro";
 // FAQ.astro
 /* ===== PROPS ===== */
 interface FaqItem {
@@ -10,6 +12,7 @@ interface Props {
   id?: string;
   className?: string;
   title?: string;
+  subtitle?: string;
   items: FaqItem[];
   headingId?: string; // id для <h2> и aria-labelledby
   singleOpen?: boolean; // оставлять открытым только один пункт (по умолчанию: true)
@@ -20,6 +23,7 @@ const {
   className = "",
   title = "Часто задаваемые вопросы",
   items = [],
+  subtitle = "Если у вас остались вопросы, вы можете найти ответы в нашем FAQ или связаться с нами",
   headingId = "faq-title",
   singleOpen = true,
 } = Astro.props as Props;
@@ -32,7 +36,7 @@ const {
   data-faq-singleopen={singleOpen ? "1" : "0"}
 >
   <div class="faq-inner">
-    <h2 id={headingId} class="faq__title">{title}</h2>
+    <H2Zag title={title} subtitle={subtitle} />
 
     <div class="faq__list" role="list">
       {

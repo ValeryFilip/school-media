@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import CardNew from "../cards/cardNew.astro";
+import H2Zag from "../text/h2zag.astro";
 
 interface Props {
   // Массив постов для карточек
@@ -17,72 +18,78 @@ interface Props {
     href?: string;
   }>;
   basePath?: string;
+  title?: string;
+  subtitle?: string;
 }
 
-const { posts, cards, basePath = "/media" } = Astro.props;
+const {
+  posts,
+  cards,
+  basePath = "/media",
+  title = "Читайте полезные статьи от экспертов в нашем медиа",
+  subtitle = "Мы работаем с лучшими вузами страны и помогаем нашим студентам поступить в лучшие вузы",
+} = Astro.props;
 ---
 
 <section class="ad-media section">
   <div class="container">
     <div class="ad-media__header">
-      <h2 class="ad-media__title">
-        Читайте полезные статьи от экспертов в нашем медиа
-      </h2>
+      <H2Zag title={title} subtitle={subtitle} />
+      <div class="ad-media__grid">
+        {
+          posts && posts.length > 0 ? (
+            posts.slice(0, 4).map((post) => (
+              <div class="ad-media__card">
+                <CardNew post={post} basePath={basePath} />
+              </div>
+            ))
+          ) : cards && cards.length > 0 ? (
+            cards.slice(0, 4).map((card) => (
+              <div class="ad-media__card">
+                <CardNew
+                  imageSrc={card.imageSrc}
+                  imageAlt={card.imageAlt}
+                  date={card.date}
+                  timeToRead={card.timeToRead}
+                  title={card.title}
+                  text={card.text}
+                  category={card.category}
+                  href={card.href}
+                  basePath={basePath}
+                />
+              </div>
+            ))
+          ) : (
+            // Fallback: пустые карточки, если ничего не передано
+            <>
+              <div class="ad-media__card">
+                <CardNew />
+              </div>
+              <div class="ad-media__card">
+                <CardNew />
+              </div>
+              <div class="ad-media__card">
+                <CardNew />
+              </div>
+            </>
+          )
+        }
+      </div>
     </div>
-    <div class="ad-media__grid">
-      {
-        posts && posts.length > 0 ? (
-          posts.slice(0, 4).map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath={basePath} />
-            </div>
-          ))
-        ) : cards && cards.length > 0 ? (
-          cards.slice(0, 4).map((card) => (
-            <div class="ad-media__card">
-              <CardNew
-                imageSrc={card.imageSrc}
-                imageAlt={card.imageAlt}
-                date={card.date}
-                timeToRead={card.timeToRead}
-                title={card.title}
-                text={card.text}
-                category={card.category}
-                href={card.href}
-                basePath={basePath}
-              />
-            </div>
-          ))
-        ) : (
-          // Fallback: пустые карточки, если ничего не передано
-          <>
-            <div class="ad-media__card">
-              <CardNew />
-            </div>
-            <div class="ad-media__card">
-              <CardNew />
-            </div>
-            <div class="ad-media__card">
-              <CardNew />
-            </div>
-          </>
-        )
-      }
-    </div>
-  </div>
 
-  <style>
-    .ad-media__grid {
-      padding: var(--space-24) 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .ad-media__title {
-      font-size: var(--h2);
-      line-height: 1.25;
-      margin-bottom: var(--space-24);
-      color: var(--black);
-    }
-  </style>
+    <style>
+      .ad-media__grid {
+        padding: var(--space-24) 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      .ad-media__title {
+        font-size: var(--h2);
+        line-height: 1.25;
+        margin-bottom: var(--space-24);
+        color: var(--black);
+      }
+    </style>
+  </div>
 </section>

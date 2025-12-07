@@ -1,4 +1,5 @@
 ---
+import H2Zag from "../text/h2zag.astro";
 /* Университетская лента логотипов — контейнер как у оффера */
 
 interface UniLogo {
@@ -9,6 +10,7 @@ interface UniLogo {
 interface Props {
   id?: string;
   title?: string;
+  subtitle?: string;
   logos?: UniLogo[]; // основной набор (лента 1)
   speedSec?: number; // скорость прокрутки (сек)
   heightPx?: number; // высота зоны (px)
@@ -19,6 +21,7 @@ interface Props {
 const {
   id = "unis",
   title = "Выпускники учатся в лучших вузах страны",
+  subtitle = "Мы работаем с лучшими вузами страны и помогаем нашим студентам поступить в лучшие вузы",
   speedSec = 38,
   heightPx = 110,
   pauseOnHover = true,
@@ -49,7 +52,7 @@ const {
   style={`--unis-height:${heightPx}px; --unis-speed:${speedSec}s;`}
 >
   <div class="unis-inner">
-    <h2 id={`${id}-title`} class="unis__title">{title}</h2>
+    <H2Zag title={title} subtitle={subtitle} />
 
     <div
       class="unis__marquee"

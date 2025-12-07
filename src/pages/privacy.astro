@@ -9,24 +9,6 @@ const description = "Как мы обрабатываем и защищаем п
 
 // крошки: ваш компонент сам добавит «домой», поэтому здесь только текущая
 const breadcrumbs = [{ name: title }];
-
-// канонический для JSON-LD
-const siteUrl = config.siteUrl.replace(/\/$/, "");
-const canonical = `${siteUrl}${Astro.url.pathname}`;
-
-// JSON-LD: PrivacyPolicy
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "PrivacyPolicy",
-  "name": title,
-  "inLanguage": "ru-RU",
-  "url": canonical,
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": config.siteName,
-    "url": siteUrl
-  }
-};
 ---
 
 <MainLayout
@@ -36,8 +18,6 @@ const jsonLd = {
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
-  <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-
   <main class="legal" aria-labelledby="privacy-title">
     <div class="container">
       <h1 id="privacy-title">{title}</h1>

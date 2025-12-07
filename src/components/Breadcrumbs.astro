@@ -70,8 +70,6 @@ function normalizeHref(h?: string): string | undefined {
 /* ===== Рендер ===== */
 const homeHref = inMedia ? `${siteOrigin}/media/` : `${siteOrigin}/`;
 const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
-
-// JSON-LD данные теперь генерируются в MainLayout.astro через seoData.ts
 ---
 
 <div

@@ -14,7 +14,6 @@ const articles = defineCollection({
         authorRole: z.string().optional(),  // должность/роль автора
         authorImage: z.string().optional(), // аватар автора
         readingTime: z.string().optional(),
-        articleBody: z.string().optional(), // полный текст статьи для JSON-LD
     }),
 });
 

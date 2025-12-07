@@ -4,13 +4,11 @@ import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import CardNew from "../components/cards/cardNew.astro";
 import CatBadge from "../components/CatBadge.astro";
-import JsonLd from "../components/JsonLd.astro";
 import ProgressBar from "../components/article/ProgressBar.astro";
 import ArticleHero from "../components/article/ArticleHero.astro";
 import CopyLinkButton from "../components/article/CopyLinkButton.astro";
 import { slugify } from "../lib/slugify";
 import {
-  buildArticlePublisher,
   ORGANIZATION_DATA,
   absAsset,
 } from "../lib/seoData";
@@ -31,7 +29,6 @@ interface Props {
     imageAlt?: string;
     heroAlt?: string;
     updated?: string | Date;
-    articleBody?: string;
   };
   slug: string;
   headings?: { depth: number; slug: string; text: string }[];
@@ -137,45 +134,6 @@ function buildNestedToc(items: any[]) {
 
 const nestedTocItems = buildNestedToc(tocItems || []);
 
-/* === JSON-LD статьи === */
-const jsonLdArticle = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: fm.title,
-  description: fm.description,
-  image: heroFromFM
-    ? {
-        "@type": "ImageObject",
-        url: absAsset(origin, heroFromFM),
-        width: "1200",
-        height: "630",
-      }
-    : undefined,
-  url: articleUrl,
-  inLanguage: "ru-RU",
-  keywords: Array.isArray(fm.tags) ? fm.tags : [],
-  articleSection: fm.category || undefined,
-  author: {
-    "@type": "Person",
-    name: authorName,
-    url: `${origin}/about`,
-    ...(authorPhoto ? { image: absAsset(origin, authorPhoto) } : {}),
-    jobTitle: authorRole,
-    worksFor: {
-      "@type": "Organization",
-      name: "EGEHIM",
-    },
-  },
-  publisher: buildArticlePublisher(origin),
-  ...(dateObj ? { datePublished: dateObj.toISOString() } : {}),
-  ...(updatedObj ? { dateModified: updatedObj.toISOString() } : {}),
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": articleUrl,
-  },
-  ...(fm.articleBody ? { articleBody: fm.articleBody } : {}),
-};
-
 /* === «Ещё по теме»: та же категория === */
 const allArticles = await getCollection("articles");
 function getTimeSafe(p: CollectionEntry<"articles">): number {
@@ -193,9 +151,6 @@ const sameCategoryTop = allArticles
   .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
   .slice(0, 3);
 ---
-
-<!-- JSON-LD структурированные данные -->
-<JsonLd type="article" data={jsonLdArticle as any} />
 
 <!-- Прогресс чтения -->
 <ProgressBar />

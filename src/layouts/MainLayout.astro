@@ -5,7 +5,6 @@ import UnifiedMenu from "../components/UnifiedMenu.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import JsonLd from "../components/JsonLd.astro";
 import Preloader from "../components/scripts/Preloader.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
 import YandexMetrika from "../components/analytics/YandexMetrika.astro";
@@ -60,30 +59,6 @@ const {
 } = Astro.props as Props;
 
 const inMedia = Astro.url.pathname.startsWith("/media");
-
-import {
-  buildOrganizationJsonLd,
-  buildWebSiteJsonLd,
-  buildBreadcrumbsJsonLd,
-} from "../lib/seoData";
-
-const origin = Astro.url.origin;
-const siteUrl = (config as any)?.siteUrl || origin;
-const configSiteName = (config as any)?.siteName || "EGEHIM";
-
-const orgJsonLd = buildOrganizationJsonLd(siteUrl);
-const websiteJsonLd = buildWebSiteJsonLd(siteUrl, configSiteName);
-
-const breadcrumbsJsonLd =
-  showBreadcrumbs && breadcrumbs.length > 0
-    ? buildBreadcrumbsJsonLd(
-        origin,
-        configSiteName,
-        breadcrumbs,
-        inMedia,
-        Astro.url.pathname
-      )
-    : null;
 ---
 
 <!doctype html>
@@ -105,7 +80,7 @@ const breadcrumbsJsonLd =
         <>
           <link
             rel="preload"
-            href="/logo.svg"
+            href="/favicon.svg"
             as="image"
             type="image/svg+xml"
           />
@@ -144,9 +119,6 @@ const breadcrumbsJsonLd =
       href="/rss.xml"
     />
 
-    <JsonLd type="organization" data={orgJsonLd} />
-    <JsonLd type="website" data={websiteJsonLd} />
-    {breadcrumbsJsonLd && <JsonLd type="breadcrumb" data={breadcrumbsJsonLd} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

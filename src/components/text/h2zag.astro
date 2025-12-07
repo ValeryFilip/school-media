@@ -1,0 +1,39 @@
+---
+interface Props {
+  title?: string; // Заголовок
+  subtitle?: string; // Подзаголовок
+}
+
+const { title = "", subtitle = "" } = Astro.props;
+---
+
+<div class="h2zag">
+  <h2 class="h2zag-title">{title}</h2>
+  {subtitle ? <p class="h2zag-subtitle">{subtitle}</p> : null}
+</div>
+
+<style>
+  .h2zag {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  .h2zag-title {
+    font-size: var(--h2);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .h2zag-subtitle {
+    font-size: var(--lead);
+    font-weight: 400;
+    line-height: 1.6;
+    margin: 0 0 var(--space-24) 0;
+  }
+  @media (max-width: 600px) {
+    .h2zag-title,
+    .h2zag-subtitle {
+      text-align: center;
+    }
+  }
+</style>

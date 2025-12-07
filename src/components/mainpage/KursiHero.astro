@@ -14,11 +14,6 @@ interface Props {
   href2?: string; text2?: string;
   imgLeft?: Img;
   imgRight?: Img;
-  /* SEO */
-  jsonLd?: boolean;
-  courseName?: string;
-  courseDesc?: string;
-  providerName?: string;
 }
 
 const origin = Astro.url.origin;
@@ -33,25 +28,9 @@ const {
   href2 = "#self-paced", text2 = "Узнать подробнее",
   imgLeft = { src: "images/mainpage/heroleft.png",  width: 550, height: 1100, alt: "Лаборантка с пробиркой" },
   imgRight= { src: "images/mainpage/heroright.jpg", width: 550, height: 1100, alt: "Студентка в медицинской форме" },
-  jsonLd = true,
-  courseName,
-  courseDesc,
-  providerName = "EGEHIM",
 } = Astro.props as Props;
 
-const plain = (s: string) => s.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, "").trim();
-const ldCourse = {
-  "@context": "https://schema.org",
-  "@type": "Course",
-  "name": courseName || plain(title),
-  "description": (courseDesc || plain(lead)).slice(0, 300),
-  "provider": { "@type": "Organization", "name": providerName },
-  "inLanguage": "ru-RU",
-  "url": pageUrl + (href1?.startsWith("#") ? href1 : ""),
-};
 ---
-
-{jsonLd && <script type="application/ld+json">{JSON.stringify(ldCourse)}</script>}
 
 <section class="section kursi-hero" aria-labelledby={`${id}-title`}>
   <style>

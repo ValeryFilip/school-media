@@ -25,14 +25,6 @@ interface Props {
   ctas?: CTA[];
   image?: Image;
   features?: Feature[];
-
-  // SEO (опционально)
-  jsonLd?: boolean;
-  courseName?: string;
-  courseDesc?: string;
-  providerName?: string;
-  ratingValue?: number;
-  reviewCount?: number;
 }
 
 const {
@@ -51,32 +43,7 @@ const {
     { title: "1085 заданий на курсе", text: "Курс нацелен на практику, вы будете решать, а не учить" },
     { title: "Рейтинг курса 5⭐",      text: "На основании независимых оценок Stepik" },
   ],
-  jsonLd = false,
-  courseName,
-  courseDesc,
-  providerName = "EGEHIM",
-  ratingValue,
-  reviewCount,
 } = Astro.props as Props;
-
-const origin = Astro.url.origin;
-const pageUrl = `${origin}${Astro.url.pathname}`;
-const plain = (s: string) => s.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, "").trim();
-
-const ldCourse = jsonLd
-  ? {
-      "@context": "https://schema.org",
-      "@type": "Course",
-      "name": courseName || plain(title),
-      "description": (courseDesc || plain(desc)).slice(0, 400),
-      "provider": { "@type": "Organization", "name": providerName },
-      "inLanguage": "ru-RU",
-      "url": pageUrl,
-      ...(typeof ratingValue === "number" && typeof reviewCount === "number"
-        ? { "aggregateRating": { "@type": "AggregateRating", "ratingValue": ratingValue, "reviewCount": reviewCount } }
-        : {}),
-    }
-  : null;
 
 const toBtnClass = (v?: CTA["variant"]) => {
   if (v === "primary") return "btn btn--primary";
@@ -84,8 +51,6 @@ const toBtnClass = (v?: CTA["variant"]) => {
   return "btn btn--ghost";
 };
 ---
-
-{jsonLd && <script type="application/ld+json">{JSON.stringify(ldCourse)}</script>}
 
 <section class="section stepik-hero" aria-labelledby={`${id}-title`}>
   <div class="hero-inner">

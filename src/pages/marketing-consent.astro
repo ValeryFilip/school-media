@@ -10,26 +10,6 @@ const description =
   `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${config.siteUrl}.`;
 
 const breadcrumbs = [{ name: title }];
-
-const siteUrl = config.siteUrl.replace(/\/$/, "");
-const canonical = `${siteUrl}${Astro.url.pathname}`;
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": title,
-  "url": canonical,
-  "inLanguage": "ru-RU",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": config.siteName,
-    "url": siteUrl
-  },
-  "about": {
-    "@type": "Thing",
-    "name": "Согласие на получение рекламных рассылок и сообщений"
-  }
-};
 ---
 
 <MainLayout
@@ -39,8 +19,6 @@ const jsonLd = {
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
-  <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-
   <main class="policy" aria-labelledby="marketing-consent-title">
     <div class="container">
       <h1 id="marketing-consent-title">{title}</h1>

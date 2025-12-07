@@ -213,10 +213,6 @@ const SWIPER_NEXT = `${id}-swiper-next`;
                   <video
                     class={`platform__img ${i === 0 ? "is-active" : ""}`}
                     src={s.img.src}
-                    poster={(s.img.src || "").replace(
-                      /\.(webm|mp4)(\?.*)?$/i,
-                      ".webp"
-                    )}
                     muted
                     playsinline
                     autoplay

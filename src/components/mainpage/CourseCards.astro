@@ -1,5 +1,6 @@
 ---
 import CursCard from "../cards/cursCard.astro";
+import H2Zag from "../text/h2zag.astro";
 
 interface CourseCard {
   pins?: string[];
@@ -15,15 +16,20 @@ interface CourseCard {
 
 interface Props {
   heading?: string;
+  subtitle?: string;
   cards?: CourseCard[];
 }
 
-const { heading = "Наши курсы", cards = [] } = Astro.props;
+const {
+  heading = "Наши курсы",
+  subtitle = "Наши курсы помогут вам успешно поступить в вуз",
+  cards = [],
+} = Astro.props;
 ---
 
 <section class="section course-cards">
   <div class="course-grid__wrapper container">
-    <h2 class="section-title">{heading}</h2>
+    <H2Zag title={heading} subtitle={subtitle} />
     <div class="course-cards__grid">
       {
         cards.map((card) => (

@@ -10,28 +10,6 @@ const description =
 
 // крошки: ваш компонент добавит «Домой», здесь — только текущая страница
 const breadcrumbs = [{ name: title }];
-
-// канонический для JSON-LD
-const siteUrl = config.siteUrl.replace(/\/$/, "");
-const canonical = `${siteUrl}${Astro.url.pathname}`;
-
-// JSON-LD: WebPage (страница с информацией об оплате)
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": title,
-  "url": canonical,
-  "inLanguage": "ru-RU",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": config.siteName,
-    "url": siteUrl
-  },
-  "about": {
-    "@type": "Thing",
-    "name": "Оплата курсов и безопасность платежей"
-  }
-};
 ---
 
 <MainLayout
@@ -41,8 +19,6 @@ const jsonLd = {
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
-  <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-
   <main class="policy" aria-labelledby="payment-title">
     <div class="container">
       <h1 id="payment-title">{title}</h1>

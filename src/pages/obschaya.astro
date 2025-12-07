@@ -100,25 +100,6 @@ const platformProps = {
   ],
 };
 
-/* JSON-LD: VideoObject для слайдов MegaSection */
-const videoLd = platformProps.slides
-  .filter((s) => /\.(webm|mp4)(\?.*)?$/i.test(s.img?.src || ""))
-  .map((s) => {
-    const src: string = s.img.src;
-    const ext = (src.split(".").pop() || "").toLowerCase();
-    const encoding = ext === "mp4" ? "video/mp4" : "video/webm";
-    return {
-      "@context": "https://schema.org",
-      "@type": "VideoObject",
-      "name": s.title,
-      "description": s.text,
-      "inLanguage": "ru-RU",
-      "contentUrl": `${Astro.url.origin}${src}`,
-      "encodingFormat": encoding,
-      "url": `${Astro.url.origin}${Astro.url.pathname}`,
-    };
-  });
-
 /* Модули курса */
 const modulesProps = {
   id: "modules",
@@ -484,24 +465,6 @@ const offerProps = {
   ],
 };
 
-/* JSON-LD: Product + Offer */
-const toPriceNumber = (s: string) => String(s ?? "").replace(/[^0-9]/g, "");
-const productLd = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": offerProps.title,
-  "description": (seo.description || "").trim(),
-  "brand": { "@type": "Organization", "name": "ЕГЭХИМ" },
-  "url": `${Astro.url.origin}${Astro.url.pathname}`,
-  "offers": {
-    "@type": "Offer",
-    "price": toPriceNumber(offerProps.price),
-    "priceCurrency": "RUB",
-    "url": offerProps.buy?.href || `${Astro.url.origin}${Astro.url.pathname}`,
-    "availability": "https://schema.org/InStock"
-  }
-};
-
 /* === FAQ ПРОПСЫ (только «вытащил» на страницу) === */
 const faqProps = {
   title: "Часто задаваемые вопросы",
@@ -533,17 +496,6 @@ const faqProps = {
       a: "Да, рассрочку можно оформить на Stepik через Яндекс или Тинькофф.",
     },
   ],
-};
-
-/* JSON-LD: FAQPage */
-const faqLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqProps.items.map((it) => ({
-    "@type": "Question",
-    "name": it.q,
-    "acceptedAnswer": { "@type": "Answer", "text": it.a },
-  })),
 };
 
 /* === ПРОПСЫ АВТОРА (блок у тебя уже готов; ниже — типичный набор) === */
@@ -590,7 +542,7 @@ const megaSectionProps = {
   image={seo.image}
   seoType="website"
   showBreadcrumbs={false}
-  logoSrc="/logo.svg"
+  logoSrc="/favicon.svg"
   ctaHref="/courses"
 >
   <section id="hero">
@@ -631,10 +583,6 @@ const megaSectionProps = {
             text: "На основании независимых оценок stepik",
           },
         ]}
-        jsonLd={true}
-        courseName="Общая химия для ЕГЭ"
-        courseDesc="Полный курс по общей химии: видеоуроки, практика, поддержка."
-        providerName="ЕГЭХИМ"
       />
     </section>
   </div>
@@ -644,9 +592,6 @@ const megaSectionProps = {
   </section>
 
   <section id="platform">
-    {videoLd.length > 0 && (
-      <script type="application/ld+json">{JSON.stringify(videoLd)}</script>
-    )}
     <MegaSection {...megaSectionProps} />
   </section>
 
@@ -667,7 +612,6 @@ const megaSectionProps = {
   </section>
 
   <section id="offer">
-    <script type="application/ld+json">{JSON.stringify(productLd)}</script>
     <CourseOffer {...offerProps} />
   </section>
 
@@ -677,7 +621,6 @@ const megaSectionProps = {
 
   {/* Оболочка для FAQ (если нужно, чтобы открывался только один пункт) */}
   <section id="faq">
-    <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
     <Faq {...faqProps} />
     <div data-faq-singleopen={faqProps.singleOpen ? "1" : "0"}></div>
 

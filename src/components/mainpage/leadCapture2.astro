@@ -1,0 +1,374 @@
+---
+interface Social {
+  href: string;
+  icon: string;
+  alt: string;
+}
+
+interface Props {
+  id?: string; // ID секции
+  imageSrc?: string; // Путь к картинке
+  imageAlt?: string; // Alt текст для картинки
+  title?: string; // Заголовок
+  subtitle?: string; // Подзаголовок
+  showSteps?: boolean; // Показывать ли степы
+  stepsText?: string[]; // Массив текстов для степов
+  socials?: Social[]; // Массив социальных сетей
+  formAction?: string; // URL для отправки формы
+  utmSource?: string; // UTM метка: источник
+  utmMedium?: string; // UTM метка: канал
+  utmCampaign?: string; // UTM метка: кампания
+  utmContent?: string; // UTM метка: контент
+  utmTerm?: string; // UTM метка: ключевое слово
+}
+
+const {
+  id = "lead-capture",
+  imageSrc = "/images/girl-lead2.webp",
+  imageAlt = "Ученица на уроке",
+  title = "Начни подготовку с пробного бесплатного занятия",
+  subtitle = "Ответим на вопросы, расскажем про форматы и цены",
+  showSteps = true,
+  stepsText = [
+    "Познакомим с онлайн-школой",
+    "Расскажем, как проходят занятия",
+    "Запишем на бесплатный урок",
+  ],
+  socials = [
+    {
+      href: "https://t.me/valery_chemistry",
+      icon: "/images/technical/telegram.png",
+      alt: "Telegram",
+    },
+    {
+      href: "https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20",
+      icon: "/images/technical/whatsapp.png",
+      alt: "WhatsApp",
+    },
+    {
+      href: "https://vk.me/valeryfilip",
+      icon: "/images/technical/vk.png",
+      alt: "VK",
+    },
+  ],
+  formAction = "/api/lead",
+  utmSource,
+  utmMedium,
+  utmCampaign,
+  utmContent,
+  utmTerm,
+} = Astro.props;
+---
+
+<section id={id} class="lead-capture container">
+  <div class="lead__wrapper">
+    <div class="lead__left">
+      <figure class="lead__left-img">
+        <img src={imageSrc} alt={imageAlt} loading="lazy" />
+        {
+          showSteps && stepsText.length > 0 && (
+            <figcaption class="lead__left-steps">
+              <div class="lead__left-steps-wrapper">
+                {stepsText.map((step, index) => (
+                  <div class="lead__left-steps-item">
+                    <span class="num">{index + 1}</span>
+                    <span class="txt">{step}</span>
+                  </div>
+                ))}
+              </div>
+            </figcaption>
+          )
+        }
+      </figure>
+    </div>
+
+    <div class="lead__right">
+      <h2 class="lead__right-title">{title}</h2>
+      {subtitle && <p class="lead__right-subtitle">{subtitle}</p>}
+      <form
+        class="lead__right-form"
+        action={formAction}
+        method="post"
+        data-utm-source={utmSource}
+        data-utm-medium={utmMedium}
+        data-utm-campaign={utmCampaign}
+        data-utm-content={utmContent}
+        data-utm-term={utmTerm}
+      >
+        <div class="lead__right-form-group">
+          <label class="lead__right-form-label" for="name">Имя</label>
+          <input
+            class="lead__right-form-input"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Ваше имя"
+            required
+          />
+        </div>
+        <div class="lead__right-form-group">
+          <label class="lead__right-form-label" for="phone">Телефон</label>
+          <input
+            class="lead__right-form-input"
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="Ваш телефон"
+            required
+          />
+        </div>
+        <div class="lead__right-form-group">
+          <label class="lead__right-form-label" for="telegram"
+            >Телеграм (без @)</label
+          >
+          <input
+            class="lead__right-form-input"
+            type="text"
+            id="telegram"
+            name="telegram"
+            placeholder="Ваш Telegram"
+            required
+          />
+        </div>
+        <div class="lead__right-form-checkbox">
+          <input
+            class="lead__right-form-checkbox-input"
+            type="checkbox"
+            id="checkbox1"
+            name="checkbox"
+            required
+          />
+          <label class="lead__right-form-checkbox-label" for="checkbox1">
+            Принимаю соглашение
+            <a href="/agreement">о передаче персональных данных</a>
+          </label>
+        </div>
+        <div class="lead__right-form-checkbox">
+          <input
+            class="lead__right-form-checkbox-input"
+            type="checkbox"
+            id="checkbox2"
+            name="checkbox"
+            required
+          />
+          <label class="lead__right-form-checkbox-label" for="checkbox2">
+            Согласен <a href="/marketing-consent">на рекламную рассылку</a>
+          </label>
+        </div>
+        <div class="lead__right-form-checkbox">
+          <input
+            class="lead__right-form-checkbox-input"
+            type="checkbox"
+            id="checkbox3"
+            name="checkbox"
+            required
+          />
+          <label class="lead__right-form-checkbox-label" for="checkbox3">
+            Согласен с <a href="/privacy">политикой конфиденциальности</a>
+          </label>
+        </div>
+        <button type="submit" class="lead__right-form-button btn btn--ghost">
+          Отправить
+        </button>
+      </form>
+      {
+        socials && socials.length > 0 && (
+          <div class="lead__right-form-social">
+            <p class="lead__right-form-social-title">
+              Или напишите нам в мессенджеры:
+            </p>
+            <div class="lead__right-form-social-icons">
+              {socials.map((social) => (
+                <a
+                  href={social.href}
+                  class="lead__right-form-social-icon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={social.icon}
+                    alt={social.alt}
+                    loading="lazy"
+                    width="42"
+                    height="42"
+                  />
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+<style>
+  .lead__wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-24);
+    padding: var(--space-24);
+    background-color: var(--blue);
+    border-radius: var(--radius-24);
+  }
+  .lead__left {
+    position: relative;
+    border-radius: var(--radius-24);
+    margin: 0;
+    padding: 0;
+  }
+  .lead__left-img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .lead__left-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-24);
+    display: block;
+    object-position: 73% 27%;
+  }
+  .lead__left-steps {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    width: 100%;
+    max-width: 95%;
+  }
+  .lead__left-steps-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-16);
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: var(--space-16);
+  }
+  .lead__left-steps-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .num {
+    font-weight: 700;
+    font-size: clamp(18px, 2.5vw, 30px);
+    line-height: 1;
+  }
+  .txt {
+    font-weight: 400;
+    font-size: clamp(8px, 1.5vw, 14px);
+    line-height: 1.3;
+  }
+  .lead__right-title {
+    font-weight: 700;
+    font-size: var(--h2);
+    line-height: 1;
+    color: var(--white);
+    margin: 0 0 var(--space-8);
+  }
+  .lead__right-subtitle {
+    font-weight: 400;
+    font-size: var(--text);
+    line-height: 1.6;
+    color: var(--white);
+    margin: 0 0 var(--space-16);
+  }
+  .lead__right-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 0 var(--space-16);
+  }
+  .lead__right-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .lead__right-form-label {
+    font-weight: 400;
+    font-size: var(--text);
+    line-height: 1.6;
+    color: var(--white);
+  }
+  .lead__right-form-input {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--white);
+    background: var(--white);
+    padding: 0 14px;
+    font-size: var(--text);
+    color: var(--black);
+  }
+  .lead__right-form-input:focus {
+    border-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+    outline: none;
+  }
+  .lead__right-form-checkbox-input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--blue);
+  }
+  .lead__right-form-checkbox-label {
+    font-weight: 400;
+    font-size: var(--text);
+    line-height: 1.6;
+    color: var(--white);
+  }
+  .lead__right-form-checkbox-label a {
+    color: var(--white);
+    text-decoration: underline;
+    font-size: inherit;
+  }
+  .lead__right-form-social {
+    display: flex;
+    gap: var(--space-40);
+    align-items: center;
+  }
+  .lead__right-form-social-title {
+    font-weight: 400;
+    font-size: var(--text);
+    line-height: 1.6;
+    color: var(--white);
+    margin: 0;
+  }
+  .lead__right-form-social-icons {
+    display: flex;
+    gap: var(--space-16);
+    align-items: center;
+  }
+  .lead__right-form-social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+  .lead__right-form-social-icon:hover {
+    transform: scale(1.05);
+  }
+  .lead__right-form-social-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%) brightness(0.95);
+    transition: filter 0.3s ease;
+  }
+  .lead__right-form-social-icon:hover img {
+    filter: grayscale(0%) brightness(1);
+  }
+  .lead__right-form-social-icons a {
+    width: 50px;
+    height: 50px;
+    background-color: var(--white);
+    border-radius: 50%;
+    padding: 10px;
+  }
+</style>

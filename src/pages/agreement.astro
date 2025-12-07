@@ -9,26 +9,6 @@ const description =
   "Условия и сроки согласия на обработку персональных данных на egehim.ru.";
 
 const breadcrumbs = [{ name: title }];
-
-const siteUrl = config.siteUrl.replace(/\/$/, "");
-const canonical = `${siteUrl}${Astro.url.pathname}`;
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": title,
-  "url": canonical,
-  "inLanguage": "ru-RU",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": config.siteName,
-    "url": siteUrl
-  },
-  "about": {
-    "@type": "Thing",
-    "name": "Согласие на обработку персональных данных"
-  }
-};
 ---
 
 <MainLayout
@@ -38,8 +18,6 @@ const jsonLd = {
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
-  <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-
   <main class="policy" aria-labelledby="consent-title">
     <div class="container">
       <h1 id="consent-title">{title}</h1>

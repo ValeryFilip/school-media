@@ -15,7 +15,7 @@ import AboutSection from "../components/mainpage/AboutSection.astro";
 import CasesSlider from "../components/mainpage/CasesSlider.astro";
 import UnisMarquee from "../components/mainpage/UnisMarquee.astro";
 import Faq from "../components/mainpage/Faq.astro";
-import LeadCapture from "../components/mainpage/LeadCapture.astro";
+import LeadCapture2 from "../components/mainpage/leadCapture2.astro";
 import CoursesTabs from "../components/mainpage/CoursesTabs.astro";
 import CourseCards from "../components/mainpage/CourseCards.astro";
 import { getCollection } from "astro:content";
@@ -65,7 +65,6 @@ const heroProps = {
     height: 1100,
     alt: "Студентка в медицинской форме",
   },
-  jsonLd: true,
   providerName: "EGEHIM",
 };
 
@@ -481,11 +480,19 @@ const faqItems = [
   { q: "Есть рассрочка?", a: "Да, через Stepik — Яндекс или Тинькофф." },
 ];
 
-/* 9) Лид-форма (оставим дефолтные пропсы) */
+/* 9) Лид-форма */
 const leadProps = {
   id: "lead-capture",
+  imageSrc: "/images/girl-lead2.webp",
+  imageAlt: "Ученица на уроке",
   title: "Начни подготовку с пробного бесплатного занятия",
   subtitle: "Ответим на вопросы, расскажем про форматы и цены",
+  showSteps: true,
+  stepsText: [
+    "Познакомим с онлайн-школой",
+    "Расскажем, как проходят занятия",
+    "Запишем на бесплатный урок",
+  ],
   formAction:
     "https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec",
   // UTM метки для главной страницы
@@ -525,7 +532,7 @@ const leadProps = {
 
   <UnisMarquee />
 
-  <LeadCapture {...leadProps} />
+  <LeadCapture2 {...leadProps} />
 
   <Faq items={faqItems} />
 </MainLayout>
