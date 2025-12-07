@@ -11,7 +11,9 @@ import { slugify } from "../lib/slugify";
 import {
   ORGANIZATION_DATA,
   absAsset,
+  buildArticleJsonLd,
 } from "../lib/seoData";
+import JsonLd from "../components/JsonLd.astro";
 import "../styles/global_lend.css";
 
 // типы пропсов
@@ -150,7 +152,29 @@ const sameCategoryTop = allArticles
   )
   .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
   .slice(0, 3);
+
+// Генерация JSON-LD для Article
+const articleJsonLd = buildArticleJsonLd({
+  origin,
+  url: articleUrl,
+  headline: fm.title,
+  description: fm.description || undefined,
+  image: heroFromFM || undefined,
+  datePublished: dateObj ? dateObj.toISOString() : undefined,
+  dateModified: updatedObj ? updatedObj.toISOString() : undefined,
+  author: {
+    name: authorName !== "Без имени" ? authorName : undefined,
+    url: authorName !== "Без имени" ? `${origin}/about` : undefined,
+    image: authorPhoto || undefined,
+    jobTitle: authorRole || undefined,
+  },
+  keywords: fm.tags && fm.tags.length > 0 ? fm.tags : undefined,
+  articleSection: fm.category || undefined,
+});
 ---
+
+<!-- JSON-LD структурированные данные -->
+<JsonLd data={articleJsonLd} />
 
 <!-- Прогресс чтения -->
 <ProgressBar />

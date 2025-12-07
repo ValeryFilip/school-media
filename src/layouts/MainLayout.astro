@@ -5,9 +5,15 @@ import UnifiedMenu from "../components/UnifiedMenu.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import Preloader from "../components/scripts/Preloader.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
 import YandexMetrika from "../components/analytics/YandexMetrika.astro";
+import JsonLd from "../components/JsonLd.astro";
+import {
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+  buildBreadcrumbsJsonLd,
+  getSiteName,
+} from "../lib/seoData";
 
 interface Crumb {
   name: string;
@@ -59,6 +65,22 @@ const {
 } = Astro.props as Props;
 
 const inMedia = Astro.url.pathname.startsWith("/media");
+const origin = Astro.url.origin;
+const siteNameFinal = getSiteName(siteName, config.siteName);
+
+// Генерация JSON-LD
+const orgJsonLd = buildOrganizationJsonLd(origin);
+const websiteJsonLd = buildWebSiteJsonLd(origin, siteNameFinal);
+const breadcrumbsJsonLd =
+  showBreadcrumbs && breadcrumbs.length > 0
+    ? buildBreadcrumbsJsonLd(
+        origin,
+        siteNameFinal,
+        breadcrumbs,
+        inMedia,
+        Astro.url.pathname
+      )
+    : null;
 ---
 
 <!doctype html>
@@ -124,6 +146,11 @@ const inMedia = Astro.url.pathname.startsWith("/media");
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <YandexMetrika />
+
+    {/* JSON-LD структурированные данные */}
+    <JsonLd data={orgJsonLd} />
+    <JsonLd data={websiteJsonLd} />
+    {breadcrumbsJsonLd && <JsonLd data={breadcrumbsJsonLd} />}
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
     <UnifiedMenu

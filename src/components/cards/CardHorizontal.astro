@@ -78,21 +78,22 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     flex-wrap: nowrap;
     gap: 30px;
     justify-content: start;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
     transform: none;
     container-type: inline-size;
-  }
-  .card__wrapper:hover {
-    transform: translateY(-5px) rotate(1deg);
   }
   .card__top-img img {
     width: 100px;
     border-radius: 12px;
     aspect-ratio: 1/1;
     object-fit: cover;
+    transition: all 0.5s ease;
+  }
+  .card__top-img img:hover {
+    transform: scale(1.02);
   }
   .card__body {
-    padding: 0;
+    padding: 15px;
   }
   .card__body-title {
     font-size: clamp(18px, 2.5vw, 20px);
@@ -161,7 +162,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   }
 </style>
 
-<article class="card123 card-horizontal">
+<article class="card123 card-horizontal white-bg">
   <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
     <a href={href} style="text-decoration: none; color: inherit; display: contents;">
       <div class="card__top-img">

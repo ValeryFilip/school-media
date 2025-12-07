@@ -85,9 +85,6 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     transition: all 0.3s ease;
     transform: none;
   }
-  .card__wrapper:hover {
-    transform: translateY(-5px) rotate(1deg);
-  }
   .card__top-img {
     padding-bottom: 16px;
   }
@@ -96,9 +93,13 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     border-radius: 12px;
     aspect-ratio: 16/9;
     object-fit: cover;
+    transition: all 0.5s ease;
+  }
+  .card__top-img img:hover {
+    transform: scale(1.02);
   }
   .card__body {
-    padding: 0px;
+    padding: 0 15px 15px 15px;
   }
   .card__body-title {
     font-size: clamp(18px, 2.5vw, 22px);
@@ -151,7 +152,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   }
 </style>
 
-<article class="card123 card-vertical">
+<article class="card123 card-vertical white-bg">
   <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
     <a
       href={href}

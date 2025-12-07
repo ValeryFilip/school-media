@@ -3,6 +3,8 @@
 
 import MainLayout from "../layouts/MainLayout.astro";
 import config from "../config.ts";
+import JsonLd from "../components/JsonLd.astro";
+import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
 
 const title = "Оплата и безопасность платежей";
 const description =
@@ -10,6 +12,18 @@ const description =
 
 // крошки: ваш компонент добавит «Домой», здесь — только текущая страница
 const breadcrumbs = [{ name: title }];
+
+// Генерация JSON-LD
+const origin = Astro.url.origin;
+const pageUrl = `${origin}${Astro.url.pathname}`;
+const siteName = getSiteName(undefined, config.siteName);
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url: pageUrl,
+  name: title,
+  siteName,
+  about: "Оплата и безопасность платежей",
+});
 ---
 
 <MainLayout
@@ -19,36 +33,50 @@ const breadcrumbs = [{ name: title }];
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
+  {/* JSON-LD структурированные данные */}
+  <JsonLd data={webPageJsonLd} />
   <main class="policy" aria-labelledby="payment-title">
     <div class="container">
       <h1 id="payment-title">{title}</h1>
 
       <section class="policy__section">
         <p>
-          Оплата курсов осуществляется исключительно через образовательную платформу
-          <a href="https://stepik.org" target="_blank" rel="noopener noreferrer">Stepik.org</a>.
+          Оплата курсов осуществляется исключительно через образовательную
+          платформу
+          <a href="https://stepik.org" target="_blank" rel="noopener noreferrer"
+            >Stepik.org</a
+          >.
         </p>
         <p>
-          Все операции с банковскими картами выполняются на стороне платформы Stepik и её платёжных партнёров
-          по защищённым канала м связи. Сайт <strong>{new URL(config.siteUrl).host}</strong> не принимает платежи и не обрабатывает
-          данные банковских карт.
+          Все операции с банковскими картами выполняются на стороне платформы
+          Stepik и её платёжных партнёров по защищённым канала м связи. Сайт <strong
+            >{new URL(config.siteUrl).host}</strong
+          > не принимает платежи и не обрабатывает данные банковских карт.
         </p>
       </section>
 
       <section class="policy__section">
         <h2>Правила оплаты и возвратов</h2>
         <p>
-          Правила оплаты, возврата средств и безопасность проведения платежей регулируются официальными
-          документами платформы Stepik:
+          Правила оплаты, возврата средств и безопасность проведения платежей
+          регулируются официальными документами платформы Stepik:
         </p>
         <ul>
           <li>
-            <a href="https://stepik.org/legal" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://stepik.org/legal"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Пользовательское соглашение Stepik
             </a>
           </li>
           <li>
-            <a href="https://stepik.org/privacy" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://stepik.org/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Политика конфиденциальности Stepik
             </a>
           </li>
@@ -58,73 +86,120 @@ const breadcrumbs = [{ name: title }];
       <section class="policy__section">
         <h2>Согласие на обработку персональных данных</h2>
         <p>
-          Оформляя оплату на платформе Stepik, вы соглашаетесь с условиями обработки персональных данных,
-          установленными Stepik и его платёжными партнёрами. Сайт <strong>{new URL(config.siteUrl).host}</strong> не собирает и
-          не хранит платёжные реквизиты банковских карт.
+          Оформляя оплату на платформе Stepik, вы соглашаетесь с условиями
+          обработки персональных данных, установленными Stepik и его платёжными
+          партнёрами. Сайт <strong>{new URL(config.siteUrl).host}</strong> не собирает
+          и не хранит платёжные реквизиты банковских карт.
         </p>
         <p>
-          По вопросам, связанным с оплатой или возвратами, рекомендуем обращаться в поддержку Stepik через
-          официальные каналы, указанные на <a href="https://stepik.org" target="_blank" rel="noopener noreferrer">stepik.org</a>.
+          По вопросам, связанным с оплатой или возвратами, рекомендуем
+          обращаться в поддержку Stepik через официальные каналы, указанные на <a
+            href="https://stepik.org"
+            target="_blank"
+            rel="noopener noreferrer">stepik.org</a
+          >.
         </p>
       </section>
     </div>
   </main>
 
   <style>
-    .policy{
-      font-family: var(--ff, Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
-      color:#222;
+    .policy {
+      font-family: var(
+        --ff,
+        Montserrat,
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Arial,
+        sans-serif
+      );
+      color: #222;
       padding: var(--space-32, 32px) 0;
     }
-    .policy .container{
+    .policy .container {
       max-width: var(--container, 900px);
       padding: 0 var(--pad-desktop, 50px);
       margin: 0 auto;
       box-sizing: border-box;
     }
 
-    .policy h1{
+    .policy h1 {
       font-size: var(--h1, 32px);
       line-height: 1.2;
       margin: 0 0 var(--space-16, 16px);
       font-weight: 700;
     }
-    .policy h2{
+    .policy h2 {
       font-size: var(--h2, 24px);
       line-height: 1.25;
       margin: 28px 0 12px;
       font-weight: 700;
     }
     .policy p,
-    .policy li{
+    .policy li {
       font-size: 20px;
       line-height: 1.7;
       margin: 0 0 12px;
     }
-    .policy ul{ padding-left: 20px; }
-    .policy__section + .policy__section{ margin-top: 16px; }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
 
-    .policy a{
+    .policy a {
       color: var(--blue, #0d6efd);
       text-decoration: none;
     }
-    .policy a:hover{ text-decoration: underline; }
+    .policy a:hover {
+      text-decoration: underline;
+    }
 
-    @media (max-width: 600px){
-      .policy .container{ padding: 0 var(--pad-mobile, 20px); }
-      .policy p, .policy li{ font-size:16px; }
-      .policy h1{ font-size: clamp(24px, 6.5vw, 32px); }
-      .policy h2{ font-size: clamp(18px, 5vw, 24px); }
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
     }
 
     /* печать */
-    @media print{
-      header, nav, footer { display:none !important; }
-      .policy{ padding: 0; }
-      .policy .container{ max-width: none; padding: 0; }
-      .policy h1{ font-size: 28px; }
-      .policy h2{ font-size: 20px; margin: 18px 0 8px; }
-      .policy p, .policy li{ font-size: 14px; line-height:1.6; }
+    @media print {
+      header,
+      nav,
+      footer {
+        display: none !important;
+      }
+      .policy {
+        padding: 0;
+      }
+      .policy .container {
+        max-width: none;
+        padding: 0;
+      }
+      .policy h1 {
+        font-size: 28px;
+      }
+      .policy h2 {
+        font-size: 20px;
+        margin: 18px 0 8px;
+      }
+      .policy p,
+      .policy li {
+        font-size: 14px;
+        line-height: 1.6;
+      }
     }
   </style>
 </MainLayout>

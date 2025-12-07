@@ -36,6 +36,8 @@ const {
   addSiteSuffix = true,
   siteName: siteNameProp,
   imageAlt,
+  datePublished,
+  dateModified,
 } = Astro.props as Props;
 
 import config from "../config.ts";
@@ -72,19 +74,13 @@ const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
 {ogImage && <meta property="og:image" content={ogImage} />}
 {ogImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
 {
-  type === "article" && (Astro.props as any).datePublished && (
-    <meta
-      property="article:published_time"
-      content={(Astro.props as any).datePublished}
-    />
+  type === "article" && datePublished && (
+    <meta property="article:published_time" content={datePublished} />
   )
 }
 {
-  type === "article" && (Astro.props as any).dateModified && (
-    <meta
-      property="article:modified_time"
-      content={(Astro.props as any).dateModified}
-    />
+  type === "article" && dateModified && (
+    <meta property="article:modified_time" content={dateModified} />
   )
 }
 

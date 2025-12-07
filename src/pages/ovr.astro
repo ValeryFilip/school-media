@@ -1,6 +1,13 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import StepikHero from "../components/stepik/stepikHero.astro";
+import JsonLd from "../components/JsonLd.astro";
+import {
+  buildCourseJsonLd,
+  buildProductJsonLd,
+  buildVideoJsonLd,
+  buildFAQJsonLd,
+} from "../lib/seoData";
 
 import CourseWhy from "../components/stepik/CourseWhy.astro";
 import ReviewsSection from "../components/stepik/ReviewsSection.astro";
@@ -417,6 +424,50 @@ const megaSectionProps = {
     rel: "noopener",
   },
 };
+
+// Генерация JSON-LD
+const origin = Astro.url.origin;
+const pageUrl = `${origin}${Astro.url.pathname}`;
+
+// Course JSON-LD
+const courseJsonLd = buildCourseJsonLd({
+  origin,
+  url: pageUrl,
+  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  description: seo.description.trim(),
+  ratingValue: 4.9,
+  reviewCount: reviewsProps.stats.find((s) => s.value.includes("4,9"))
+    ? 100
+    : undefined,
+});
+
+// Product JSON-LD
+const productPrice = offerProps.price.replace(/[^\d]/g, "");
+const productJsonLd = buildProductJsonLd({
+  origin,
+  url: pageUrl,
+  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  description: seo.description.trim(),
+  price: productPrice,
+  priceCurrency: "RUB",
+});
+
+// VideoObject JSON-LD (берем первое видео из платформы)
+const videoSlide = platformProps.slides.find(
+  (s) => s.img.src.includes(".webm") || s.img.src.includes(".mp4")
+);
+const videoJsonLd = videoSlide
+  ? buildVideoJsonLd({
+      origin,
+      pageUrl,
+      name: videoSlide.title,
+      description: videoSlide.text,
+      contentUrl: videoSlide.img.src,
+    })
+  : null;
+
+// FAQPage JSON-LD
+const faqJsonLd = buildFAQJsonLd(faqProps.items);
 ---
 
 <MainLayout
@@ -428,58 +479,93 @@ const megaSectionProps = {
   logoSrc="/favicon.svg"
   ctaHref="/courses"
 >
+  {/* JSON-LD структурированные данные */}
+  <JsonLd data={courseJsonLd} />
+  <JsonLd data={productJsonLd} />
+  {videoJsonLd && <JsonLd data={videoJsonLd} />}
+  <JsonLd data={faqJsonLd} />
   <section id="hero">
-      <StepikHero
-        labels={["Курс", "Химия ЕГЭ 2026", "ОВР"]}
-        title="Курс по написанию ОВР на ЕГЭ 2026"
-        desc="ОВР - основа неорганики и умение писать эти реакции поможет вам решать все задания из неорганической химии, особенно 29 и 31."
-        ctas={[
-          {
-            href: "#offer",
-            text: "Забронировать скидку", // ← текст кнопки
-            variant: "primary",
-          },
-          {
-            href: "#author",
-            text: "Подробнее", // ← текст ссылки
-            variant: "ghost",
-          },
-        ]}
-        image={{
-          src: "/images/stepik/hero-image-neorg.webp",
-          alt: "ЕГЭХИМ — подготовка к ЕГЭ по химии",
-          width: 1200,
-          height: 800,
-        }}
-        features={[
-          { title: "Доступ к курсу", text: "Остается навсегда" },
-          {
-            title: "+20баллов на ЕГЭ",
-            text: "После курса увеличите свой результат",
-          },
-          {
-            title: "125 заданий на курсе",
-            text: "Курс нацелен на практику, вы будете много решать.",
-          },
-          {
-            title: "Рейтинг курса 5⭐",
-            text: "На основании независимых оценок stepik",
-          },
-        ]}
-      />
-    </section>
-  </div>
+    <StepikHero
+      labels={["Курс", "Химия ЕГЭ 2026", "ОВР"]}
+      title="Курс по написанию ОВР на ЕГЭ 2026"
+      desc="ОВР - основа неорганики и умение писать эти реакции поможет вам решать все задания из неорганической химии, особенно 29 и 31."
+      ctas={[
+        {
+          href: "#offer",
+          text: "Забронировать скидку", // ← текст кнопки
+          variant: "primary",
+        },
+        {
+          href: "#author",
+          text: "Подробнее", // ← текст ссылки
+          variant: "ghost",
+        },
+      ]}
+      image={{
+        src: "/images/stepik/hero-image-neorg.webp",
+        alt: "ЕГЭХИМ — подготовка к ЕГЭ по химии",
+        width: 1200,
+        height: 800,
+      }}
+      features={[
+        { title: "Доступ к курсу", text: "Остается навсегда" },
+        {
+          title: "+20баллов на ЕГЭ",
+          text: "После курса увеличите свой результат",
+        },
+        {
+          title: "125 заданий на курсе",
+          text: "Курс нацелен на практику, вы будете много решать.",
+        },
+        {
+          title: "Рейтинг курса 5⭐",
+          text: "На основании независимых оценок stepik",
+        },
+      ]}
+    />
+  </section>
 
   <section id="author">
     <AuthorSection />
   </section>
 
   <section id="platform">
-    <MegaSection {...megaSectionProps} />
+    <MegaSection
+      id={megaSectionProps.id}
+      innerGap={megaSectionProps.innerGap}
+      platform={{
+        heading: megaSectionProps.platform.heading,
+        autoplayMs: megaSectionProps.platform.autoplayMs,
+        slides: megaSectionProps.platform.slides,
+      }}
+      modules={megaSectionProps.modules}
+      skills={megaSectionProps.skills}
+      bottomCta={{
+        href: megaSectionProps.bottomCta.href,
+        text: megaSectionProps.bottomCta.text,
+        target: megaSectionProps.bottomCta.target as "_blank" | "_self",
+        rel: megaSectionProps.bottomCta.rel,
+      }}
+    />
   </section>
 
   <section id="course-why">
-    <CourseWhy {...courseWhyProps} />
+    <CourseWhy
+      id={courseWhyProps.id}
+      className={courseWhyProps.className}
+      image={courseWhyProps.image}
+      title={courseWhyProps.title}
+      topCards={courseWhyProps.topCards as [
+        (typeof courseWhyProps.topCards)[0],
+        (typeof courseWhyProps.topCards)[1],
+      ]}
+      bottomCards={courseWhyProps.bottomCards as [
+        (typeof courseWhyProps.bottomCards)[0],
+        (typeof courseWhyProps.bottomCards)[1],
+      ]}
+      verticalCard={courseWhyProps.verticalCard}
+      footer={courseWhyProps.footer}
+    />
   </section>
 
   <section id="reviews">
@@ -487,7 +573,18 @@ const megaSectionProps = {
   </section>
 
   <section id="support">
-    <SupportSection {...supportProps} />
+    <SupportSection
+      id={supportProps.id}
+      heading={supportProps.heading}
+      accent={supportProps.accent}
+      leftCards={supportProps.leftCards as [
+        (typeof supportProps.leftCards)[0],
+        (typeof supportProps.leftCards)[1],
+      ]}
+      rightTitle={supportProps.rightTitle}
+      rightText={supportProps.rightText}
+      rightImg={supportProps.rightImg}
+    />
   </section>
 
   <section id="price">
@@ -495,7 +592,23 @@ const megaSectionProps = {
   </section>
 
   <section id="offer">
-    <CourseOffer {...offerProps} />
+    <CourseOffer
+      id={offerProps.id}
+      badges={offerProps.badges}
+      title={offerProps.title}
+      subtitle={offerProps.subtitle}
+      bullets={offerProps.bullets}
+      price={offerProps.price}
+      oldPrice={offerProps.oldPrice}
+      buy={offerProps.buy}
+      buyWithDiscount={offerProps.buyWithDiscount}
+      headerImage={offerProps.headerImage}
+      ctaColor={offerProps.ctaColor}
+      packages={offerProps.packages as [
+        (typeof offerProps.packages)[0],
+        (typeof offerProps.packages)[1],
+      ]}
+    />
   </section>
 
   <section id="universities">

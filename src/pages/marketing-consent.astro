@@ -3,13 +3,25 @@
 
 import MainLayout from "../layouts/MainLayout.astro";
 import config from "../config.ts";
+import JsonLd from "../components/JsonLd.astro";
+import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
 
 const title = "Согласие на получение рекламных рассылок";
-import config from "../config.ts";
-const description =
-  `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${config.siteUrl}.`;
+const description = `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${config.siteUrl}.`;
 
 const breadcrumbs = [{ name: title }];
+
+// Генерация JSON-LD
+const origin = Astro.url.origin;
+const pageUrl = `${origin}${Astro.url.pathname}`;
+const siteName = getSiteName(undefined, config.siteName);
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url: pageUrl,
+  name: title,
+  siteName,
+  about: "Согласие на получение рекламных рассылок",
+});
 ---
 
 <MainLayout
@@ -19,18 +31,21 @@ const breadcrumbs = [{ name: title }];
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
 >
+  {/* JSON-LD структурированные данные */}
+  <JsonLd data={webPageJsonLd} />
   <main class="policy" aria-labelledby="marketing-consent-title">
     <div class="container">
       <h1 id="marketing-consent-title">{title}</h1>
 
       <section class="policy__section">
         <p>
-          Настоящим, руководствуясь Федеральным законом от 13.03.2006 №&nbsp;38-ФЗ «О рекламе»
-          и Федеральным законом от 27.07.2006 №&nbsp;152-ФЗ «О персональных данных»,
-          я даю согласие самозанятому Филипенко Валерию Юрьевичу (ИНН 11111111111),
-          владельцу сайта <strong>{config.siteUrl}</strong> (далее — Оператор),
-          на получение от Оператора рекламной информации и сообщений, а также на обработку
-          моих персональных данных в целях рассылок.
+          Настоящим, руководствуясь Федеральным законом от 13.03.2006
+          №&nbsp;38-ФЗ «О рекламе» и Федеральным законом от 27.07.2006
+          №&nbsp;152-ФЗ «О персональных данных», я даю согласие самозанятому
+          Филипенко Валерию Юрьевичу (ИНН 11111111111), владельцу сайта <strong
+            >{config.siteUrl}</strong
+          > (далее — Оператор), на получение от Оператора рекламной информации и
+          сообщений, а также на обработку моих персональных данных в целях рассылок.
         </p>
       </section>
 
@@ -39,8 +54,14 @@ const breadcrumbs = [{ name: title }];
         <p>Согласие распространяется на направления:</p>
         <ul>
           <li>электронная почта (email-рассылки);</li>
-          <li>телефонные номера (SMS/мессенджеры, голосовые уведомления без использования автонабора);</li>
-          <li>мессенджеры и соцсети: Telegram, WhatsApp, VK и др. — при условии моей подписки/инициативного контакта;</li>
+          <li>
+            телефонные номера (SMS/мессенджеры, голосовые уведомления без
+            использования автонабора);
+          </li>
+          <li>
+            мессенджеры и соцсети: Telegram, WhatsApp, VK и др. — при условии
+            моей подписки/инициативного контакта;
+          </li>
           <li>web-уведомления (push) — при отдельном разрешении в браузере.</li>
         </ul>
       </section>
@@ -48,21 +69,22 @@ const breadcrumbs = [{ name: title }];
       <section class="policy__section">
         <h2>Содержание и периодичность</h2>
         <p>
-          Рассылки могут включать информацию о курсах и мероприятиях, обучающих материалах,
-          спецпредложениях, акциях, полезных статьях и новостях проекта.
-          Периодичность — разумная и непревышающая обычную деловую практику
-          (как правило, не чаще 4 сообщений в неделю).
+          Рассылки могут включать информацию о курсах и мероприятиях, обучающих
+          материалах, спецпредложениях, акциях, полезных статьях и новостях
+          проекта. Периодичность — разумная и непревышающая обычную деловую
+          практику (как правило, не чаще 4 сообщений в неделю).
         </p>
       </section>
 
       <section class="policy__section">
         <h2>Обрабатываемые данные</h2>
         <p>
-          Для целей рассылок Оператор может обрабатывать: имя, адрес электронной почты,
-          номер телефона, идентификаторы в мессенджерах/соцсетях, сведения о факте
-          подписки/отписки и взаимодействии с сообщениями (открытия, клики),
-          а также технические данные (IP-адрес, время/дата подтверждения согласия)
-          — для фиксации факта согласия и соблюдения законодательства о рекламе.
+          Для целей рассылок Оператор может обрабатывать: имя, адрес электронной
+          почты, номер телефона, идентификаторы в мессенджерах/соцсетях,
+          сведения о факте подписки/отписки и взаимодействии с сообщениями
+          (открытия, клики), а также технические данные (IP-адрес, время/дата
+          подтверждения согласия) — для фиксации факта согласия и соблюдения
+          законодательства о рекламе.
         </p>
       </section>
 
@@ -70,28 +92,43 @@ const breadcrumbs = [{ name: title }];
         <h2>Передача третьим лицам</h2>
         <p>
           Оператор вправе поручать обработку и доставку сообщений уполномоченным
-          сервисам рассылок и мессенджер-платформам при условии соблюдения ими требований
-          к защите персональных данных. Перечень таких лиц может меняться; обработка ведётся
-          в объёме, необходимом для отправки сообщений.
+          сервисам рассылок и мессенджер-платформам при условии соблюдения ими
+          требований к защите персональных данных. Перечень таких лиц может
+          меняться; обработка ведётся в объёме, необходимом для отправки
+          сообщений.
         </p>
       </section>
 
       <section class="policy__section">
         <h2>Срок действия и отзыв согласия</h2>
         <p>
-          Согласие действует до момента его отзыва. Я могу отказаться от рекламных сообщений в любой момент:
+          Согласие действует до момента его отзыва. Я могу отказаться от
+          рекламных сообщений в любой момент:
         </p>
         <ul>
           <li>по ссылке «Отписаться» в конце каждого письма;</li>
-          <li>отправив ответное письмо на адрес <strong>info@{new URL(config.siteUrl).host}</strong> с темой «Отписка»;</li>
-          <li>в SMS — ответив словом «СТОП/STOP», либо через настройки телефона/оператора;</li>
-          <li>в Telegram/VK/WhatsApp — отключив получение сообщений или написав «стоп»/«unsubscribe» боту или аккаунту;</li>
-          <li>через личный кабинет (если доступен) — отключив соответствующие уведомления.</li>
+          <li>
+            отправив ответное письмо на адрес <strong
+              >info@{new URL(config.siteUrl).host}</strong
+            > с темой «Отписка»;
+          </li>
+          <li>
+            в SMS — ответив словом «СТОП/STOP», либо через настройки
+            телефона/оператора;
+          </li>
+          <li>
+            в Telegram/VK/WhatsApp — отключив получение сообщений или написав
+            «стоп»/«unsubscribe» боту или аккаунту;
+          </li>
+          <li>
+            через личный кабинет (если доступен) — отключив соответствующие
+            уведомления.
+          </li>
         </ul>
         <p>
-          После отзыва согласия рекламные сообщения направляться не будут; данные,
-          используемые для рассылок, будут удалены/обезличены в разумный срок,
-          если иное не требуется по закону.
+          После отзыва согласия рекламные сообщения направляться не будут;
+          данные, используемые для рассылок, будут удалены/обезличены в разумный
+          срок, если иное не требуется по закону.
         </p>
       </section>
 
@@ -99,12 +136,15 @@ const breadcrumbs = [{ name: title }];
         <h2>Дополнительные положения</h2>
         <ul>
           <li>
-            Согласие на рекламные рассылки является отдельным от согласия на обработку
-            персональных данных и не влияет на предоставление обязательных по договору уведомлений.
+            Согласие на рекламные рассылки является отдельным от согласия на
+            обработку персональных данных и не влияет на предоставление
+            обязательных по договору уведомлений.
           </li>
           <li>
-            Использование сайта означает принятие условий, изложенных в настоящем документе.
-            Вопросы можно направить на <strong>info@{new URL(config.siteUrl).host}</strong>.
+            Использование сайта означает принятие условий, изложенных в
+            настоящем документе. Вопросы можно направить на <strong
+              >info@{new URL(config.siteUrl).host}</strong
+            >.
           </li>
         </ul>
       </section>
@@ -112,59 +152,101 @@ const breadcrumbs = [{ name: title }];
   </main>
 
   <style>
-    .policy{
-      font-family: var(--ff, Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
-      color:#222;
+    .policy {
+      font-family: var(
+        --ff,
+        Montserrat,
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Arial,
+        sans-serif
+      );
+      color: #222;
       padding: var(--space-32, 32px) 0;
     }
-    .policy .container{
+    .policy .container {
       max-width: var(--container, 900px);
       padding: 0 var(--pad-desktop, 50px);
       margin: 0 auto;
       box-sizing: border-box;
     }
 
-    .policy h1{
+    .policy h1 {
       font-size: var(--h1, 3px);
       line-height: 1.2;
       margin: 0 0 var(--space-16, 16px);
       font-weight: 700;
     }
-    .policy h2{
+    .policy h2 {
       font-size: var(--h2, 24px);
       line-height: 1.25;
       margin: 28px 0 12px;
       font-weight: 700;
     }
     .policy p,
-    .policy li{
+    .policy li {
       font-size: 20px;
       line-height: 1.7;
       margin: 0 0 12px;
     }
-    .policy ul{ padding-left: 20px; }
-    .policy__section + .policy__section{ margin-top: 16px; }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
 
-    .policy a{
+    .policy a {
       color: var(--blue, #0d6efd);
       text-decoration: none;
     }
-    .policy a:hover{ text-decoration: underline; }
-
-    @media (max-width: 600px){
-      .policy .container{ padding: 0 var(--pad-mobile, 20px); }
-      .policy p, .policy li{ font-size:16px; }
-      .policy h1{ font-size: clamp(24px, 6.5vw, 32px); }
-      .policy h2{ font-size: clamp(18px, 5vw, 24px); }
+    .policy a:hover {
+      text-decoration: underline;
     }
 
-    @media print{
-      header, nav, footer { display:none !important; }
-      .policy{ padding: 0; }
-      .policy .container{ max-width: none; padding: 0; }
-      .policy h1{ font-size: 28px; }
-      .policy h2{ font-size: 20px; margin: 18px 0 8px; }
-      .policy p, .policy li{ font-size: 14px; line-height:1.6; }
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
+    }
+
+    @media print {
+      header,
+      nav,
+      footer {
+        display: none !important;
+      }
+      .policy {
+        padding: 0;
+      }
+      .policy .container {
+        max-width: none;
+        padding: 0;
+      }
+      .policy h1 {
+        font-size: 28px;
+      }
+      .policy h2 {
+        font-size: 20px;
+        margin: 18px 0 8px;
+      }
+      .policy p,
+      .policy li {
+        font-size: 14px;
+        line-height: 1.6;
+      }
     }
   </style>
 </MainLayout>

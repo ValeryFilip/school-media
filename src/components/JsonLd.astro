@@ -1,0 +1,20 @@
+---
+/**
+ * JsonLd.astro — универсальный компонент для структурированных данных JSON-LD
+ *
+ * Использование:
+ *   <JsonLd data={jsonLdObject} />
+ */
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+
+if (!data) {
+  return null;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data, null, 2)} />

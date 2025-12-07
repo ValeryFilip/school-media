@@ -129,15 +129,6 @@ const adFreeProps = {
             <CardHorizontal post={post} basePath="/media" />
           ))}
         </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("новости")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("новости")};`}
-          >
-            Посмотреть все
-          </a>
-        </div>
       </section>
     )
   }
@@ -172,15 +163,6 @@ const adFreeProps = {
           {section2Horizontal.map((post) => (
             <CardHorizontal post={post} basePath="/media" />
           ))}
-        </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("школьникам")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("школьникам")};`}
-          >
-            Посмотреть все
-          </a>
         </div>
       </section>
     )
@@ -218,15 +200,6 @@ const adFreeProps = {
             <CardHorizontal post={post} basePath="/media" />
           ))}
         </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("родителям")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("родителям")};`}
-          >
-            Посмотреть все
-          </a>
-        </div>
       </section>
     )
   }
@@ -258,15 +231,6 @@ const adFreeProps = {
           {section4Vertical.map((post) => (
             <CardNew post={post} basePath="/media" />
           ))}
-        </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("поступление")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("поступление")};`}
-          >
-            Посмотреть все
-          </a>
         </div>
       </section>
     )
@@ -300,15 +264,6 @@ const adFreeProps = {
             <CardNew post={post} basePath="/media" />
           ))}
         </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("психология")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("психология")};`}
-          >
-            Посмотреть все
-          </a>
-        </div>
       </section>
     )
   }
@@ -341,15 +296,6 @@ const adFreeProps = {
             <CardNew post={post} basePath="/media" />
           ))}
         </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("как быть взрослым")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("как быть взрослым")};`}
-          >
-            Посмотреть все
-          </a>
-        </div>
       </section>
     )
   }
@@ -381,15 +327,6 @@ const adFreeProps = {
           {section7Vertical.map((post) => (
             <CardNew post={post} basePath="/media" />
           ))}
-        </div>
-        <div class="container">
-          <a
-            href={`/media/category/${slugify("материалы по химии")}`}
-            class="category-button"
-            style={`background-color: ${getCategoryHex("материалы по химии")};`}
-          >
-            Посмотреть все
-          </a>
         </div>
       </section>
     )
@@ -561,30 +498,6 @@ const adFreeProps = {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 30px;
     margin-bottom: 50px;
-  }
-  .category-button {
-    display: block;
-    width: 100%;
-    padding: 14px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition:
-      opacity 0.2s ease,
-      transform 0.15s ease;
-    margin-top: 30px;
-  }
-  .category-button:hover {
-    opacity: 0.85;
-    transform: translateY(-2px);
-  }
-  .category-button:active {
-    transform: translateY(0);
   }
   @media (max-width: 1000px) {
     :global(.home-grid-4) {
