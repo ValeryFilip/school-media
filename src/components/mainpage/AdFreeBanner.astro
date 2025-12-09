@@ -10,6 +10,7 @@ interface Props {
   title?: string;
   lead?: string;
   ctaText?: string;
+  ctaHref?: string;
   image?: Img;
 }
 const {
@@ -17,6 +18,7 @@ const {
   title = "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
   lead = "Два курса, которые дадут тебе +30 баллов на экзамене. Забирай по кнопкам ниже",
   ctaText = "Забрать оба курса",
+  ctaHref,
   image = {
     src: "/images/mainpage/adfree.png",
     width: 400,
@@ -30,21 +32,48 @@ const {
   <div class="container">
     <div class="ad-free__card">
       <header class="ad-free__text">
-        <h2 id={`${id}-title`} class="ad-free__title">{title}</h2>
-        <p class="ad-free__lead">{lead}</p>
-        <button
-          id="cta-adfree-A"
-          type="button"
-          class="btn btn--ghost popup-btn"
-          data-popup-id="lead-popup"
-          data-source="adfree-hero"
-          data-variant="A"
-          data-campaign="free-courses"
-          data-utm-source="site"
-          data-utm-medium="cta"
-          data-utm-campaign="adfree-hero"
-          data-utm-content="btn-A">{ctaText}</button
-        >
+        <div>
+          <h2 id={`${id}-title`} class="ad-free__title">{title}</h2>
+        </div>
+        <div>
+          <p class="ad-free__lead">{lead}</p>
+        </div>
+        <div>
+          {
+            ctaHref ? (
+              <a
+                href={ctaHref}
+                class="btn btn--ghost"
+                id="cta-adfree-A"
+                data-source="adfree-hero"
+                data-variant="A"
+                data-campaign="free-courses"
+                data-utm-source="site"
+                data-utm-medium="cta"
+                data-utm-campaign="adfree-hero"
+                data-utm-content="btn-A"
+              >
+                {ctaText}
+              </a>
+            ) : (
+              <button
+                id="cta-adfree-A"
+                type="button"
+                class="btn btn--ghost popup-btn"
+                data-popup-id="lead-popup"
+                data-source="adfree-hero"
+                data-variant="A"
+                data-campaign="free-courses"
+                data-utm-source="site"
+                data-utm-medium="cta"
+                data-utm-campaign="adfree-hero"
+                data-utm-content="btn-A"
+              >
+                {ctaText}
+              </button>
+            )
+          }
+        </div>
       </header>
 
       <figure class="ad-free__figure">
@@ -100,11 +129,10 @@ const {
       padding: var(--space-32);
     }
     .ad-free__text {
-      display: grid;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       gap: var(--space-24);
-      justify-items: start;
-      text-align: left;
-      max-width: 720px;
     }
     .ad-free__title {
       font-size: var(--h2);

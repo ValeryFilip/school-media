@@ -33,6 +33,11 @@ const categories = [
   { id: "psych", label: "Психология", slug: "психология" },
   { id: "adults", label: "Как быть взрослым", slug: "как быть взрослым" },
   { id: "chemistry", label: "Материалы по химии", slug: "материалы по химии" },
+  {
+    id: "ege-oge",
+    label: "Материалы для ЕГЭ и ОГЭ по химии",
+    slug: "материалы для егэ и огэ по химии",
+  },
 ]
   .filter((cat) => filterByCategory(cat.slug).length > 0)
   .map((c) => ({ ...c, color: getCategoryHex(c.label) }));
@@ -68,6 +73,10 @@ const section6Vertical = section6Posts.slice(0, 6);
 const section7Posts = filterByCategory("материалы по химии");
 const section7Vertical = section7Posts.slice(0, 6);
 
+// Секция 8: Материалы для ЕГЭ и ОГЭ по химии (6 CardNew)
+const section8Posts = filterByCategory("материалы для егэ и огэ по химии");
+const section8Vertical = section8Posts.slice(0, 6);
+
 // SEO
 const site = config.siteUrl.replace(/\/$/, "");
 const pageTitle = "Главная — ЕГЭХИМ";
@@ -80,12 +89,34 @@ const adFreeProps = {
   title: "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
   lead: "Два курса, которые дадут тебе +30 баллов на экзамене. Забирай по кнопкам ниже",
   ctaText: "Забрать оба курса",
+  ctaHref: "/start",
   image: {
     src: "/images/mainpage/adfree.png",
     width: 400,
     height: 300,
     alt: "Превью бесплатного курса",
   },
+};
+
+// Пропсы для лид-формы
+const leadProps = {
+  id: "lead-capture",
+  imageSrc: "/images/girl-lead2.webp",
+  imageAlt: "Ученица на уроке",
+  title: "Начни подготовку с пробного бесплатного занятия",
+  subtitle: "Ответим на вопросы, расскажем про форматы и цены",
+  showSteps: true,
+  stepsText: [
+    "Познакомим с онлайн-школой",
+    "Расскажем, как проходят занятия",
+    "Запишем на бесплатный урок",
+  ],
+  formAction:
+    "https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec",
+  // UTM метки для страницы медиа
+  utmSource: "media-page",
+  utmMedium: "organic",
+  utmCampaign: "media-lead",
 };
 ---
 
@@ -332,18 +363,40 @@ const adFreeProps = {
     )
   }
 
+  <!-- Секция 8: Материалы для ЕГЭ и ОГЭ по химии -->
+  {
+    section8Vertical.length > 0 && (
+      <section id="ege-oge">
+        <div class="grid1__title container">
+          <h2 class="grid1__title">
+            <a
+              href={`/media/category/${slugify("материалы для егэ и огэ по химии")}`}
+              class="category-title-link"
+            >
+              Материалы для ЕГЭ и ОГЭ по химии
+            </a>
+          </h2>
+          <div class="grid__arrow">
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt="Arrow"
+              width="42"
+              height="42"
+            />
+          </div>
+        </div>
+        <div class="home-grid-5 container">
+          {section8Vertical.map((post) => (
+            <CardNew post={post} basePath="/media" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
   <!-- Форма лид-захвата -->
-  <LeadCapture
-    id="lead-capture-form"
-    title="Запишись на бесплатную консультацию по подготовке к ЕГЭ"
-    subtitle="Узнай, как эффективно подготовиться к экзамену и получить высокий балл"
-    image={{
-      src: "/images/girl-lead.webp",
-      alt: "Студентка с книгами",
-      width: 400,
-      height: 500,
-    }}
-  />
+  <LeadCapture {...leadProps} />
 </MainLayout>
 
 <style>

@@ -9,7 +9,7 @@ import timeIcon from "../../assets/icons/time.png";
 interface Props {
   // Либо передаем post из коллекции
   post?: CollectionEntry<"articles">;
-  
+
   // Либо вручную
   imageSrc?: string;
   imageAlt?: string;
@@ -20,7 +20,7 @@ interface Props {
   title?: string;
   text?: string;
   href?: string;
-  
+
   // Базовый путь для ссылок (например /media)
   basePath?: string;
   wrapperClass?: string;
@@ -42,7 +42,8 @@ const {
 }: Props = Astro.props;
 
 // Извлекаем данные из post или используем ручные
-const imageSrc = manualImageSrc ?? post?.data.image ?? "/images/placeholder.jpg";
+const imageSrc =
+  manualImageSrc ?? post?.data.image ?? "/images/placeholder.jpg";
 const imageAlt = manualImageAlt ?? post?.data.title ?? "Card Image";
 const title = manualTitle ?? post?.data.title ?? "";
 const text = manualText ?? post?.data.description ?? "";
@@ -53,7 +54,11 @@ const tag = manualTag ?? category; // tag = category для совместимо
 let date = manualDate;
 if (!date && post?.data.date) {
   const d = new Date(post.data.date);
-  date = d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  date = d.toLocaleDateString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
 // Время чтения
@@ -83,9 +88,10 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     container-type: inline-size;
   }
   .card__top-img img {
-    width: 100px;
+    width: 160px;
     border-radius: 12px;
     aspect-ratio: 1/1;
+    overflow: hidden;
     object-fit: cover;
     transition: all 0.5s ease;
   }
@@ -117,11 +123,14 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   .card__body-tag {
     font-size: clamp(10px, 2.5vw, 12px);
     align-items: center;
-    /* Цвет задается через inline style */
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
   }
   .card__body-tag:hover {
     text-decoration: underline;
-    cursor: pointer;
   }
   .card__body-meta {
     display: flex;
@@ -151,23 +160,28 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     }
     .card__body-title {
       display: -webkit-box;
-    -webkit-line-clamp: none;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 0;
-  }
-  .card__body-tag {
-    display: none;
+      -webkit-line-clamp: none;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0;
+    }
+    .card__body-tag {
+      display: none;
+    }
   }
 </style>
 
 <article class="card123 card-horizontal white-bg">
-  <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
-    <a href={href} style="text-decoration: none; color: inherit; display: contents;">
+  <a
+    href={href}
+    style="text-decoration: none; color: inherit; display: contents;"
+  >
+    <div class={`card__wrapper ${wrapperClass ?? ""}`.trim()}>
       <div class="card__top-img">
         <img src={imageSrc} alt={imageAlt} loading="lazy" />
       </div>
+
       <div class="card__body">
         <div class="card__body-meta">
           {
@@ -200,20 +214,20 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
           }
           {
             tag && (
-              <a
-                href={`${basePath}/category/${slugify(tag)}`}
+              <button
+                type="button"
                 class="card__body-tag"
                 style={`color: ${categoryColor};`}
-                onclick="event.stopPropagation();"
+                onclick={`event.stopPropagation(); window.location.href='${basePath}/category/${slugify(tag)}';`}
               >
                 {tag}
-              </a>
+              </button>
             )
           }
         </div>
         <h3 class="card__body-title">{title}</h3>
         <p class="card__body-text">{text}</p>
       </div>
-    </a>
-  </div>
+    </div>
+  </a>
 </article>

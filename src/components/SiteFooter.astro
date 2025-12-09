@@ -44,9 +44,17 @@ import ScrollToTop from "./ui/ScrollToTop.astro";
 
     <!-- 3) Правая (кнопка + соцсети) -->
     <div class="footer-right">
-      <a href="/start" class="btn btn--blue footer-cta" rel="noopener"
-        >Начать бесплатно</a
+      <button
+        type="button"
+        class="btn btn--blue footer-cta popup-btn"
+        data-popup-id="lead-popup"
+        data-utm-source="footer"
+        data-utm-medium="cta"
+        data-utm-campaign="footer-cta"
+        data-utm-content="footer-button"
       >
+        Начать бесплатно
+      </button>
 
       <p class="social-title">Напишите нам</p>
       <div class="social-icons" aria-label="Мессенджеры">

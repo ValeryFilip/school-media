@@ -70,8 +70,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
 ---
 
 <style>
-  html,
-  body {
+  article {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -80,8 +79,6 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
     border-radius: 8px;
     overflow: hidden;
     max-width: 100%;
-  }
-  .card__wrapper {
     transition: all 0.3s ease;
     transform: none;
   }
@@ -91,15 +88,19 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   .card__top-img img {
     max-width: 100%;
     border-radius: 12px;
-    aspect-ratio: 16/9;
+    aspect-ratio: 16/10;
     object-fit: cover;
     transition: all 0.5s ease;
+    object-position: left;
   }
   .card__top-img img:hover {
     transform: scale(1.02);
   }
   .card__body {
     padding: 0 15px 15px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .card__body-title {
     font-size: clamp(18px, 2.5vw, 22px);

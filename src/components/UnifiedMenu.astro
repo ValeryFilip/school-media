@@ -268,7 +268,17 @@ if (context === "media") {
         </div>
       </div>
       <div class="menu__cta">
-        <button class="menu__cta-button">{ctaText}</button>
+        <button
+          type="button"
+          class="menu__cta-button popup-btn"
+          data-popup-id="lead-popup"
+          data-utm-source="menu"
+          data-utm-medium="cta"
+          data-utm-campaign="menu-cta"
+          data-utm-content="desktop-button"
+        >
+          {ctaText}
+        </button>
       </div>
     </div>
     <div class="menu__burger">
@@ -507,7 +517,17 @@ if (context === "media") {
           </a>
         </div>
       </div>
-      <button class="mnav__cta-button">{ctaText}</button>
+      <button
+        type="button"
+        class="mnav__cta-button popup-btn"
+        data-popup-id="lead-popup"
+        data-utm-source="menu"
+        data-utm-medium="cta"
+        data-utm-campaign="menu-cta"
+        data-utm-content="mobile-button"
+      >
+        {ctaText}
+      </button>
     </div>
   </div>
 </dialog>
@@ -999,10 +1019,14 @@ if (context === "media") {
       a.addEventListener("click", closeMenu);
     });
 
-    // Закрытие меню при клике на CTA кнопку
+    // Закрытие меню при клике на CTA кнопку (но не при открытии попапа)
     const ctaButton = dlg.querySelector(".mnav__cta-button");
     if (ctaButton) {
-      ctaButton.addEventListener("click", closeMenu);
+      ctaButton.addEventListener("click", (e) => {
+        // Если это кнопка попапа, не закрываем меню сразу - попап сам закроет
+        // Меню закроется при открытии попапа через popup.js
+        setTimeout(() => closeMenu(), 100);
+      });
     }
   }
 </script>

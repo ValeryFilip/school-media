@@ -88,13 +88,7 @@ const tgUrl =
   </div>
 </article>
 
-<!-- Lightbox для просмотра фото -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <img class="lightbox__img" id="lightboxImg" alt="" />
-  <button class="lightbox__close" id="lightboxClose" type="button">
-    Закрыть
-  </button>
-</div>
+<!-- Lightbox создается динамически через JavaScript -->
 
 <style>
   .caseCard {
@@ -102,18 +96,17 @@ const tgUrl =
   }
   .caseCard__wrapper {
     max-width: 100%;
-    border: 1px solid #ccc;
-    background-color: #fff;
+    border: 1px solid var(--border);
+    background-color: var(--white);
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px 20px 160px 20px;
+    padding: var(--space-20) var(--space-20) 160px var(--space-20);
     position: relative;
   }
   .caseCard__top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-20);
   }
   .caseCard__top-left,
   .caseCard__top-right {
@@ -131,9 +124,10 @@ const tgUrl =
   .caseCard__top-number {
     font-size: clamp(32px, 4vw, 64px);
     font-weight: 500;
-    border: 2px solid #000;
+    border: 2px solid var(--black);
     border-radius: 50%;
-    padding: 12px 20px;
+    padding: 12px 25px;
+    width: fit-content;
     margin: 0;
   }
   .caseCard__top-text {
@@ -144,14 +138,14 @@ const tgUrl =
     margin-bottom: 10px;
     font-size: 15px;
     font-weight: 400;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid var(--black);
     padding-bottom: 4px;
   }
   .caseCard__bottom {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 16px;
+    gap: var(--space-16);
   }
   .caseCard__bottom-name {
     font-size: 18px;
@@ -164,7 +158,7 @@ const tgUrl =
     align-items: center;
     gap: 4px;
     margin: 0;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-8);
     padding: 0;
     height: fit-content;
   }
@@ -173,9 +167,9 @@ const tgUrl =
     height: 16px;
   }
   .caseCard__bottom-tg {
-    font-size: 14px;
+    font-size: var(--text);
     font-weight: 400;
-    color: #1a0dab;
+    color: var(--blue);
     text-decoration: none;
     margin: 0;
     padding: 0;
@@ -183,10 +177,10 @@ const tgUrl =
     height: fit-content;
   }
   .caseCard__bottom-text {
-    font-size: 14px;
+    font-size: var(--text);
     font-weight: 400;
-    color: #333;
-    margin: 0 0 20px 0;
+    color: var(--black);
+    margin: 0 0 var(--space-20) 0;
   }
 
   .caseCard__bottom-photo {
@@ -206,8 +200,8 @@ const tgUrl =
   }
   .caseCard__footer {
     position: absolute;
-    left: 20px;
-    right: 20px;
+    left: var(--space-20);
+    right: var(--space-20);
     bottom: -10px;
     display: flex;
     gap: -100px;
@@ -222,7 +216,7 @@ const tgUrl =
     aspect-ratio: 16 / 9;
     position: relative;
     transform: rotate(-10deg);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s var(--easing);
   }
 
   .caseCard__footer-photo-2 {
@@ -233,11 +227,11 @@ const tgUrl =
     aspect-ratio: 16 / 9;
     position: relative;
     transform: rotate(10deg);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s var(--easing);
   }
   .caseCard__footer-photo-1:hover,
   .caseCard__footer-photo-2:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-2);
     transform: scale(1.05);
   }
 
@@ -256,60 +250,61 @@ const tgUrl =
     margin: 0 4px;
   }
 
-  /* Оверлей (по умолчанию скрыт) */
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: none; /* скрыт */
-    align-items: center;
-    justify-content: center;
-    padding: 4vh 4vw;
-    z-index: 9999;
+  /* Оверлей (по умолчанию скрыт) - создается в body */
+  :global(.caseCard-lightbox) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s var(--easing);
   }
 
   /* когда открыт */
-  .lightbox.is-open {
-    display: flex;
-    opacity: 1;
+  :global(.caseCard-lightbox.is-open) {
+    display: flex !important;
+    opacity: 1 !important;
   }
 
   /* Картинка внутри оверлея */
-  .lightbox__img {
-    max-width: 90vw;
-    max-height: 90vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    background: #111; /* на случай прозрачных PNG */
+  :global(.caseCard-lightbox__img) {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    background: var(--black) !important;
   }
 
-  /* Иконка закрытия (опционально) */
-  .lightbox__close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font:
-      600 16px/1 system-ui,
-      -apple-system,
-      Segoe UI,
-      Roboto,
-      Arial,
-      sans-serif;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
+  /* Иконка закрытия */
+  :global(.caseCard-lightbox__close) {
+    position: absolute !important;
+    top: var(--space-16) !important;
+    right: var(--space-16) !important;
+    font: 600 16px/1 var(--ff) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: var(--space-8) var(--space-12) !important;
+    cursor: pointer !important;
+    z-index: 100000 !important;
   }
 
   @container (max-width: 350px) {
     .caseCard__wrapper {
-      padding: 20px 20px 30px 20px;
+      padding: var(--space-20) var(--space-20) 30px var(--space-20);
     }
     .caseCard__top-arrow {
       display: none;
@@ -322,9 +317,9 @@ const tgUrl =
     }
     .caseCard__footer {
       flex-direction: column;
-      gap: 20px;
+      gap: var(--space-20);
       position: static;
-      margin-top: 20px;
+      margin-top: var(--space-20);
     }
     .caseCard__footer-photo-1,
     .caseCard__footer-photo-2 {
@@ -337,11 +332,27 @@ const tgUrl =
 <script>
   // Инициализация после загрузки DOM
   document.addEventListener("DOMContentLoaded", () => {
-    const lb = document.getElementById("lightbox");
-    const lbImg = document.getElementById(
-      "lightboxImg"
+    // Создаем или находим единый lightbox на уровне body
+    let lb = document.querySelector(".caseCard-lightbox") as HTMLElement | null;
+    let lbImg: HTMLImageElement | null = null;
+    let lbClose: HTMLElement | null = null;
+
+    if (!lb) {
+      // Создаем lightbox, если его еще нет
+      lb = document.createElement("div");
+      lb.className = "caseCard-lightbox";
+      lb.setAttribute("aria-hidden", "true");
+      lb.innerHTML = `
+        <img class="caseCard-lightbox__img" alt="" />
+        <button class="caseCard-lightbox__close" type="button">Закрыть</button>
+      `;
+      document.body.appendChild(lb);
+    }
+
+    lbImg = lb.querySelector(
+      ".caseCard-lightbox__img"
     ) as HTMLImageElement | null;
-    const lbClose = document.getElementById("lightboxClose");
+    lbClose = lb.querySelector(".caseCard-lightbox__close");
 
     if (!lb || !lbImg || !lbClose) return;
 
@@ -351,7 +362,7 @@ const tgUrl =
       lb.setAttribute("aria-hidden", "true");
       // Чуть позже очищаем src, чтобы не мигало при открытии другой
       setTimeout(() => {
-        lbImg.removeAttribute("src");
+        if (lbImg) lbImg.removeAttribute("src");
       }, 200);
     }
 
@@ -362,7 +373,7 @@ const tgUrl =
       const img = target.closest(
         ".caseCard__footer-photo-1 img, .caseCard__footer-photo-2 img"
       ) as HTMLImageElement | null;
-      if (!img) return;
+      if (!img || !lb || !lbImg) return;
 
       const full = img.dataset.full || img.src; // если есть data-full — используем её
 
@@ -380,7 +391,7 @@ const tgUrl =
 
     // Закрытие по Esc
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && lb.classList.contains("is-open")) {
+      if (e.key === "Escape" && lb && lb.classList.contains("is-open")) {
         closeLightbox();
       }
     });
