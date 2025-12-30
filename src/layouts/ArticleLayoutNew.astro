@@ -8,18 +8,16 @@ import ProgressBar from "../components/article/ProgressBar.astro";
 import ArticleHero from "../components/article/ArticleHero.astro";
 import CopyLinkButton from "../components/article/CopyLinkButton.astro";
 import { slugify } from "../lib/slugify";
-import {
-  ORGANIZATION_DATA,
-  absAsset,
-  buildArticleJsonLd,
-} from "../lib/seoData";
-import JsonLd from "../components/JsonLd.astro";
+import { ORGANIZATION_DATA, absAsset } from "../lib/seoData";
 import "../styles/global_lend.css";
 
 // типы пропсов
 interface Props {
   fm: CollectionEntry<"articles">["data"] & {
-    toc?: { id: string; text: string }[];
+    toc?: boolean;
+    tocManual?: { id: string; text: string }[];
+    showHeroImage?: boolean;
+    videoUrl?: string;
     authorName?: string;
     authorRole?: string;
     authorPhoto?: string;
@@ -97,14 +95,14 @@ const heroAlt = fm.heroAlt ?? fm.imageAlt ?? fm.title;
 
 /* === TOC === */
 const tocFromFM =
-  Array.isArray(fm.toc) && fm.toc.length
-    ? fm.toc.map((item: any) => ({
+  Array.isArray(fm.tocManual) && fm.tocManual.length
+    ? fm.tocManual.map((item: any) => ({
         ...item,
         id: slugify(item.id || item.text),
       }))
     : null;
 const tocFromMD = headings
-  .filter((h) => h.depth === 2 || h.depth === 3)
+  .filter((h) => h.depth === 2)
   .map((h) => {
     // Всегда слагифицируем текст заголовка для транслитерации кириллицы
     // Это гарантирует, что id будет на транслите
@@ -151,30 +149,8 @@ const sameCategoryTop = allArticles
       String(p.data?.category ?? "").toLowerCase() === currentCategory
   )
   .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
-  .slice(0, 3);
-
-// Генерация JSON-LD для Article
-const articleJsonLd = buildArticleJsonLd({
-  origin,
-  url: articleUrl,
-  headline: fm.title,
-  description: fm.description || undefined,
-  image: heroFromFM || undefined,
-  datePublished: dateObj ? dateObj.toISOString() : undefined,
-  dateModified: updatedObj ? updatedObj.toISOString() : undefined,
-  author: {
-    name: authorName !== "Без имени" ? authorName : undefined,
-    url: authorName !== "Без имени" ? `${origin}/about` : undefined,
-    image: authorPhoto || undefined,
-    jobTitle: authorRole || undefined,
-  },
-  keywords: fm.tags && fm.tags.length > 0 ? fm.tags : undefined,
-  articleSection: fm.category || undefined,
-});
+  .slice(0, 4);
 ---
-
-<!-- JSON-LD структурированные данные -->
-<JsonLd data={articleJsonLd} />
 
 <!-- Прогресс чтения -->
 <ProgressBar />
@@ -230,16 +206,20 @@ const articleJsonLd = buildArticleJsonLd({
             <p class="article__header-description">{fm.description}</p>
           )
         }
-        <div class="article__header-image-wrapper">
-          <figure class="article__header-image">
-            <ArticleHero heroSrc={heroFromFM} heroAlt={heroAlt} />
-            <figcaption class="caption">
-              {(fm as any).imageCaption ?? fm.title}
-            </figcaption>
-          </figure>
-        </div>
         {
-          nestedTocItems && nestedTocItems.length > 0 && (
+          fm.showHeroImage !== false && heroFromFM && (
+            <div class="article__header-image-wrapper">
+              <figure class="article__header-image">
+                <ArticleHero heroSrc={heroFromFM} heroAlt={heroAlt} />
+                <figcaption class="caption">
+                  {(fm as any).imageCaption ?? fm.title}
+                </figcaption>
+              </figure>
+            </div>
+          )
+        }
+        {
+          fm.toc !== false && nestedTocItems && nestedTocItems.length > 0 && (
             <div class="article__inside-content">
               <h3 class="article__content-title">Содержание статьи</h3>
               <ul class="article__content-list">
@@ -268,61 +248,64 @@ const articleJsonLd = buildArticleJsonLd({
         <slot />
       </div>
       <script is:inline>
-        // Устанавливаем транслитерированные id для всех заголовков
         (function () {
-          const content = document.querySelector(".article__content");
-          if (!content) return;
-
-          const headings = content.querySelectorAll("h2, h3");
-          const slugify = (text) => {
-            const map = {
-              а: "a",
-              б: "b",
-              в: "v",
-              г: "g",
-              д: "d",
-              е: "e",
-              ё: "e",
-              ж: "zh",
-              з: "z",
-              и: "i",
-              й: "y",
-              к: "k",
-              л: "l",
-              м: "m",
-              н: "n",
-              о: "o",
-              п: "p",
-              р: "r",
-              с: "s",
-              т: "t",
-              у: "u",
-              ф: "f",
-              х: "h",
-              ц: "c",
-              ч: "ch",
-              ш: "sh",
-              щ: "sch",
-              ъ: "",
-              ы: "y",
-              ь: "",
-              э: "e",
-              ю: "yu",
-              я: "ya",
-            };
-            return text
-              .toLowerCase()
-              .replace(/[а-яё]/g, (ch) => map[ch] || ch)
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/^-+|-+$/g, "");
+          // Клиентская версия slugify (должна совпадать с серверной)
+          const map = {
+            а: "a",
+            б: "b",
+            в: "v",
+            г: "g",
+            д: "d",
+            е: "e",
+            ё: "e",
+            ж: "zh",
+            з: "z",
+            и: "i",
+            й: "y",
+            к: "k",
+            л: "l",
+            м: "m",
+            н: "n",
+            о: "o",
+            п: "p",
+            р: "r",
+            с: "s",
+            т: "t",
+            у: "u",
+            ф: "f",
+            х: "h",
+            ц: "c",
+            ч: "ch",
+            ш: "sh",
+            щ: "sch",
+            ъ: "",
+            ы: "y",
+            ь: "",
+            э: "e",
+            ю: "yu",
+            я: "ya",
           };
 
+          function slugify(input) {
+            if (!input) return "";
+            return input
+              .toLowerCase()
+              .replace(/[а-яё]/g, (ch) => map[ch] ?? ch)
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-+|-+$/g, "");
+          }
+
+          // Добавляем id к заголовкам
+          const content = document.querySelector(".article__content");
+          if (!content) return;
+          const headings = content.querySelectorAll("h2, h3");
           headings.forEach((h) => {
             const text = h.textContent || "";
             h.id = slugify(text);
           });
         })();
       </script>
+
       {
         fm.tags && fm.tags.length > 0 && (
           <div class="article__tags-block">

@@ -1,7 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import StepikHero from "../components/stepik/stepikHero.astro";
-import JsonLd from "../components/JsonLd.astro";
 import {
   buildCourseJsonLd,
   buildProductJsonLd,
@@ -652,12 +651,11 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
   showBreadcrumbs={false}
   logoSrc="/favicon.svg"
   ctaHref="/courses"
+  courseJsonLd={courseJsonLd}
+  productJsonLd={productJsonLd}
+  videoJsonLd={videoJsonLd}
+  faqJsonLd={faqJsonLd}
 >
-  {/* JSON-LD структурированные данные */}
-  <JsonLd data={courseJsonLd} />
-  <JsonLd data={productJsonLd} />
-  {videoJsonLd && <JsonLd data={videoJsonLd} />}
-  <JsonLd data={faqJsonLd} />
   <section id="hero">
     <StepikHero
       labels={["Курс", "Химия ЕГЭ 2026", "Органическая химия"]}
@@ -729,8 +727,14 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       className={courseWhyProps.className}
       image={courseWhyProps.image}
       title={courseWhyProps.title}
-      topCards={courseWhyProps.topCards as [typeof courseWhyProps.topCards[0], typeof courseWhyProps.topCards[1]]}
-      bottomCards={courseWhyProps.bottomCards as [typeof courseWhyProps.bottomCards[0], typeof courseWhyProps.bottomCards[1]]}
+      topCards={courseWhyProps.topCards as [
+        (typeof courseWhyProps.topCards)[0],
+        (typeof courseWhyProps.topCards)[1],
+      ]}
+      bottomCards={courseWhyProps.bottomCards as [
+        (typeof courseWhyProps.bottomCards)[0],
+        (typeof courseWhyProps.bottomCards)[1],
+      ]}
       verticalCard={courseWhyProps.verticalCard}
       footer={courseWhyProps.footer}
     />
@@ -745,7 +749,10 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       id={supportProps.id}
       heading={supportProps.heading}
       accent={supportProps.accent}
-      leftCards={supportProps.leftCards as [typeof supportProps.leftCards[0], typeof supportProps.leftCards[1]]}
+      leftCards={supportProps.leftCards as [
+        (typeof supportProps.leftCards)[0],
+        (typeof supportProps.leftCards)[1],
+      ]}
       rightTitle={supportProps.rightTitle}
       rightText={supportProps.rightText}
       rightImg={supportProps.rightImg}
@@ -769,7 +776,10 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       buyWithDiscount={offerProps.buyWithDiscount}
       headerImage={offerProps.headerImage}
       ctaColor={offerProps.ctaColor}
-      packages={offerProps.packages as [typeof offerProps.packages[0], typeof offerProps.packages[1]]}
+      packages={offerProps.packages as [
+        (typeof offerProps.packages)[0],
+        (typeof offerProps.packages)[1],
+      ]}
     />
   </section>
 

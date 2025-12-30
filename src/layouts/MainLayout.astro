@@ -42,6 +42,14 @@ interface Props {
   /* крошки */
   breadcrumbs?: Crumb[];
   showBreadcrumbs?: boolean;
+
+  /* дополнительные JSON-LD */
+  articleJsonLd?: any;
+  videoJsonLd?: any;
+  courseJsonLd?: any;
+  productJsonLd?: any;
+  faqJsonLd?: any;
+  webPageJsonLd?: any;
 }
 const {
   title,
@@ -63,6 +71,13 @@ const {
 
   breadcrumbs = [],
   showBreadcrumbs = true,
+
+  articleJsonLd,
+  videoJsonLd,
+  courseJsonLd,
+  productJsonLd,
+  faqJsonLd,
+  webPageJsonLd,
 } = Astro.props as Props;
 
 const inMedia = Astro.url.pathname.startsWith("/media");
@@ -94,7 +109,7 @@ const breadcrumbsJsonLd =
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
     <meta name="robots" content="noindex, nofollow" />
@@ -152,6 +167,12 @@ const breadcrumbsJsonLd =
     <JsonLd data={orgJsonLd} />
     <JsonLd data={websiteJsonLd} />
     {breadcrumbsJsonLd && <JsonLd data={breadcrumbsJsonLd} />}
+    {articleJsonLd && <JsonLd data={articleJsonLd} />}
+    {videoJsonLd && <JsonLd data={videoJsonLd} />}
+    {courseJsonLd && <JsonLd data={courseJsonLd} />}
+    {productJsonLd && <JsonLd data={productJsonLd} />}
+    {faqJsonLd && <JsonLd data={faqJsonLd} />}
+    {webPageJsonLd && <JsonLd data={webPageJsonLd} />}
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
     <UnifiedMenu

@@ -1,0 +1,207 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  buttonText?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  utmSource?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+}
+const {
+  title = "Готовим к ЕГЭ на сотку и выше",
+  subtitle,
+  buttonText = "Записаться на бесплатный курс",
+  imageSrc,
+  imageAlt,
+  utmSource = "banner-article",
+  utmCampaign = "banner-article",
+  utmContent = "btn-A",
+} = Astro.props;
+---
+
+<section class="banner">
+  <div
+    class={`banner__wrapper ${!imageSrc ? "banner__wrapper--no-image" : ""}`}
+    role="button"
+    tabindex="0"
+  >
+    <div class="banner_left">
+      <div class="banner_left-title">{title}</div>
+      {subtitle && <div class="banner_left-subtitle">{subtitle}</div>}
+      <button
+        id="cta-adfree-A"
+        type="button"
+        class="btn btn--ghost popup-btn"
+        data-popup-id="lead-popup"
+        data-source={utmSource}
+        data-variant="A"
+        data-campaign={utmCampaign}
+        data-utm-source={utmSource}
+        data-utm-medium="cta"
+        data-utm-campaign={utmCampaign}
+        data-utm-content={utmContent}
+      >
+        {buttonText}
+      </button>
+    </div>
+    <div class="banner_right">
+      {
+        imageSrc && (
+          <img class="banner_right-img" src={imageSrc} alt={imageAlt} />
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .banner__wrapper {
+    font-family: var(--ff, "Raleway", sans-serif);
+    display: grid;
+    grid-template-columns: 1.5fr 1.2fr;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #366ef0;
+    border-radius: 24px;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .banner__wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(54, 110, 240, 0.3);
+  }
+
+  .banner__wrapper:active {
+    transform: translateY(0);
+  }
+  .banner_left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Когда нет картинки - кнопка сбоку от текста */
+  .banner__wrapper--no-image {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .banner__wrapper--no-image .banner_right {
+    flex: 0;
+    display: none;
+  }
+
+  .banner__wrapper--no-image .banner_left {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .banner__wrapper--no-image .banner_left-title {
+    flex: 2;
+    min-width: 0;
+  }
+
+  .banner__wrapper--no-image .banner_left-subtitle {
+    flex-basis: 100%;
+    margin-top: 0;
+  }
+  .banner_left-title {
+    font-size: var(--h2);
+    line-height: 1.2;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .banner_left-subtitle {
+    font-size: var(--text);
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 8px;
+  }
+  .banner_right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .banner_right img {
+    margin: 0;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  button {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .banner__wrapper button {
+    pointer-events: auto;
+  }
+  @media (max-width: 600px) {
+    .banner__wrapper {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .banner_left {
+      gap: 10px;
+      flex-direction: column !important;
+    }
+    .banner__wrapper--no-image .banner_left {
+      flex-direction: column !important;
+    }
+    button {
+      width: 100%;
+    }
+    .banner_right {
+      order: -1;
+    }
+    .banner_left-title {
+      text-align: center;
+    }
+    .banner_left-subtitle {
+      text-align: center;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const bannerWrapper = document.querySelector(
+      ".banner__wrapper[role='button']"
+    );
+    if (!bannerWrapper) return;
+
+    // Обработчик клика на весь баннер
+    bannerWrapper.addEventListener("click", function (e) {
+      // Если клик был по кнопке, не обрабатываем (кнопка сама откроет попап)
+      if (e.target.closest("button")) {
+        return;
+      }
+
+      // Находим кнопку внутри баннера и кликаем по ней
+      const button = this.querySelector("button.popup-btn");
+      if (button) {
+        button.click();
+      }
+    });
+
+    // Поддержка клавиатуры (Enter и Space)
+    bannerWrapper.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const button = this.querySelector("button.popup-btn");
+        if (button) {
+          button.click();
+        }
+      }
+    });
+  })();
+</script>

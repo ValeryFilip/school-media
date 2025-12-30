@@ -95,32 +95,6 @@ const {
   </div>
 
   <style>
-    /* локальный контейнер (стандартный паттерн) */
-    .container {
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      box-sizing: border-box;
-    }
-    @media (max-width: 1100px) {
-      .container {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .container {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-
     .ad-social__card {
       display: grid;
       grid-template-columns: 1fr 0.7fr;
@@ -157,10 +131,10 @@ const {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 72px;
-      height: 72px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: #e0e0e0;
+      background: #ffffff;
       transition:
         transform 0.15s var(--easing),
         background 0.2s var(--easing);
@@ -168,7 +142,7 @@ const {
     }
     .ad-social__item a:hover {
       transform: translateY(-2px);
-      background: #d8d8d8;
+      background: #ededed;
     }
     .ad-social__item img {
       width: 36px;

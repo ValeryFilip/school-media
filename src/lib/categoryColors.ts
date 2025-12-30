@@ -12,6 +12,7 @@ export const CATEGORY_HEX: Record<string, string> = {
     "поступление": "#1D4EFF",
     "психология": "#7BC65B",
     "как быть взрослым": "#C05B66",
+    "видео": "#E63946",
 };
 
 const DEFAULT_HEX = "#0D6EFD";

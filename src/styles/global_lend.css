@@ -13,7 +13,7 @@
   --page-bg: var(--bg);
 
   /* Типографика */
-  --ff: "Inter Tight", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+  --ff: "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial,
     sans-serif;
   --h1: clamp(35px, 6vw, 48px);
   --h2: clamp(26px, 4vw, 42px);
@@ -53,11 +53,13 @@
 
 html {
   color-scheme: light;
+  font-family: var(--ff);
+  font-variant-numeric: lining-nums;
 }
 
 body {
   margin: 0;
-  font-family: var(--ff);
+
   font-size: var(--text);
 }
 
@@ -152,9 +154,16 @@ h3,
 .lead {
   font-size: var(--lead);
   line-height: 1.6;
+  font-weight: 500;
   margin: 0 0 var(--space-16);
 }
 
+.text {
+  font-size: var(--text);
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 0 0 var(--space-16);
+}
 /* Карточки и кнопки (унифицированные) */
 .card {
   background: var(--white);
@@ -265,6 +274,7 @@ h3,
   margin: 0 0 clamp(16px, 2vw, 24px) 0;
   font-size: clamp(16px, 1.2vw, 18px);
   line-height: 1.6;
+  font-weight: 500;
   color: var(--black);
 }
 

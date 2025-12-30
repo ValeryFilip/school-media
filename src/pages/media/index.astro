@@ -38,6 +38,7 @@ const categories = [
     label: "Материалы для ЕГЭ и ОГЭ по химии",
     slug: "материалы для егэ и огэ по химии",
   },
+  { id: "video", label: "Видео", slug: "видео" },
 ]
   .filter((cat) => filterByCategory(cat.slug).length > 0)
   .map((c) => ({ ...c, color: getCategoryHex(c.label) }));
@@ -58,7 +59,7 @@ const section3Vertical = section3Posts.slice(0, 2);
 const section3Horizontal = section3Posts.slice(2, 8);
 
 // Секция 4: home-grid-4 (6 CardNew)
-const section4Posts = filterByCategory("поступление");
+const section4Posts = filterByCategory("видео");
 const section4Vertical = section4Posts.slice(0, 8);
 
 // Секция 5: home-grid-5 (2 CardNew + остальные CardNew)
@@ -238,14 +239,14 @@ const leadProps = {
   <!-- Секция 4: home-grid-4 -->
   {
     section4Vertical.length > 0 && (
-      <section id="enrol">
+      <section id="video">
         <div class="grid1__title container">
           <h2 class="grid1__title">
             <a
-              href={`/media/category/${slugify("поступление")}`}
+              href={`/media/category/${slugify("видео")}`}
               class="category-title-link"
             >
-              Поступление
+              Наши видео
             </a>
           </h2>
           <div class="grid__arrow">

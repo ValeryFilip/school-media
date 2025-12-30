@@ -2,11 +2,12 @@
 // src/pages/search.astro
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
+import { getSlugFileName } from "../../lib/slugify";
 
 // 1) Во время сборки собираем все статьи
 const posts = await getCollection("articles");
 const indexData = posts.map((p) => ({
-  slug: p.slug,
+  slug: getSlugFileName(p.slug),
   title: p.data.title,
   description: p.data.description || "",
   tags: Array.isArray(p.data.tags) ? p.data.tags : [],
@@ -177,6 +178,7 @@ const indexData = posts.map((p) => ({
       margin: 32px 0 16px;
       font-size: 2rem;
       line-height: 1.2;
+      margin-top: 0;
     }
 
     /* Поисковая форма и инпут со скруглениями */
@@ -327,9 +329,7 @@ const indexData = posts.map((p) => ({
     @media (max-width: 1100px) {
       .result-link {
         grid-template-columns: 150px 1fr;
-        grid-template-areas:
-          "img title"
-          "img meta";
+        grid-template-areas: "img title";
       }
       .result-image {
         grid-area: img;
@@ -341,29 +341,14 @@ const indexData = posts.map((p) => ({
       .result-author,
       .result-category,
       .result-tags {
-        grid-area: meta;
-        display: inline-flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 4px;
-      }
-      .result-date::after,
-      .result-author::after,
-      .result-category::after {
-        content: "•";
-        margin: 0 8px;
-        color: #999;
-      }
-      .result-category::after {
-        content: "";
-        margin: 0;
+        display: none;
       }
     }
     @media (max-width: 520px) {
       .search-title {
         font-size: 1.6rem;
       }
+
       .result-link {
         gap: 10px;
       }

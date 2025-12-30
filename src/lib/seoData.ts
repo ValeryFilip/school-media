@@ -7,8 +7,8 @@
 // ===== КОНСТАНТЫ =====
 
 export const ORGANIZATION_DATA = {
-  name: "EGEHIM",
-  description: "Подготовка к ЕГЭ по химии: курсы, разборы и материалы",
+  name: "Химия ЕГЭ с Валерием Филипенко",
+  description: "Подготовка к ЕГЭ по химии с нуля до 80+ баллов. Подготовка к ОГЭ по химии. Самостоятельные курсы, полезные материалы, теория, задания",
   logo: {
     path: "/images/technical/logo.png",
     width: "60",
@@ -25,9 +25,9 @@ export const ORGANIZATION_DATA = {
   },
   defaultAuthor: {
     name: "Валерий Филипенко",
-    role: "Эксперт по теме",
+    role: "Профессиональный химик, преподаватель, эксперт ЕГЭ, автор ЕГЭ-курсов, репетитор со стажем больше 10 лет.",
     photo: "/images/stepik/researcher.webp",
-    url: "/about",
+    url: "https://t.me/valery_chemistry",
   },
 } as const;
 
@@ -48,7 +48,7 @@ export function absUrl(origin: string, path?: string | null): string | undefined
  * Заменяет дублирующуюся логику из разных файлов
  */
 export function getSiteName(prop?: string, configSiteName?: string): string {
-  return prop || configSiteName || ORGANIZATION_DATA.name || "EGEHIM";
+  return prop || configSiteName || ORGANIZATION_DATA.name || "Химия ЕГЭ с Валерием Филипенко";
 }
 
 
@@ -305,27 +305,38 @@ export function buildVideoJsonLd(params: {
   pageUrl: string;
   name: string;
   description: string;
-  contentUrl: string;
+  contentUrl?: string;
+  embedUrl?: string;
   encodingFormat?: string;
 }) {
-  const { origin, pageUrl, name, description, contentUrl, encodingFormat } = params;
+  const { origin, pageUrl, name, description, contentUrl, embedUrl, encodingFormat } = params;
   
-  // Определяем формат по расширению, если не указан
-  const format = encodingFormat || (() => {
-    const ext = contentUrl.split(".").pop()?.toLowerCase();
-    return ext === "mp4" ? "video/mp4" : "video/webm";
-  })();
-
-  return {
+  const result: any = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name,
     description,
     inLanguage: "ru-RU",
-    contentUrl: absUrl(origin, contentUrl),
-    encodingFormat: format,
     url: pageUrl,
   };
+
+  // Если есть embedUrl (YouTube, VK, Rutube), используем его
+  if (embedUrl) {
+    result.embedUrl = embedUrl;
+  }
+
+  // Если есть contentUrl (прямая ссылка на видео файл), используем его
+  if (contentUrl) {
+    result.contentUrl = absUrl(origin, contentUrl);
+    // Определяем формат по расширению, если не указан
+    const format = encodingFormat || (() => {
+      const ext = contentUrl.split(".").pop()?.toLowerCase();
+      return ext === "mp4" ? "video/mp4" : "video/webm";
+    })();
+    result.encodingFormat = format;
+  }
+
+  return result;
 }
 
 /**

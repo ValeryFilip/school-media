@@ -1,0 +1,200 @@
+---
+interface Props {
+  youtubeHref?: string;
+  vkHref?: string;
+  rutubeHref?: string;
+}
+
+const { youtubeHref, vkHref, rutubeHref } = Astro.props;
+---
+
+<section class="tabs">
+  <div class="tab-headers" role="tablist" aria-label="Video sources">
+    <div
+      class="tab-header active"
+      role="tab"
+      id="tab-firstReview"
+      aria-selected="true"
+      aria-controls="firstReview"
+      tabindex="0"
+      data-tab="firstReview"
+    >
+      YouTube
+    </div>
+    <div
+      class="tab-header"
+      role="tab"
+      id="tab-secondReview"
+      aria-selected="false"
+      aria-controls="secondReview"
+      tabindex="-1"
+      data-tab="secondReview"
+    >
+      VK Video
+    </div>
+    <div
+      class="tab-header"
+      role="tab"
+      id="tab-thirdReview"
+      aria-selected="false"
+      aria-controls="thirdReview"
+      tabindex="-1"
+      data-tab="thirdReview"
+    >
+      Rutube
+    </div>
+  </div>
+  <div class="tab-contents">
+    <div
+      class="tab-content"
+      role="tabpanel"
+      id="firstReview"
+      aria-labelledby="tab-firstReview"
+      data-tab="firstReview"
+    >
+      <iframe
+        width="560"
+        height="315"
+        src={youtubeHref}
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen></iframe>
+    </div>
+    <div
+      class="tab-content"
+      role="tabpanel"
+      id="secondReview"
+      aria-labelledby="tab-secondReview"
+      data-tab="secondReview"
+      hidden
+    >
+      <iframe
+        src={vkHref}
+        title="VK video player"
+        width="560"
+        height="315"
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
+        allowfullscreen></iframe>
+    </div>
+    <div
+      class="tab-content"
+      role="tabpanel"
+      id="thirdReview"
+      aria-labelledby="tab-thirdReview"
+      data-tab="thirdReview"
+      hidden
+    >
+      <iframe
+        width="720"
+        height="405"
+        src={rutubeHref}
+        title="Rutube video player"
+        style="border: none"
+        allow="clipboard-write; autoplay"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: var(--ff, Arial, sans-serif);
+    margin: 0;
+    padding: 0;
+  }
+  section {
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  iframe {
+    border-radius: 10px;
+    max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  .tab-headers {
+    display: flex;
+    gap: 10px;
+    padding: 0;
+  }
+  .tab-header {
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #f9f9f9;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .tab-header.active {
+    background-color: #f9f9f9;
+    color: #000;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    z-index: 2;
+  }
+  .tab-content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 0 5px 5px 5px;
+    position: relative;
+    top: -1px;
+    z-index: 1;
+  }
+  @media (max-width: 600px) {
+    .tab-headers {
+      flex-direction: column;
+      gap: 0;
+    }
+    .tab-header:nth-child(2) {
+      border-radius: 0;
+    }
+    .tab-header:nth-child(3) {
+      border-radius: 0;
+    }
+    .tab-header {
+      width: 100%;
+      text-align: center;
+    }
+    .tab-content {
+      border-radius: 0 0 5px 5px;
+    }
+  }
+</style>
+
+<script is:inline>
+  const tabButtons = document.querySelectorAll(".tab-header");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabButtons.forEach((tabButton) => {
+    tabButton.addEventListener("click", () => {
+      const tabButtonType = tabButton.dataset.tab;
+      const tabContent = document.querySelector(
+        `.tab-content[data-tab="${tabButtonType}"]`
+      );
+      tabContent.hidden = false;
+      tabContents.forEach((otherTabContent) => {
+        if (otherTabContent !== tabContent) {
+          otherTabContent.hidden = true;
+        }
+      });
+      tabButton.classList.add("active");
+      tabButton.setAttribute("aria-selected", "true");
+      tabButton.setAttribute("tabindex", "0");
+      tabButtons.forEach((otherTabButton) => {
+        if (otherTabButton !== tabButton) {
+          otherTabButton.classList.remove("active");
+          otherTabButton.setAttribute("aria-selected", "false");
+          otherTabButton.setAttribute("tabindex", "-1");
+        }
+      });
+    });
+  });
+</script>

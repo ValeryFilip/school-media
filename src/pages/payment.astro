@@ -3,7 +3,6 @@
 
 import MainLayout from "../layouts/MainLayout.astro";
 import config from "../config.ts";
-import JsonLd from "../components/JsonLd.astro";
 import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
 
 const title = "Оплата и безопасность платежей";
@@ -32,9 +31,8 @@ const webPageJsonLd = buildWebPageJsonLd({
   seoType="website"
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
 >
-  {/* JSON-LD структурированные данные */}
-  <JsonLd data={webPageJsonLd} />
   <main class="policy" aria-labelledby="payment-title">
     <div class="container">
       <h1 id="payment-title">{title}</h1>

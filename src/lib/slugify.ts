@@ -12,3 +12,10 @@ export function slugify(input: string): string {
         .replace(/[^a-z0-9]+/g, '-')   // всё остальное → дефисы
         .replace(/^-+|-+$/g, '');      // обрезать дефисы по краям
 }
+
+// Получить slug из имени файла (убирает расширение .mdx/.md)
+export function getSlugFileName(slug: string): string {
+    if (!slug) return '';
+    // Убираем расширение файла, если есть
+    return slug.replace(/\.(mdx?|astro)$/, '');
+}

@@ -3,7 +3,6 @@
 
 import MainLayout from "../layouts/MainLayout.astro";
 import config from "../config.ts";
-import JsonLd from "../components/JsonLd.astro";
 import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
 
 const title = "Согласие на получение рекламных рассылок";
@@ -30,9 +29,8 @@ const webPageJsonLd = buildWebPageJsonLd({
   seoType="website"
   breadcrumbs={breadcrumbs}
   showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
 >
-  {/* JSON-LD структурированные данные */}
-  <JsonLd data={webPageJsonLd} />
   <main class="policy" aria-labelledby="marketing-consent-title">
     <div class="container">
       <h1 id="marketing-consent-title">{title}</h1>
@@ -44,8 +42,8 @@ const webPageJsonLd = buildWebPageJsonLd({
           №&nbsp;152-ФЗ «О персональных данных», я даю согласие самозанятому
           Филипенко Валерию Юрьевичу (ИНН 11111111111), владельцу сайта <strong
             >{config.siteUrl}</strong
-          > (далее — Оператор), на получение от Оператора рекламной информации и
-          сообщений, а также на обработку моих персональных данных в целях рассылок.
+          > (далее — Оператор), на получение от Оператора рекламной информации и сообщений,
+          а также на обработку моих персональных данных в целях рассылок.
         </p>
       </section>
 

@@ -19,6 +19,7 @@ import LeadCapture2 from "../components/mainpage/leadCapture2.astro";
 import CoursesTabs from "../components/mainpage/CoursesTabs.astro";
 import CourseCards from "../components/mainpage/CourseCards.astro";
 import { getCollection } from "astro:content";
+import TypeChoose from "../components/mainpage/typeChoose.astro";
 
 // Получаем самые новые 3 статьи для AdMediaBanner
 // Сортируем по дате публикации от новых к старым
@@ -491,6 +492,15 @@ const leadProps = {
   utmCampaign: "homepage-lead",
 };
 
+/* 10) Type Choose */
+const typeChooseProps = {
+  priceLeft: "150",
+  priceRight: "150",
+  title: "Выбери свой формат подготовки",
+  subtitle:
+    "Самостоятельный тариф для тех, кто уже знает материал и хочет освежить. Минигруппа для тех, кто хочет получить максимальную поддержку и разбор заданий.",
+};
+
 /* =============================================== */
 ---
 
@@ -506,7 +516,7 @@ const leadProps = {
 
   <!-- <AboutSection {...aboutProps} /> -->
 
-  <KursiFormat {...formatProps} />
+  <TypeChoose {...typeChooseProps} />
 
   <AdFreeBanner {...adFreeProps} />
   <AuthorSection {...authorProps} />

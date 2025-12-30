@@ -1,7 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import StepikHero from "../components/stepik/stepikHero.astro";
-import JsonLd from "../components/JsonLd.astro";
 import {
   buildCourseJsonLd,
   buildProductJsonLd,
@@ -478,12 +477,11 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
   showBreadcrumbs={false}
   logoSrc="/favicon.svg"
   ctaHref="/courses"
+  courseJsonLd={courseJsonLd}
+  productJsonLd={productJsonLd}
+  videoJsonLd={videoJsonLd}
+  faqJsonLd={faqJsonLd}
 >
-  {/* JSON-LD структурированные данные */}
-  <JsonLd data={courseJsonLd} />
-  <JsonLd data={productJsonLd} />
-  {videoJsonLd && <JsonLd data={videoJsonLd} />}
-  <JsonLd data={faqJsonLd} />
   <section id="hero">
     <StepikHero
       labels={["Курс", "Химия ЕГЭ 2026", "ОВР"]}
