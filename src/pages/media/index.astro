@@ -11,9 +11,11 @@ import LeadCapture from "../../components/mainpage/LeadCapture.astro";
 import AdFreeBanner from "../../components/mainpage/AdFreeBanner.astro";
 import SideCategoryScroller from "../../components/SideCategoryScroller.astro";
 
-// Получаем все статьи и сортируем по дате (от новых к старым)
+// Получаем все видимые статьи и сортируем по дате (от новых к старым)
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const allPosts = (await getCollection("articles")).sort(
+const allPosts = (await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+})).sort(
   (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime()
 );
 

@@ -135,7 +135,9 @@ function buildNestedToc(items: any[]) {
 const nestedTocItems = buildNestedToc(tocItems || []);
 
 /* === «Ещё по теме»: та же категория === */
-const allArticles = await getCollection("articles");
+const allArticles = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 function getTimeSafe(p: CollectionEntry<"articles">): number {
   const v = (p.data as any)?.date;
   const d = v instanceof Date ? v : new Date(v);

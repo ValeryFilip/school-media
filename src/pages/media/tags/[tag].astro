@@ -9,7 +9,9 @@ import Pagination from "../../../components/Pagination.astro";
 import { slugify } from "../../../lib/slugify";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("articles");
+  const posts = await getCollection("articles", ({ data }) => {
+    return data.visible !== false;
+  });
   const seen = new Set<string>();
   const tags = posts.flatMap((p) =>
     Array.isArray(p.data.tags) ? p.data.tags : []
@@ -27,7 +29,9 @@ export async function getStaticPaths() {
 
 const { tag: slug } = Astro.params;
 
-const all = await getCollection("articles");
+const all = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 
 // Найти оригинальное имя тега по слагу
 const tagMap = new Map<string, string>();

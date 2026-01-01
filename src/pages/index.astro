@@ -21,10 +21,12 @@ import CourseCards from "../components/mainpage/CourseCards.astro";
 import { getCollection } from "astro:content";
 import TypeChoose from "../components/mainpage/typeChoose.astro";
 
-// Получаем самые новые 3 статьи для AdMediaBanner
+// Получаем самые новые 3 видимые статьи для AdMediaBanner
 // Сортируем по дате публикации от новых к старым
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const allArticles = await getCollection("articles");
+const allArticles = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 const latestArticles = allArticles
   .sort((a, b) => {
     // Сортируем по дате: сначала самые новые (большая дата идет первой)

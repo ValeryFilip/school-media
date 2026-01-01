@@ -5,8 +5,10 @@ import { getCollection } from 'astro:content';
 import config from '../config.ts';
 
 export async function GET() {
-    // Загружаем и сортируем статьи
-    const posts = await getCollection('articles');
+    // Загружаем и сортируем только видимые статьи
+    const posts = await getCollection('articles', ({ data }) => {
+        return data.visible !== false;
+    });
     posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
     // Убираем слеш на конце, если он есть

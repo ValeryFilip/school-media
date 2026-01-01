@@ -22,7 +22,9 @@ const {
 let mediaCategories: Array<{ label: string; href: string }> = [];
 if (context === "media") {
   try {
-    const allArticles = await getCollection("articles");
+    const allArticles = await getCollection("articles", ({ data }) => {
+      return data.visible !== false;
+    });
     const categories = [
       ...new Set(allArticles.map((article) => article.data.category)),
     ];

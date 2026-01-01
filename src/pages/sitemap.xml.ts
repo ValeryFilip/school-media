@@ -25,8 +25,10 @@ function toIsoSafe(d: unknown): string | undefined {
 export const GET: APIRoute = async () => {
     const base = siteBase();
 
-    // Контент «Медиа»
-    const posts = await getCollection('articles');
+    // Контент «Медиа» (только видимые статьи)
+    const posts = await getCollection('articles', ({ data }) => {
+        return data.visible !== false;
+    });
     const categories = Array.from(new Set(posts.map(p => String(p.data.category || '').trim()).filter(Boolean)));
     const tags = Array.from(new Set(posts.flatMap(p => Array.isArray(p.data.tags) ? p.data.tags : []).filter(Boolean)));
 

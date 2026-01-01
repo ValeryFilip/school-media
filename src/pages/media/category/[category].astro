@@ -9,7 +9,9 @@ import Pagination from "../../../components/Pagination.astro";
 import { slugify } from "../../../lib/slugify";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("articles");
+  const posts = await getCollection("articles", ({ data }) => {
+    return data.visible !== false;
+  });
   const categories = Array.from(
     new Set(posts.map((p) => p.data.category))
   ).filter(Boolean);
@@ -20,7 +22,9 @@ export async function getStaticPaths() {
 
 const { category: slug } = Astro.params;
 
-const all = await getCollection("articles");
+const all = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 
 // найти оригинальное имя категории по слагу
 let originalCategory = undefined as string | undefined;

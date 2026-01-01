@@ -4,8 +4,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 import { getSlugFileName } from "../../lib/slugify";
 
-// 1) Во время сборки собираем все статьи
-const posts = await getCollection("articles");
+// 1) Во время сборки собираем все видимые статьи
+const posts = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 const indexData = posts.map((p) => ({
   slug: getSlugFileName(p.slug),
   title: p.data.title,

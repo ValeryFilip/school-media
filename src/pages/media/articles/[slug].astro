@@ -7,7 +7,9 @@ import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("articles");
+  const posts = await getCollection("articles", ({ data }) => {
+    return data.visible !== false; // только видимые статьи (по умолчанию true)
+  });
   return posts.map((post) => ({ params: { slug: post.slug } }));
 }
 
@@ -16,11 +18,18 @@ const { slug } = Astro.params;
 const entry = await getEntryBySlug("articles", slug);
 if (!entry) throw new Error(`Статья "${slug}" не найдена`);
 
+// Проверка видимости статьи
+if (entry.data.visible === false) {
+  return Astro.redirect("/404");
+}
+
 const { data: fm, render } = entry;
 const { Content, headings } = await render();
 
-// Рекомендации
-const all = await getCollection("articles");
+// Рекомендации (только видимые статьи)
+const all = await getCollection("articles", ({ data }) => {
+  return data.visible !== false;
+});
 const byTag = all.filter(
   (p) => p.slug !== slug && p.data.tags?.some((t) => fm.tags?.includes(t))
 );
