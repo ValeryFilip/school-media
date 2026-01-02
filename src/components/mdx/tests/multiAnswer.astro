@@ -1,0 +1,292 @@
+---
+interface Question {
+  title: string;
+  text: string;
+  items: {
+    text: string;
+    correct: boolean;
+  }[];
+  helpText: string;
+  explanationText: string;
+}
+interface Props {
+  questions: Question[];
+}
+const questionId = `q-${Math.random().toString(36).slice(2, 8)}`;
+const { questions } = Astro.props;
+---
+
+<div class="section checkbox-test-section">
+  <div class="test__wrapper">
+    <div class="test__content">
+      <div class="test__question">
+        <p class="test__question-text">
+          {questions[0].text}
+        </p>
+        <div class="test__question-items">
+          {
+            questions[0].items.map((item, i) => (
+              <div class="test__question-item">
+                <input
+                  class="test__question-input"
+                  type="checkbox"
+                  name={questionId}
+                  id={`${questionId}-${i}`}
+                  data-correct={String(item.correct)}
+                />
+                <label for={`${questionId}-${i}`}>{item.text}</label>
+              </div>
+            ))
+          }
+        </div>
+        <div class="test__answer-button">
+          <button class="test__answer-button-text">Проверить</button>
+        </div>
+      </div>
+      <div class="test__answer-result" hidden>
+        <p class="test__answer-result-text">Ответ</p>
+      </div>
+      <div class="test__answer-text" hidden>
+        <p class="test__answer-explanation">
+          {questions[0].explanationText}
+        </p>
+        <p class="test__answer-hint">
+          {questions[0].helpText}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .checkbox-test-section {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .test__wrapper {
+    background: #fff;
+    border-radius: clamp(8px, 1.2vw, 12px);
+    border: 1px solid #e5e5e5;
+    padding: clamp(24px, 3vw, 32px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .test__wrapper:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .test__content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2vw, 20px);
+  }
+
+  .test__question {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2vw, 20px);
+  }
+
+  .test__question-text {
+    font-size: clamp(16px, 1.8vw, 18px);
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .test__question-items {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.2vw, 12px);
+  }
+
+  .test__question-item {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 1.2vw, 12px);
+    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: clamp(6px, 0.8vw, 8px);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .test__question-item:hover {
+    background: #f0f7ff;
+    border-color: #b3d9ff;
+  }
+
+  .test__question-item:has(input:checked) {
+    background: #e6f2ff;
+    border-color: #366ef0;
+  }
+
+  .test__question-input {
+    width: clamp(18px, 2vw, 20px);
+    height: clamp(18px, 2vw, 20px);
+    cursor: pointer;
+    accent-color: #366ef0;
+    flex-shrink: 0;
+  }
+
+  .test__question-item label {
+    font-size: clamp(14px, 1.5vw, 16px);
+    color: #333;
+    cursor: pointer;
+    flex: 1;
+    line-height: 1.5;
+    user-select: none;
+  }
+
+  .test__answer-button {
+    margin-top: clamp(8px, 1vw, 12px);
+  }
+
+  .test__answer-button-text {
+    background: #366ef0;
+    color: #fff;
+    border: none;
+    border-radius: clamp(6px, 0.8vw, 8px);
+    padding: clamp(12px, 1.6vw, 16px) clamp(24px, 3vw, 32px);
+    font-size: clamp(14px, 1.6vw, 16px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .test__answer-button-text:hover {
+    background: #2a5dd9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(54, 110, 240, 0.3);
+  }
+
+  .test__answer-button-text:active {
+    transform: translateY(0);
+  }
+
+  .test__answer-result {
+    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
+    border-radius: clamp(6px, 0.8vw, 8px);
+    background: #fff;
+    border-left: 4px solid #366ef0;
+  }
+
+  .test__answer-result-text {
+    font-size: clamp(14px, 1.6vw, 16px);
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+  }
+
+  .test__answer-text {
+    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
+    border-radius: clamp(6px, 0.8vw, 8px);
+    background: #e6f2ff;
+    border-left: 4px solid #366ef0;
+  }
+
+  .test__answer-explanation,
+  .test__answer-hint {
+    font-size: clamp(14px, 1.5vw, 15px);
+    color: #444;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Стили для правильного ответа */
+  .test__answer-result[data-result="correct"] {
+    background: #e6f9f8;
+    border-left-color: #2aa5a1;
+  }
+
+  .test__answer-result[data-result="correct"] .test__answer-result-text {
+    color: #2aa5a1;
+  }
+
+  /* Стили для неправильного ответа */
+  .test__answer-result[data-result="incorrect"] {
+    background: #ffe6e9;
+    border-left-color: #c05b66;
+  }
+
+  .test__answer-result[data-result="incorrect"] .test__answer-result-text {
+    color: #c05b66;
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 16px;
+    }
+
+    .test__wrapper {
+      padding: 20px;
+    }
+
+    .test__question-item {
+      padding: 12px 16px;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll(".checkbox-test-section").forEach((test) => {
+    const questionInputs = test.querySelectorAll(".test__question-input");
+    const answerButton = test.querySelector(".test__answer-button-text");
+    const resultContainer = test.querySelector(".test__answer-result");
+    const resultText = test.querySelector(".test__answer-result-text");
+    const helpContainer = test.querySelector(".test__answer-text");
+    const explanationText = test.querySelector(".test__answer-explanation");
+    const hintText = test.querySelector(".test__answer-hint");
+
+    answerButton.addEventListener("click", () => {
+      const checkedInputs = Array.from(questionInputs).filter(
+        (input) => input.checked
+      );
+      const correctAnswers = Array.from(questionInputs).filter(
+        (input) => input.dataset.correct == "true"
+      );
+
+      if (checkedInputs.length === 0) {
+        resultContainer.hidden = false;
+        resultText.textContent = "Выберите хотя бы один ответ";
+        resultContainer.removeAttribute("data-result");
+        helpContainer.hidden = true;
+        return;
+      }
+
+      if (checkedInputs.length !== correctAnswers.length) {
+        resultContainer.hidden = false;
+        resultText.textContent = "Вы ответили неверно";
+        resultContainer.setAttribute("data-result", "incorrect");
+        helpContainer.hidden = false;
+        hintText.hidden = false;
+        explanationText.hidden = true;
+        return;
+      }
+
+      for (let i = 0; i < correctAnswers.length; i++) {
+        if (!checkedInputs.includes(correctAnswers[i])) {
+          resultContainer.hidden = false;
+          resultText.textContent = "Вы ответили неверно";
+          resultContainer.setAttribute("data-result", "incorrect");
+          helpContainer.hidden = false;
+          hintText.hidden = false;
+          explanationText.hidden = true;
+          return;
+        }
+      }
+
+      resultContainer.hidden = false;
+      resultText.textContent = "Вы ответили верно";
+      resultContainer.setAttribute("data-result", "correct");
+      helpContainer.hidden = false;
+      explanationText.hidden = false;
+      hintText.hidden = true;
+    });
+  });
+</script>

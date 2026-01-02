@@ -21,7 +21,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="banner">
+<div class="banner">
   <div
     class={`banner__wrapper ${!imageSrc ? "banner__wrapper--no-image" : ""}`}
     role="button"
@@ -54,7 +54,7 @@ const {
       }
     </div>
   </div>
-</section>
+</div>
 
 <style>
   .banner__wrapper {

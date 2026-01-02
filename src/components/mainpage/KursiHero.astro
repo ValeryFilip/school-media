@@ -3,15 +3,22 @@
    Вариант без BLEED, с локальным .container и внутренними адаптивами.
    Использует только глобальные токены. */
 
-   interface Img { src: string; width?: number; height?: number; alt: string; }
+interface Img {
+  src: string;
+  width?: number;
+  height?: number;
+  alt: string;
+}
 
 interface Props {
   id?: string;
   title?: string;
   highlight?: string;
   lead?: string;
-  href1?: string; text1?: string;
-  href2?: string; text2?: string;
+  href1?: string;
+  text1?: string;
+  href2?: string;
+  text2?: string;
   imgLeft?: Img;
   imgRight?: Img;
 }
@@ -24,20 +31,33 @@ const {
   title = "Подготовим к ЕГЭ по химии 2026",
   highlight = "с нуля до 85+ и бюджета",
   lead = "Хочешь учиться в меде<br />или на химфаке?<br />Мы доведём до бюджета!",
-  href1 = "#self-paced", text1 = "Узнать подробнее",
-  href2 = "#self-paced", text2 = "Узнать подробнее",
-  imgLeft = { src: "images/mainpage/heroleft.png",  width: 550, height: 1100, alt: "Лаборантка с пробиркой" },
-  imgRight= { src: "images/mainpage/heroright.jpg", width: 550, height: 1100, alt: "Студентка в медицинской форме" },
+  href1 = "#self-paced",
+  text1 = "Узнать подробнее",
+  href2 = "#self-paced",
+  text2 = "Узнать подробнее",
+  imgLeft = {
+    src: "images/mainpage/heroleft.png",
+    width: 550,
+    height: 1100,
+    alt: "Лаборантка с пробиркой",
+  },
+  imgRight = {
+    src: "images/mainpage/heroright.jpg",
+    width: 550,
+    height: 1100,
+    alt: "Студентка в медицинской форме",
+  },
 } = Astro.props as Props;
-
 ---
 
 <section class="section kursi-hero" aria-labelledby={`${id}-title`}>
   <style>
-    .kursi-hero{ font-family: var(--ff); }
+    .kursi-hero {
+      font-family: var(--ff);
+    }
 
     /* Локальный контейнер (стандартный паттерн) */
-    .container{
+    .container {
       max-width: var(--container);
       margin: 0 auto;
       padding: 0 var(--pad-desktop);
@@ -63,31 +83,37 @@ const {
     }
 
     /* Сетка секции */
-    .kursi-hero__grid{
-      display:flex;
+    .kursi-hero__grid {
+      display: flex;
       gap: var(--space-16);
       align-items: stretch;
     }
-    .kursi-hero__left{
-      display:flex; flex-direction:column; gap: var(--space-16);
+    .kursi-hero__left {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
       flex: 1 1 auto;
       min-width: 0;
     }
-    .kursi-hero__right{
-      display:flex; gap: var(--space-16); flex-shrink:0;
+    .kursi-hero__right {
+      display: flex;
+      gap: var(--space-16);
+      flex-shrink: 0;
     }
 
     /* Карточка с заголовком */
-    .kursi-hero__main{ padding: var(--space-32); }
-    .kursi-hero__title{
+    .kursi-hero__main {
+      padding: var(--space-32);
+    }
+    .kursi-hero__title {
       font-size: var(--h1);
       line-height: 1.15;
       margin: 0;
       color: var(--black);
       max-width: 22ch;
     }
-    .kursi-hero__highlight{
-      display:inline-block;
+    .kursi-hero__highlight {
+      display: inline-block;
       margin-top: var(--space-12);
       padding: 6px 12px;
       border: 2px solid var(--blue);
@@ -96,53 +122,73 @@ const {
     }
 
     /* Оффер */
-    .kursi-hero__offer{
+    .kursi-hero__offer {
       border: 2px solid var(--blue);
       border-radius: var(--radius-24);
       padding: var(--space-24);
-      display:flex; flex-direction:column; gap: var(--space-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
       background: #fff;
     }
-    .kursi-hero__lead{
-      margin:0;
+    .kursi-hero__lead {
+      margin: 0;
       font-size: clamp(20px, 3.6vw, 30px);
       line-height: 1.3;
       color: var(--black);
     }
-    .kursi-hero__actions{ display:flex; gap: var(--space-16); flex-wrap:wrap; }
+    .kursi-hero__actions {
+      display: flex;
+      gap: var(--space-16);
+      flex-wrap: wrap;
+    }
 
     /* Изображения справа */
-    .kursi-hero__img{
+    .kursi-hero__img {
       width: 290px;
       aspect-ratio: 29 / 58; /* 1:2 */
-      overflow:hidden;
+      overflow: hidden;
       border-radius: var(--radius-24);
-      margin:0;
-      background:#ddd;
-      flex-shrink:0;
+      margin: 0;
+      background: #ddd;
+      flex-shrink: 0;
     }
-    .kursi-hero__img img{
-      width:100%; height:100%;
-      object-fit: cover; object-position: center;
-      display:block;
+    .kursi-hero__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
     }
 
     /* ===== Адаптивы (локальные) ===== */
 
     /* ≤1100px — убираем правую колонку, левая на всю ширину */
-    @media (max-width:1100px){
-      .kursi-hero__right{ display:none !important; }
-      .kursi-hero__grid{ flex-direction: column; }
-      .kursi-hero__main{ padding: var(--space-24); }
-      .kursi-hero__offer{ padding: var(--space-20); }
-      .kursi-hero__actions{ gap: var(--space-12); }
+    @media (max-width: 1100px) {
+      .kursi-hero__right {
+        display: none !important;
+      }
+      .kursi-hero__grid {
+        flex-direction: column;
+      }
+      .kursi-hero__main {
+        padding: var(--space-24);
+      }
+      .kursi-hero__offer {
+        padding: var(--space-20);
+      }
+      .kursi-hero__actions {
+        gap: var(--space-12);
+      }
     }
 
     /* ≤600px — компактные кнопки, перенос текста безопасный */
-    @media (max-width:600px){
+    @media (max-width: 600px) {
       .kursi-hero__title,
-      .kursi-hero__lead{ overflow-wrap:anywhere; }
-      .kursi-hero__actions{
+      .kursi-hero__lead {
+        overflow-wrap: anywhere;
+      }
+      .kursi-hero__actions {
         gap: var(--space-12);
         flex-wrap: wrap;
       }
@@ -165,8 +211,10 @@ const {
         <article class="kursi-hero__offer">
           <p class="kursi-hero__lead" set:html={lead} />
           <div class="kursi-hero__actions" role="group" aria-label="Действия">
-            <a href={href1} class="btn btn--blue"    aria-label={text1}>{text1}</a>
-            <a href={href2} class="btn btn--primary" aria-label={text2}>{text2}</a>
+            <a href={href1} class="btn btn--blue" aria-label={text1}>{text1}</a>
+            <a href={href2} class="btn btn--primary" aria-label={text2}
+              >{text2}</a
+            >
           </div>
         </article>
       </div>
@@ -174,10 +222,20 @@ const {
       <!-- Правая колонка (изображения) -->
       <div class="kursi-hero__right" aria-hidden="true">
         <figure class="kursi-hero__img">
-          <img src={imgLeft.src}  width={imgLeft.width ?? 550}  height={imgLeft.height ?? 1100}  alt={imgLeft.alt} />
+          <img
+            src={imgLeft.src}
+            width={imgLeft.width ?? 550}
+            height={imgLeft.height ?? 1100}
+            alt={imgLeft.alt}
+          />
         </figure>
         <figure class="kursi-hero__img">
-          <img src={imgRight.src} width={imgRight.width ?? 550} height={imgRight.height ?? 1100} alt={imgRight.alt} />
+          <img
+            src={imgRight.src}
+            width={imgRight.width ?? 550}
+            height={imgRight.height ?? 1100}
+            alt={imgRight.alt}
+          />
         </figure>
       </div>
     </div>

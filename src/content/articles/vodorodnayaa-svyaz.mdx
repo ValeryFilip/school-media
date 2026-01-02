@@ -19,14 +19,57 @@ readingTime: "15 мин"
 toc: false
 showHeroImage: false
 videoUrl: "https://www.youtube.com/embed/8N3WYklP7Zc?si=2Nry-ywOFf4--mgv"
-visible: false
+visible: true
 ---
 
 import VideoTabs from "../../components/mdx/videoTabs.astro";
 import FAQ from "../../components/mdx/FAQ.astro";
+import TestComponent from "../../components/mdx/tests/TestComponent.astro";
+import Slider from "../../components/mdx/tests/TestSlider.astro";
 
 <VideoTabs
   youtubeHref="https://www.youtube.com/embed/8N3WYklP7Zc?si=2Nry-ywOFf4--mgv"
   vkHref="https://vkvideo.ru/video_ext.php?oid=-196205998&id=456239207&hash=8a4bbb910a49b500&hd=3"
   rutubeHref="https://rutube.ru/play/embed/04f46a668a1f354a1990194a243fe243/"
 ></VideoTabs>
+## Тест по теме водородная связь
+
+Выбирайте верные ответы и прожимайте Далее
+
+<Slider
+  questions={[
+    {
+      type: "radio",
+      text: "Какой металл самый твёрдый?",
+      mode: "slider",
+      items: [
+        { text: "член", correct: true },
+        { text: "Медь", correct: false },
+      ],
+      explanationText: "Железо имеет более плотную кристаллическую решётку.",
+      helpText: "Вспомни свойства переходных металлов",
+    },
+    {
+      type: "radio",
+      text: "Какой металл самый твёрдый?",
+      mode: "slider",
+      items: [
+        { text: "член", correct: true },
+        { text: "Медь", correct: false },
+      ],
+      explanationText: "Железо имеет более плотную кристаллическую решётку.",
+      helpText: "Вспомни свойства переходных металлов",
+    },
+    {
+      type: "radio",
+      text: "Какой металл самый твёрдый?",
+      mode: "slider",
+      items: [
+        { text: "член", correct: true },
+        { text: "Медь", correct: false },
+      ],
+      explanationText: "Железо имеет более плотную кристаллическую решётку.",
+      helpText: "Вспомни свойства переходных металлов",
+    },
+  ]}
+/>

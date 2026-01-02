@@ -1,0 +1,164 @@
+---
+interface Question {
+  type: "radio" | "checkbox" | "text";
+  title?: string;
+  text: string;
+  items?: {
+    text: string;
+    correct: boolean;
+  }[];
+  correctTextAnswer?: string;
+  helpText: string;
+  explanationText: string;
+}
+
+interface Props {
+  questions: Question[];
+}
+
+const { questions } = Astro.props;
+
+import TestComponent from "./testComponent.astro";
+import AdFreeBanner from "../../mainpage/AdFreeBanner.astro";
+import PicButtonText from "../ADbanners/picButtonText.astro";
+---
+
+<div class="slider">
+  <div class="slider__wrapper">
+    <div class="slider__track">
+      {
+        questions.map((question, index) => (
+          <div class="slider__slide" data-index={index} hidden={index != 0}>
+            <TestComponent questions={[question]} />
+          </div>
+        ))
+      }
+
+      <!-- Промо-слайд -->
+      <div class="slider__slide slider__slide--promo" hidden>
+        <PicButtonText />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .slider {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden; /* viewport */
+    position: relative;
+  }
+
+  .slider__wrapper {
+    width: 100%;
+  }
+
+  .slider__track {
+    display: flex;
+    width: 100%; /* базово */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .slider__slide {
+    flex: 0 0 100%; /* ключевая строка */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .slider__slide--promo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Скрываем содержимое слайда, когда родитель имеет hidden */
+  .slider__slide[hidden] {
+    display: none !important;
+  }
+
+  .slider__slide[hidden] .section {
+    display: none !important;
+  }
+
+  @media (max-width: 600px) {
+    .slider {
+      border-radius: 8px;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const slider = document.querySelector(".slider");
+    const promoSlide = slider.querySelector(".slider__slide--promo");
+
+    if (!slider) return;
+
+    const steps = Array.from(slider.querySelectorAll(".slider__slide"));
+    let currentIndex = 0;
+
+    function showStep(index) {
+      if (index < 0 || index >= steps.length) return;
+
+      // Скрываем все слайды
+      steps.forEach((step) => {
+        step.hidden = true;
+      });
+
+      if (promoSlide) {
+        promoSlide.hidden = true;
+      }
+
+      // Показываем нужный слайд
+      if (steps[index]) {
+        steps[index].hidden = false;
+      }
+    }
+    // Инициализация: показываем первый слайд
+    showStep(0);
+
+    slider.addEventListener("test:next", (e) => {
+      const sourceSlide = e.target.closest(".slider__slide");
+      if (!sourceSlide) return;
+
+      const sourceIndex = steps.indexOf(sourceSlide);
+      if (sourceIndex !== currentIndex) return;
+
+      if (currentIndex >= steps.length - 1) return;
+
+      currentIndex++;
+      showStep(currentIndex);
+    });
+
+    // let isProcessing = false;
+
+    // // // Слушаем событие от testComponent
+    // slider.addEventListener("test:correct", (element) => {
+    //   // Находим слайд, от которого пришло событие
+    //   const sourceSlide = element.target.closest(".slider__slide");
+    //   if (!sourceSlide) return;
+
+    //   //   // Проверяем, что это текущий активный слайд
+    //   const sourceIndex = steps.indexOf(sourceSlide);
+    //   if (sourceIndex !== currentIndex) {
+    //     return;
+    //   }
+
+    //   //   // Защита от множественных срабатываний
+    //   if (isProcessing) return;
+    //   if (currentIndex >= steps.length - 1) return;
+
+    //   isProcessing = true;
+    //   currentIndex++;
+    //   showStep(currentIndex);
+
+    //   //   // Сбрасываем флаг через небольшую задержку
+    //   setTimeout(() => {
+    //     isProcessing = false;
+    //   }, 300);
+    // });
+  })();
+</script>

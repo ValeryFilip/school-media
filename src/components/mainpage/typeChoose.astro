@@ -15,7 +15,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="typeChoose section">
+<div class="typeChoose section">
   <div class="typeChoose__wrapper container">
     <div class="typeChoose__header">
       <H2Zag title={title} subtitle={subtitle} />
@@ -70,24 +70,24 @@ const {
       </div>
       <div class="typeChoose__right">
         <h3 class="typeChoose__right-title">
-          Подготовка к ЕГЭ по химии в минигруппе
+          Самостоятельная подготовка без расписания
         </h3>
         <div class="typeChoose__right-lists">
           <div class="typeChoose__right-list">
             <ul class="typeChoose__right-list-items">
-              <li class="typeChoose__right-list-item">8-10 занятий в месяц;</li>
+              <li class="typeChoose__right-list-item">Без расписания;</li>
               <li class="typeChoose__right-list-item">
-                5-10 человек в группе;
+                Записанные подробные видеоуроки;
               </li>
-              <li class="typeChoose__right-list-item">Ежемесячный пробник;</li>
+              <li class="typeChoose__right-list-item">Конспекты;</li>
               <li class="typeChoose__right-list-item">
-                Нет кураторов - есть эксперты ЕГЭ;
-              </li>
-              <li class="typeChoose__right-list-item">
-                Постоянная связь с родителями;
+                Постоянная связь с преподавателем;
               </li>
               <li class="typeChoose__right-list-item">
-                Строгое расписание, без вольностей;
+                Больше 2000 заданий практики;
+              </li>
+              <li class="typeChoose__right-list-item">
+                Доступ к материалам навсегда;
               </li>
             </ul>
           </div>
@@ -99,10 +99,8 @@ const {
                 Удобная платформа с мобильным приложением;
               </li>
               <li class="typeChoose__right-list-item">Трекинг успехов;</li>
-              <li class="typeChoose__right-list-item">
-                Постоянная поддержка от преподавателя;
-              </li>
-              <li class="typeChoose__right-list-item">Зачеты;</li>
+              <li class="typeChoose__right-list-item">Нет занятий;</li>
+              <li class="typeChoose__right-list-item">Очень низкая цена;</li>
             </ul>
           </div>
         </div>
@@ -119,13 +117,9 @@ const {
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <style>
-  /* * {
-  font-family: Raleway, sans-serif;
-  font-variant-numeric: lining-nums;
-} */
   .typeChoose__content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

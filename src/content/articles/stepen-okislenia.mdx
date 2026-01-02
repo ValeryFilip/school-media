@@ -20,6 +20,9 @@ import FAQ from "../../components/mdx/FAQ.astro";
 import Banner from "../../components/mdx/Banner.astro";
 import Quote from "../../components/mdx/Quote.astro";
 import VideoTabs from "../../components/mdx/VideoTabs.astro";
+import CheckboxTest from "../../components/mdx/tests/multiAnswer.astro";
+import OneAnswer from "../../components/mdx/tests/oneAnswer.astro";
+import TestComponent from "../../components/mdx/tests/TestComponent.astro";
 
 ## Как определить степень окисления?
 
@@ -231,6 +234,17 @@ Cr: x, O: −2
   **заряду** иона.
 </Banner>
 
+<TestComponent
+  questions={[
+    {
+      type: "text",
+      text: "Введите формулу серной кислоты",
+      correctTextAnswer: "354",
+      helpText: "Вспомните кислоты серы",
+      explanationText: "Серная кислота имеет формулу H₂SO₄",
+    },
+  ]}
+/>
 ## Часто задаваемые вопросы
 
 <FAQ question="Как определить степень окисления?" open={true}>

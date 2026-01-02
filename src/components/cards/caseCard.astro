@@ -71,7 +71,7 @@ const tgUrl =
         <div class="caseCard__bottom-tginfo">
           <img src="/images/technical/telegram.png" alt="tg-icon" />
           <p class="caseCard__bottom-tg">
-            <a href={tgUrl}>{telegramLink}</a>
+            <a href={tgUrl} target="_blank">{telegramLink} </a>
           </p>
         </div>
         <p class="caseCard__bottom-text">{reviewText}</p>
@@ -126,9 +126,15 @@ const tgUrl =
     font-weight: 500;
     border: 2px solid var(--black);
     border-radius: 50%;
-    padding: 12px 25px;
-    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    min-width: clamp(60px, 8vw, 100px);
+    min-height: clamp(60px, 8vw, 100px);
+    padding: clamp(8px, 1vw, 12px);
     margin: 0;
+    line-height: 1;
   }
   .caseCard__top-text {
     margin: 0;

@@ -21,11 +21,15 @@ interface Props {
   title?: string;
   subtitle?: string;
   cases?: CaseCardData[];
+  moreReviewsLink?: string;
+  moreReviewsText?: string;
 }
 
 const {
   title = "Истории успеха наших учеников",
-  subtitle = "Мы работаем с лучшими вузами страны и помогаем нашим студентам поступить в лучшие вузы",
+  subtitle = "Мы работаем со всеми университетами страны и помогаем нашим студентам поступить в лучшие университеты",
+  moreReviewsLink = "https://t.me/valeryfilip_otzivi",
+  moreReviewsText = "Тут больше отзывов",
   cases = [
     {
       entranceScore: 31,
@@ -95,10 +99,35 @@ const SLIDER_PREV = "cases-slider-prev";
 const SLIDER_NEXT = "cases-slider-next";
 ---
 
-<section class="cases-slider-section container">
-  <H2Zag title={title} subtitle={subtitle} />
+<div class="cases-slider-section container">
+  <div class="header-cases">
+    <H2Zag title={title} subtitle={subtitle} />
+  </div>
 
   <div class="cases-slider" id={SLIDER_ID}>
+    <!-- Кнопки навигации сверху -->
+    <div class="cases-slider__controls">
+      <a href={moreReviewsLink} target="_blank" class="cases-slider__more-link">
+        {moreReviewsText}
+      </a>
+      <div class="cases-slider__buttons">
+        <button
+          id={SLIDER_PREV}
+          class="cases-slider__button cases-slider__button--prev"
+          type="button"
+          aria-label="Предыдущая карточка"
+        >
+        </button>
+        <button
+          id={SLIDER_NEXT}
+          class="cases-slider__button cases-slider__button--next"
+          type="button"
+          aria-label="Следующая карточка"
+        >
+        </button>
+      </div>
+    </div>
+
     <div class="cases-slider__viewport">
       <div class="cases-slider__wrapper">
         {
@@ -110,26 +139,8 @@ const SLIDER_NEXT = "cases-slider-next";
         }
       </div>
     </div>
-
-    <!-- Кнопки навигации внизу -->
-    <div class="cases-slider__controls">
-      <button
-        id={SLIDER_PREV}
-        class="cases-slider__button cases-slider__button--prev"
-        type="button"
-        aria-label="Предыдущая карточка"
-      >
-      </button>
-      <button
-        id={SLIDER_NEXT}
-        class="cases-slider__button cases-slider__button--next"
-        type="button"
-        aria-label="Следующая карточка"
-      >
-      </button>
-    </div>
   </div>
-</section>
+</div>
 
 <style>
   .cases-slider-section {
@@ -155,7 +166,6 @@ const SLIDER_NEXT = "cases-slider-next";
   .cases-slider__viewport {
     overflow: hidden;
     width: 100%;
-    margin-bottom: 30px;
     padding-bottom: 40px;
   }
 
@@ -175,8 +185,37 @@ const SLIDER_NEXT = "cases-slider-next";
 
   .cases-slider__controls {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .cases-slider__buttons {
+    display: flex;
     gap: 12px;
+  }
+
+  .cases-slider__more-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: var(--blue, #366ef0);
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition:
+      transform 150ms ease-in-out,
+      filter 150ms ease-in-out;
+    white-space: nowrap;
+  }
+
+  .cases-slider__more-link:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    text-decoration: none;
   }
 
   .cases-slider__button {
@@ -242,8 +281,12 @@ const SLIDER_NEXT = "cases-slider-next";
     }
 
     .cases-slider__viewport {
-      margin-bottom: 24px;
       padding-bottom: 100px;
+    }
+
+    .cases-slider__more-link {
+      padding: 12px 24px;
+      font-size: 14px;
     }
   }
 
@@ -258,13 +301,17 @@ const SLIDER_NEXT = "cases-slider-next";
     }
 
     .cases-slider__viewport {
-      margin-bottom: 20px;
       padding-bottom: 100px;
     }
 
     .cases-slider__button {
       width: 40px;
       height: 40px;
+    }
+
+    .cases-slider__more-link {
+      padding: 12px 20px;
+      font-size: 14px;
     }
   }
 </style>
