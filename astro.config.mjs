@@ -18,11 +18,12 @@ export default defineConfig({
         syntaxHighlight: 'prism',
     },
 
-    // Настройка Vite для поддержки алиаса ~/
+    // Настройка Vite для поддержки алиасов
     vite: {
         resolve: {
             alias: {
                 '~': path.resolve(__dirname, './src'),
+                'src': path.resolve(__dirname, './src'),
             },
         },
     },
