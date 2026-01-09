@@ -37,7 +37,7 @@ const { slides = defaultSlides } = Astro.props as Props;
 const cid = "ss-" + Math.random().toString(36).slice(2, 8);
 ---
 
-<section class="simple-slider" aria-label="Галерея" data-cid={cid}>
+<div class="simple-slider" aria-label="Галерея" data-cid={cid}>
   <div class="slider-wrap">
     <div class="img-col">
       <img
@@ -178,4 +178,4 @@ const cid = "ss-" + Math.random().toString(36).slice(2, 8);
       show(i);
     })();
   </script>
-</section>
+</div>

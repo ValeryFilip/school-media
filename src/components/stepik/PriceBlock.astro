@@ -23,7 +23,7 @@ const {
 ---
 
 <!-- Вписана в вертикальный ритм: .section; без своих вертикальных маргинов -->
-<section
+<div
   class={`section price-block ${textured ? "textured" : ""} ${className}`.trim()}
   id={id}
   style={textured ? `--texture-url: url('${textureSrc}')` : undefined}
@@ -238,4 +238,4 @@ const {
       }
     }
   </style>
-</section>
+</div>

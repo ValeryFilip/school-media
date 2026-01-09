@@ -1,0 +1,452 @@
+---
+import H2Zag from "../text/h2zag.astro";
+interface Tab {
+  value: string;
+  dataTab: string;
+  active: boolean;
+}
+interface Card {
+  titleCard: string;
+  subtitleCard: string;
+  featuresList?: string[];
+  newPrice: string;
+  oldPrice: string;
+  cardData: string;
+  active: boolean;
+  buttonHref: string;
+  image: string;
+}
+
+interface Props {
+  title: string;
+  subtitle: string;
+  leftTabs: Tab[];
+  rightCards: Card[];
+}
+
+const {
+  title = "Полный курс подготовки к ЕГЭ по химии в минигруппе",
+  subtitle = "Программа включает в себя теорию, практику и тренировочные задания",
+  leftTabs = [
+    { value: "ЕГЭ", dataTab: "ege", active: true },
+    { value: "ОГЭ", dataTab: "oge", active: false },
+    { value: "10 класс", dataTab: "organika", active: false },
+  ],
+  rightCards = [
+    {
+      titleCard: "Полный курс подготовки к ЕГЭ по химии в минигруппе",
+      subtitleCard:
+        "Программа включает в себя теорию, практику и тренировочные задания",
+      featuresList: ["пися", "сися", "пися", "сися", "пися", "сися"],
+      newPrice: "10 000",
+      oldPrice: "14000",
+      cardData: "ege",
+      active: true,
+      buttonHref: "/egekurs",
+      image: "/images/mainpage/ege.png",
+    },
+    {
+      titleCard: "Полный курс подготовки к ОГЭ по химии в минигруппе",
+      subtitleCard:
+        "Программа включает в себя теорию, практику и тренировочные задания",
+      featuresList: ["пися", "сися", "пися", "сися", "пися", "сися"],
+      newPrice: "9 000",
+      oldPrice: "12 000",
+      cardData: "oge",
+      active: false,
+      buttonHref: "/ogekurs",
+      image: "/images/mainpage/oge.png",
+    },
+    {
+      titleCard: "Полный курс подготовки к 10 классу по химии в минигруппе",
+      subtitleCard:
+        "Программа включает в себя теорию, практику и тренировочные задания",
+      featuresList: ["пися", "сися", "пися", "сися", "пися", "сися"],
+      newPrice: "6 000",
+      oldPrice: "8 000",
+      cardData: "organika",
+      active: false,
+      buttonHref: "/10kurs",
+      image: "/images/mainpage/10klass.png",
+    },
+  ],
+} = Astro.props;
+---
+
+<div class="section">
+  <div class="container">
+    <div class="courses__header">
+      <H2Zag title={title} subtitle={subtitle} />
+    </div>
+    <div class="courses__wrapper">
+      <div class="courses__left">
+        {
+          leftTabs.map((t) => {
+            return (
+              <div
+                class={`courses__left-tab ${t.active ? "active" : ""}`}
+                data-tab={t.dataTab}
+              >
+                {t.value}
+              </div>
+            );
+          })
+        }
+      </div>
+      <div class="courses__right">
+        <div class="courses__right-cards">
+          {
+            rightCards.map((c) => {
+              return (
+                <div
+                  class={`courses__right-card ${c.active ? "active" : ""}`}
+                  data-tab={c.cardData}
+                  hidden={!c.active}
+                >
+                  <div class="courses__right-card-header">
+                    <h3 class="courses__right-card-header-title">
+                      {c.titleCard}
+                    </h3>
+                    <p class="courses__right-card-header-subtitle">
+                      {c.subtitleCard}
+                    </p>
+                    {c.image && (
+                      <img
+                        src={c.image}
+                        alt={c.titleCard}
+                        class="courses__right-card-header-image"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+                  <div class="courses__right-card-content">
+                    <div class="courses__right-card-content-items">
+                      <ul class="courses__right-card-content-items-list">
+                        <div class="courses__right-card-content-items-list-title">
+                          Преимущества:
+                        </div>
+                        {c.featuresList &&
+                          c.featuresList.map((f) => {
+                            return (
+                              <li class="courses__right-card-content-items-list-item">
+                                {f}
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    </div>
+                    <div class="courses__right-bottom">
+                      <div class="courses__right-bottom-price">
+                        <div class="courses__right-bottom-price-current">
+                          {c.newPrice} Р/мес
+                        </div>
+                        <div class="courses__right-bottom-price-oldprice">
+                          {c.oldPrice} р/мес
+                        </div>
+                      </div>
+                      <a
+                        href={c.buttonHref}
+                        class="courses__right-bottom-button btn--ghost btn"
+                      >
+                        Узнать подробнее
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .courses__wrapper {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: var(--space-24);
+    align-items: start;
+  }
+
+  /* Левая панель с табами */
+  .courses__left {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-24);
+    width: 100%;
+    color: var(--black);
+    background: var(--white);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+  }
+
+  .courses__left-tab {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-20) var(--space-24);
+    margin: 0;
+    cursor: pointer;
+    transition: all 0.3s var(--easing);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .courses__left-tab:last-child {
+    border-bottom: none;
+  }
+
+  .courses__left-tab:hover {
+    background-color: var(--blue);
+    color: var(--white);
+  }
+
+  .courses__left-tab.active {
+    background-color: var(--blue);
+    color: var(--white);
+  }
+
+  .courses__left-tab:first-child.active {
+    border-radius: var(--radius-24) var(--radius-24) 0 0;
+  }
+
+  .courses__left-tab:last-child.active {
+    border-radius: 0 0 var(--radius-24) var(--radius-24);
+  }
+
+  /* Правая часть с карточками */
+  .courses__right {
+    padding: var(--space-32);
+    border-radius: var(--radius-24);
+    width: 100%;
+    background: var(--blue);
+    box-shadow: var(--shadow-1);
+    border: 1px solid var(--border);
+  }
+
+  .courses__right-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-32);
+    align-items: start;
+  }
+
+  .courses__right-card[hidden] {
+    display: none !important;
+  }
+
+  /* Заголовок карточки */
+  .courses__right-card-header {
+    margin-bottom: var(--space-24);
+    position: relative;
+  }
+
+  .courses__right-card-header-title {
+    font-size: clamp(24px, 3vw, 32px) !important;
+    line-height: 1.2;
+    margin: 0 0 var(--space-12);
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .courses__right-card-header-subtitle {
+    font-size: var(--lead);
+    line-height: 1.6;
+    margin: 0 0 var(--space-20);
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .courses__right-card-header-image {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    object-fit: contain;
+    border-radius: var(--radius-24);
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  }
+
+  /* Контент карточки */
+  .courses__right-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+  }
+
+  .courses__right-card-content-items {
+    flex: 1;
+  }
+
+  .courses__right-card-content-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  .courses__right-card-content-items-list-item {
+    font-size: var(--text);
+    line-height: 1.6;
+    color: var(--white);
+    padding-left: var(--space-24);
+    position: relative;
+  }
+
+  .courses__right-card-content-items-list-item::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--white);
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  /* Нижняя часть карточки (цена и кнопка) */
+  .courses__right-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-24);
+    padding-top: var(--space-24);
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .courses__right-bottom-price {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .courses__right-bottom-price-current {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .courses__right-bottom-price-oldprice {
+    font-size: var(--text);
+    color: var(--white);
+    text-decoration: line-through;
+    line-height: 1.4;
+  }
+
+  .courses__right-bottom-button {
+    white-space: nowrap;
+  }
+  .courses__right-card-content-items-list-title {
+    font-size: var(--h3);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--space-12);
+  }
+
+  /* Адаптивность */
+  @media (max-width: 1100px) {
+    .courses__wrapper {
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+    }
+
+    .courses__left {
+      flex-direction: row;
+      border-radius: var(--radius-24);
+    }
+
+    .courses__left-tab {
+      flex: 1;
+      border-bottom: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .courses__left-tab:last-child {
+      border-right: none;
+    }
+
+    .courses__left-tab:first-child.active {
+      border-radius: var(--radius-24) 0 0 var(--radius-24);
+    }
+
+    .courses__left-tab:last-child.active {
+      border-radius: 0 var(--radius-24) var(--radius-24) 0;
+    }
+
+    .courses__right {
+      padding: var(--space-24);
+    }
+
+    .courses__right-card {
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+    }
+
+    .courses__right-card-header-image {
+      max-width: 100%;
+      margin: var(--space-20) auto 0;
+    }
+
+    .courses__right-bottom {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .courses__right-bottom-button {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .courses__left-tab {
+      padding: var(--space-12) var(--space-16);
+      font-size: clamp(16px, 4vw, 20px);
+    }
+
+    .courses__right {
+      padding: var(--space-20);
+    }
+
+    .courses__right-card-header-title {
+      font-size: var(--h3);
+    }
+
+    .courses__right-card-header-image {
+      max-width: 100%;
+      margin-top: var(--space-16);
+    }
+
+    .courses__right-bottom-price-current {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<script is:inline>
+  const coursesTabs = document.querySelectorAll(".courses__left-tab");
+  const coursesCards = document.querySelectorAll(".courses__right-card");
+
+  coursesTabs.forEach((tabik) => {
+    tabik.addEventListener("click", () => {
+      const activeTab = tabik.dataset.tab;
+      coursesTabs.forEach((tab) => {
+        tab.classList.remove("active");
+      });
+      tabik.classList.add("active");
+      coursesCards.forEach((card) => {
+        card.hidden = card.dataset.tab !== activeTab;
+        if (card.dataset.tab === activeTab) {
+          card.classList.remove("active");
+          card.classList.add("active");
+        } else {
+          card.classList.remove("active");
+        }
+      });
+    });
+  });
+</script>

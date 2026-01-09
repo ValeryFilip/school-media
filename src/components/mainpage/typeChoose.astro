@@ -5,6 +5,8 @@ interface Props {
   priceRight: string;
   title: string;
   subtitle: string;
+  formActionLeft: string;
+  formActionRight: string;
 }
 
 const {
@@ -12,6 +14,8 @@ const {
   priceRight,
   title = "Выбери свой формат подготовки",
   subtitle = "Самостоятельный тариф для тех, кто уже знает материал и хочет освежить. Минигруппа для тех, кто хочет получить максимальную поддержку и разбор заданий.",
+  formActionLeft = "#",
+  formActionRight = "#",
 } = Astro.props;
 ---
 
@@ -61,11 +65,14 @@ const {
           <div class="typeChoose__left-price">
             <span class="typeChoose__left-price-ot">от </span>
             {priceLeft}
-            <span class="typeChoose__left-price-rub">р</span>
+            <span class="typeChoose__left-price-rub">р/час</span>
           </div>
-          <button class="typeChoose__left-button btn btn--ghost">
+          <a
+            href={formActionLeft}
+            class="typeChoose__left-button btn btn--ghost"
+          >
             Узнать подробнее
-          </button>
+          </a>
         </div>
       </div>
       <div class="typeChoose__right">
@@ -108,11 +115,14 @@ const {
           <div class="typeChoose__right-price">
             <span class="typeChoose__right-price-ot">от </span>
             {priceRight}
-            <span class="typeChoose__right-price-rub">р</span>
+            <span class="typeChoose__right-price-rub">р&nbsp;/&nbsp;час</span>
           </div>
-          <button class="typeChoose__right-button btn--blue btn">
+          <a
+            href={formActionRight}
+            class="typeChoose__right-button btn--blue btn"
+          >
             Узнать подробнее
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -171,22 +181,25 @@ const {
     line-height: 1;
     padding: 0;
     margin: 0;
+    white-space: nowrap;
   }
   .typeChoose__right-price-ot,
   .typeChoose__left-price-ot {
-    font-size: clamp(24px, 2.5vw, 40px);
+    font-size: clamp(24px, 2.5vw, 34px);
     font-weight: 800;
     line-height: 1;
     padding: 0;
     margin-right: 10px;
+    white-space: nowrap;
   }
   .typeChoose__right-price-rub,
   .typeChoose__left-price-rub {
-    font-size: clamp(24px, 2.5vw, 40px);
+    font-size: clamp(24px, 2.5vw, 34px);
     font-weight: 800;
     line-height: 1;
     padding: 0;
     margin-left: -20px;
+    white-space: nowrap;
   }
   .typeChoose__right-bottom,
   .typeChoose__left-bottom {
@@ -195,8 +208,19 @@ const {
     align-items: center;
     justify-content: space-between;
   }
-
-  @media (max-width: 440px) {
+  @media (max-width: 1200px) {
+    .typeChoose__left-bottom,
+    .typeChoose__right-bottom {
+      flex-wrap: nowrap;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .typeChoose__right-button,
+    .typeChoose__left-button {
+      width: 100%;
+    }
+  }
+  @media (max-width: 600px) {
     .typeChoose__content {
       grid-template-columns: 1fr;
     }
@@ -212,6 +236,10 @@ const {
     .typeChoose__right-bottom {
       flex-direction: column;
       gap: 36px;
+    }
+    .typeChoose__right-button {
+      width: 100%;
+      margin-top: 16px;
     }
   }
 </style>

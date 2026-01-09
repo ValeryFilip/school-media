@@ -180,16 +180,13 @@ const breadcrumbsJsonLd =
       logoSrc={logoSrc}
       ctaHref={ctaHref}
     />
-
-    <main id="main" class="content">
-      {
-        showBreadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} />
-        )
-      }
-      <div class="page-stack">
-        <slot />
-      </div>
+    {
+      showBreadcrumbs && breadcrumbs.length > 0 && (
+        <Breadcrumbs items={breadcrumbs} />
+      )
+    }
+    <main id="main" class="content page-stack">
+      <slot />
     </main>
 
     <SiteFooter />

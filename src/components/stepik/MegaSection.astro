@@ -183,7 +183,7 @@ const SWIPER_PREV = `${id}-swiper-prev`;
 const SWIPER_NEXT = `${id}-swiper-next`;
 ---
 
-<section
+<div
   class="section mega"
   id={id}
   aria-label="Секция платформы, модулей и навыков"
@@ -321,7 +321,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
 
     <!-- Блок 3: Навыки -->
     <div class="content-block">
-      <section class="skills" aria-label={skills.title}>
+      <div class="skills" aria-label={skills.title}>
         <h2 class="skills__h2">{skills.title}</h2>
         {
           skills.rows.map((r) => (
@@ -332,7 +332,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
             </div>
           ))
         }
-      </section>
+      </div>
     </div>
 
     <!-- Нижняя кнопка -->
@@ -1111,4 +1111,4 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       swiper.addEventListener("mouseleave", onPointerUp);
     })();
   </script>
-</section>
+</div>

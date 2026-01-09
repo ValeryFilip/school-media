@@ -217,51 +217,55 @@ const faqItems = [
   showBreadcrumbs={false}
 >
   <div class="page-stack">
-    <HeroCourses
-      title="Качественная самостоятельная подготовка к ЕГЭ –"
-      highlight="реальность!"
-      lead="Качественная самостоятельная подготовка к ЕГЭ – реальность!"
-    />
+    <section id="hero">
+      <HeroCourses
+        title="Качественная самостоятельная подготовка к ЕГЭ –"
+        highlight="реальность!"
+        lead="Качественная самостоятельная подготовка к ЕГЭ – реальность!"
+      />
+    </section>
 
     <!-- Блок 1: заголовок+лид+5 карточек -->
-    <CourseCards
-      heading={pageH2}
-      sub={pageLead}
-      cards={cardsTop}
-      barRightGapPx={48}
-      minHeightPx={440}
-    />
+    <section id="courses-top">
+      <CourseCards heading={pageH2} subtitle={pageLead} cards={cardsTop} />
+    </section>
 
     <!-- Баннер с бесплатными мини-курсами -->
-    <AdFreeBanner
-      title="Забери 2 бесплатных мини-курса: +30 баллов к ЕГЭ"
-      lead="Видео + практические задания. Подойдут, чтобы быстро войти в режим и закрыть базовые пробелы."
-      ctaText="Забрать бесплатно"
-      image={{
-        src: "/images/mainpage/adfree.png",
-        width: 420,
-        height: 300,
-        alt: "Бесплатные мини-курсы по химии",
-      }}
-    />
+    <section id="ad-free">
+      <AdFreeBanner
+        title="Забери 2 бесплатных мини-курса: +30 баллов к ЕГЭ"
+        lead="Видео + практические задания. Подойдут, чтобы быстро войти в режим и закрыть базовые пробелы."
+        ctaText="Забрать бесплатно"
+        image={{
+          src: "/images/mainpage/adfree.png",
+          width: 420,
+          height: 300,
+          alt: "Бесплатные мини-курсы по химии",
+        }}
+      />
+    </section>
 
     <!-- Блок 2: заголовок+лид+3 карточки -->
-    <CourseCards
-      heading={secondH2}
-      sub={secondLead}
-      cards={cardsBottom}
-      barRightGapPx={48}
-      minHeightPx={420}
-    />
+    <section id="courses-bottom">
+      <CourseCards
+        heading={secondH2}
+        subtitle={secondLead}
+        cards={cardsBottom}
+      />
+    </section>
 
     <!-- Лид-форма -->
-    <LeadCapture
-      title="Помочь с выбором курса?"
-      subtitle="Оставьте заявку — за 5 минут подскажем оптимальный маршрут под ваши цели и сроки"
-      formAction="https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec"
-    />
+    <section id="lead-capture">
+      <LeadCapture
+        title="Помочь с выбором курса?"
+        subtitle="Оставьте заявку — за 5 минут подскажем оптимальный маршрут под ваши цели и сроки"
+        formAction="https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec"
+      />
+    </section>
 
     <!-- FAQ -->
-    <Faq title="Вопросы по курсам" items={faqItems} singleOpen={true} />
+    <section id="faq">
+      <Faq title="Вопросы по курсам" items={faqItems} singleOpen={true} />
+    </section>
   </div>
 </MainLayout>

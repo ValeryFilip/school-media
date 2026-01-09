@@ -166,7 +166,6 @@ const SLIDER_NEXT = "cases-slider-next";
   .cases-slider__viewport {
     overflow: hidden;
     width: 100%;
-    padding-bottom: 40px;
   }
 
   .cases-slider__wrapper {
@@ -188,6 +187,7 @@ const SLIDER_NEXT = "cases-slider-next";
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    flex-wrap: wrap;
   }
 
   .cases-slider__buttons {
@@ -264,7 +264,7 @@ const SLIDER_NEXT = "cases-slider-next";
 
   @media (max-width: 1100px) {
     .cases-slider-section {
-      padding: 40px var(--pad-desktop, 20px) 60px;
+      padding: 0px var(--pad-mobile, 20px) 0;
     }
 
     .cases-slider__title {
@@ -279,11 +279,6 @@ const SLIDER_NEXT = "cases-slider-next";
     .cases-slider__slide {
       flex: 0 0 calc(100% - 20px);
     }
-
-    .cases-slider__viewport {
-      padding-bottom: 100px;
-    }
-
     .cases-slider__more-link {
       padding: 12px 24px;
       font-size: 14px;
@@ -292,16 +287,12 @@ const SLIDER_NEXT = "cases-slider-next";
 
   @media (max-width: 600px) {
     .cases-slider-section {
-      padding: 30px var(--pad-mobile, 16px) 50px;
+      padding: 30px var(--pad-mobile, 16px) 0;
     }
 
     .cases-slider__title {
       font-size: 24px;
       margin-bottom: 24px;
-    }
-
-    .cases-slider__viewport {
-      padding-bottom: 100px;
     }
 
     .cases-slider__button {
