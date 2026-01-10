@@ -1,7 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import KursiHero from "../components/mainpage/KursiHero.astro";
-import KursiFormat from "../components/mainpage/KursiFormat.astro";
 import AdFreeBanner from "../components/mainpage/AdFreeBanner.astro";
 import AdSocialBanner from "../components/mainpage/AdSocialBanner.astro";
 import AdMediaBanner from "../components/mainpage/AdMediaBanner.astro";
@@ -10,20 +9,20 @@ import AboutSection from "../components/mainpage/AboutSection.astro";
 import CasesSlider from "../components/mainpage/CasesSlider.astro";
 import UnisMarquee from "../components/mainpage/UnisMarquee.astro";
 import Faq from "../components/mainpage/Faq.astro";
-import LeadCapture2 from "../components/mainpage/leadCapture2.astro";
 import LeadCapture from "../components/mainpage/LeadCapture.astro";
-import CoursesTabs from "../components/mainpage/CoursesTabs.astro";
 import CourseCards from "../components/mainpage/CourseCards.astro";
 import CourseCardsnew from "../components/mainpage/courseCardsnew.astro";
 import { getCollection } from "astro:content";
 import TypeChoose from "../components/mainpage/typeChoose.astro";
+import { withReadingTime } from "../lib/withReadingTime";
 
 // Получаем самые новые 3 видимые статьи для AdMediaBanner
 // Сортируем по дате публикации от новых к старым
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const allArticles = await getCollection("articles", ({ data }) => {
+const allArticlesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
+const allArticles = withReadingTime(allArticlesRaw);
 const latestArticles = allArticles
   .sort((a, b) => {
     // Сортируем по дате: сначала самые новые (большая дата идет первой)
@@ -108,6 +107,15 @@ const aboutProps = {
         badge:
           "Учитель в школе не объясняет или идёт слишком быстро — остаются «дыры» в темах.",
       },
+    ],
+  ] as [
+    [
+      { img: string; alt: string; badge: string },
+      { img: string; alt: string; badge: string },
+    ],
+    [
+      { img: string; alt: string; badge: string },
+      { img: string; alt: string; badge: string },
     ],
   ],
   solutionText:

@@ -4,11 +4,14 @@ import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
 import CardNew from "../../../components/cards/cardNew.astro";
+import { withReadingTime } from "../../../lib/withReadingTime";
 
 // Данные (только видимые статьи)
-const entries = await getCollection("articles", ({ data }) => {
+const entriesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
+
+const entries = withReadingTime(entriesRaw);
 
 const toISO = (d: unknown) => {
   if (d instanceof Date) return d.toISOString();
@@ -67,7 +70,6 @@ const currentPageServer = Math.max(
     : undefined}
   breadcrumbs={breadcrumbs}
 >
-
   <main
     id="articles-main"
     class="articles-section"
@@ -89,7 +91,9 @@ const currentPageServer = Math.max(
         entries.map((p) => (
           <template id={`tmpl-${p.slug}`}>
             {/* Универсальная карточка CardNew для медиа-раздела */}
-            <CardNew post={p} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={p} basePath="/media" />
+            </div>
           </template>
         ))
       }
@@ -400,6 +404,10 @@ const currentPageServer = Math.max(
     display: grid;
     gap: 40px;
     grid-template-columns: repeat(4, 1fr);
+  }
+  .ad-media__card {
+    display: flex;
+    align-items: flex-start;
   }
 
   .pager {

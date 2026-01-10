@@ -14,7 +14,7 @@ interface Props {
   imageSrc?: string;
   imageAlt?: string;
   date?: string;
-  time?: string;
+  readingTime?: number;
   tag?: string;
   category?: string;
   title?: string;
@@ -31,7 +31,7 @@ const {
   imageSrc: manualImageSrc,
   imageAlt: manualImageAlt,
   date: manualDate,
-  time: manualTime,
+  readingTime: manualReadingTime,
   tag: manualTag,
   category: manualCategory,
   title: manualTitle,
@@ -61,8 +61,13 @@ if (!date && post?.data.date) {
   });
 }
 
-// Время чтения
-const time = manualTime ?? post?.data.readingTime ?? "";
+// --- время чтения (ЧИСЛО) ---
+const readingTime =
+  manualReadingTime ??
+  (typeof post?.data.readingTime === "number" ? post.data.readingTime : null);
+
+// --- label для UI ---
+const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : "";
 
 // Ссылка
 let href = manualHref;
@@ -199,7 +204,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
             )
           }
           {
-            time && (
+            timeLabel && (
               <div class="card__body-meta-time">
                 <Image
                   src={timeIcon}
@@ -208,7 +213,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
                   height={14}
                   loading="lazy"
                 />
-                {time}
+                {timeLabel}
               </div>
             )
           }

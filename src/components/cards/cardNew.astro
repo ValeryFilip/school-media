@@ -4,20 +4,18 @@ import { slugify } from "../../lib/slugify";
 import { getCategoryHex } from "../../lib/categoryColors";
 
 interface Props {
-  // Либо передаем post из коллекции
   post?: CollectionEntry<"articles">;
 
-  // Либо вручную
+  // ручной режим (опционально)
   imageSrc?: string;
   imageAlt?: string;
   date?: string;
-  timeToRead?: string;
+  readingTime?: number; // ← ЧИСЛО, не строка
   title?: string;
   text?: string;
   category?: string;
   href?: string;
 
-  // Базовый путь для ссылок (например /media)
   basePath?: string;
   wrapperClass?: string;
 }
@@ -27,7 +25,7 @@ const {
   imageSrc: manualImageSrc,
   imageAlt: manualImageAlt,
   date: manualDate,
-  timeToRead: manualTimeToRead,
+  readingTime: manualReadingTime,
   title: manualTitle,
   text: manualText,
   category: manualCategory,
@@ -36,7 +34,7 @@ const {
   wrapperClass,
 }: Props = Astro.props;
 
-// Извлекаем данные из post или используем ручные
+// --- данные ---
 const imageSrc =
   manualImageSrc ?? post?.data.image ?? "/images/placeholder.jpg";
 const imageAlt = manualImageAlt ?? post?.data.title ?? "Card Image";
@@ -44,7 +42,7 @@ const title = manualTitle ?? post?.data.title ?? "";
 const text = manualText ?? post?.data.description ?? "";
 const category = manualCategory ?? post?.data.category ?? "";
 
-// Дата
+// --- дата ---
 let date = manualDate;
 if (!date && post?.data.date) {
   const d = new Date(post.data.date);
@@ -55,17 +53,21 @@ if (!date && post?.data.date) {
   });
 }
 
-// Время чтения
-const timeToRead = manualTimeToRead ?? post?.data.readingTime ?? "";
+// --- время чтения (ЧИСЛО) ---
+const readingTime =
+  manualReadingTime ??
+  (typeof post?.data.readingTime === "number" ? post.data.readingTime : null);
 
-// Ссылка
+// --- label для UI ---
+const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : "";
+
+// --- ссылка ---
 let href = manualHref;
 if (!href && post) {
-  const slug = post.slug;
-  href = `${basePath}/articles/${slug}`;
+  href = `${basePath}/articles/${post.slug}`;
 }
 
-// Цвет категории (только текст, без обводки)
+// --- цвет категории ---
 const categoryColor = category ? getCategoryHex(category) : "#427eff";
 ---
 
@@ -179,7 +181,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
             )
           }
           {
-            timeToRead && (
+            timeLabel && (
               <div class="card__body-meta-time">
                 <img
                   src="/images/technical/time.png"
@@ -188,7 +190,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
                   height="14"
                   loading="lazy"
                 />
-                {timeToRead}
+                {timeLabel}
               </div>
             )
           }

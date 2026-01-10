@@ -10,6 +10,7 @@ import CopyLinkButton from "../components/article/CopyLinkButton.astro";
 import { slugify } from "../lib/slugify";
 import { ORGANIZATION_DATA, absAsset } from "../lib/seoData";
 import "../styles/global_lend.css";
+import { withReadingTime } from "../lib/withReadingTime";
 
 // типы пропсов
 interface Props {
@@ -135,9 +136,12 @@ function buildNestedToc(items: any[]) {
 const nestedTocItems = buildNestedToc(tocItems || []);
 
 /* === «Ещё по теме»: та же категория === */
-const allArticles = await getCollection("articles", ({ data }) => {
+const allArticlesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
+
+const allArticles = withReadingTime(allArticlesRaw);
+
 function getTimeSafe(p: CollectionEntry<"articles">): number {
   const v = (p.data as any)?.date;
   const d = v instanceof Date ? v : new Date(v);
@@ -184,7 +188,7 @@ const sameCategoryTop = allArticles
                   width="14"
                   height="14"
                 />
-                <span>{fm.readingTime}</span>
+                <span>{fm.readingTime} мин</span>
               </time>
             )
           }
@@ -378,8 +382,8 @@ const sameCategoryTop = allArticles
 </section>
 {
   sameCategoryTop.length > 0 && (
-    <section class="article__more-section container">
-      <div class="article__more">
+    <section class="article__more-section section">
+      <div class="article__more container">
         <div class="article__more-header">
           <h2 class="article__more-title">Ещё по теме</h2>
           <p class="article__more-description">
@@ -389,7 +393,9 @@ const sameCategoryTop = allArticles
         </div>
         <div class="article__more-content">
           {sameCategoryTop.map((post) => (
-            <CardNew post={post} />
+            <div class="ad-media__card">
+              <CardNew post={post} />
+            </div>
           ))}
         </div>
       </div>
@@ -678,6 +684,10 @@ const sameCategoryTop = allArticles
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: var(--space-20);
+  }
+  .ad-media__card {
+    display: flex;
+    align-items: flex-start;
   }
 
   /* ===== АДАПТИВ ===== */
