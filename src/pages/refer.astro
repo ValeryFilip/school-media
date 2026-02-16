@@ -7,7 +7,8 @@ import TwoColPromo from "../components/TwoColPromo.astro";
 import CalcSlot from "../components/slots/CalcSlot.astro";
 import PlainSlot from "../components/slots/PlainSlot.astro";
 import TgChecker from "../components/slots/TgChecker.astro";
-import Faq from "../components/mainpage/Faq.astro"; // ← FAQ
+import Faq from "../components/mainpage/Faq.astro";
+import { buildFAQJsonLd } from "../lib/seoData";
 
 const seo = {
   title: "Партнёрская программа — рекомендуй и зарабатывай",
@@ -19,15 +20,15 @@ const seo = {
 const faqItems = [
   {
     q: "Как стать партнёром?",
-    a: "Заполните короткую форму заявки. Мы проверим данные в течение 1–2 дней и вышлем персональную UTM-ссылку.",
+    a: "Заполните короткую форму заявки, получите персональную UTM-ссылку и начните рекомендовать курсы друзьям и знакомым. Лучше дополнительно написать в поддержку!",
   },
   {
     q: "Сколько я зарабатываю?",
-    a: "За каждого ученика — фиксированная сумма в зависимости от объёма (от 3000 ₽ до 5000 ₽). Плюс 15% от покупок самостоятельных курсов на Stepik.",
+    a: "За каждого ученика — фиксированная сумма в зависимости от количества приглашенных учеников (от 3000 ₽ до 5000 ₽). Плюс 15% от покупок самостоятельных курсов на Stepik.",
   },
   {
     q: "Когда происходит выплата?",
-    a: "После 3 занятий у ученика или по итогам первого месяца обучения. Переводим на карту, ИП или самозанятому.",
+    a: "После 3 занятий у ученика или по итогам первого месяца обучения. Переводим на карту, ИП или самозанятому. Оплачиваем по факту, без задержек.",
   },
   {
     q: "Как отслеживать учеников и покупки?",
@@ -38,6 +39,8 @@ const faqItems = [
     a: "Проверьте правильность написания (без пробелов и с @). Если не помогло — напишите нам в поддержку, всё сверим вручную.",
   },
 ];
+
+const faqJsonLd = buildFAQJsonLd(faqItems);
 ---
 
 <MainLayout
@@ -46,9 +49,9 @@ const faqItems = [
   image={seo.image}
   seoType="website"
   showBreadcrumbs={false}
+  faqJsonLd={faqJsonLd}
 >
-  <div class="page-stack">
-    <!-- Блок 1: промо + калькулятор -->
+  <section id="refers-intro">
     <TwoColPromo
       id="refers-intro"
       bg="var(--white)"
@@ -61,12 +64,44 @@ const faqItems = [
         "Выплаты переводом, удобно и прозрачно",
       ]}
       showButton={true}
-      button={{ text: "Стать партнёром", href: "#apply", variant: "blue" }}
+      button={{
+        text: "Стать партнёром",
+        href: "#refers-apply",
+        variant: "blue",
+      }}
+      image={{
+        src: "/images/refer.webp",
+        alt: "Станьте партнёром нашей онлайн-школы",
+        width: 450,
+        height: 300,
+      }}
+    />
+  </section>
+
+  <section id="refers-calc">
+    <TwoColPromo
+      id="refers-calc"
+      bg="var(--white)"
+      textColor="var(--black)"
+      title="Станьте партнёром нашей онлайн-школы"
+      subtitle="Рекомендуйте курсы и получайте вознаграждение за каждого ученика"
+      list={[
+        "UTM-ссылка и отслеживание",
+        "15% со Stepik-покупок рефералов",
+        "Выплаты переводом, удобно и прозрачно",
+      ]}
+      showButton={true}
+      button={{
+        text: "Стать партнёром",
+        href: "#refers-apply",
+        variant: "blue",
+      }}
     >
       <CalcSlot slot="right" />
     </TwoColPromo>
-
-    <!-- Блок 2: правый слот под форму/виджет -->
+  </section>
+  <!-- Блок 2: правый слот под форму/виджет -->
+  <section id="refers-apply">
     <TwoColPromo
       id="refers-apply"
       bg="var(--blue)"
@@ -106,8 +141,10 @@ const faqItems = [
         </PlainSlot>
       </div>
     </TwoColPromo>
+  </section>
 
-    <!-- Блок 3: проверка статуса по Telegram -->
+  <!-- Блок 3: проверка статуса по Telegram -->
+  <section id="refers-check">
     <TwoColPromo
       id="refers-check"
       bg="var(--white)"
@@ -120,108 +157,112 @@ const faqItems = [
         "Работает и на мобильных",
       ]}
       showButton={true}
-      button={{ text: "Написать в поддержку", href: "#apply", variant: "blue" }}
+      button={{
+        text: "Написать в поддержку",
+        href: "https://t.me/valery_chemistry",
+        variant: "blue",
+      }}
     >
       <TgChecker slot="right" />
     </TwoColPromo>
-
-    <!-- Блок 4: FAQ (в конце страницы) -->
+  </section>
+  <!-- Блок 4: FAQ (в конце страницы) -->
+  <section id="faq">
     <Faq
       title="Частые вопросы о партнёрской программе"
       items={faqItems}
       singleOpen={true}
       headingId="refers-faq-title"
     />
-  </div>
-
-  <style>
-    /* ===== Верхний двухколоночный блок (без списка), на твоих токенах ===== */
-    .refer-hero__box {
-      margin-top: 50px;
-      background: var(--white);
-      color: var(--black);
-      border-radius: var(--radius-24);
-      box-shadow: var(--shadow-1);
-      border: 1px solid var(--border);
-      padding: var(--space-32);
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: var(--space-32);
-      align-items: center;
-    }
-    .refer-hero__title {
-      margin: 0 0 var(--space-16);
-      font-size: var(--h1);
-      line-height: 1.15;
-      font-weight: 700;
-    }
-    .refer-hero__lead {
-      margin: 0;
-      font-size: var(--lead);
-      line-height: 1.6;
-      color: var(--black);
-    }
-
-    /* Кнопки */
-    .refer-hero__actions {
-      display: flex;
-      gap: var(--space-12);
-      flex-wrap: wrap;
-      margin-top: var(--space-24);
-    }
-
-    .refer-hero__figure {
-      margin: 0;
-      overflow: hidden;
-    }
-    .refer-hero__figure img {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-
-    /* Адаптив: на планшете и мобильном — в одну колонку */
-    @media (max-width: 1100px) {
-      .refer-hero__box {
-        grid-template-columns: 1fr;
-        gap: var(--space-24);
-        padding: var(--space-24);
-      }
-      .refer-hero__title,
-      .refer-hero__lead {
-        text-align: center;
-      }
-      .refer-hero__actions {
-        justify-content: center;
-      }
-    }
-
-    /* мини-оформление заглушки формы внутри PlainSlot — на твоих токенах */
-    .fake-form {
-      display: grid;
-      gap: var(--space-16);
-    }
-    .fake-label {
-      display: grid;
-      gap: 8px;
-      font: 600 14px/1.2 var(--ff);
-      color: var(--black);
-    }
-    .fake-input {
-      height: 44px;
-      border-radius: 12px;
-      padding: 0 14px;
-      font-size: 16px;
-      border: 1px solid var(--border);
-      background: #f9f9f9;
-      outline: none;
-      color: var(--black);
-    }
-    .fake-input:focus {
-      background: #fff;
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
-    }
-  </style>
+  </section>
 </MainLayout>
+<style>
+  /* ===== Верхний двухколоночный блок (без списка), на твоих токенах ===== */
+  .refer-hero__box {
+    margin-top: 50px;
+    background: var(--white);
+    color: var(--black);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+    border: 1px solid var(--border);
+    padding: var(--space-32);
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: var(--space-32);
+    align-items: center;
+  }
+  .refer-hero__title {
+    margin: 0 0 var(--space-16);
+    font-size: var(--h1);
+    line-height: 1.15;
+    font-weight: 700;
+  }
+  .refer-hero__lead {
+    margin: 0;
+    font-size: var(--lead);
+    line-height: 1.6;
+    color: var(--black);
+  }
+
+  /* Кнопки */
+  .refer-hero__actions {
+    display: flex;
+    gap: var(--space-12);
+    flex-wrap: wrap;
+    margin-top: var(--space-24);
+  }
+
+  .refer-hero__figure {
+    margin: 0;
+    overflow: hidden;
+  }
+  .refer-hero__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Адаптив: на планшете и мобильном — в одну колонку */
+  @media (max-width: 1100px) {
+    .refer-hero__box {
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+      padding: var(--space-24);
+    }
+    .refer-hero__title,
+    .refer-hero__lead {
+      text-align: center;
+    }
+    .refer-hero__actions {
+      justify-content: center;
+    }
+  }
+
+  /* мини-оформление заглушки формы внутри PlainSlot — на твоих токенах */
+  .fake-form {
+    display: grid;
+    gap: var(--space-16);
+  }
+  .fake-label {
+    display: grid;
+    gap: 8px;
+    font: 600 14px/1.2 var(--ff);
+    color: var(--black);
+  }
+  .fake-input {
+    height: 44px;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    background: #f9f9f9;
+    outline: none;
+    color: var(--black);
+  }
+  .fake-input:focus {
+    background: #fff;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
+  }
+</style>

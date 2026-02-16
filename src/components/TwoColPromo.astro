@@ -46,7 +46,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<section
+<div
   class="section two-col-promo"
   aria-labelledby={`${id}-title`}
   style={`--promo-bg:${bg}; --promo-color:${textColor}; --promo-sub-fz:${subtitleSize};`}
@@ -74,12 +74,7 @@ const {
               href={button.href}
               id="cta-adfree-A"
               type="button"
-              class={"btn btn--ghost ad-free__cta popup-btn"}
-              data-popup-id="lead-popup"
-              data-utm-source="two-col-promo"
-              data-utm-medium="cta"
-              data-utm-campaign="two-col-promo"
-              data-utm-content="btn"
+              class={"btn btn--ghost"}
               aria-label={button.aria || button.text}
             >
               {button.text}
@@ -112,6 +107,9 @@ const {
   <style>
     .two-col-promo {
       color: var(--promo-color, var(--black));
+      display: flex;
+      gap: var(--space-32);
+      align-items: center;
     }
 
     .promo-box {
@@ -162,12 +160,10 @@ const {
       margin: 0;
       border-radius: var(--radius-24);
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: #00000008;
     }
     .promo-figure img {
       display: block;
-      width: 100%;
+      max-width: 100%;
       height: auto;
       object-fit: cover;
     }
@@ -186,4 +182,4 @@ const {
       }
     }
   </style>
-</section>
+</div>

@@ -17,7 +17,7 @@ export async function GET() {
     // Формируем <item> для каждой статьи
     const itemsXml = posts.map((post) => {
         const { slug, data } = post;
-        const url = `${siteUrl}/articles/${slug}`;
+        const url = `${siteUrl}/media/articles/${slug}`;
         const pubDate = data.date.toUTCString();
 
         // Описание: картинка + текст

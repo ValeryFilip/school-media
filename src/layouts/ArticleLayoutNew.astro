@@ -79,10 +79,6 @@ function resolveSrc(input: unknown): string | null {
 /* === автор === */
 const authorName = fm.authorName || fm.author || "Без имени";
 const authorRole = fm.authorRole || "Эксперт по теме";
-const authorPhoto =
-  resolveSrc((fm as any).authorPhoto) ||
-  resolveSrc((fm as any).authorImage) ||
-  "/images/stepik/researcher.webp";
 
 /* === HERO === */
 const heroFromFM =
@@ -152,7 +148,7 @@ const sameCategoryTop = allArticles
   .filter(
     (p) =>
       p.slug !== slug &&
-      String(p.data?.category ?? "").toLowerCase() === currentCategory
+      String(p.data?.category ?? "").toLowerCase() === currentCategory,
   )
   .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
   .slice(0, 4);
@@ -201,7 +197,6 @@ const sameCategoryTop = allArticles
             />
           </div>
           <div class="article__meta-author">
-            <img src={authorPhoto} alt={authorName} width="14" height="14" />
             <span>{authorName}</span>
           </div>
         </div>

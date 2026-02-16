@@ -72,11 +72,6 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
 ---
 
 <style>
-  article {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
   .card__wrapper {
     border-radius: 8px;
     overflow: hidden;
@@ -86,17 +81,21 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   }
   .card__top-img {
     padding-bottom: 16px;
+    overflow: hidden;
   }
+
   .card__top-img img {
     max-width: 100%;
     border-radius: 12px;
     aspect-ratio: 16/10;
     object-fit: cover;
-    transition: all 0.5s ease;
     object-position: center;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
-  .card__top-img img:hover {
-    transform: scale(1.02);
+
+  .card__wrapper:hover .card__top-img img {
+    transform: scale(1.04);
   }
   .card__body {
     padding: 0 15px 15px 15px;

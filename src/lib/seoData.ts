@@ -218,8 +218,9 @@ export function buildCourseJsonLd(params: {
   providerName?: string;
   ratingValue?: number;
   reviewCount?: number;
+  keywords?: string[];
 }) {
-  const { origin, url, name, description, providerName, ratingValue, reviewCount } = params;
+  const { origin, url, name, description, providerName, ratingValue, reviewCount, keywords } = params;
 
   return {
     "@context": "https://schema.org",
@@ -232,6 +233,7 @@ export function buildCourseJsonLd(params: {
     },
     inLanguage: "ru-RU",
     url,
+    ...(keywords?.length ? { keywords: keywords.join(", ") } : {}),
     ...(typeof ratingValue === "number" && typeof reviewCount === "number" && {
       aggregateRating: {
         "@type": "AggregateRating",

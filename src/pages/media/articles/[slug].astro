@@ -6,6 +6,7 @@ import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
 import { calcReadingTime } from "../../../lib/calcReadingTime";
+import { buildArticleJsonLd } from "../../../lib/seoData";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -62,6 +63,21 @@ const breadcrumbs = [
   },
   { name: fm.title }, // текущая страница — без href
 ];
+
+// Article JSON-LD для статей (keywords, articleSection)
+const articleJsonLd = buildArticleJsonLd({
+  origin: siteUrl,
+  url: pageUrl,
+  headline: fm.title,
+  description: fm.description,
+  image: fm.image,
+  datePublished: new Date(fm.date as any).toISOString(),
+  dateModified: (fm as any).updated
+    ? new Date((fm as any).updated as any).toISOString()
+    : new Date(fm.date as any).toISOString(),
+  keywords: fm.tags?.length ? fm.tags : undefined,
+  articleSection: fm.category,
+});
 ---
 
 <MainLayout
@@ -75,6 +91,7 @@ const breadcrumbs = [
     ? new Date((fm as any).updated as any).toISOString()
     : new Date(fm.date as any).toISOString()}
   breadcrumbs={breadcrumbs}
+  articleJsonLd={articleJsonLd}
 >
   <ArticleLayoutNew fm={fm} slug={slug} headings={headings}>
     <Content />

@@ -1,21 +1,14 @@
 ---
-title: "Шкала перевода баллов ЕГЭ 2025. Калькулятор"
+title: " ГОТОВО Шкала перевода баллов ЕГЭ 2025. Первичные и вторичные баллы. Калькулятор"
 date: 2025-09-24
-description: "Шкала перевода баллов ЕГЭ 2025: как перевести первичные баллы в тестовые (100-балльная система), минимальные баллы ЕГЭ для поступления, таблицы по предметам и калькулятор перевода."
+description: "Шкала перевода баллов ЕГЭ 2025. Первичные и вторичные баллы. как перевести первичные баллы в тестовые (100-балльная система), минимальные баллы ЕГЭ для поступления, таблицы по предметам и калькулятор перевода."
 tags:
-  [
-    "ЕГЭ",
-    "шкала перевода баллов ЕГЭ",
-    "перевод первичных баллов ЕГЭ",
-    "результаты ЕГЭ в баллах",
-    "шкала ЕГЭ 2025",
-  ]
+  ["ЕГЭ", "Проведение экзамена"]
 category: "Школьникам"
 image: "/images/articles/shkala.png"
 heroImage: "/images/articles/shkala.png"
 author: "Валерий Филипенко"
 authorRole: "Преподаватель химии, автор курсов ЕГЭ"
-authorImage: "/images/authors/valeriy-filipenko.jpg"
 visible: true
 ---
 
@@ -23,8 +16,9 @@ import Table from "../../components/mdx/Table.astro";
 import FAQ from "../../components/mdx/FAQ.astro";
 import Banner from "../../components/mdx/Banner.astro";
 import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
+import Accordion from "../../components/mdx/Accordion.astro";
 
-Шкала перевода баллов ЕГЭ помогает понять, как перевести первичные баллы в тестовые 100-балльной системы. На этой странице собраны таблицы «первичные и тестовые баллы ЕГЭ» по ключевым предметам и минимальные баллы ЕГЭ 2025. Также ниже есть калькулятор: выберите предмет, введите первичные - получите вторичные и увидите, преодолен ли порог.
+Шкала перевода баллов ЕГЭ помогает понять, как перевести первичные баллы в тестовые 100-балльной системы. На этой странице собраны таблицы «первичные и тестовые баллы ЕГЭ» по всем предметам и минимальные баллы ЕГЭ 2026  . Также ниже есть калькулятор: выберите предмет, введите первичные - получите вторичные и увидите, преодолен ли порог.
 
 Чтобы правильно спланировать подготовку, узнайте даты экзаменов. Полное расписание ЕГЭ 2026 смотрите в статье [Расписание ЕГЭ 2026](/media/articles/raspisanie-ege-2026).
 
@@ -32,7 +26,7 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 <Banner type="info" title="Минимальные баллы для поступления">
   В таблицах ниже строка, соответствующая минимальному порогу для поступления
-  (по Рособрнадзору), подсвечена оранжевым цветом.
+  (по [Рособрнадзору](https://obrnadzor.gov.ru/gia/gia-11/rezultaty/)), подсвечена оранжевым цветом.
 </Banner>
 
 **Минимальные пороги по предметам:**
@@ -48,12 +42,11 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 <EgeCalculator />
 
-## Таблицы перевода «первичные → тестовые» (ЕГЭ-2025)
+## Таблицы перевода «первичные в тестовые» (ЕГЭ-2026)
 
 В таблицах приведены официальные соответствия: «первичные баллы» → «вторичные (тестовые)». Если каких-то значений нет - это нормально: не каждый тестовый балл достижим из-за особенностей шкалы.
 
-<details id="math-base" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Математика (базовый уровень)</strong></summary>
+<Accordion id="math-base" title="Математика (базовый уровень)">
 
 <div class="table-body">
 <Table>
@@ -71,13 +64,12 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="math-pro" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Математика (профиль)</strong></summary>
+<Accordion id="math-pro" title="Математика (профиль)">
 
 <div class="table-body">
-<Table>
+<Table bordered="false">
 
 | Первичные | Тестовые |
 | --------- | -------- |
@@ -120,10 +112,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="russian" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Русский язык</strong></summary>
+<Accordion id="russian" title="Русский язык">
 
 <div class="table-body">
 <Table>
@@ -187,10 +178,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="chemistry" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Химия</strong></summary>
+<Accordion id="chemistry" title="Химия" >
 
 <div class="table-body">
 <Table>
@@ -260,10 +250,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="biology" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Биология</strong></summary>
+<Accordion id="biology" title="Биология">
 
 <div class="table-body">
 <Table>
@@ -334,10 +323,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="physics" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Физика</strong></summary>
+<Accordion id="physics" title="Физика">
 
 <div class="table-body">
 <Table>
@@ -396,10 +384,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="history" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>История</strong></summary>
+<Accordion id="history" title="История">
 
 <div class="table-body">
 <Table>
@@ -455,10 +442,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="literature" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Литература</strong></summary>
+<Accordion id="literature" title="Литература">
 
 <div class="table-body">
 <Table>
@@ -520,10 +506,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="social" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Обществознание</strong></summary>
+<Accordion id="social" title="Обществознание">
 
 <div class="table-body">
 <Table>
@@ -595,10 +580,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="informatics" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Информатика</strong></summary>
+<Accordion id="informatics" title="Информатика">
 
 <div class="table-body">
 <Table>
@@ -641,10 +625,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="geography" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>География</strong></summary>
+<Accordion id="geography" title="География">
 
 <div class="table-body">
 <Table>
@@ -696,10 +679,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="foreign-lang" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Иностранные языки</strong></summary>
+<Accordion id="foreign-lang" title="Иностранные языки">
 
 <div class="table-body">
 <Table>
@@ -795,10 +777,9 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
-<details id="chinese" style="margin: clamp(16px, 2vw, 24px) 0; border: 1px solid #e5e7eb; border-radius: clamp(8px, 1vw, 12px); overflow: hidden; background: #fff;">
-  <summary style="padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px); cursor: pointer; user-select: none; list-style: none; font-weight: 600; font-size: clamp(15px, 1.4vw, 17px); color: #111; background: #f9fafb; border-bottom: 1px solid #e5e7eb; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px;"><strong>Китайский язык</strong></summary>
+<Accordion id="chinese" title="Китайский язык">
 
 <div class="table-body">
 <Table>
@@ -892,7 +873,7 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 
 </div>
 
-</details>
+</Accordion>
 
 ## Часто задаваемые вопросы
 
@@ -916,16 +897,14 @@ import EgeCalculator from "../../components/mdx/EgeCalculator.astro";
 <FAQ question="В чём разница между первичными и тестовыми баллами ЕГЭ?">
   Первичные баллы - это сумма баллов за все выполненные задания ЕГЭ.
   Максимальное количество первичных баллов различается по предметам (например,
-  математика - 32, русский язык - 50, химия - 56). Тестовые баллы - это
+  математика - 32, русский язык - 50, химия - 56). Тестовые баллы (вторичные) - это
   результат перевода первичных баллов в 100-балльную шкалу. Именно тестовые
   баллы учитываются при поступлении в вуз.
 </FAQ>
 
 <FAQ question="Как узнать, прошёл ли я минимальный порог ЕГЭ?">
-  Минимальный порог определяется по тестовым баллам. В таблицах на этой странице
-  строка с минимальным порогом подсвечена оранжевым цветом. Если ваш тестовый
-  балл равен или превышает минимальный порог для предмета, значит вы прошли
-  порог. Калькулятор также автоматически покажет, пройден ли порог для введённых
+  Минимальный порог определяется по тестовым баллам, выберите свой предмет, узнайте минимальный балл и сверьтесь.
+   Калькулятор также автоматически покажет, пройден ли порог для введённых
   первичных баллов.
 </FAQ>
 

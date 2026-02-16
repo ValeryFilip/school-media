@@ -12,6 +12,7 @@ import AdFreeBanner from "../components/mainpage/AdFreeBanner.astro";
 import LeadCapture from "../components/mainpage/LeadCapture.astro";
 import Faq from "../components/mainpage/Faq.astro";
 import HeroCourses from "../components/HeroCourses.astro";
+import { buildFAQJsonLd } from "../lib/seoData";
 
 /* SEO */
 const seo = {
@@ -207,6 +208,8 @@ const faqItems = [
     a: "В течение 14 дней при прохождении менее 20% курса — оформим возврат без вопросов.",
   },
 ];
+
+const faqJsonLd = buildFAQJsonLd(faqItems);
 ---
 
 <MainLayout
@@ -215,6 +218,7 @@ const faqItems = [
   image={seo.image}
   seoType="website"
   showBreadcrumbs={false}
+  faqJsonLd={faqJsonLd}
 >
   <div class="page-stack">
     <section id="hero">

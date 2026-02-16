@@ -104,6 +104,7 @@ const breadcrumbsJsonLd =
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#366ef0" />
     {inMedia && <base href="/media/" />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -112,7 +113,6 @@ const breadcrumbsJsonLd =
       href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <meta name="robots" content="noindex, nofollow" />
     {
       inMedia && (
         <>
@@ -124,7 +124,7 @@ const breadcrumbsJsonLd =
           />
           <link
             rel="preload"
-            href="/favicon.ico"
+            href="/favicon.svg"
             as="image"
             type="image/x-icon"
           />
@@ -158,8 +158,8 @@ const breadcrumbsJsonLd =
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.svg" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <YandexMetrika />
 
