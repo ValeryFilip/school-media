@@ -184,7 +184,7 @@ export function buildArticleJsonLd(params: {
     }),
     url,
     inLanguage: "ru-RU",
-    ...(keywords && keywords.length > 0 && { keywords }),
+    ...(keywords && keywords.length > 0 && { keywords: Array.isArray(keywords) ? keywords.join(", ") : keywords }),
     ...(articleSection && { articleSection }),
     author: {
       "@type": "Person",

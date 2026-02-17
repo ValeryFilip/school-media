@@ -37,26 +37,27 @@ export const GET: APIRoute = async () => {
     // 1) Статика: собрать все .astro страницы (без динамических [param])
     const pageFiles = Object.keys(import.meta.glob('./**/*.astro', { eager: true }));
     const toRoute = (p: string) => {
-        // './neorganika.astro' -> '/neorganika/' ; './media/index.astro' -> '/media/'
+        // './neorganika.astro' -> '/neorganika/' ; './index.astro' -> '/' ; './media/index.astro' -> '/media/'
         let r = p.replace(/^\.\//, '').replace(/\.astro$/, '');
-        if (r.endsWith('/index')) r = r.slice(0, -('/index'.length));
+        if (r === 'index' || r.endsWith('/index')) r = r === 'index' ? '' : r.slice(0, -('/index'.length));
         if (!r.startsWith('/')) r = '/' + r;
         if (!r.endsWith('/')) r = r + '/';
         return r;
     };
+    // URL, которые добавляем отдельно с другими priority/changefreq — не дублируем из статики
+    const excludeFromStatic = ['/sitemap.xml/', '/rss.xml/', '/robots.txt/', '/media/', '/media/articles/', '/media/search/', '/thank-you/'];
     const staticRoutes = pageFiles
-        .filter(p => !p.includes('[')) // исключаем динамические
+        .filter(p => !p.includes('['))
         .filter(p => !p.endsWith('404.astro'))
         .map(toRoute)
-        // исключаем сам sitemap, rss и robots (они отдельными endpoint'ами)
-        .filter(r => !['/sitemap.xml/', '/rss.xml/', '/robots.txt/'].includes(r));
+        .filter(r => !excludeFromStatic.includes(r));
 
-    // Базовые приоритеты
+    // 1) Статика
     for (const url of staticRoutes) {
         smStream.write({ url, changefreq: 'weekly', priority: url === '/' ? 1.0 : 0.7 });
     }
 
-    // 2) Медиа: корневые страницы
+    // 2) Медиа: корневые страницы (по одному разу с нужными priority)
     smStream.write({ url: '/media/', changefreq: 'daily', priority: 0.9 });
     smStream.write({ url: '/media/articles/', changefreq: 'daily', priority: 0.8 });
     smStream.write({ url: '/media/search/', changefreq: 'weekly', priority: 0.5 });

@@ -67,7 +67,7 @@ const {
   nextUrl,
 
   logoSrc,
-  ctaHref = "/egecourse",
+  ctaHref = "/allcourses",
 
   breadcrumbs = [],
   showBreadcrumbs = true,
@@ -81,6 +81,14 @@ const {
 } = Astro.props as Props;
 
 const inMedia = Astro.url.pathname.startsWith("/media");
+const pathname = Astro.url.pathname;
+// UTM source по странице: для попапа и кнопок CTA (меню, футер)
+const pageUtmSource =
+  pathname === "/"
+    ? "main-page"
+    : pathname.startsWith("/media")
+      ? "media"
+      : (pathname.replace(/^\/|\/$/g, "").split("/")[0] || "main-page");
 const origin = Astro.url.origin;
 const siteNameFinal = getSiteName(siteName, config.siteName);
 
@@ -136,7 +144,7 @@ const breadcrumbsJsonLd =
       title={title ?? "EGEHIM"}
       description={description ??
         "Подготовка к ЕГЭ по химии: курсы, разборы и материалы"}
-      image={image}
+      image={image ?? "/images/technical/og-home.png"}
       url={url}
       type={seoType}
       noindex={noindex}
@@ -179,6 +187,7 @@ const breadcrumbsJsonLd =
       context={inMedia ? "media" : "landing"}
       logoSrc={logoSrc}
       ctaHref={ctaHref}
+      pageUtmSource={pageUtmSource}
     />
     {
       showBreadcrumbs && breadcrumbs.length > 0 && (
@@ -189,9 +198,14 @@ const breadcrumbsJsonLd =
       <slot />
     </main>
 
-    <SiteFooter />
+    <SiteFooter pageUtmSource={pageUtmSource} />
 
-    <PopupForm popupId="lead-popup" />
+    <PopupForm
+      popupId="lead-popup"
+      utmSource={pageUtmSource}
+      utmMedium="organic"
+      utmCampaign="popup-lead"
+    />
 
     <ExternalScripts />
   </body>

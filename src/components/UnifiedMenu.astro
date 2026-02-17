@@ -8,6 +8,8 @@ interface Props {
   logoAlt?: string;
   ctaText?: string;
   ctaHref?: string;
+  /** UTM source по странице (main-page, media, allcourses, …) для кнопок попапа */
+  pageUtmSource?: string;
 }
 
 const {
@@ -16,6 +18,7 @@ const {
   logoAlt = "ЕГЕХИМ",
   ctaText = "Записаться на пробный урок",
   ctaHref = "#signup",
+  pageUtmSource = "main-page",
 } = Astro.props;
 
 // Получаем категории из коллекций для медиа
@@ -289,10 +292,10 @@ if (context === "media") {
           type="button"
           class="menu__cta-button popup-btn"
           data-popup-id="lead-popup"
-          data-utm-source="menu"
+          data-utm-source={pageUtmSource}
           data-utm-medium="cta"
-          data-utm-campaign="menu-cta"
-          data-utm-content="desktop-button"
+          data-utm-campaign="popup-lead"
+          data-utm-content="menu-desktop"
         >
           {ctaText}
         </button>
@@ -558,10 +561,10 @@ if (context === "media") {
         type="button"
         class="mnav__cta-button popup-btn"
         data-popup-id="lead-popup"
-        data-utm-source="menu"
+        data-utm-source={pageUtmSource}
         data-utm-medium="cta"
-        data-utm-campaign="menu-cta"
-        data-utm-content="mobile-button"
+        data-utm-campaign="popup-lead"
+        data-utm-content="menu-mobile"
       >
         {ctaText}
       </button>

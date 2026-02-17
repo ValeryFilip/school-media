@@ -15,6 +15,9 @@ const { data } = Astro.props;
 if (!data) {
   return null;
 }
+
+// Экранируем </script> в JSON, чтобы контент (title, description и т.д.) не закрывал тег
+const jsonStr = JSON.stringify(data, null, 2).replace(/<\/script/gi, "<\\/script");
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(data, null, 2)} />
+<script type="application/ld+json" set:html={jsonStr} />
