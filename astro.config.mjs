@@ -9,10 +9,10 @@ import sitemap from '@astrojs/sitemap';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-    // Ваш публичный URL (для sitemap, og:url и т. д.)
+    // Обязательно для sitemap: полный URL с https:// (иначе интеграция не сможет строить URL и возможен undefined в astro:build:done)
     site: 'https://egehim.ru',
 
-    // Статический режим для генерации статических файлов
+    // Статический режим. При output: 'server' (SSR) sitemap получает undefined вместо списка страниц и падает на .reduce()
     output: 'static',
 
     // Подсветка кода в Markdown
