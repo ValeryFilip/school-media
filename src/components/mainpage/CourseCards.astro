@@ -2,6 +2,16 @@
 import CursCard from "../cards/cursCard.astro";
 import H2Zag from "../text/h2zag.astro";
 
+/** Формат из allcourses: labels, price: { current, old, discount } */
+interface CardFromPage {
+  labels?: Array<{ text?: string }>;
+  price?: { current?: string; old?: string; discount?: string };
+  title?: string;
+  features?: string[];
+  href?: string;
+  [key: string]: unknown;
+}
+
 interface CourseCard {
   pins?: string[];
   title?: string;
@@ -17,7 +27,7 @@ interface CourseCard {
 interface Props {
   heading?: string;
   subtitle?: string;
-  cards?: CourseCard[];
+  cards?: (CourseCard | CardFromPage)[];
 }
 
 const {
@@ -25,6 +35,28 @@ const {
   subtitle = "Наши курсы помогут вам успешно поступить в вуз",
   cards = [],
 } = Astro.props;
+
+/** Нормализует карточку: и формат allcourses (labels, price), и старый (pins, priceNew...) */
+function normalizeCard(card: CourseCard | CardFromPage): CourseCard {
+  const c = card as CardFromPage;
+  const hasNewFormat =
+    ("labels" in card && Array.isArray(c.labels)) ||
+    (c.price && typeof c.price === "object");
+  if (hasNewFormat) {
+    return {
+      pins: c.labels?.map((l) => l?.text ?? "") ?? [],
+      title: c.title,
+      features: c.features,
+      priceNew: c.price?.current,
+      priceOld: c.price?.old,
+      priceDisc: c.price?.discount,
+      priceNote: (card as CourseCard).priceNote,
+      buttonText: (card as CourseCard).buttonText,
+      href: c.href,
+    };
+  }
+  return card as CourseCard;
+}
 ---
 
 <div class="section course-cards">
@@ -32,19 +64,22 @@ const {
     <H2Zag title={heading} subtitle={subtitle} />
     <div class="course-cards__grid">
       {
-        cards.map((card) => (
-          <CursCard
-            pins={card.pins}
-            title={card.title}
-            features={card.features}
-            priceNew={card.priceNew}
-            priceOld={card.priceOld}
-            priceDisc={card.priceDisc}
-            priceNote={card.priceNote}
-            buttonText={card.buttonText}
-            href={card.href}
-          />
-        ))
+        cards.map((card) => {
+          const n = normalizeCard(card);
+          return (
+            <CursCard
+              pins={n.pins}
+              title={n.title}
+              features={n.features}
+              priceNew={n.priceNew}
+              priceOld={n.priceOld}
+              priceDisc={n.priceDisc}
+              priceNote={n.priceNote}
+              buttonText={n.buttonText}
+              href={n.href}
+            />
+          );
+        })
       }
     </div>
   </div>

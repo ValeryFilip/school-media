@@ -12,10 +12,11 @@ const description =
 // крошки: ваш компонент добавит «Домой», здесь — только текущая страница
 const breadcrumbs = [{ name: title }];
 
-// Генерация JSON-LD
-const origin = Astro.url.origin;
+// Генерация JSON-LD (origin — из Astro.site)
+const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageUrl = `${origin}${Astro.url.pathname}`;
 const siteName = getSiteName(undefined, config.siteName);
+const siteBase = origin;
 const webPageJsonLd = buildWebPageJsonLd({
   origin,
   url: pageUrl,
@@ -48,7 +49,7 @@ const webPageJsonLd = buildWebPageJsonLd({
         <p>
           Все операции с банковскими картами выполняются на стороне платформы
           Stepik и её платёжных партнёров по защищённым каналам связи. Сайт <strong
-            >{new URL(config.siteUrl).host}</strong
+            >{new URL(siteBase).host}</strong
           > не принимает платежи и не обрабатывает данные банковских карт.
         </p>
       </section>
@@ -86,7 +87,7 @@ const webPageJsonLd = buildWebPageJsonLd({
         <p>
           Оформляя оплату на платформе Stepik, вы соглашаетесь с условиями
           обработки персональных данных, установленными Stepik и его платёжными
-          партнёрами. Сайт <strong>{new URL(config.siteUrl).host}</strong> не собирает
+          партнёрами. Сайт <strong>{new URL(siteBase).host}</strong> не собирает
           и не хранит платёжные реквизиты банковских карт.
         </p>
         <p>

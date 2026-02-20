@@ -83,8 +83,8 @@ const section7Vertical = section7Posts.slice(0, 6);
 const section8Posts = filterByCategory("материалы для егэ и огэ по химии");
 const section8Vertical = section8Posts.slice(0, 6);
 
-// SEO
-const site = config.siteUrl.replace(/\/$/, "");
+// SEO (приоритет — Astro.site из astro.config)
+const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle = "Медиа — статьи и материалы по химии, ЕГЭ и ОГЭ";
 const pageDesc =
   "Статьи, разборы и материалы по химии: подготовка к ЕГЭ и ОГЭ, теория, практика и советы от экспертов.";

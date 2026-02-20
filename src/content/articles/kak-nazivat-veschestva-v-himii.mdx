@@ -16,6 +16,59 @@ import FAQ from "../../components/mdx/FAQ.astro";
 import Banner from "../../components/mdx/Banner.astro";
 import Quote from "../../components/mdx/Quote.astro";
 import VideoTabs from "../../components/mdx/VideoTabs.astro";
+import Slider from "../../components/mdx/tests/TestSlider.astro";
+import PicButtonText from "../../components/mdx/ADbanners/PicButtonText.astro";
+
+export const testQuestionsNomenklatura = [
+  {
+    type: "radio",
+    mode: "slider",
+    text: "Выберите систематическое (номенклатурное) название вещества NaOH:",
+    items: [
+      { text: "Гидроксид натрия", correct: true },
+      { text: "Едкий натр", correct: false },
+      { text: "Каустик", correct: false },
+    ],
+    helpText: "Систематическое название строится по правилу: гидроксид + металл. Едкий натр и каустик — тривиальные названия.",
+    explanationText: "NaOH — гидроксид натрия. «Едкий натр» и «каустик» — тривиальные названия того же вещества.",
+  },
+  {
+    type: "radio",
+    mode: "slider",
+    text: "Формула CaCO₃ по систематической номенклатуре называется:",
+    items: [
+      { text: "Карбонат кальция", correct: true },
+      { text: "Мел", correct: false },
+      { text: "Известняк", correct: false },
+    ],
+    helpText: "Соль = кислотный остаток (карбонат) + металл (кальций). Мел и известняк — тривиальные названия.",
+    explanationText: "Карбонат кальция — систематическое название. Мел и известняк — тривиальные названия того же вещества.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Напишите формулу вещества по названию: оксид железа (III). (Цифры в формуле можно вводить обычные, например H2O.)",
+    correctTextAnswer: "fe2o3",
+    helpText: "Оксид железа(III) — железо в степени окисления +3 и кислород −2. Сумма степеней в молекуле равна 0.",
+    explanationText: "Оксид железа(III) — Fe₂O₃. Железо +3, кислород −2. Тривиальное название — красный железняк.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Напишите формулу вещества по названию: нитрат алюминия.",
+    correctTextAnswer: "al(no3)3",
+    helpText: "Нитрат — кислотный остаток NO₃⁻. Алюминий — металл III группы, степень окисления +3.",
+    explanationText: "Нитрат алюминия — Al(NO₃)₃. Алюминий +3, три нитрат-иона дают −3.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Напишите формулу вещества по названию: гидрокарбонат калия",
+    correctTextAnswer: "khco3",
+    helpText: "Гидрокарбонат — кислотный остаток HCO₃⁻. Калий — металл I группы, степень окисления +1.",
+    explanationText: "Гидрокарбонат калия — KHCO₃. Калий +1, один гидрокарбонат-ион HCO₃⁻.",
+  },
+];
 
 ## Как называть вещества в химии?
 
@@ -81,6 +134,15 @@ import VideoTabs from "../../components/mdx/VideoTabs.astro";
   на уроках, но в заданиях ЕГЭ лучше всегда уметь переводить их в
   систематическую форму.
 </Banner>
+
+<PicButtonText
+  title="Номенклатура — основа заданий ЕГЭ. Закрепи тему на практике"
+  buttonText="Записаться на бесплатный курс"
+  imageSrc="/images/banner-pic.png"
+  imageAlt="Подготовка к ЕГЭ по химии"
+  utmSource="article"
+  utmContent="nazvaniya-veschestv"
+/>
 
 Для школы и экзамена чаще применяются **номенклатурные названия**. Систематические названия - это строгие названия по правилам ИЮПАК или школьной программы: оксид железа(III), гидроксид калия, серная кислота. Они позволяют безошибочно восстановить формулу по названию. Именно систематическая номенклатура нужна «для ЕГЭ» и «для ОГЭ». С помощью названия по правилу понятно, что за класс имеет данное вещество. Например, оксид железа(III) - Fe<sub>2</sub>O<sub>3</sub> из класса оксидов.
 
@@ -287,6 +349,13 @@ import VideoTabs from "../../components/mdx/VideoTabs.astro";
 
 </Table>
 
+<PicButtonText
+  title="Оксиды, соли, кислоты — названия по правилам. Закрепи номенклатуру на практике"
+  buttonText="Записаться на бесплатный урок"
+  utmSource="article"
+  utmContent="nazvaniya-veschestv-2"
+/>
+
 ### Как назвать пероксиды
 
 Пероксиды - это соединение, состоящее из двух элементов, одним из которых является кислород со с.о. −1.
@@ -474,6 +543,10 @@ import VideoTabs from "../../components/mdx/VideoTabs.astro";
 <FAQ question="Нужно ли знать все кислоты и кислотные остатки?">
   Да, это обязательно для успешной сдачи ЕГЭ 
   </FAQ>
+
+## Тест по теме: названия веществ
+
+<Slider questions={testQuestionsNomenklatura} />
 
 <Banner type="success" title="Заключение">
   Надеюсь, эта статья помогла вам разобраться, как называть вещества в химии.

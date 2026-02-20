@@ -65,7 +65,7 @@ const pagedLeftCards = leftCards.slice(
   currentPage * PER_PAGE
 );
 
-const siteUrl = config.siteUrl.replace(/\/$/, "");
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle = `${originalCategory ?? ""}`;
 const catKey = String(originalCategory || "").toLowerCase();
 const pageDesc =

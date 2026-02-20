@@ -8,7 +8,8 @@ const seo = {
     "Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.",
   noindex: true, // Не индексируем страницу благодарности
 };
-const canonicalUrl = `${config.siteUrl.replace(/\/$/, "")}/thank-you/`;
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const canonicalUrl = `${siteUrl}/thank-you/`;
 
 // Получаем UTM параметры из URL для аналитики
 const url = new URL(Astro.request.url);

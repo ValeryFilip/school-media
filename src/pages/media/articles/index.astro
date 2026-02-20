@@ -35,8 +35,8 @@ const tags = Array.from(
   new Set(indexData.flatMap((p) => p.tags).filter(Boolean))
 ).sort((a, b) => a.localeCompare(b, "ru"));
 
-// SEO + крошки
-const siteUrl = config.siteUrl.replace(/\/$/, "");
+// SEO + крошки (приоритет — Astro.site из astro.config)
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle = "Все статьи";
 const pageDesc =
   "Архив статей по химии, подготовке к ЕГЭ и ОГЭ: теория, разборы заданий, советы и материалы от преподавателей.";

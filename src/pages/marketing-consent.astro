@@ -6,7 +6,8 @@ import config from "../config.ts";
 import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
 
 const title = "Согласие на получение рекламных рассылок";
-const description = `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${config.siteUrl}.`;
+const siteBase = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const description = `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${siteBase}.`;
 
 const breadcrumbs = [{ name: title }];
 
@@ -41,8 +42,8 @@ const webPageJsonLd = buildWebPageJsonLd({
           №&nbsp;38-ФЗ «О рекламе» и Федеральным законом от 27.07.2006
           №&nbsp;152-ФЗ «О персональных данных», я даю согласие самозанятому
           Филипенко Валерию Юрьевичу, владельцу сайта <strong
-            >{config.siteUrl}</strong
-          > (далее — Оператор), на получение от Оператора рекламной информации и сообщений,
+>{siteBase}</strong
+            > (далее — Оператор), на получение от Оператора рекламной информации и сообщений,
           а также на обработку моих персональных данных в целях рассылок.
         </p>
       </section>

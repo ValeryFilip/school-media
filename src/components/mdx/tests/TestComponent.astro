@@ -431,14 +431,15 @@ const { questions } = Astro.props;
           ? showCorrect()
           : showIncorrect();
       }
+    });
 
-      nextButton?.addEventListener("click", () => {
-        test.dispatchEvent(
-          new CustomEvent("test:next", {
-            bubbles: true,
-          })
-        );
-      });
+    // Кнопка «Далее» — вешаем один раз, иначе для type="text" не доходило (return до блока)
+    nextButton?.addEventListener("click", () => {
+      test.dispatchEvent(
+        new CustomEvent("test:next", {
+          bubbles: true,
+        })
+      );
     });
   });
 </script>

@@ -1,0 +1,55 @@
+---
+/**
+ * Блок «Тест по теме» в конце статьи: заголовок + несколько вопросов.
+ * Каждый вопрос рендерится через TestComponent (радио, чекбокс или свободный ответ).
+ */
+import TestComponent from "./TestComponent.astro";
+
+export interface Question {
+  type: "radio" | "checkbox" | "text";
+  mode?: "alone" | "slider";
+  title?: string;
+  text: string;
+  items?: {
+    text: string;
+    correct: boolean;
+  }[];
+  correctTextAnswer?: string;
+  helpText: string;
+  explanationText: string;
+}
+
+interface Props {
+  title?: string;
+  questions: Question[];
+}
+
+const { title = "Проверьте себя", questions = [] } = Astro.props;
+---
+
+<section class="article-test-section" aria-labelledby={title ? "article-test-heading" : undefined}>
+  {title && (
+    <h2 id="article-test-heading" class="article-test__title">{title}</h2>
+  )}
+  <div class="article-test__list">
+    {questions.map((q) => (
+      <TestComponent questions={[{ ...q, mode: q.mode ?? "alone" }]} />
+    ))}
+  </div>
+</section>
+
+<style>
+  .article-test-section {
+    margin: var(--space-32, 32px) 0;
+  }
+  .article-test__title {
+    font-size: var(--h2, clamp(1.5rem, 2.5vw, 2rem));
+    margin: 0 0 var(--space-24, 24px);
+    color: var(--black, #111);
+  }
+  .article-test__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24, 24px);
+  }
+</style>

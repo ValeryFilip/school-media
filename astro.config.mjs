@@ -4,6 +4,8 @@ import mdx from '@astrojs/mdx';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import sitemap from '@astrojs/sitemap';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
@@ -29,7 +31,5 @@ export default defineConfig({
     },
 
     // Здесь можно подключать интеграции (RSS, sitemap, tailwind и т. д.)
-    integrations: [
-        mdx(), // Поддержка MDX (Markdown + JSX)
-    ],
+    integrations: [mdx(), sitemap()],
 });

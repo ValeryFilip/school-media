@@ -77,7 +77,7 @@ const pagedLeftCards = leftCards.slice(
   currentPage * PER_PAGE
 );
 
-const siteUrl = config.siteUrl.replace(/\/$/, "");
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 function humanizeTag(t: string): string {
   const s = t.trim();
   return s.charAt(0).toUpperCase() + s.slice(1);
