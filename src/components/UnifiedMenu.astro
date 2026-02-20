@@ -57,7 +57,8 @@ if (context === "media") {
             src={logoSrc}
             alt={logoAlt}
             class="menu__logo-img"
-            height="50px"
+            width="140"
+            height="50"
             loading="eager"
             decoding="async"
           />
@@ -319,14 +320,17 @@ if (context === "media") {
   <div class="sheet__panel">
     <div class="sheet__head">
       <div class="mnav__logo">
-        <img
-          src={logoSrc}
-          alt={logoAlt}
-          class="mnav__logo-img"
-          height="50px"
-          loading="eager"
-          decoding="async"
-        />
+        <a href="/">
+          <img
+            src={logoSrc}
+            alt={logoAlt}
+            class="mnav__logo-img"
+            width="140"
+            height="50"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
       </div>
       <button id="closeMenu" class="sheet__close" aria-label="Закрыть">
         ✕
@@ -633,6 +637,22 @@ if (context === "media") {
     align-items: center;
     gap: 50px;
   }
+  .menu__logo {
+    flex-shrink: 0;
+    line-height: 0;
+  }
+  .menu__logo a {
+    display: block;
+    line-height: 0;
+  }
+  .menu__logo-img {
+    display: block;
+    height: 50px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    object-position: left center;
+  }
   .menu__list > li {
     position: relative;
     padding: 8px 10px;
@@ -789,6 +809,22 @@ if (context === "media") {
     top: 0;
     background: #fff;
     z-index: 100;
+  }
+  .mnav__logo {
+    flex-shrink: 0;
+    line-height: 0;
+  }
+  .mnav__logo a {
+    display: block;
+    line-height: 0;
+  }
+  .mnav__logo-img {
+    display: block;
+    height: 50px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    object-position: left center;
   }
   .sheet__close {
     border: 0;
@@ -982,12 +1018,12 @@ if (context === "media") {
     }
   }
 
-  @media (min-width: 870px) {
+  @media (min-width: 1000px) {
     .menu__burger {
       display: none;
     }
   }
-  @media (max-width: 870px) {
+  @media (max-width: 1000px) {
     .menu__nav {
       display: none;
     }
