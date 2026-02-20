@@ -25,7 +25,7 @@ import AuthorSection from "../components/mainpage/AuthorSection.astro";
 
 /* SEO */
 const seo = {
-  title: "Курс по ОВР для ЕГЭ 2026 | ЕГЭХИМ, Филипенко Валерий",
+  title: "Курс по ОВР для ЕГЭ 2026 | Химия ЕГЭ с Валерием Филипенко",
   description:
     "Онлайн-курс по ОВР для ЕГЭ: теория, практика, тренажёры и поддержка. Начни бесплатно и выйди на 80–100 баллов!",
   image: "/images/technical/og-home.png",
@@ -313,7 +313,7 @@ const offerProps = {
   packages: [
     {
       title: "Выгоднее взять пакет курсов",
-      price: "11 100 ₽",
+      price: "11 700 ₽",
       oldPrice: "15 500 ₽",
       discount: "-26%",
       text: "Общая + неорганическая + органическая химии",
@@ -333,7 +333,7 @@ const offerProps = {
     },
     {
       title: "Еще один выгодный пакет курсов",
-      price: "6 700 ₽",
+      price: "6 990 ₽",
       oldPrice: "10 000 ₽",
       discount: "-25%",
       text: "Общая + неорганическая химии",
@@ -432,7 +432,7 @@ const pageUrl = `${origin}${Astro.url.pathname}`;
 const courseJsonLd = buildCourseJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
   description: seo.description.trim(),
   ratingValue: 4.9,
   reviewCount: reviewsProps.stats.find((s) => s.value.includes("4,9"))
@@ -452,7 +452,7 @@ const productPrice = offerProps.price.replace(/[^\d]/g, "");
 const productJsonLd = buildProductJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
   description: seo.description.trim(),
   price: productPrice,
   priceCurrency: "RUB",
@@ -460,7 +460,7 @@ const productJsonLd = buildProductJsonLd({
 
 // VideoObject JSON-LD (берем первое видео из платформы)
 const videoSlide = platformProps.slides.find(
-  (s) => s.img.src.includes(".webm") || s.img.src.includes(".mp4")
+  (s) => s.img.src.includes(".webm") || s.img.src.includes(".mp4"),
 );
 const videoJsonLd = videoSlide
   ? buildVideoJsonLd({
@@ -508,7 +508,7 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       ]}
       image={{
         src: "/images/stepik/hero-image-neorg.webp",
-        alt: "ЕГЭХИМ — подготовка к ЕГЭ по химии",
+        alt: " — подготовка к ЕГЭ по химии",
         width: 1200,
         height: 800,
       }}

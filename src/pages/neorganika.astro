@@ -26,7 +26,7 @@ import AuthorSection from "../components/mainpage/AuthorSection.astro";
 /* SEO */
 const seo = {
   title:
-    "Курс по всей неорганической химии для ЕГЭ 2026 | ЕГЭХИМ, Филипенко Валерий",
+    "Курс по всей неорганической химии для ЕГЭ 2026 | Химия ЕГЭ с Валерием Филипенко",
   description:
     "Онлайн-курс по неорганической химии для ЕГЭ: видеоуроки, 1000+ задач, проверка ДЗ и поддержка в чате. Начни бесплатно и выйди на 80–100 баллов!",
   image: "/images/technical/og-home.png",
@@ -433,7 +433,7 @@ const offerProps = {
     { text: "Автопроверка заданий" },
     { text: "Свободное расписание" },
   ],
-  price: "5 490 ₽",
+  price: "5 790 ₽",
   oldPrice: "7 490 ₽",
   buy: {
     text: "Курс на Stepik",
@@ -454,7 +454,7 @@ const offerProps = {
   packages: [
     {
       title: "Выгоднее взять пакет курсов",
-      price: "11 100 ₽",
+      price: "11 700 ₽",
       oldPrice: "15 500 ₽",
       discount: "-26%",
       text: "Общая + неорганическая + органическая + варианты",
@@ -474,7 +474,7 @@ const offerProps = {
     },
     {
       title: "Еще один выгодный пакет курсов",
-      price: "6 700 ₽",
+      price: "6 990 ₽",
       oldPrice: "10 000 ₽",
       discount: "-25%",
       text: "Общая + неорганическая химии",
@@ -573,7 +573,7 @@ const pageUrl = `${origin}${Astro.url.pathname}`;
 const courseJsonLd = buildCourseJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
   description: seo.description.trim(),
   ratingValue: 4.9,
   reviewCount: reviewsProps.stats.find((s) => s.value.includes("4,9"))
@@ -592,7 +592,7 @@ const productPrice = offerProps.price.replace(/[^\d]/g, "");
 const productJsonLd = buildProductJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | ЕГЭХИМ, Филипенко Валерий", ""),
+  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
   description: seo.description.trim(),
   price: productPrice,
   priceCurrency: "RUB",
@@ -600,7 +600,7 @@ const productJsonLd = buildProductJsonLd({
 
 // VideoObject JSON-LD (берем первое видео из платформы)
 const videoSlide = platformProps.slides.find(
-  (s) => s.img.src.includes(".webm") || s.img.src.includes(".mp4")
+  (s) => s.img.src.includes(".webm") || s.img.src.includes(".mp4"),
 );
 const videoJsonLd = videoSlide
   ? buildVideoJsonLd({
@@ -647,7 +647,7 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       ]}
       image={{
         src: "/images/stepik/hero-image-neorg.webp",
-        alt: "ЕГЭХИМ — подготовка к ЕГЭ по химии",
+        alt: "Химия ЕГЭ с Валерием Филипенко",
         width: 1200,
         height: 800,
       }}

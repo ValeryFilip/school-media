@@ -26,7 +26,7 @@ const allPosts = withReadingTime(allPostsRaw);
 const filterByCategory = (category: string) =>
   allPosts.filter(
     (p) =>
-      String(p.data.category || "").toLowerCase() === category.toLowerCase()
+      String(p.data.category || "").toLowerCase() === category.toLowerCase(),
   );
 
 // Категории
@@ -85,7 +85,8 @@ const section8Vertical = section8Posts.slice(0, 6);
 
 // SEO (приоритет — Astro.site из astro.config)
 const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageTitle = "Медиа — статьи и материалы по химии, ЕГЭ и ОГЭ";
+const pageTitle =
+  "Синтез медиа — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам";
 const pageDesc =
   "Статьи, разборы и материалы по химии: подготовка к ЕГЭ и ОГЭ, теория, практика и советы от экспертов.";
 
@@ -98,7 +99,7 @@ const adFreeProps = {
   ctaHref:
     "https://t.me/chemistry_examBot?start=s=3272321-utm_source=cite-utm_content=main",
   image: {
-    src: "/images/mainpage/adfree.png",
+    src: "/images/mainpage/adfree.webp",
     width: 400,
     height: 300,
     alt: "Превью бесплатного курса",
@@ -108,7 +109,7 @@ const adFreeProps = {
 // Пропсы для лид-формы
 const leadProps = {
   id: "lead-capture",
-  imageSrc: "/images/girl-lead2.webp",
+  imageSrc: "/images/girl-lead1.webp",
   imageAlt: "Ученица на уроке",
   title: "Начни подготовку с пробного бесплатного занятия",
   subtitle: "Ответим на вопросы, расскажем про форматы и цены",
