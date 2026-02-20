@@ -3,6 +3,12 @@
 const year = new Date().getFullYear();
 import SupportFab from "./ui/SupportFab.astro";
 import ScrollToTop from "./ui/ScrollToTop.astro";
+
+interface Props {
+  /** UTM source по странице для кнопки попапа */
+  pageUtmSource?: string;
+}
+const { pageUtmSource = "main-page" } = Astro.props;
 ---
 
 <footer class="contact-bottom" role="contentinfo" aria-label="Подвал сайта">
@@ -48,10 +54,10 @@ import ScrollToTop from "./ui/ScrollToTop.astro";
         type="button"
         class="btn btn--blue footer-cta popup-btn"
         data-popup-id="lead-popup"
-        data-utm-source="footer"
+        data-utm-source={pageUtmSource}
         data-utm-medium="cta"
-        data-utm-campaign="footer-cta"
-        data-utm-content="footer-button"
+        data-utm-campaign="popup-lead"
+        data-utm-content="footer"
       >
         Начать бесплатно
       </button>
@@ -88,21 +94,21 @@ import ScrollToTop from "./ui/ScrollToTop.astro";
 
       <p class="social-title second">Подписывайтесь на наши соцсети</p>
       <div class="social-icons" aria-label="Соцсети">
-        <a href="https://www.youtube.com/@chemistry_exam"
+        <a href="https://www.youtube.com/@chemistry_exam" target="_blank" rel="noopener noreferrer"
           ><img
             src="https://i.ibb.co/N6xJKVrh/002-youtube.png"
             alt="YouTube"
             loading="lazy"
           /></a
         >
-        <a href="https://vk.com/chemistry_exam"
+        <a href="https://vk.com/chemistry_exam" target="_blank" rel="noopener noreferrer"
           ><img
             src="https://i.ibb.co/4wPdvNQp/001-vk.png"
             alt="VK"
             loading="lazy"
           /></a
         >
-        <a href="https://t.me/+KznfEhtzkeNlZjIy"
+        <a href="https://t.me/+KznfEhtzkeNlZjIy" target="_blank" rel="noopener noreferrer"
           ><img
             src="https://i.ibb.co/B2sgbb2r/003-telegram.png"
             alt="Telegram"

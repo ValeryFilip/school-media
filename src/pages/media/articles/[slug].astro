@@ -5,6 +5,8 @@ import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
+import { calcReadingTime } from "../../../lib/calcReadingTime";
+import { buildArticleJsonLd } from "../../../lib/seoData";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -23,8 +25,18 @@ if (entry.data.visible === false) {
   return Astro.redirect("/404");
 }
 
-const { data: fm, render } = entry;
-const { Content, headings } = await render();
+const fm = {
+  ...entry.data,
+  readingTime: calcReadingTime(entry.body),
+  tocManual: entry.data.tocManual
+    ? entry.data.tocManual.map((item) => ({
+        id: item.id || slugify(item.text),
+        text: item.text,
+      }))
+    : undefined,
+};
+
+const { Content, headings } = await entry.render();
 
 // Рекомендации (только видимые статьи)
 const all = await getCollection("articles", ({ data }) => {
@@ -39,8 +51,8 @@ const byCategory = all.filter(
 );
 const recommendations = [...byTag, ...byCategory].slice(0, 4);
 
-// Полный URL (⚙️ через /media/)
-const siteUrl = config.siteUrl.replace(/\/$/, "");
+// Полный URL (приоритет — Astro.site из astro.config)
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageUrl = `${siteUrl}/media/articles/${slug}/`;
 
 // Хлебные крошки (категория тоже через /media/)
@@ -51,6 +63,21 @@ const breadcrumbs = [
   },
   { name: fm.title }, // текущая страница — без href
 ];
+
+// Article JSON-LD для статей (keywords, articleSection)
+const articleJsonLd = buildArticleJsonLd({
+  origin: siteUrl,
+  url: pageUrl,
+  headline: fm.title,
+  description: fm.description,
+  image: fm.image,
+  datePublished: new Date(fm.date as any).toISOString(),
+  dateModified: (fm as any).updated
+    ? new Date((fm as any).updated as any).toISOString()
+    : new Date(fm.date as any).toISOString(),
+  keywords: fm.tags?.length ? fm.tags : undefined,
+  articleSection: fm.category,
+});
 ---
 
 <MainLayout
@@ -64,6 +91,7 @@ const breadcrumbs = [
     ? new Date((fm as any).updated as any).toISOString()
     : new Date(fm.date as any).toISOString()}
   breadcrumbs={breadcrumbs}
+  articleJsonLd={articleJsonLd}
 >
   <ArticleLayoutNew fm={fm} slug={slug} headings={headings}>
     <Content />

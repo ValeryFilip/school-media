@@ -11,11 +11,11 @@ const description =
 
 const breadcrumbs = [{ name: title }];
 
-// Генерация JSON-LD
-const origin = Astro.url.origin;
+// Генерация JSON-LD (origin — из Astro.site)
+const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageUrl = `${origin}${Astro.url.pathname}`;
 const siteName = getSiteName(undefined, config.siteName);
-const siteUrl = config.siteUrl;
+const siteUrl = origin;
 const webPageJsonLd = buildWebPageJsonLd({
   origin,
   url: pageUrl,
@@ -41,11 +41,11 @@ const webPageJsonLd = buildWebPageJsonLd({
         <p>
           Настоящим, в соответствии с требованиями Федерального закона от
           27.07.2006 г. № 152-ФЗ «О персональных данных» я даю свое согласие
-          самозанятому Филипенко Валерию Юрьевичу (ИНН 11111111111), владельцу
-          сайта <strong>{siteUrl}</strong> (далее – Оператор) на обработку Оператором
-          моих персональных данных (включая получение от меня и/или от любых третьих
-          лиц) и подтверждаю, что, давая такое согласие, я действую своей волей и
-          в своем интересе.
+          самозанятому Филипенко Валерию Юрьевичу, владельцу сайта <strong
+            >{siteUrl}</strong
+          > (далее – Оператор) на обработку Оператором моих персональных данных (включая
+          получение от меня и/или от любых третьих лиц) и подтверждаю, что, давая
+          такое согласие, я действую своей волей и в своем интересе.
         </p>
       </section>
 
@@ -119,7 +119,7 @@ const webPageJsonLd = buildWebPageJsonLd({
           В случае несогласия с условиями обработки данных я обязуюсь прекратить
           использование сайта и сервисов, принадлежащих Оператору, и направить
           письменное уведомление на адрес электронной почты <strong
-            >info@egehim.ru</strong
+            >caramba-mix@mail.ru</strong
           >.
         </p>
       </section>

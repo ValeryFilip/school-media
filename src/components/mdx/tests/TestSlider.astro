@@ -22,7 +22,8 @@ import TestComponent from "../../mdx/tests/TestComponent.astro";
 import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 ---
 
-<div class="slider">
+<div class="slider" data-total={questions.length}>
+  <div class="slider__counter" aria-live="polite">Вопрос 1 из {questions.length}</div>
   <div class="slider__wrapper">
     <div class="slider__track">
       {
@@ -48,6 +49,17 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
     margin: 0 auto;
     overflow: hidden; /* viewport */
     position: relative;
+  }
+
+  .slider__counter {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    z-index: 2;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted, #6c757d);
+    pointer-events: none;
   }
 
   .slider__wrapper {
@@ -82,6 +94,10 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
     display: none !important;
   }
 
+  .slider__counter[hidden] {
+    display: none !important;
+  }
+
   @media (max-width: 600px) {
     .slider {
       border-radius: 8px;
@@ -93,14 +109,29 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
   (function () {
     const slider = document.querySelector(".slider");
     const promoSlide = slider.querySelector(".slider__slide--promo");
+    const counterEl = slider.querySelector(".slider__counter");
+    const total = parseInt(slider.dataset.total || "0", 10);
 
     if (!slider) return;
 
     const steps = Array.from(slider.querySelectorAll(".slider__slide"));
+    const questionCount = promoSlide ? steps.length - 1 : steps.length;
     let currentIndex = 0;
+
+    function updateCounter() {
+      if (!counterEl) return;
+      if (currentIndex >= questionCount) {
+        counterEl.hidden = true;
+        return;
+      }
+      counterEl.hidden = false;
+      counterEl.textContent = "Вопрос " + (currentIndex + 1) + " из " + (total || questionCount);
+    }
 
     function showStep(index) {
       if (index < 0 || index >= steps.length) return;
+
+      currentIndex = index;
 
       // Скрываем все слайды
       steps.forEach((step) => {
@@ -115,6 +146,8 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
       if (steps[index]) {
         steps[index].hidden = false;
       }
+
+      updateCounter();
     }
     // Инициализация: показываем первый слайд
     showStep(0);
@@ -128,8 +161,7 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 
       if (currentIndex >= steps.length - 1) return;
 
-      currentIndex++;
-      showStep(currentIndex);
+      showStep(currentIndex + 1);
     });
 
     // let isProcessing = false;

@@ -2,7 +2,12 @@
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-<MainLayout title="404 — Страница не найдена" showBreadcrumbs={false}>
+<MainLayout
+  title="404 — Страница не найдена"
+  description="Страница не найдена. Вернитесь на главную или в раздел медиа."
+  showBreadcrumbs={false}
+  noindex={true}
+>
   <section class="section">
     <div class="container error-container">
       <div class="error-text">

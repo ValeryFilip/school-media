@@ -19,21 +19,14 @@ const {
   pagePadding = 50,
 } = Astro.props as Props;
 
-/* ===== Домен и хосты ===== */
-const siteOrigin = Astro.url.origin; // напр. http://localhost:4321 или https://egehim.ru
+/* ===== Домен и хосты (приоритет — Astro.site из astro.config) ===== */
+const siteOrigin = Astro.url.origin;
 const siteHost = new URL(siteOrigin).host;
-
-let configHost: string | null = null;
-try {
-  if (config?.siteUrl) configHost = new URL(String(config.siteUrl)).host;
-} catch {}
+const configHost = Astro.site?.host ?? (config?.siteUrl ? new URL(String(config.siteUrl)).host : null);
 
 const inMedia = Astro.url.pathname.startsWith("/media");
 
-/** Это «наш» внутренний абсолютный URL?
- *  - тот же хост, что у текущего запроса; ИЛИ
- *  - хост равен config.siteUrl (часто это и есть example.com в dev).
- */
+/** Это «наш» внутренний абсолютный URL? (текущий хост или хост из Astro.site) */
 function isInternalAbsolute(u: URL): boolean {
   return u.host === siteHost || Boolean(configHost && u.host === configHost);
 }

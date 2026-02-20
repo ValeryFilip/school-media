@@ -67,7 +67,7 @@ const {
   nextUrl,
 
   logoSrc,
-  ctaHref = "/egecourse",
+  ctaHref = "/allcourses",
 
   breadcrumbs = [],
   showBreadcrumbs = true,
@@ -81,6 +81,14 @@ const {
 } = Astro.props as Props;
 
 const inMedia = Astro.url.pathname.startsWith("/media");
+const pathname = Astro.url.pathname;
+// UTM source по странице: для попапа и кнопок CTA (меню, футер)
+const pageUtmSource =
+  pathname === "/"
+    ? "main-page"
+    : pathname.startsWith("/media")
+      ? "media"
+      : (pathname.replace(/^\/|\/$/g, "").split("/")[0] || "main-page");
 const origin = Astro.url.origin;
 const siteNameFinal = getSiteName(siteName, config.siteName);
 
@@ -104,6 +112,7 @@ const breadcrumbsJsonLd =
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#366ef0" />
     {inMedia && <base href="/media/" />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -112,7 +121,6 @@ const breadcrumbsJsonLd =
       href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <meta name="robots" content="noindex, nofollow" />
     {
       inMedia && (
         <>
@@ -124,7 +132,7 @@ const breadcrumbsJsonLd =
           />
           <link
             rel="preload"
-            href="/favicon.ico"
+            href="/favicon.svg"
             as="image"
             type="image/x-icon"
           />
@@ -136,7 +144,7 @@ const breadcrumbsJsonLd =
       title={title ?? "EGEHIM"}
       description={description ??
         "Подготовка к ЕГЭ по химии: курсы, разборы и материалы"}
-      image={image}
+      image={image ?? "/images/technical/og-home.png"}
       url={url}
       type={seoType}
       noindex={noindex}
@@ -158,8 +166,8 @@ const breadcrumbsJsonLd =
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.svg" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <YandexMetrika />
 
@@ -179,6 +187,7 @@ const breadcrumbsJsonLd =
       context={inMedia ? "media" : "landing"}
       logoSrc={logoSrc}
       ctaHref={ctaHref}
+      pageUtmSource={pageUtmSource}
     />
     {
       showBreadcrumbs && breadcrumbs.length > 0 && (
@@ -189,9 +198,14 @@ const breadcrumbsJsonLd =
       <slot />
     </main>
 
-    <SiteFooter />
+    <SiteFooter pageUtmSource={pageUtmSource} />
 
-    <PopupForm popupId="lead-popup" />
+    <PopupForm
+      popupId="lead-popup"
+      utmSource={pageUtmSource}
+      utmMedium="organic"
+      utmCampaign="popup-lead"
+    />
 
     <ExternalScripts />
   </body>

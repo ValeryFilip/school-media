@@ -10,14 +10,17 @@ import CardHorizontal from "../../components/cards/CardHorizontal.astro";
 import LeadCapture from "../../components/mainpage/LeadCapture.astro";
 import AdFreeBanner from "../../components/mainpage/AdFreeBanner.astro";
 import SideCategoryScroller from "../../components/SideCategoryScroller.astro";
+import { withReadingTime } from "../../lib/withReadingTime";
 
 // Получаем все видимые статьи и сортируем по дате (от новых к старым)
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const allPosts = (await getCollection("articles", ({ data }) => {
-  return data.visible !== false;
-})).sort(
-  (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime()
-);
+const allPostsRaw = (
+  await getCollection("articles", ({ data }) => {
+    return data.visible !== false;
+  })
+).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
+
+const allPosts = withReadingTime(allPostsRaw);
 
 // Функция для фильтрации по категории
 const filterByCategory = (category: string) =>
@@ -80,11 +83,11 @@ const section7Vertical = section7Posts.slice(0, 6);
 const section8Posts = filterByCategory("материалы для егэ и огэ по химии");
 const section8Vertical = section8Posts.slice(0, 6);
 
-// SEO
-const site = config.siteUrl.replace(/\/$/, "");
-const pageTitle = "Главная — ЕГЭХИМ";
+// SEO (приоритет — Astro.site из astro.config)
+const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const pageTitle = "Медиа — статьи и материалы по химии, ЕГЭ и ОГЭ";
 const pageDesc =
-  "Главный экран с подборками статей по химии, подготовке к ЕГЭ и ОГЭ.";
+  "Статьи, разборы и материалы по химии: подготовка к ЕГЭ и ОГЭ, теория, практика и советы от экспертов.";
 
 // Пропсы для рекламного баннера
 const adFreeProps = {
@@ -92,7 +95,8 @@ const adFreeProps = {
   title: "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
   lead: "Два курса, которые дадут тебе +30 баллов на экзамене. Забирай по кнопкам ниже",
   ctaText: "Забрать оба курса",
-  ctaHref: "/start",
+  ctaHref:
+    "https://t.me/chemistry_examBot?start=s=3272321-utm_source=cite-utm_content=main",
   image: {
     src: "/images/mainpage/adfree.png",
     width: 400,
@@ -157,10 +161,14 @@ const leadProps = {
         </div>
         <div class="home-grid container">
           {section1Main.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
           {section1Horizontal.map((post) => (
-            <CardHorizontal post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardHorizontal post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -192,10 +200,14 @@ const leadProps = {
         </div>
         <div class="home-grid-2 container">
           {section2Main.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
           {section2Horizontal.map((post) => (
-            <CardHorizontal post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardHorizontal post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -228,10 +240,14 @@ const leadProps = {
         </div>
         <div class="home-grid-3 container">
           {section3Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
           {section3Horizontal.map((post) => (
-            <CardHorizontal post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardHorizontal post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -263,7 +279,9 @@ const leadProps = {
         </div>
         <div class="home-grid-4 container">
           {section4Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -295,7 +313,9 @@ const leadProps = {
         </div>
         <div class="home-grid-5 container">
           {section5Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -327,7 +347,9 @@ const leadProps = {
         </div>
         <div class="home-grid-5 container">
           {section6Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -359,7 +381,9 @@ const leadProps = {
         </div>
         <div class="home-grid-5 container">
           {section7Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -391,7 +415,9 @@ const leadProps = {
         </div>
         <div class="home-grid-5 container">
           {section8Vertical.map((post) => (
-            <CardNew post={post} basePath="/media" />
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/media" />
+            </div>
           ))}
         </div>
       </section>
@@ -604,6 +630,10 @@ const leadProps = {
     :global(.home-grid-5 > *:nth-child(2)) {
       grid-row: 1 / span 1;
       grid-column: 1 / span 1;
+    }
+    .ad-media__card {
+      display: flex;
+      align-items: flex-start;
     }
   }
 </style>

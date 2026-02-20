@@ -40,32 +40,25 @@ const {
     </div>
 
     <div class="hero-right">
-      <div class="columns">
-        <div class="column">
-          <div class="card card-blue-border large">
-            <div class="number">{statValue}</div>
-            <div class="text">
-              {statLabel}<br />
-              <span>готовятся к ЕГЭ по химии с нами</span>
-            </div>
-          </div>
-
-          <div class="card card-blue-fill small">
-            <h3>{chatTitle}</h3>
-            <p>{chatText}</p>
+      <div class="features">
+        <div class="card card-blue-border large" data-cell="stat">
+          <div class="number">{statValue}</div>
+          <div class="text">
+            {statLabel}<br />
+            <span>готовятся к ЕГЭ по химии с нами</span>
           </div>
         </div>
-
-        <div class="column">
-          <div class="card card-blue-fill small">
-            <h3>{accessTitle}</h3>
-            <p>{accessText}</p>
-          </div>
-
-          <div class="card card-green-fill large">
-            <h3>{flexibleTitle}</h3>
-            <p>{flexibleText}</p>
-          </div>
+        <div class="card card-blue-fill small" data-cell="chat">
+          <h3>{chatTitle}</h3>
+          <p>{chatText}</p>
+        </div>
+        <div class="card card-blue-fill small" data-cell="access">
+          <h3>{accessTitle}</h3>
+          <p>{accessText}</p>
+        </div>
+        <div class="card card-green-fill large" data-cell="flexible">
+          <h3>{flexibleTitle}</h3>
+          <p>{flexibleText}</p>
         </div>
       </div>
 
@@ -138,16 +131,34 @@ const {
     gap: var(--space-24);
   }
 
-  .columns {
-    display: flex;
+  /* Сетка фич: 2×2 на десктопе, 1 колонка на мобильном */
+  .features {
+    display: grid;
     gap: var(--gap-10);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "stat access"
+      "chat flexible";
+    min-height: 0;
     height: 410px;
   }
-  .column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: var(--gap-10);
+  .card[data-cell="stat"] {
+    grid-area: stat;
+  }
+  .card[data-cell="chat"] {
+    grid-area: chat;
+  }
+  .card[data-cell="access"] {
+    grid-area: access;
+  }
+  .card[data-cell="flexible"] {
+    grid-area: flexible;
+  }
+  .features .card {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 
   .card {
@@ -212,9 +223,10 @@ const {
     font-weight: 500;
   }
 
-  /* Нижняя капсула 510×100 */
+  /* Нижняя капсула 510×100 (на мобильном растягивается) */
   .rating {
-    width: 510px;
+    width: 100%;
+    max-width: 510px;
     height: 100px;
     border: 2px solid var(--blue);
     border-radius: 50px;
@@ -252,6 +264,12 @@ const {
     aspect-ratio: 5 / 3; /* 250×150 */
     height: auto;
   }
+  .features .card.large,
+  .features .card.small {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
 
   /* === DESKTOP (≥1101px): lead уезжает к низу левой колонки === */
   @media (min-width: 1101px) {
@@ -279,6 +297,10 @@ const {
 
   /* === TABLET & MOBILE (≤1100px): центрируем заголовок и lead === */
   @media (max-width: 1100px) {
+    .hero-right {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
     .hero-left {
       display: flex; /* оставляем флекс, чтобы было стабильно */
       flex-direction: column;
@@ -301,8 +323,7 @@ const {
 
     .hero-left,
     .hero-right,
-    .columns,
-    .column,
+    .features,
     .card,
     .rating {
       width: 100%;
@@ -334,6 +355,7 @@ const {
     }
 
     .rating {
+      height: auto;
       flex-direction: column;
       align-items: center;
       padding: var(--space-16);
@@ -356,21 +378,24 @@ const {
     }
   }
   @media (max-width: 600px) {
-    .columns {
-      flex-direction: column;
-      gap: var(--space-20);
+    .features {
+      height: auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      grid-template-areas:
+        "stat"
+        "chat"
+        "access"
+        "flexible";
+      gap: var(--space-16);
     }
 
-    .column {
-      flex-direction: column;
-      gap: var(--space-20);
-    }
-
-    .card.large,
-    .card.small {
+    .features .card.large,
+    .features .card.small {
       width: 100%;
       height: auto;
       aspect-ratio: auto;
+      min-height: 0;
       padding: var(--space-20);
     }
   }

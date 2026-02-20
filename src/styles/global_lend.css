@@ -209,6 +209,7 @@ h3,
   box-shadow: var(--shadow-1);
   border-radius: 20px;
   border: solid 1px var(--border);
+  overflow: hidden;
 }
 .white-bg:hover {
   border: solid 1px rgba(54, 110, 240, 0.3);
@@ -297,6 +298,8 @@ h3,
 .article__content ol {
   margin: 0 0 clamp(20px, 2.5vw, 28px) 0;
   padding-left: clamp(24px, 3vw, 36px);
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .article__content li {

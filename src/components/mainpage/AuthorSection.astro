@@ -76,8 +76,8 @@ const {
     <h2 id={`${id}-title`} class="author__heading">{heading}</h2>
 
     <div class="author__shell">
-      <!-- Левая колонка (управляет высотой ряда) -->
-      <div class="author__left" data-equal-src>
+      <!-- Левая колонка -->
+      <div class="author__left">
         <h3 class="author__name">
           <span class="author__name--hl">{name}</span>
         </h3>
@@ -110,9 +110,9 @@ const {
         </nav>
       </div>
 
-      <!-- Правая колонка: высота = высоте левой -->
+      <!-- Правая колонка: высота тянется за grid -->
       <figure class="author__right">
-        <div class="author__photo" data-equal-target>
+        <div class="author__photo">
           <img src={photoSrc} alt={photoAlt} loading="lazy" decoding="async" />
           <a
             href={moreHref}
@@ -130,7 +130,6 @@ const {
   <style>
     /* ===== Контейнер как у оффера ===== */
     .author {
-      --author-equal-h: auto; /* управляемая высота правой колонки */
       font-family: var(--ff);
       font-variant-numeric: lining-nums;
     }
@@ -253,15 +252,19 @@ const {
       filter: brightness(100) invert(1);
     }
 
-    /* Правая колонка — равная высота с левой */
+    /* Правая колонка — растягивается по высоте grid (равно левой) */
     .author__right {
       margin: 0;
       align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     .author__photo {
       position: relative;
       width: 100%;
-      height: var(--author-equal-h); /* ключ */
+      flex: 1;
+      min-height: 0;
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
@@ -298,9 +301,6 @@ const {
 
     /* Mobile ≤700px — порядок: Имя → Фото → Факты → Соцсети */
     @media (max-width: 700px) {
-      .author {
-        --author-equal-h: auto;
-      } /* отключаем “equal height” */
       .author__shell {
         display: grid !important;
         grid-template-columns: 1fr !important;
@@ -343,26 +343,4 @@ const {
       }
     }
   </style>
-
-  <script is:inline>
-    // Выравниваем высоту правой колонки под левую (кросс-контентно, без флэшей)
-    (() => {
-      const root = document.currentScript.closest(".author");
-      if (!root) return;
-      const src = root.querySelector("[data-equal-src]");
-      const setH = () => {
-        const h = src?.getBoundingClientRect().height || 0;
-        root.style.setProperty("--author-equal-h", h ? `${h}px` : "auto");
-      };
-      const ro = "ResizeObserver" in window ? new ResizeObserver(setH) : null;
-      if (src && ro) ro.observe(src);
-
-      // Инициализация/обновления
-      setH();
-      window.addEventListener("load", setH);
-      window.addEventListener("resize", setH, { passive: true });
-
-      // На очень узких — равенство высот отключено через MQ, но лишний вызов не вредит
-    })();
-  </script>
 </div>

@@ -11,11 +11,11 @@ const description = "Как мы обрабатываем и защищаем п
 // крошки: ваш компонент сам добавит «домой», поэтому здесь только текущая
 const breadcrumbs = [{ name: title }];
 
-// Генерация JSON-LD
-const origin = Astro.url.origin;
+// Генерация JSON-LD (origin — из Astro.site)
+const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageUrl = `${origin}${Astro.url.pathname}`;
 const siteName = getSiteName(undefined, config.siteName);
-const siteUrl = config.siteUrl;
+const siteUrl = origin;
 const webPageJsonLd = buildWebPageJsonLd({
   origin,
   url: pageUrl,

@@ -12,6 +12,8 @@ interface Package {
   discount?: string; // "-26%"
   text?: string;
   href?: string;
+  target?: string;
+  rel?: string;
   ctaText?: string;
   buyWithDiscount?: {
     text: string;
@@ -156,16 +158,14 @@ const {
           </a>
           {
             buyWithDiscount && (
-              <a
-                href="javascript:void(0)"
-                target={buyWithDiscount.target}
-                rel={buyWithDiscount.rel}
-                onclick={`${buyWithDiscount.onClick}; return false;`}
+              <button
+                type="button"
+                onclick={buyWithDiscount.onClick}
                 class="btn btn--blue vet-discount-btn"
                 aria-label="Оплатить со скидкой 5%"
               >
                 {buyWithDiscount.text}
-              </a>
+              </button>
             )
           }
         </div>
@@ -224,16 +224,14 @@ const {
               )}
 
               {p.buyWithDiscount && (
-                <a
-                  href="javascript:void(0)"
-                  target={p.buyWithDiscount.target}
-                  rel={p.buyWithDiscount.rel}
-                  onclick={`${p.buyWithDiscount.onClick}; return false;`}
+                <button
+                  type="button"
+                  onclick={p.buyWithDiscount.onClick}
                   class="package-discount-link"
                   aria-label="Оплатить пакет со скидкой"
                 >
                   {p.buyWithDiscount.text}
-                </a>
+                </button>
               )}
             </div>
 

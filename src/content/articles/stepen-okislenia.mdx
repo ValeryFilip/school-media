@@ -2,14 +2,12 @@
 title: "Степень окисления: полное руководство с примерами"
 date: 2025-10-24
 description: "Подробное объяснение степени окисления: правила определения, алгоритмы, таблицы и примеры решения задач для ЕГЭ и ОГЭ по химии"
-tags: ["степень окисления", "ОВР", "ЕГЭ", "ОГЭ", "электронный баланс"]
+tags: ["Общая химия", "ЕГЭ", "ОГЭ"]
 category: "Материалы для ЕГЭ и ОГЭ по химии"
 image: "/images/articles/stepen.png"
 heroImage: "/images/articles/stepen.png"
 author: "Валерий Филипенко"
 authorRole: "Преподаватель химии, эксперт ЕГЭ"
-authorImage: "/images/stepik/researcher.webp"
-readingTime: "12 мин"
 toc: true
 showHeroImage: true
 visible: true
@@ -23,6 +21,59 @@ import VideoTabs from "../../components/mdx/VideoTabs.astro";
 import CheckboxTest from "../../components/mdx/tests/MultiAnswer.astro";
 import OneAnswer from "../../components/mdx/tests/OneAnswer.astro";
 import TestComponent from "../../components/mdx/tests/TestComponent.astro";
+import Slider from "../../components/mdx/tests/TestSlider.astro";
+import PicButtonText from "../../components/mdx/ADbanners/PicButtonText.astro";
+
+export const testQuestionsStepen = [
+  {
+    type: "radio",
+    mode: "slider",
+    text: "Что такое степень окисления?",
+    items: [
+      { text: "Условный заряд атома при полном ионном характере связей", correct: true },
+      { text: "Валентность атома в римских цифрах", correct: false },
+      { text: "Число отданных или принятых электронов", correct: false },
+    ],
+    helpText: "В статье: степень окисления — это условный заряд атома.",
+    explanationText: "Степень окисления — условный заряд атома, который он «получил бы» при полном ионном характере связей. Часто совпадает с валентностью по модулю, но не всегда.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Определите степень окисления азота в HNO₃. Введите число со знаком, например +5 или −2.",
+    correctTextAnswer: "+5",
+    helpText: "H = +1, O = −2 (три атома). Сумма степеней в молекуле равна 0: 1 + x + (−2)·3 = 0.",
+    explanationText: "В азотной кислоте HNO₃: водород +1, кислород −2. Уравнение: +1 + x − 6 = 0 → x = +5.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Определите степень окисления серы в H₂SO₄. Введите число со знаком.",
+    correctTextAnswer: "+6",
+    helpText: "H = +1 (два атома), O = −2 (четыре атома). Сумма степеней окисления в молекуле равна 0.",
+    explanationText: "В серной кислоте H₂SO₄: 2·(+1) + x + 4·(−2) = 0 → 2 + x − 8 = 0 → x = +6.",
+  },
+  {
+    type: "text",
+    mode: "slider",
+    text: "Определите степень окисления кислорода в пероксиде натрия Na₂O₂. Введите число со знаком.",
+    correctTextAnswer: "-1",
+    helpText: "В пероксидах кислород имеет степень окисления −1 (исключение из правила «кислород −2»).",
+    explanationText: "В пероксиде Na₂O₂ кислород не −2, а −1. Уравнение: 2·(+1) + 2x = 0 → x = −1.",
+  },
+  {
+    type: "radio",
+    mode: "slider",
+    text: "Какие элементы входят в мнемонику КОФЕ (исключения для максимальной степени окисления)?",
+    items: [
+      { text: "Cu, O, F, Fe — медь, кислород (в OF₂), фтор, железо", correct: true },
+      { text: "C, O, Fe — углерод, кислород, железо", correct: false },
+      { text: "K, O, Fe — калий, кислород, железо", correct: false },
+    ],
+    helpText: "В статье: слово «КОФЕ» — CuOFFe. Cu +2, O в OF₂ +2, F (0), Fe +6.",
+    explanationText: "КОФЕ (CuOFFe): медь +2, кислород во фториде OF₂ +2, фтор 0, железо в феррате +6. Эти элементы не подчиняются правилу «максимальная степень = номер группы».",
+  },
+];
 
 ## Как определить степень окисления?
 
@@ -93,6 +144,15 @@ P<sup>0</sup> + 3e → P<sup>−3</sup>
 </Banner>
 
 Например, в соединении SO<sub>2</sub> кислород (χ = 3,5) принимает отрицательную степень окисления, сера (χ = 2,5) - положительную. На знак в соединении влияет различие электроотрицательностей.
+
+<PicButtonText
+  title="Степень окисления и ОВР — основа заданий ЕГЭ. Закрепи тему на практике"
+  buttonText="Записаться на бесплатный курс"
+  imageSrc="/images/banner-pic.png"
+  imageAlt="Подготовка к ЕГЭ по химии"
+  utmSource="article"
+  utmContent="stepen-okislenia"
+/>
 
 ## Правила определения степени окисления
 
@@ -234,17 +294,13 @@ Cr: x, O: −2
   **заряду** иона.
 </Banner>
 
-<TestComponent
-  questions={[
-    {
-      type: "text",
-      text: "Введите формулу серной кислоты",
-      correctTextAnswer: "354",
-      helpText: "Вспомните кислоты серы",
-      explanationText: "Серная кислота имеет формулу H₂SO₄",
-    },
-  ]}
+<PicButtonText
+  title="Разбери задания №3, №19 и №29 с экспертом — без степеней окисления их не решить"
+  buttonText="Записаться на бесплатный урок"
+  utmSource="article"
+  utmContent="stepen-okislenia-2"
 />
+
 ## Часто задаваемые вопросы
 
 <FAQ question="Как определить степень окисления?" open={true}>
@@ -279,6 +335,10 @@ Cr: x, O: −2
   Запомните слово КОФЕ (CuOFFe): Cu (+2), O (+2), F (0), Fe (+6). Эти элементы
   не следуют правилу «максимальная степень = номер группы».
 </FAQ>
+
+## Тест по теме: степень окисления
+
+<Slider questions={testQuestionsStepen} />
 
 <Banner type="success" title="Заключение">
   Если вы выучите правила и потренируетесь, задачи на степень окисления будут

@@ -1,5 +1,8 @@
 // src/content/config.ts
 import { defineCollection, z } from "astro:content";
+import { calcReadingTime } from "../lib/calcReadingTime";
+
+
 
 const articles = defineCollection({
     type: "content",
@@ -13,7 +16,7 @@ const articles = defineCollection({
         author: z.string().optional(),
         authorRole: z.string().optional(),  // должность/роль автора
         authorImage: z.string().optional(), // аватар автора
-        readingTime: z.string().optional(),
+        readingTime: z.number().int().positive().optional(),
         toc: z.boolean().optional(),        // показывать/скрывать содержание статьи (по умолчанию true)
         tocManual: z.array(z.object({       // ручное содержание (опционально, если нужно переопределить автоматическое)
             id: z.string().optional(),

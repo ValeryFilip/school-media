@@ -27,7 +27,7 @@ import AuthorSection from "../components/mainpage/AuthorSection.astro";
 const seo = {
   title: "Курс по ОВР для ЕГЭ 2026 | ЕГЭХИМ, Филипенко Валерий",
   description:
-    " Онлайн-курс по ОВР для ЕГЭ: теория, практика, тренажёры и поддержка. Начни бесплатно и выйди на 80–100 баллов!",
+    "Онлайн-курс по ОВР для ЕГЭ: теория, практика, тренажёры и поддержка. Начни бесплатно и выйди на 80–100 баллов!",
   image: "/images/technical/og-home.png",
 };
 
@@ -438,6 +438,13 @@ const courseJsonLd = buildCourseJsonLd({
   reviewCount: reviewsProps.stats.find((s) => s.value.includes("4,9"))
     ? 100
     : undefined,
+  keywords: [
+    "ОВР ЕГЭ",
+    "окислительно-восстановительные реакции",
+    "задание 29 ЕГЭ",
+    "курс ОВР",
+    "реакции ЕГЭ",
+  ],
 });
 
 // Product JSON-LD

@@ -56,32 +56,6 @@ const {
       font-family: var(--ff);
     }
 
-    /* Локальный контейнер (стандартный паттерн) */
-    .container {
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      box-sizing: border-box;
-    }
-    @media (max-width: 1100px) {
-      .container {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .container {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-
     /* Сетка секции */
     .kursi-hero__grid {
       display: flex;
@@ -91,9 +65,7 @@ const {
     .kursi-hero__left {
       display: flex;
       flex-direction: column;
-      gap: var(--space-16);
-      flex: 1 1 auto;
-      min-width: 0;
+      justify-content: space-between;
     }
     .kursi-hero__right {
       display: flex;
@@ -200,15 +172,15 @@ const {
       <!-- Левая колонка -->
       <div class="kursi-hero__left">
         <!-- Белая карточка с заголовком -->
-        <article class="card kursi-hero__main">
+        <div class="card kursi-hero__main">
           <h1 id={`${id}-title`} class="kursi-hero__title">
             {title}
             <span class="kursi-hero__highlight">{highlight}</span>
           </h1>
-        </article>
+        </div>
 
         <!-- Карточка с оффером -->
-        <article class="kursi-hero__offer">
+        <div class="kursi-hero__offer">
           <p class="kursi-hero__lead" set:html={lead} />
           <div class="kursi-hero__actions" role="group" aria-label="Действия">
             <a href={href1} class="btn btn--blue" aria-label={text1}>{text1}</a>
@@ -216,26 +188,16 @@ const {
               >{text2}</a
             >
           </div>
-        </article>
+        </div>
       </div>
 
       <!-- Правая колонка (изображения) -->
       <div class="kursi-hero__right" aria-hidden="true">
         <figure class="kursi-hero__img">
-          <img
-            src={imgLeft.src}
-            width={imgLeft.width ?? 550}
-            height={imgLeft.height ?? 1100}
-            alt={imgLeft.alt}
-          />
+          <img src={imgLeft.src} alt={imgLeft.alt} />
         </figure>
         <figure class="kursi-hero__img">
-          <img
-            src={imgRight.src}
-            width={imgRight.width ?? 550}
-            height={imgRight.height ?? 1100}
-            alt={imgRight.alt}
-          />
+          <img src={imgRight.src} alt={imgRight.alt} />
         </figure>
       </div>
     </div>
