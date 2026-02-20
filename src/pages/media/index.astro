@@ -26,7 +26,7 @@ const allPosts = withReadingTime(allPostsRaw);
 const filterByCategory = (category: string) =>
   allPosts.filter(
     (p) =>
-      String(p.data.category || "").toLowerCase() === category.toLowerCase()
+      String(p.data.category || "").toLowerCase() === category.toLowerCase(),
   );
 
 // Категории
@@ -85,7 +85,8 @@ const section8Vertical = section8Posts.slice(0, 6);
 
 // SEO (приоритет — Astro.site из astro.config)
 const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageTitle = "Медиа — статьи и материалы по химии, ЕГЭ и ОГЭ";
+const pageTitle =
+  "Синтез медиа — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам";
 const pageDesc =
   "Статьи, разборы и материалы по химии: подготовка к ЕГЭ и ОГЭ, теория, практика и советы от экспертов.";
 
