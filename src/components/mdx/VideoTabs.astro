@@ -55,11 +55,12 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       <iframe
         width="560"
         height="315"
-        src={youtubeHref}
+        data-src={youtubeHref}
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen></iframe>
+        allowfullscreen
+        loading="lazy"></iframe>
     </div>
     <div
       class="tab-content"
@@ -70,12 +71,13 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       hidden
     >
       <iframe
-        src={vkHref}
+        data-src={vkHref}
         title="VK video player"
         width="560"
         height="315"
         allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
-        allowfullscreen></iframe>
+        allowfullscreen
+        loading="lazy"></iframe>
     </div>
     <div
       class="tab-content"
@@ -88,11 +90,12 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       <iframe
         width="720"
         height="405"
-        src={rutubeHref}
+        data-src={rutubeHref}
         title="Rutube video player"
         style="border: none"
         allow="clipboard-write; autoplay"
-        allowfullscreen></iframe>
+        allowfullscreen
+        loading="lazy"></iframe>
     </div>
   </div>
 </section>
@@ -170,31 +173,55 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
 </style>
 
 <script is:inline>
-  const tabButtons = document.querySelectorAll(".tab-header");
-  const tabContents = document.querySelectorAll(".tab-content");
-
-  tabButtons.forEach((tabButton) => {
-    tabButton.addEventListener("click", () => {
-      const tabButtonType = tabButton.dataset.tab;
-      const tabContent = document.querySelector(
-        `.tab-content[data-tab="${tabButtonType}"]`
+  (function () {
+    function loadVisibleIframe(tabContent) {
+      if (!tabContent || tabContent.hidden) return;
+      const iframe = tabContent.querySelector("iframe[data-src]");
+      if (iframe && iframe.dataset.src && !iframe.src) {
+        iframe.src = iframe.dataset.src;
+      }
+    }
+    const tabButtons = document.querySelectorAll(".tab-header");
+    const tabContents = document.querySelectorAll(".tab-content");
+    // Грузим iframe только для видимой вкладки (первая по умолчанию — после появления в viewport или по клику)
+    const section = document.querySelector(".tabs");
+    if (section && typeof IntersectionObserver !== "undefined") {
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              var visible = document.querySelector(".tab-content:not([hidden])");
+              loadVisibleIframe(visible);
+              observer.disconnect();
+            }
+          });
+        },
+        { rootMargin: "100px" }
       );
-      tabContent.hidden = false;
-      tabContents.forEach((otherTabContent) => {
-        if (otherTabContent !== tabContent) {
-          otherTabContent.hidden = true;
-        }
-      });
-      tabButton.classList.add("active");
-      tabButton.setAttribute("aria-selected", "true");
-      tabButton.setAttribute("tabindex", "0");
-      tabButtons.forEach((otherTabButton) => {
-        if (otherTabButton !== tabButton) {
-          otherTabButton.classList.remove("active");
-          otherTabButton.setAttribute("aria-selected", "false");
-          otherTabButton.setAttribute("tabindex", "-1");
-        }
+      observer.observe(section);
+    } else {
+      loadVisibleIframe(document.querySelector(".tab-content[data-tab='firstReview']"));
+    }
+    tabButtons.forEach(function (tabButton) {
+      tabButton.addEventListener("click", function () {
+        var tabButtonType = tabButton.dataset.tab;
+        var tabContent = document.querySelector(".tab-content[data-tab=\"" + tabButtonType + "\"]");
+        tabContent.hidden = false;
+        tabContents.forEach(function (other) {
+          if (other !== tabContent) other.hidden = true;
+        });
+        tabButton.classList.add("active");
+        tabButton.setAttribute("aria-selected", "true");
+        tabButton.setAttribute("tabindex", "0");
+        tabButtons.forEach(function (other) {
+          if (other !== tabButton) {
+            other.classList.remove("active");
+            other.setAttribute("aria-selected", "false");
+            other.setAttribute("tabindex", "-1");
+          }
+        });
+        loadVisibleIframe(tabContent);
       });
     });
-  });
+  })();
 </script>
