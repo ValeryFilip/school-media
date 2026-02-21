@@ -22,7 +22,9 @@ const {
 /* ===== Домен и хосты (приоритет — Astro.site из astro.config) ===== */
 const siteOrigin = Astro.url.origin;
 const siteHost = new URL(siteOrigin).host;
-const configHost = Astro.site?.host ?? (config?.siteUrl ? new URL(String(config.siteUrl)).host : null);
+const configHost =
+  Astro.site?.host ??
+  (config?.siteUrl ? new URL(String(config.siteUrl)).host : null);
 
 const inMedia = Astro.url.pathname.startsWith("/media");
 
@@ -185,7 +187,7 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       max-width: none;
-      padding-inline: 15px;
+      padding: 0 var(--pad-mobile);
     }
   }
 
@@ -195,7 +197,7 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       max-width: none;
-      padding-inline: 15px;
+      padding: 0 var(--pad-mobile);
     }
     .breadcrumbs {
       font-size: 15px;
@@ -214,7 +216,7 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       max-width: none;
-      padding-inline: 15px;
+      padding: 0 var(--pad-mobile);
     }
   }
 </style>

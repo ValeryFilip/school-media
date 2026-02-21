@@ -64,6 +64,7 @@ const {
     align-items: center;
     gap: 20px;
     padding: 20px;
+    margin: 20px 0;
     background-color: #366ef0;
     border-radius: 24px;
     cursor: pointer;
@@ -175,7 +176,7 @@ const {
 <script is:inline>
   (function () {
     const bannerWrapper = document.querySelector(
-      ".banner__wrapper[role='button']"
+      ".banner__wrapper[role='button']",
     );
     if (!bannerWrapper) return;
 
