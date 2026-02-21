@@ -26,30 +26,30 @@
 
 Картинки, которые **ещё ссылаются в коде** и при этом тяжёлые или в формате PNG/JPEG — их стоит сжать и при необходимости заменить на WebP, затем обновить пути в коде.
 
-| Файл | Размер | Где в коде | Действие |
-|------|--------|------------|----------|
-| `images/chemistry.png` | **~2.4 MB** | В коде уже `chemistry.webp` (ArticleLayoutNew) | Удалить PNG с диска — не используется |
-| `images/banner-pic.png` | **~2.4 MB** | В коде уже `banner-pic.webp` | Удалить PNG с диска |
-| `images/1234.jpg` | **~1.27 MB** | В коде уже `1234.webp` | Удалить JPG с диска |
-| `images/girl-lead.webp` | **~1.45 MB** | В коде уже `girl-lead1.webp` | Удалить старый webp с диска |
-| `images/mainpage/reviews/liza-photo.jpg` | **~1.84 MB** | В коде уже `liza-photo.webp` | Удалить JPG с диска |
-| `images/mainpage/adfree.png` | **~673 KB** | В коде уже `adfree.webp` | Удалить PNG с диска |
-| `images/mainpage/reviews/veronika-photo.jpg` | **~632 KB** | В коде уже `veronika-photo.webp` | Удалить JPG с диска |
-| ~~**Главная**~~ | — | **Готово:** heroleft, heroright, photo-last, social → .webp, пути обновлены |
-| **Фласки / allcourses** |
-| `images/flasks/CE-FLAISET__44996.png` | **~1.05 MB** | allcourses.astro | WebP → заменить пути в allcourses |
-| `images/flasks/CE-SEPF250_1__97109.png` | **~714 KB** | allcourses.astro | То же |
-| `images/flasks/CE-BEISET__57187.png` | **~626 KB** | allcourses.astro | То же |
-| `images/flasks/ce-fdis250_1__98982.png` | **~530 KB** | allcourses.astro | То же |
-| ~~`images/technical/404.png`~~ | — | **Готово:** заменён на 404.webp, путь в 404.astro обновлён |
-| **Отзывы на главной (в коде всё ещё .jpg/.png)** |
-| `images/mainpage/reviews/maks-photo.jpg`, maks1.jpg, maks2.png | разное | index.astro | Сжать или WebP, обновить пути |
-| `images/mainpage/reviews/nika-photo.jpg`, nika1.jpg, nika2.png | разное | index.astro | То же |
-| `images/mainpage/reviews/david-photo.jpg`, david1.png, david2.jpg | разное | index.astro | То же |
-| `images/mainpage/reviews/anna-photo.jpg`, anna1.jpg, anna2.png | разное | index.astro | То же |
-| `images/mainpage/reviews/anya-photo.jpg`, anya1.png, anya2.png | разное | index.astro | То же |
-| `images/mainpage/reviews/veronika1.jpg`, veronika2.png | разное | index.astro | То же |
-| `images/mainpage/reviews/liza1.jpg`, liza2.png | разное | index.astro | То же |
+| Файл                                                              | Размер       | Где в коде                                                                  | Действие                              |
+| ----------------------------------------------------------------- | ------------ | --------------------------------------------------------------------------- | ------------------------------------- |
+| `images/chemistry.png`                                            | **~2.4 MB**  | В коде уже `chemistry.webp` (ArticleLayoutNew)                              | Удалить PNG с диска — не используется |
+| `images/banner-pic.png`                                           | **~2.4 MB**  | В коде уже `banner-pic.webp`                                                | Удалить PNG с диска                   |
+| `images/1234.jpg`                                                 | **~1.27 MB** | В коде уже `1234.webp`                                                      | Удалить JPG с диска                   |
+| `images/girl-lead.webp`                                           | **~1.45 MB** | В коде уже `girl-lead1.webp`                                                | Удалить старый webp с диска           |
+| `images/mainpage/reviews/liza-photo.jpg`                          | **~1.84 MB** | В коде уже `liza-photo.webp`                                                | Удалить JPG с диска                   |
+| `images/mainpage/adfree.png`                                      | **~673 KB**  | В коде уже `adfree.webp`                                                    | Удалить PNG с диска                   |
+| `images/mainpage/reviews/veronika-photo.jpg`                      | **~632 KB**  | В коде уже `veronika-photo.webp`                                            | Удалить JPG с диска                   |
+| ~~**Главная**~~                                                   | —            | **Готово:** heroleft, heroright, photo-last, social → .webp, пути обновлены |
+| **Фласки / allcourses**                                           |
+| `images/flasks/CE-FLAISET__44996.png`                             | **~1.05 MB** | allcourses.astro                                                            | WebP → заменить пути в allcourses     |
+| `images/flasks/CE-SEPF250_1__97109.png`                           | **~714 KB**  | allcourses.astro                                                            | То же                                 |
+| `images/flasks/CE-BEISET__57187.png`                              | **~626 KB**  | allcourses.astro                                                            | То же                                 |
+| `images/flasks/ce-fdis250_1__98982.png`                           | **~530 KB**  | allcourses.astro                                                            | То же                                 |
+| ~~`images/technical/404.png`~~                                    | —            | **Готово:** заменён на 404.webp, путь в 404.astro обновлён                  |
+| **Отзывы на главной (в коде всё ещё .jpg/.png)**                  |
+| `images/mainpage/reviews/maks-photo.jpg`, maks1.jpg, maks2.png    | разное       | index.astro                                                                 | Сжать или WebP, обновить пути         |
+| `images/mainpage/reviews/nika-photo.jpg`, nika1.jpg, nika2.png    | разное       | index.astro                                                                 | То же                                 |
+| `images/mainpage/reviews/david-photo.jpg`, david1.png, david2.jpg | разное       | index.astro                                                                 | То же                                 |
+| `images/mainpage/reviews/anna-photo.jpg`, anna1.jpg, anna2.png    | разное       | index.astro                                                                 | То же                                 |
+| `images/mainpage/reviews/anya-photo.jpg`, anya1.png, anya2.png    | разное       | index.astro                                                                 | То же                                 |
+| `images/mainpage/reviews/veronika1.jpg`, veronika2.png            | разное       | index.astro                                                                 | То же                                 |
+| `images/mainpage/reviews/liza1.jpg`, liza2.png                    | разное       | index.astro                                                                 | То же                                 |
 
 **Примечание:** компонент `KursiFormat.astro` нигде не используется (не импортируется). В нём по умолчанию указан несуществующий `topimage.png` — можно не трогать или при необходимости поменять default на существующий файл.
 
@@ -65,25 +65,25 @@
 
 ## Обязательно уменьшить/оптимизировать
 
-| Файл | Размер | Действие |
-|------|--------|----------|
-| `images/1234.jpg` | **1.27 MB** | WebP или JPEG quality 80–85 |
-| `images/1234.webp` | **930 KB** | Уменьшить качество/разрешение |
-| `images/girl-lead.webp` | **1.45 MB** | Уменьшить качество/разрешение |
-| ~~`images/articles/*.png`~~ | — | **Готово:** заменены на WebP, PNG удалены |
-| `images/articles/videos/*.jpeg` | ~115–195 KB каждый | По желанию: можно конвертировать в WebP позже |
-| `images/mainpage/reviews/anya-photo.jpg` | **379 KB** | Уменьшить до ~100–150 KB |
-| `images/mainpage/reviews/david1.png` | **244 KB** | Конвертировать в WebP |
-| `images/mainpage/reviews/liza1.jpg` | **365 KB** | Сжать |
-| `images/mainpage/reviews/veronika2.png` | **173 KB** | WebP |
-| `images/mainpage/reviews/nika2.png` | **276 KB** | WebP |
-| `images/stepik/hero-image-neorg.webp` | **317 KB** | Уменьшить качество WebP |
-| `images/stepik/gifs/*.webm` | **1.2–1.7 MB каждый** | Пережать (меньший битрейт), всего ~8.4 MB |
-| `images/technical/404.png` | **320 KB** | WebP или сжатый PNG |
-| `images/uni/gorniy.webp` | **357 KB** | Уменьшить качество |
-| `images/uni/Spbgu.webp` | **192 KB** | По желанию |
-| `images/uni/almazova.webp` | **169 KB** | По желанию |
-| `images/uni/mechnikova.webp` | **155 KB** | По желанию |
+| Файл                                     | Размер                | Действие                                      |
+| ---------------------------------------- | --------------------- | --------------------------------------------- |
+| `images/1234.jpg`                        | **1.27 MB**           | WebP или JPEG quality 80–85                   |
+| `images/1234.webp`                       | **930 KB**            | Уменьшить качество/разрешение                 |
+| `images/girl-lead.webp`                  | **1.45 MB**           | Уменьшить качество/разрешение                 |
+| ~~`images/articles/*.png`~~              | —                     | **Готово:** заменены на WebP, PNG удалены     |
+| `images/articles/videos/*.jpeg`          | ~115–195 KB каждый    | По желанию: можно конвертировать в WebP позже |
+| `images/mainpage/reviews/anya-photo.jpg` | **379 KB**            | Уменьшить до ~100–150 KB                      |
+| `images/mainpage/reviews/david1.png`     | **244 KB**            | Конвертировать в WebP                         |
+| `images/mainpage/reviews/liza1.jpg`      | **365 KB**            | Сжать                                         |
+| `images/mainpage/reviews/veronika2.png`  | **173 KB**            | WebP                                          |
+| `images/mainpage/reviews/nika2.png`      | **276 KB**            | WebP                                          |
+| `images/stepik/hero-image-neorg.webp`    | **317 KB**            | Уменьшить качество WebP                       |
+| `images/stepik/gifs/*.webm`              | **1.2–1.7 MB каждый** | Пережать (меньший битрейт), всего ~8.4 MB     |
+| `images/technical/404.png`               | **320 KB**            | WebP или сжатый PNG                           |
+| `images/uni/gorniy.webp`                 | **357 KB**            | Уменьшить качество                            |
+| `images/uni/Spbgu.webp`                  | **192 KB**            | По желанию                                    |
+| `images/uni/almazova.webp`               | **169 KB**            | По желанию                                    |
+| `images/uni/mechnikova.webp`             | **155 KB**            | По желанию                                    |
 
 ---
 
@@ -98,10 +98,10 @@
 
 ## SVG
 
-| Файл | Действие |
-|------|----------|
+| Файл                           | Действие                                            |
+| ------------------------------ | --------------------------------------------------- |
 | `favicon.svg` (в корне public) | Минифицировать (SVGO) — сократить размер в 2–5 раз. |
-| `images/logo_media.svg` | Оставить как есть (используется в меню). |
+| `images/logo_media.svg`        | Оставить как есть (используется в меню).            |
 
 ---
 
@@ -133,4 +133,4 @@
 - **SVG:** `npx svgo favicon.svg -o favicon.min.svg`.
 - **WebM:** `ffmpeg -i input.webm -b:v 800k output.webm`.
 
-После оптимизации проверить, что в коде используются нужные файлы и при необходимости обновить пути на `.webp`.
+После оптимизации проверить, что в коде используются нужные файлы и при необходимости обновить пути на `.webp`.asd
