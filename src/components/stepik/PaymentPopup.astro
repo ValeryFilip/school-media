@@ -26,7 +26,12 @@ const {
   <div class="payment-popup__overlay" data-payment-close></div>
 
   <div class="payment-popup__container">
-    <button type="button" class="payment-popup__close" data-payment-close aria-label="Закрыть окно оплаты">×</button>
+    <button
+      type="button"
+      class="payment-popup__close"
+      data-payment-close
+      aria-label="Закрыть окно оплаты">×</button
+    >
     <div class="payment-popup__content">
       <!-- Прелоадер -->
       <div class="payment-popup__loader" id="payment-loader">
@@ -47,7 +52,7 @@ const {
   </div>
 </div>
 
-<script>
+<script is:inline>
   // Обработчики для попапа оплаты
   document.addEventListener("DOMContentLoaded", () => {
     const popup = document.querySelector("[data-payment-popup]");
