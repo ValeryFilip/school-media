@@ -24,8 +24,6 @@ const {
 <div class="banner">
   <div
     class={`banner__wrapper ${!imageSrc ? "banner__wrapper--no-image" : ""}`}
-    role="button"
-    tabindex="0"
   >
     <div class="banner_left">
       <div class="banner_left-title">{title}</div>
@@ -175,9 +173,7 @@ const {
 
 <script is:inline>
   (function () {
-    const bannerWrapper = document.querySelector(
-      ".banner__wrapper[role='button']",
-    );
+    const bannerWrapper = document.querySelector(".banner__wrapper");
     if (!bannerWrapper) return;
 
     // Обработчик клика на весь баннер

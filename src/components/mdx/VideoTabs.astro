@@ -8,8 +8,8 @@ interface Props {
 const { youtubeHref, vkHref, rutubeHref } = Astro.props;
 ---
 
-<section class="tabs">
-  <div class="tab-headers" role="tablist" aria-label="Video sources">
+<section class="tabs" aria-label="Видео: выбор источника">
+  <div class="tab-headers" role="tablist" aria-label="Источник видео">
     <div
       class="tab-header active"
       role="tab"
@@ -50,6 +50,7 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       role="tabpanel"
       id="firstReview"
       aria-labelledby="tab-firstReview"
+      aria-hidden="false"
       data-tab="firstReview"
     >
       <iframe
@@ -67,6 +68,7 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       role="tabpanel"
       id="secondReview"
       aria-labelledby="tab-secondReview"
+      aria-hidden="true"
       data-tab="secondReview"
       hidden
     >
@@ -84,6 +86,7 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
       role="tabpanel"
       id="thirdReview"
       aria-labelledby="tab-thirdReview"
+      aria-hidden="true"
       data-tab="thirdReview"
       hidden
     >
@@ -202,13 +205,20 @@ const { youtubeHref, vkHref, rutubeHref } = Astro.props;
     } else {
       loadVisibleIframe(document.querySelector(".tab-content[data-tab='firstReview']"));
     }
+    tabContents.forEach(function (panel) {
+      panel.setAttribute("aria-hidden", panel.hidden ? "true" : "false");
+    });
     tabButtons.forEach(function (tabButton) {
       tabButton.addEventListener("click", function () {
         var tabButtonType = tabButton.dataset.tab;
         var tabContent = document.querySelector(".tab-content[data-tab=\"" + tabButtonType + "\"]");
         tabContent.hidden = false;
+        tabContent.setAttribute("aria-hidden", "false");
         tabContents.forEach(function (other) {
-          if (other !== tabContent) other.hidden = true;
+          if (other !== tabContent) {
+            other.hidden = true;
+            other.setAttribute("aria-hidden", "true");
+          }
         });
         tabButton.classList.add("active");
         tabButton.setAttribute("aria-selected", "true");

@@ -32,10 +32,10 @@ const {
 } = Astro.props as Props;
 ---
 
-<section class="hero-ege">
+<section class="hero-ege" role="region" aria-labelledby="hero-courses-title">
   <div class="hero-container">
     <div class="hero-left">
-      <h1>{title} <span>{highlight}</span></h1>
+      <h1 id="hero-courses-title">{title} <span>{highlight}</span></h1>
       <p class="lead">{lead}</p>
     </div>
 
@@ -62,9 +62,9 @@ const {
         </div>
       </div>
 
-      <div class="rating">
+      <div class="rating" role="group" aria-label={`Рейтинг: ${rating} из 5. ${ratingNote}`}>
         <div class="rating-number">{rating}</div>
-        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="stars" aria-hidden="true">⭐⭐⭐⭐⭐</div>
         <div class="rating-text">{ratingNote}</div>
       </div>
     </div>

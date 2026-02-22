@@ -27,12 +27,15 @@ interface CourseCard {
 interface Props {
   heading?: string;
   subtitle?: string;
+  /** id для заголовка и aria-labelledby региона (уникальный на странице) */
+  headingId?: string;
   cards?: (CourseCard | CardFromPage)[];
 }
 
 const {
   heading = "Наши курсы",
   subtitle = "Наши курсы помогут вам успешно поступить в вуз",
+  headingId = "courses-cards-title",
   cards = [],
 } = Astro.props;
 
@@ -59,9 +62,9 @@ function normalizeCard(card: CourseCard | CardFromPage): CourseCard {
 }
 ---
 
-<div class="section course-cards">
+<div class="section course-cards" role="region" aria-labelledby={headingId}>
   <div class="course-grid__wrapper container">
-    <H2Zag title={heading} subtitle={subtitle} />
+    <H2Zag title={heading} subtitle={subtitle} headingId={headingId} />
     <div class="course-cards__grid">
       {
         cards.map((card) => {

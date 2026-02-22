@@ -18,6 +18,8 @@ const { striped = true, bordered = true } = Astro.props;
 
 <div
   class={`table-wrapper ${striped ? "striped" : ""} ${bordered ? "bordered" : ""}`}
+  role="region"
+  aria-label="Таблица"
 >
   <slot />
 </div>

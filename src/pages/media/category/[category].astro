@@ -90,15 +90,15 @@ const totalArticles = posts.length;
     : undefined}
   breadcrumbs={breadcrumbs}
 >
-  <main class="main container">
-    <section class="header">
+  <main class="main container" aria-labelledby="category-title">
+    <section class="header" role="region" aria-labelledby="category-title">
       <div class="header__wrapper">
-        <h1 class="header__title" data-count={totalArticles}>{pageTitle}</h1>
+        <h1 id="category-title" class="header__title" data-count={totalArticles}>{pageTitle}</h1>
         <p class="header__description">{pageDesc}</p>
       </div>
     </section>
 
-    <section class="main-cards">
+    <section class="main-cards" role="region" aria-labelledby="category-title">
       <div class="left-block__grid" id="grid-initial">
         {
           pagedLeftCards.map((post) => (
@@ -109,8 +109,8 @@ const totalArticles = posts.length;
         }
       </div>
 
-      <div class="popular">
-        <h2 class="popular__title">Популярное</h2>
+      <div class="popular" role="region" aria-labelledby="popular-title">
+        <h2 id="popular-title" class="popular__title">Популярное</h2>
         <div class="popular__cards">
           {
             rightCards.map((post) => (

@@ -55,11 +55,11 @@ const toBtnClass = (v?: CTA["variant"]) => {
 <div class="section stepik-hero" aria-labelledby={`${id}-title`}>
   <div class="hero-inner">
     <article class="card hero-card">
-      {/* Ярлыки */}
+      {/* Ярлыки (не навигация — просто подписи) */}
       {labels?.length > 0 && (
-        <nav class="label-group" aria-label="Категории курса">
+        <div class="label-group" role="group" aria-label="Категории курса">
           {labels.map((l) => <span class="label">{l}</span>)}
-        </nav>
+        </div>
       )}
 
       <div class="hero-grid">
@@ -94,7 +94,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
         </figure>
       </div>
 
-      <ul class="features" role="list">
+      <ul class="features">
         {features.map((f, i) => (
           <li class={`feature ${i === features.length - 1 ? "feature--accent" : ""}`}>
             <h3 class="feature-title">{f.title}</h3>

@@ -25,8 +25,8 @@ const indexData = posts.map((p) => ({
   title="Поиск по сайту"
   description="Поиск статей и материалов по химии, ЕГЭ, ОГЭ и подготовке к экзаменам на egehim.ru."
 >
-  <div class="search-wrap">
-    <h1 class="search-title">Поиск по сайту</h1>
+  <div class="search-wrap" role="region" aria-labelledby="search-page-title">
+    <h1 id="search-page-title" class="search-title">Поиск по сайту</h1>
 
     <!-- Поле ввода -->
     <form action="search" method="get" class="search-form" role="search">
@@ -39,7 +39,7 @@ const indexData = posts.map((p) => ({
         class="search-input"
         aria-label="Введите запрос для поиска по сайту"
       />
-      <button type="submit" class="visually-hidden">Искать</button>
+      <button type="submit" class="visually-hidden" aria-label="Выполнить поиск">Искать</button>
     </form>
 
     <!-- Шапка колонок -->

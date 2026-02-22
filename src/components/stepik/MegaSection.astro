@@ -186,7 +186,8 @@ const SWIPER_NEXT = `${id}-swiper-next`;
 <div
   class="section mega"
   id={id}
-  aria-label="Секция платформы, модулей и навыков"
+  role="region"
+  aria-labelledby={`${id}-heading`}
 >
   <div
     class="mega-bg"
@@ -195,7 +196,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
     <!-- Блок 1: Платформа -->
     <div class="content-block">
       <div class="platform">
-        <h2 class="platform__h2">{platform.heading}</h2>
+        <h2 id={`${id}-heading`} class="platform__h2">{platform.heading}</h2>
 
         <div
           class="platform__slider"

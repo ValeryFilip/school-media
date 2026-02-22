@@ -99,12 +99,12 @@ const SLIDER_PREV = "cases-slider-prev";
 const SLIDER_NEXT = "cases-slider-next";
 ---
 
-<div class="cases-slider-section container">
+<div class="cases-slider-section container" role="region" aria-labelledby="cases-slider-title">
   <div class="header-cases">
-    <H2Zag title={title} subtitle={subtitle} />
+    <H2Zag title={title} subtitle={subtitle} headingId="cases-slider-title" />
   </div>
 
-  <div class="cases-slider" id={SLIDER_ID}>
+  <div class="cases-slider" id={SLIDER_ID} aria-roledescription="карусель" aria-label="Истории успеха учеников">
     <!-- Кнопки навигации сверху -->
     <div class="cases-slider__controls">
       <a href={moreReviewsLink} target="_blank" rel="noopener noreferrer" class="cases-slider__more-link">

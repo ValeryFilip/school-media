@@ -133,11 +133,12 @@ const {
             target={footer.target}
             rel={footer.rel}
             class="btn btn--primary"
+            aria-label={footer.ctaText}
           >
             {footer.ctaText}
           </a>
         ) : (
-          <button type="button" class="btn btn--primary">
+          <button type="button" class="btn btn--primary" aria-label={footer.ctaText}>
             {footer.ctaText}
           </button>
         )

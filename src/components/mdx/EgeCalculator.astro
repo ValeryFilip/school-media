@@ -2,8 +2,8 @@
 // Компонент для калькулятора перевода баллов ЕГЭ
 ---
 
-<div class="calc" id="ege-calc">
-  <h2 class="calc__title">Калькулятор шкалы перевода баллов ЕГЭ</h2>
+<div class="calc" id="ege-calc" role="region" aria-labelledby="ege-calc-title">
+  <h2 id="ege-calc-title" class="calc__title">Калькулятор шкалы перевода баллов ЕГЭ</h2>
   <div class="calc__row">
     <label class="calc__label">
       Предмет
@@ -22,21 +22,22 @@
         <option value="chinese">Китайский язык</option>
       </select>
     </label>
-    <label class="calc__label">
+    <label class="calc__label" for="ege-calc-primary">
       Первичные баллы
       <input
-        id="primary"
+        id="ege-calc-primary"
         type="number"
         min="0"
         step="1"
         placeholder="например, 23"
         class="calc__input"
+        aria-describedby="ege-calc-note"
       />
     </label>
   </div>
-  <button id="calc-btn" type="button" class="calc__btn">Посчитать</button>
-  <div class="calc__result" id="result"></div>
-  <p class="calc__note">
+  <button id="calc-btn" type="button" class="calc__btn" aria-label="Рассчитать тестовые баллы">Посчитать</button>
+  <div class="calc__result" id="result" role="status" aria-live="polite" aria-atomic="true"></div>
+  <p id="ege-calc-note" class="calc__note">
     Результат округляется согласно официальной таблице соответствий для 2025 года.
   </p>
 </div>
@@ -791,7 +792,7 @@
       }
     });
     const $s = document.getElementById("subject");
-    const $p = document.getElementById("primary");
+    const $p = document.getElementById("ege-calc-primary");
     const $r = document.getElementById("result");
     const $b = document.getElementById("calc-btn");
     if (!$s || !$p || !$r || !$b) return;

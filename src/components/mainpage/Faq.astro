@@ -31,13 +31,14 @@ const {
 <div
   class={`section faq ${className}`.trim()}
   id={id}
+  role="region"
   aria-labelledby={headingId}
   data-faq-singleopen={singleOpen ? "1" : "0"}
 >
   <div class="faq-inner">
-    <H2Zag title={title} subtitle={subtitle} />
+    <H2Zag title={title} subtitle={subtitle} headingId={headingId} />
 
-    <div class="faq__list" role="list">
+    <div class="faq__list">
       {
         items.map((it) => (
           <details class="faq__item" {...(it.open ? { open: true } : {})}>

@@ -6,11 +6,12 @@
   <button
     id="copyLink"
     class="copy-link-button"
-    aria-label="Скопировать ссылку"
+    type="button"
+    aria-label="Скопировать ссылку на статью"
   >
-    <img src="/images/technical/copy-link.webp" alt="Copy" width="40" height="40" />
+    <img src="/images/technical/copy-link.webp" alt="" width="40" height="40" aria-hidden="true" />
   </button>
-  <span id="copyTooltip" class="copy-tooltip">Ссылка скопирована!</span>
+  <span id="copyTooltip" class="copy-tooltip" role="status" aria-live="polite" aria-atomic="true"></span>
 </div>
 
 <style>
@@ -93,13 +94,15 @@
           }, 300);
         }
 
-        // Показываем подсказку
+        // Показываем подсказку и объявляем скринридеру
+        tooltip.textContent = "Ссылка скопирована!";
         tooltip.classList.add("show");
 
         // Скрываем подсказку через 2 секунды
         setTimeout(() => {
           tooltip.classList.remove("show");
-        }, 1000);
+          tooltip.textContent = "";
+        }, 2000);
       } catch (e) {
         console.error("Failed to copy link:", e);
       }

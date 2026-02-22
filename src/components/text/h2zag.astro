@@ -2,13 +2,15 @@
 interface Props {
   title?: string; // Заголовок
   subtitle?: string; // Подзаголовок
+  /** id для h2 (для aria-labelledby у региона) */
+  headingId?: string;
 }
 
-const { title = "", subtitle = "" } = Astro.props;
+const { title = "", subtitle = "", headingId } = Astro.props;
 ---
 
 <div class="h2zag">
-  <h2 class="h2zag-title">{title}</h2>
+  <h2 class="h2zag-title" {...(headingId ? { id: headingId } : {})}>{title}</h2>
   {subtitle ? <p class="h2zag-subtitle">{subtitle}</p> : null}
 </div>
 

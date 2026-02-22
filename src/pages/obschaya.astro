@@ -607,7 +607,7 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
   videoJsonLd={videoJsonLd}
   faqJsonLd={faqJsonLd}
 >
-  <section id="hero">
+  <section id="hero" role="region" aria-labelledby="stepik-hero-title">
     <StepikHero
       labels={["Курс", "Химия ЕГЭ 2026", "Общая химия"]}
       title="Вся общая химия для ЕГЭ 2026 с 0 до 80+"
@@ -647,11 +647,11 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
       ]}
     />
   </section>
-  <section id="author">
+  <section id="author" role="region" aria-labelledby="author-title">
     <AuthorSection />
   </section>
 
-  <section id="platform">
+  <section id="platform" role="region" aria-labelledby="mega-section-heading">
     <MegaSection
       id={megaSectionProps.id}
       innerGap={megaSectionProps.innerGap}
@@ -671,7 +671,7 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
     />
   </section>
 
-  <section id="course-why">
+  <section id="course-why" role="region" aria-labelledby="course-why-title">
     <CourseWhy
       id={courseWhyProps.id}
       className={courseWhyProps.className}
@@ -690,11 +690,11 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
     />
   </section>
 
-  <section id="reviews">
+  <section id="reviews" role="region" aria-labelledby="reviews-title">
     <ReviewsSection {...reviewsProps} />
   </section>
 
-  <section id="support">
+  <section id="support" role="region" aria-labelledby="support-h">
     <SupportSection
       id={supportProps.id}
       heading={supportProps.heading}
@@ -709,11 +709,11 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
     />
   </section>
 
-  <section id="price">
+  <section id="price" role="region" aria-labelledby="price-amount">
     <PriceBlock {...priceProps} />
   </section>
 
-  <section id="offer">
+  <section id="offer" role="region" aria-labelledby="offer-h">
     <CourseOffer
       id={offerProps.id}
       badges={offerProps.badges}
@@ -733,12 +733,12 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
     />
   </section>
 
-  <section id="universities">
+  <section id="universities" role="region" aria-labelledby="unis-title">
     <UnisMarquee />
   </section>
 
   {/* Оболочка для FAQ (если нужно, чтобы открывался только один пункт) */}
-  <section id="faq">
+  <section id="faq" role="region" aria-labelledby="faq-title">
     <Faq {...faqProps} />
     <div data-faq-singleopen={faqProps.singleOpen ? "1" : "0"}></div>
   </section>

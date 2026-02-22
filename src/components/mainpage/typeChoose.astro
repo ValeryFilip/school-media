@@ -19,10 +19,10 @@ const {
 } = Astro.props;
 ---
 
-<div class="typeChoose section">
+<div class="typeChoose section" role="region" aria-labelledby="type-choose-title">
   <div class="typeChoose__wrapper container">
     <div class="typeChoose__header">
-      <H2Zag title={title} subtitle={subtitle} />
+      <H2Zag title={title} subtitle={subtitle} headingId="type-choose-title" />
     </div>
     <div class="typeChoose__content">
       <div class="typeChoose__left">

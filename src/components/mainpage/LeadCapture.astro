@@ -186,6 +186,7 @@ const {
             class="lead-form"
             action={formAction}
             method={formMethod}
+            aria-label="Заявка на пробное бесплатное занятие"
             data-utm-source={utmSource}
             data-utm-medium={utmMedium}
             data-utm-campaign={utmCampaign}
@@ -250,11 +251,12 @@ const {
                       >
                         <img
                           src={m.icon}
-                          alt={m.label}
+                          alt=""
                           width={m.width ?? 22}
                           height={m.height ?? 22}
                           loading="lazy"
                           decoding="async"
+                          aria-hidden="true"
                         />
                       </a>
                     ))}

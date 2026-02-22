@@ -21,11 +21,12 @@ const {
   role="dialog"
   aria-modal="true"
   aria-hidden="true"
-  aria-labelledby={`${id}-title`}
+  aria-label={title}
 >
   <div class="payment-popup__overlay" data-payment-close></div>
 
   <div class="payment-popup__container">
+    <button type="button" class="payment-popup__close" data-payment-close aria-label="Закрыть окно оплаты">×</button>
     <div class="payment-popup__content">
       <!-- Прелоадер -->
       <div class="payment-popup__loader" id="payment-loader">
@@ -159,6 +160,28 @@ const {
     max-width: 900px;
     max-height: 90vh;
     overflow: hidden;
+  }
+
+  .payment-popup__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 20;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: #f0f0f0;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .payment-popup__close:hover {
+    background: #e0e0e0;
   }
 
   .payment-popup__content {

@@ -184,6 +184,7 @@ const breadcrumbsJsonLd =
     {webPageJsonLd && <JsonLd data={webPageJsonLd} />}
   </head>
   <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
+    <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <UnifiedMenu
       context={inMedia ? "media" : "landing"}
       logoSrc={logoSrc}

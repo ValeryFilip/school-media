@@ -94,13 +94,14 @@ const {
                 href={s.href}
                 target={s.target}
                 rel={s.rel}
-                aria-label={s.label}
+                aria-label={`${s.label}, открыть в новой вкладке`}
               >
                 <img
                   src={s.icon}
                   width="24"
                   height="24"
-                  alt={s.label}
+                  alt=""
+                  aria-hidden="true"
                   loading="lazy"
                   decoding="async"
                 />
@@ -119,6 +120,7 @@ const {
             target={moreTarget}
             rel={moreRel}
             class="btn btn--blue author__more"
+            aria-label={moreText}
           >
             {moreText}
           </a>

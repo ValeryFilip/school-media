@@ -157,7 +157,7 @@ const sameCategoryTop = allArticles
 <!-- Прогресс чтения -->
 <ProgressBar />
 
-<section class="article__section container">
+<section class="article__section container" role="region" aria-labelledby="article-title">
   <div class="article__wrapper">
     <article class="article">
       <header class="article__header">
@@ -167,9 +167,10 @@ const sameCategoryTop = allArticles
               <div class="article__meta-date">
                 <img
                   src="/images/technical/calendar.webp"
-                  alt="Calendar"
+                  alt=""
                   width="14"
                   height="14"
+                  aria-hidden="true"
                 />
                 <span>{formatDate(dateObj)}</span>
               </div>
@@ -180,9 +181,10 @@ const sameCategoryTop = allArticles
               <time class="article__meta-time">
                 <img
                   src="/images/technical/time.webp"
-                  alt="Time"
+                  alt=""
                   width="14"
                   height="14"
+                  aria-hidden="true"
                 />
                 <span>{fm.readingTime} мин</span>
               </time>
@@ -201,7 +203,7 @@ const sameCategoryTop = allArticles
           </div>
         </div>
 
-        <h1 class="article__header-title">{fm.title}</h1>
+        <h1 id="article-title" class="article__header-title">{fm.title}</h1>
         {
           fm.description && (
             <p class="article__header-description">{fm.description}</p>
@@ -221,8 +223,8 @@ const sameCategoryTop = allArticles
         }
         {
           fm.toc !== false && nestedTocItems && nestedTocItems.length > 0 && (
-            <div class="article__inside-content">
-              <h3 class="article__content-title">Содержание статьи</h3>
+            <nav class="article__inside-content" aria-label="Содержание статьи">
+              <h3 id="article-toc-title" class="article__content-title">Содержание статьи</h3>
               <ul class="article__content-list">
                 {nestedTocItems.map((item) => (
                   <li>
@@ -241,7 +243,7 @@ const sameCategoryTop = allArticles
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           )
         }
       </header>
@@ -321,45 +323,45 @@ const sameCategoryTop = allArticles
       }
       <div class="article__divider"></div>
       <div class="article__footer">
-        <div class="article__footer-repost">
+        <div class="article__footer-repost" role="group" aria-label="Поделиться статьёй">
           <span class="article__footer-repost-title">Поделиться:</span>
           <div class="article__footer-repost-buttons">
             <a
               href={`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(fm.title)}`}
               target="_blank"
               rel="noopener"
-              aria-label="Telegram"
+              aria-label="Поделиться в Telegram"
             >
-              <img src="/images/technical/telegram.webp" alt="Telegram" />
+              <img src="/images/technical/telegram.webp" alt="" aria-hidden="true" />
             </a>
             <a
               href={`https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}`}
               target="_blank"
               rel="noopener"
-              aria-label="VK"
+              aria-label="Поделиться ВКонтакте"
             >
-              <img src="/images/technical/vk.webp" alt="VK" />
+              <img src="/images/technical/vk.webp" alt="" aria-hidden="true" />
             </a>
             <a
               href={`https://wa.me/?text=${encodeURIComponent(fm.title + " " + articleUrl)}`}
               target="_blank"
               rel="noopener"
-              aria-label="WhatsApp"
+              aria-label="Поделиться в WhatsApp"
             >
-              <img src="/images/technical/whatsapp.webp" alt="WhatsApp" />
+              <img src="/images/technical/whatsapp.webp" alt="" aria-hidden="true" />
             </a>
             <CopyLinkButton />
             <a
               href={`mailto:?subject=${encodeURIComponent(fm.title)}&body=${encodeURIComponent(articleUrl)}`}
-              aria-label="Email"
+              aria-label="Поделиться по email"
             >
-              <img src="/images/technical/mail.webp" alt="Email" />
+              <img src="/images/technical/mail.webp" alt="" aria-hidden="true" />
             </a>
           </div>
         </div>
       </div>
     </article>
-    <aside class="article__sidebar">
+    <aside class="article__sidebar" aria-label="Дополнительно">
       <div class="article__sidebar-sticky-wrapper">
         <div class="article__sidebar-tg">
           <a
@@ -377,10 +379,10 @@ const sameCategoryTop = allArticles
 </section>
 {
   sameCategoryTop.length > 0 && (
-    <section class="article__more-section section">
+    <section class="article__more-section section" role="region" aria-labelledby="article-more-title">
       <div class="article__more container">
         <div class="article__more-header">
-          <h2 class="article__more-title">Ещё по теме</h2>
+          <h2 id="article-more-title" class="article__more-title">Ещё по теме</h2>
           <p class="article__more-description">
             Продолжайте изучать тему с другими статьями из категории «
             {fm.category}»

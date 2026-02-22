@@ -42,16 +42,18 @@ const config = {
 };
 
 const { icon, color, bg, border } = config[type];
+const bannerTitleId = title ? `banner-title-${type}-${Math.random().toString(36).slice(2, 10)}` : null;
 ---
 
 <div
   class="banner"
   style={`--banner-color: ${color}; --banner-bg: ${bg}; --banner-border: ${border};`}
   role="alert"
+  {...(bannerTitleId ? { "aria-labelledby": bannerTitleId } : {})}
 >
   <div class="banner-icon" aria-hidden="true">{icon}</div>
   <div class="banner-content">
-    {title && <div class="banner-title">{title}</div>}
+    {title && bannerTitleId && <div id={bannerTitleId} class="banner-title">{title}</div>}
     <div class="banner-text">
       <slot />
     </div>

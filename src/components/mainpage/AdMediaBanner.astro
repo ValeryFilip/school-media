@@ -31,10 +31,10 @@ const {
 } = Astro.props;
 ---
 
-<div class="ad-media section">
+<div class="ad-media section" role="region" aria-labelledby="ad-media-title">
   <div class="container">
     <div class="ad-media__header">
-      <H2Zag title={title} subtitle={subtitle} />
+      <H2Zag title={title} subtitle={subtitle} headingId="ad-media-title" />
       <div class="ad-media__grid">
         {
           posts && posts.length > 0 ? (

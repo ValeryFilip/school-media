@@ -221,7 +221,7 @@ const faqJsonLd = buildFAQJsonLd(faqItems);
   faqJsonLd={faqJsonLd}
 >
   <div class="page-stack">
-    <section id="hero">
+    <section id="hero" aria-labelledby="hero-courses-title">
       <HeroCourses
         title="Качественная самостоятельная подготовка к ЕГЭ –"
         highlight="реальность!"
@@ -230,12 +230,12 @@ const faqJsonLd = buildFAQJsonLd(faqItems);
     </section>
 
     <!-- Блок 1: заголовок+лид+5 карточек -->
-    <section id="courses-top">
-      <CourseCards heading={pageH2} subtitle={pageLead} cards={cardsTop} />
+    <section id="courses-top" role="region" aria-labelledby="allcourses-top-title">
+      <CourseCards heading={pageH2} subtitle={pageLead} headingId="allcourses-top-title" cards={cardsTop} />
     </section>
 
     <!-- Баннер с бесплатными мини-курсами -->
-    <section id="ad-free">
+    <section id="ad-free" role="region" aria-labelledby="ad-free-title">
       <AdFreeBanner
         title="Забери 2 бесплатных мини-курса: +30 баллов к ЕГЭ"
         lead="Видео + практические задания. Подойдут, чтобы быстро войти в режим и закрыть базовые пробелы."
@@ -252,16 +252,17 @@ const faqJsonLd = buildFAQJsonLd(faqItems);
     </section>
 
     <!-- Блок 2: заголовок+лид+3 карточки -->
-    <section id="courses-bottom">
+    <section id="courses-bottom" role="region" aria-labelledby="allcourses-bottom-title">
       <CourseCards
         heading={secondH2}
         subtitle={secondLead}
+        headingId="allcourses-bottom-title"
         cards={cardsBottom}
       />
     </section>
 
     <!-- Лид-форма -->
-    <section id="lead-capture">
+    <section id="lead-capture" role="region" aria-labelledby="lead-capture-title">
       <LeadCapture
         title="Помочь с выбором курса?"
         subtitle="Оставьте заявку — за 5 минут подскажем оптимальный маршрут под ваши цели и сроки"
@@ -273,7 +274,7 @@ const faqJsonLd = buildFAQJsonLd(faqItems);
     </section>
 
     <!-- FAQ -->
-    <section id="faq">
+    <section id="faq" role="region" aria-labelledby="faq-title">
       <Faq title="Вопросы по курсам" items={faqItems} singleOpen={true} />
     </section>
   </div>

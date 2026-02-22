@@ -28,7 +28,7 @@ const {
 ---
 
 <article class="cursCard white-bg">
-  <a href={href} class="cursCard__link">
+  <a href={href} class="cursCard__link" aria-label={title ? `Курс: ${title}. ${buttonText}` : undefined}>
     <div class="cursCard__top">
       <div class="cursCard__pins">
         {pins.map((pin) => <div class="cursCard__pin">{pin}</div>)}
@@ -53,22 +53,13 @@ const {
         </div>
       </div>
       <div class="cursCard__price-note">{priceNote}</div>
-      {
-        href ? (
-          <a
-            href={href}
-            class={`cursCard__price-btn btn btn--primary ${buttonClass}`.trim()}
-          >
-            {buttonText}
-          </a>
-        ) : (
-          <button
-            class={`cursCard__price-btn btn btn--primary ${buttonClass}`.trim()}
-          >
-            {buttonText}
-          </button>
-        )
-      }
+      {/* Вся карточка — одна ссылка; кнопка визуально, без вложенной ссылки */}
+      <span
+        class={`cursCard__price-btn btn btn--primary ${buttonClass}`.trim()}
+        aria-hidden="true"
+      >
+        {buttonText}
+      </span>
     </div>
   </a>
 </article>
