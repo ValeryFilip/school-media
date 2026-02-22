@@ -17,7 +17,7 @@
 | **1** | Переменные окружения / секреты | В коде нет `process.env`/`import.meta.env`; нет захардкоженных API keys/паролей (проверено: только CSS‑токены) |
 | **1** | astro.config | `site: 'https://egehim.ru'`, `output: 'static'` (проверено) |
 | **2** | robots.txt | Генерация в `robots.txt.ts` — Sitemap в теле ответа (проверено) |
-| **2** | sitemap | Генерация через `@astrojs/sitemap`: `sitemap-index.xml` + `sitemap-0.xml` в `dist`; robots.txt указывает на `sitemap-index.xml` |
+| **2** | sitemap | Генерация скриптом после билда: один `sitemap.xml` в `dist`; robots.txt указывает на `sitemap.xml` |
 | **2** | noindex 404 / thank-you / search | В коде: 404 и search через MainLayout `noindex={true}`, thank-you — свой meta robots (проверено) |
 | **2** | Canonical, OG, lang, viewport | В Seo.astro, MainLayout, thank-you (проверено) |
 | **4** | Внешние ссылки rel=noopener | У всех `target="_blank"` в футере, меню, thank-you, формах и т.д. есть rel (проверено) |
@@ -26,7 +26,7 @@
 | **6** | Секреты в коде | Поиск по apiKey/password/secret — только дизайн‑токены в CSS (проверено) |
 | **1** | npm audit | Запустить `npm audit` — решить по апгрейду зависимостей |
 
-После билда можно дополнительно: проверить наличие `dist/robots.txt`, `dist/sitemap-index.xml`, `dist/sitemap-0.xml`, что HTML в `dist/` минифицирован.
+После билда можно дополнительно: проверить наличие `dist/robots.txt`, `dist/sitemap.xml`, что HTML в `dist/` минифицирован.
 
 **Остальное** (страницы открываются, Lighthouse, HTTPS, счётчики, GSC, деплой, пост‑деплой) — нужен живой сайт или ручная проверка.
 
@@ -45,8 +45,8 @@
 
 ## 2. Индексация и SEO (базовая проверка)
 
-- [x] **robots.txt** — доступен по `https://egehim.ru/robots.txt`, содержит `Sitemap: https://egehim.ru/sitemap-index.xml` (генерируется в `robots.txt.ts`)
-- [x] **sitemap** — доступен `sitemap-index.xml` (интеграция `@astrojs/sitemap`), в нём ссылка на `sitemap-0.xml` со всеми страницами
+- [x] **robots.txt** — доступен по `https://egehim.ru/robots.txt`, содержит `Sitemap: https://egehim.ru/sitemap.xml` (генерируется в `robots.txt.ts`)
+- [x] **sitemap** — один файл `sitemap.xml` генерируется скриптом после билда, отдаётся по `/sitemap.xml` без редиректов
 - [x] **Служебные страницы** — 404, thank-you, search с `noindex,nofollow` (в коде: 404 и search через MainLayout `noindex={true}`, thank-you — свой meta robots)
 - [x] **Canonical** — на страницах с MainLayout canonical задаётся в Seo.astro (origin + pathname; при билде origin из `site`); на thank-you добавлен `<link rel="canonical">` с config.siteUrl
 - [x] **Title и description** — уникальные на ключевых страницах; правки внесены (пробелы, «ГОТОВО», медиа/поиск/архив)

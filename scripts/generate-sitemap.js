@@ -1,6 +1,6 @@
 /**
- * Генерирует sitemap-index.xml и sitemap-0.xml из собранного dist/.
- * Запускается после `astro build`, чтобы не зависеть от @astrojs/sitemap (падает в CI на .reduce).
+ * Генерирует один sitemap.xml из собранного dist/.
+ * Запускается после `astro build`. Файл отдаётся по /sitemap.xml без редиректов.
  */
 import { readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -47,23 +47,16 @@ async function main() {
   const base = SITE.replace(/\/$/, '');
   const urls = paths
     .map((p) => base + pathToUrl(p))
-    .filter((u) => !u.endsWith('/404') && !u.endsWith('/404/'));
+    .filter((u) => !u.endsWith('/404') && !u.endsWith('/404/') && !/\/yandex_[a-f0-9]+$/i.test(u));
 
-  const sitemap0 = `<?xml version="1.0" encoding="UTF-8"?>
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${escapeXml(u)}</loc></url>`).join('\n')}
 </urlset>
 `;
 
-  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap><loc>${escapeXml(base + '/sitemap-0.xml')}</loc></sitemap>
-</sitemapindex>
-`;
-
-  await writeFile(join(distDir, 'sitemap-0.xml'), sitemap0, 'utf8');
-  await writeFile(join(distDir, 'sitemap-index.xml'), sitemapIndex, 'utf8');
-  console.log('Generated sitemap-index.xml and sitemap-0.xml with', urls.length, 'URLs');
+  await writeFile(join(distDir, 'sitemap.xml'), sitemap, 'utf8');
+  console.log('Generated sitemap.xml with', urls.length, 'URLs');
 }
 
 main().catch((err) => {

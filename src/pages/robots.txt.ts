@@ -5,7 +5,7 @@ export const prerender = true;
 
 export const GET: APIRoute = async ({ site }) => {
   const base = (site?.href || config.siteUrl || '').replace(/\/$/, '');
-  const body = `User-agent: *\nAllow: /\n\nSitemap: ${base ? `${base}/sitemap-index.xml` : ''}\n`;
+  const body = `User-agent: *\nAllow: /\n\nSitemap: ${base ? `${base}/sitemap.xml` : ''}\n`;
   return new Response(body, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
