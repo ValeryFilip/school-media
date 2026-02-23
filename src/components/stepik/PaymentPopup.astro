@@ -53,79 +53,70 @@ const {
 </div>
 
 <script is:inline>
-  // Обработчики для попапа оплаты
-  document.addEventListener("DOMContentLoaded", () => {
-    const popup = document.querySelector("[data-payment-popup]");
-    const closeButtons = document.querySelectorAll("[data-payment-close]");
-    const iframe = popup?.querySelector(".payment-popup__iframe");
-    const loader = popup?.querySelector("#payment-loader");
+  // Функция открытия попапа — объявляем сразу, чтобы была доступна для inline onclick
+  window.openPaymentPopup = function (url) {
+    var popup = document.querySelector("[data-payment-popup]");
+    if (!popup) return;
+    var iframe = popup.querySelector(".payment-popup__iframe");
+    var loader = popup.querySelector("#payment-loader");
+    if (url && iframe) {
+      if (loader) loader.style.display = "flex";
+      iframe.style.display = "none";
+      iframe.src = url;
+      setTimeout(function () {
+        if (loader) loader.style.display = "none";
+        if (iframe) iframe.style.display = "block";
+      }, 2000);
+      if (window.innerWidth <= 768) {
+        setTimeout(function () {
+          if (loader) loader.style.display = "none";
+          if (iframe) iframe.style.display = "block";
+        }, 3000);
+      }
+    }
+    popup.setAttribute("aria-hidden", "false");
+    popup.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var popup = document.querySelector("[data-payment-popup]");
+    var closeButtons = document.querySelectorAll("[data-payment-close]");
+    var iframe = popup && popup.querySelector(".payment-popup__iframe");
+    var loader = popup && popup.querySelector("#payment-loader");
 
     if (!popup) return;
 
-    // Функция открытия попапа
-    window.openPaymentPopup = (url?: string) => {
-      if (url && iframe) {
-        // Показываем прелоадер
-        if (loader) loader.style.display = "flex";
-        if (iframe) iframe.style.display = "none";
-
-        // Устанавливаем новый URL
-        iframe.src = url;
-
-        // Функция скрытия прелоадера
-        function hideLoader() {
-          if (loader) loader.style.display = "none";
-          if (iframe) iframe.style.display = "block";
-        }
-
-        // Простой таймаут - скрываем прелоадер через 2 секунды
-        setTimeout(() => {
-          hideLoader();
-        }, 2000);
-
-        // Дополнительная проверка для мобильных устройств
-        if (window.innerWidth <= 768) {
-          // На мобильных устройствах увеличиваем таймаут
-          setTimeout(() => {
-            hideLoader();
-          }, 3000);
-        }
-      }
-      popup.setAttribute("aria-hidden", "false");
-      popup.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    };
-
-    // Функция закрытия попапа
-    const closePopup = () => {
+    var closePopup = function () {
       popup.setAttribute("aria-hidden", "true");
       popup.style.display = "none";
       document.body.style.overflow = "";
-
-      // Сбрасываем состояние прелоадера
       if (loader) loader.style.display = "flex";
       if (iframe) iframe.style.display = "none";
     };
 
-    // Обработчики закрытия
-    closeButtons.forEach((btn) => {
+    closeButtons.forEach(function (btn) {
       btn.addEventListener("click", closePopup);
     });
 
-    // Закрытие по клику на overlay
-    popup.addEventListener("click", (e) => {
-      if (
-        e.target === popup ||
-        e.target.classList.contains("payment-popup__overlay")
-      ) {
+    popup.addEventListener("click", function (e) {
+      if (e.target === popup || e.target.classList.contains("payment-popup__overlay")) {
         closePopup();
       }
     });
 
-    // Закрытие по Escape
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && popup.getAttribute("aria-hidden") === "false") {
         closePopup();
+      }
+    });
+
+    // Клики по кнопкам с data-payment-url (надёжнее inline onclick)
+    document.body.addEventListener("click", function (e) {
+      var el = e.target.closest("[data-payment-url]");
+      if (el && el.getAttribute("data-payment-url")) {
+        e.preventDefault();
+        window.openPaymentPopup(el.getAttribute("data-payment-url"));
       }
     });
   });
@@ -228,7 +219,6 @@ const {
   }
 
   .loader-text {
-    font-family: var(--ff);
     font-size: 16px;
     color: #666;
     margin: 0;

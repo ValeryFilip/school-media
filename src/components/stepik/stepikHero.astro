@@ -20,7 +20,7 @@ interface Feature {
 interface Props {
   id?: string;
   labels?: string[];
-  title?: string;    // можно с <br>
+  title?: string; // можно с <br>
   desc?: string;
   ctas?: CTA[];
   image?: Image;
@@ -33,15 +33,35 @@ const {
   title = "Неорганическая химия<br>для ЕГЭ 2025",
   desc = "Неорганическая химия — это ~40% варианта. Научимся писать реакции (включая ОВР) и закрывать 6, 7, 8, 9, 24, 29–31.",
   ctas = [
-    { href: "https://t.me/chemestrika", text: "Забронировать скидку", variant: "primary", target: "_blank", rel: "noopener" },
+    {
+      href: "https://t.me/chemestrika",
+      text: "Забронировать скидку",
+      variant: "primary",
+      target: "_blank",
+      rel: "noopener",
+    },
     { href: "/courses/inorganic", text: "Подробнее", variant: "ghost" },
   ],
-  image = { src: "/images/mainpage/inorg-hero.png", alt: "Обложка курса", width: 1200, height: 800 },
+  image = {
+    src: "/images/mainpage/inorg-hero.png",
+    alt: "Обложка курса",
+    width: 1200,
+    height: 800,
+  },
   features = [
-    { title: "Доступ к курсу",        text: "Остается навсегда" },
-    { title: "+40 баллов на ЕГЭ",     text: "После курса увеличите свой результат" },
-    { title: "1085 заданий на курсе", text: "Курс нацелен на практику, вы будете решать, а не учить" },
-    { title: "Рейтинг курса 5⭐",      text: "На основании независимых оценок Stepik" },
+    { title: "Доступ к курсу", text: "Остается навсегда" },
+    {
+      title: "+40 баллов на ЕГЭ",
+      text: "После курса увеличите свой результат",
+    },
+    {
+      title: "1085 заданий на курсе",
+      text: "Курс нацелен на практику, вы будете решать, а не учить",
+    },
+    {
+      title: "Рейтинг курса 5⭐",
+      text: "На основании независимых оценок Stepik",
+    },
   ],
 } = Astro.props as Props;
 
@@ -56,11 +76,15 @@ const toBtnClass = (v?: CTA["variant"]) => {
   <div class="hero-inner">
     <article class="card hero-card">
       {/* Ярлыки (не навигация — просто подписи) */}
-      {labels?.length > 0 && (
-        <div class="label-group" role="group" aria-label="Категории курса">
-          {labels.map((l) => <span class="label">{l}</span>)}
-        </div>
-      )}
+      {
+        labels?.length > 0 && (
+          <div class="label-group" role="group" aria-label="Категории курса">
+            {labels.map((l) => (
+              <span class="label">{l}</span>
+            ))}
+          </div>
+        )
+      }
 
       <div class="hero-grid">
         <div class="text">
@@ -68,17 +92,19 @@ const toBtnClass = (v?: CTA["variant"]) => {
           <p class="hero-desc">{desc}</p>
 
           <div class="buttons" role="group" aria-label="Действия на странице">
-            {ctas.map((b) => (
-              <a
-                class={toBtnClass(b.variant)}
-                href={b.href}
-                target={b.target}
-                rel={b.rel}
-                aria-label={b.ariaLabel ?? b.text}
-              >
-                {b.text}
-              </a>
-            ))}
+            {
+              ctas.map((b) => (
+                <a
+                  class={toBtnClass(b.variant)}
+                  href={b.href}
+                  target={b.target}
+                  rel={b.rel}
+                  aria-label={b.ariaLabel ?? b.text}
+                >
+                  {b.text}
+                </a>
+              ))
+            }
           </div>
         </div>
 
@@ -95,27 +121,32 @@ const toBtnClass = (v?: CTA["variant"]) => {
       </div>
 
       <ul class="features">
-        {features.map((f, i) => (
-          <li class={`feature ${i === features.length - 1 ? "feature--accent" : ""}`}>
-            <h3 class="feature-title">{f.title}</h3>
-            <span class="feature-text">{f.text}</span>
-          </li>
-        ))}
+        {
+          features.map((f, i) => (
+            <li
+              class={`feature ${i === features.length - 1 ? "feature--accent" : ""}`}
+            >
+              <h3 class="feature-title">{f.title}</h3>
+              <span class="feature-text">{f.text}</span>
+            </li>
+          ))
+        }
       </ul>
     </article>
   </div>
 
   <style>
     /* ===== Контейнер как у оффера ===== */
-    .stepik-hero{ font-family: var(--ff); }
-    .hero-inner{
+    .stepik-hero {
+    }
+    .hero-inner {
       max-width: var(--container);
       margin: 0 auto;
       padding: 0 var(--pad-desktop);
       box-sizing: border-box;
     }
-    @media (max-width:1100px){
-      .hero-inner{
+    @media (max-width: 1100px) {
+      .hero-inner {
         width: 100vw;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
@@ -123,8 +154,8 @@ const toBtnClass = (v?: CTA["variant"]) => {
         padding: 0 var(--pad-mobile);
       }
     }
-    @media (max-width:600px){
-      .hero-inner{
+    @media (max-width: 600px) {
+      .hero-inner {
         width: 100vw;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
@@ -134,7 +165,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
     }
 
     /* ===== Карточка hero ===== */
-    .hero-card{
+    .hero-card {
       position: relative;
       overflow: hidden;
       padding: var(--space-50);
@@ -143,42 +174,56 @@ const toBtnClass = (v?: CTA["variant"]) => {
       box-shadow: var(--shadow-1);
       background: var(--white);
     }
-    .hero-card::before{
-      content:"";
-      position:absolute; inset:0; z-index:0;
-      background:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1300 800'><path d='M 0 800 C 200 -600, 400 1000, 600 600 S 200 -500, 1500 300 S 200 -500, 2000 0' fill='none' stroke='%23366EF0' stroke-width='150' stroke-linecap='round' stroke-opacity='0.05'/></svg>")
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1300 800'><path d='M 0 800 C 200 -600, 400 1000, 600 600 S 200 -500, 1500 300 S 200 -500, 2000 0' fill='none' stroke='%23366EF0' stroke-width='150' stroke-linecap='round' stroke-opacity='0.05'/></svg>")
         no-repeat center/cover;
     }
-    .hero-card > *{ position:relative; z-index:1; }
+    .hero-card > * {
+      position: relative;
+      z-index: 1;
+    }
 
     /* Ярлыки */
-    .label-group{
-      display:flex; flex-wrap:wrap; gap: var(--space-12);
+    .label-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-12);
       margin: 0 0 var(--space-20);
     }
-    .label{
+    .label {
       background: var(--white);
       padding: 6px 14px;
       border-radius: 999px;
-      font: 500 14px/1 var(--ff);
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 1;
       border: 1px solid var(--border);
       color: var(--black);
     }
 
     /* Контентная сетка */
-    .hero-grid{
-      display:flex; gap: var(--space-40); flex-wrap:wrap; align-items:flex-start;
+    .hero-grid {
+      display: flex;
+      gap: var(--space-40);
+      flex-wrap: wrap;
+      align-items: flex-start;
     }
-    .text{ flex: 1 1 400px; min-width: 0; }
-    .hero-title{
+    .text {
+      flex: 1 1 400px;
+      min-width: 0;
+    }
+    .hero-title {
       margin: 0 0 var(--space-16);
       font-size: var(--h1);
       line-height: 1.15;
       color: var(--black);
       font-weight: 700;
     }
-    .hero-desc{
+    .hero-desc {
       margin: 0 0 var(--space-32);
       font-size: var(--text);
       line-height: 1.6;
@@ -187,69 +232,113 @@ const toBtnClass = (v?: CTA["variant"]) => {
     }
 
     /* Кнопки — глобальные */
-    .buttons{ display:flex; gap: var(--space-16); flex-wrap:wrap; }
-    .buttons .btn{ text-decoration: none; }
+    .buttons {
+      display: flex;
+      gap: var(--space-16);
+      flex-wrap: wrap;
+    }
+    .buttons .btn {
+      text-decoration: none;
+    }
 
     /* Картинка справа */
-    .image-container{
+    .image-container {
       flex: 1 1 300px;
       min-width: 0;
-      display:flex; align-items:flex-end; justify-content:flex-end;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
     }
-    .image-container img{
-      display:block; width: 100%; max-width:100%; height:auto;
-      object-fit: contain; border-radius: 10px;
+    .image-container img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
     }
 
     /* Фичи снизу */
-    .features{
-      display:flex; flex-wrap:wrap; justify-content:space-between;
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
       gap: var(--space-12);
-      list-style:none; padding: var(--space-50) 0 0; margin: 0;
+      list-style: none;
+      padding: var(--space-50) 0 0;
+      margin: 0;
     }
-    .feature{
+    .feature {
       flex: 1 1 calc(25% - var(--space-12));
       min-width: 0;
-      box-sizing:border-box;
+      box-sizing: border-box;
       border-radius: 12px;
       padding: var(--space-20);
       color: var(--black);
       background: transparent;
       border: 1px solid var(--blue);
     }
-    .feature--accent{
+    .feature--accent {
       background: var(--blue);
       border: none;
       color: var(--white);
     }
-    .feature--accent .feature-text{ color: #eaf0ff; }
-    .feature-title{
-      margin:0 0 6px;
-      font: 600 var(--h3)/1.25 var(--ff);
+    .feature--accent .feature-text {
+      color: #eaf0ff;
     }
-    .feature-text{
-      font: 500 var(--text)/1.5 var(--ff);
+    .feature-title {
+      margin: 0 0 6px;
+      font-size: var(--h3);
+    }
+    .feature-text {
+      font-size: var(--text);
     }
 
     /* Адаптив */
-    @media (max-width:1100px){
-      .hero-card{ padding: 24px; }
-      .image-container{ display:none !important; }
-      .hero-grid{ flex-direction: column; gap: var(--space-20); }
-      .features{
-        display: grid; grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-20); padding-top: var(--space-40);
+    @media (max-width: 1100px) {
+      .hero-card {
+        padding: 24px;
       }
-      .feature{ min-width: 0; width: 100%; }
+      .image-container {
+        display: none !important;
+      }
+      .hero-grid {
+        flex-direction: column;
+        gap: var(--space-20);
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-20);
+        padding-top: var(--space-40);
+      }
+      .feature {
+        min-width: 0;
+        width: 100%;
+      }
     }
-    @media (max-width:600px){
-      .buttons{ flex-wrap: wrap; justify-content: center; gap: var(--space-12); }
-      .buttons .btn{
-        flex: 1 1 auto; min-width: 0; max-width: 100%;
-        white-space: normal; text-align: center;
+    @media (max-width: 600px) {
+      .buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-12);
       }
-      .features{ grid-template-columns: 1fr; gap: var(--space-20); padding-top: var(--space-32); }
-      .hero-title{ font-size: var(--h2); line-height: 1.25; }
+      .buttons .btn {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+      }
+      .features {
+        grid-template-columns: 1fr;
+        gap: var(--space-20);
+        padding-top: var(--space-32);
+      }
+      .hero-title {
+        font-size: var(--h2);
+        line-height: 1.25;
+      }
     }
   </style>
 </div>

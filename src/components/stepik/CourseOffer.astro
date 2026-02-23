@@ -21,6 +21,7 @@ interface Package {
     target?: string;
     rel?: string;
     onClick?: string;
+    paymentUrl?: string;
   };
   icon?: { src: string; alt?: string };
 }
@@ -50,6 +51,7 @@ interface Props {
     target?: string;
     rel?: string;
     onClick?: string;
+    paymentUrl?: string;
   };
 
   headerImage?: { src: string; alt?: string }; // справа большая декорация
@@ -158,14 +160,16 @@ const {
           </a>
           {
             buyWithDiscount && (
-              <button
-                type="button"
-                onclick={buyWithDiscount.onClick}
+              <a
+                href="javascript:void(0)"
+                role="button"
                 class="btn btn--blue vet-discount-btn"
                 aria-label="Оплатить со скидкой 5%"
+                data-payment-url={buyWithDiscount.paymentUrl}
+                onclick={!buyWithDiscount.paymentUrl ? buyWithDiscount.onClick : undefined}
               >
                 {buyWithDiscount.text}
-              </button>
+              </a>
             )
           }
         </div>
@@ -224,14 +228,16 @@ const {
               )}
 
               {p.buyWithDiscount && (
-                <button
-                  type="button"
-                  onclick={p.buyWithDiscount.onClick}
-                  class="package-discount-link"
+                <a
+                  href="javascript:void(0)"
+                  role="button"
+                  class="btn btn--ghost package-discount-link"
                   aria-label="Оплатить пакет со скидкой"
+                  data-payment-url={p.buyWithDiscount.paymentUrl}
+                  onclick={!p.buyWithDiscount.paymentUrl ? p.buyWithDiscount.onClick : undefined}
                 >
                   {p.buyWithDiscount.text}
-                </button>
+                </a>
               )}
             </div>
 
@@ -255,7 +261,6 @@ const {
     .vet {
       justify-self: center;
       inline-size: 100%;
-      font-family: var(--ff);
       color: var(--black);
       background: transparent;
     }
@@ -304,8 +309,7 @@ const {
         align-items: flex-start;
       }
 
-      .details-btn,
-      .package-discount-link {
+      .package-buttons .btn {
         width: 100%;
         text-align: center;
       }
@@ -374,19 +378,34 @@ const {
 
     .vet-badges {
       margin-bottom: var(--space-20);
-      background-color: none;
+      background-color: transparent;
       display: flex;
       gap: var(--space-8);
       flex-wrap: wrap;
     }
+    .vet-badges .cap.cap--light {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 1.2;
+    }
 
     .vet-header h2 {
-      font: 700 var(--h2) / 1.3 var(--ff);
+      font-weight: 700;
+      font-size: var(--h2);
+      line-height: 1.3;
       margin: 0 0 12px;
       color: #fff;
     }
     .vet-sub {
-      font: 500 20px/1.6 var(--ff);
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1.6;
       margin: 0 0 16px;
       color: #fff;
     }
@@ -395,7 +414,9 @@ const {
       margin: 0 0 24px 20px;
       padding: 0;
       list-style: disc;
-      font: 500 16px/1.6 var(--ff);
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 1.6;
       color: #fff;
     }
     .vet-list li {
@@ -416,10 +437,14 @@ const {
       flex-wrap: wrap;
     }
     .current-price {
-      font: 700 34px/1 var(--ff);
+      font-weight: 700;
+      font-size: 34px;
+      line-height: 1;
     }
     .old-price {
-      font: 400 20px/1 var(--ff);
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 1;
       text-decoration: line-through;
       opacity: 0.6;
     }
@@ -443,7 +468,9 @@ const {
       text-align: left;
     }
     .vet-discount-info p {
-      font: 500 14px/1.4 var(--ff);
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 1.4;
       color: rgba(255, 255, 255, 0.9);
       margin: 0;
       padding: 0 20px;
@@ -517,12 +544,16 @@ const {
       color: #fff;
     }
     .pkg-title {
-      font: 600 20px/1.3 var(--ff);
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 1.3;
       margin: 0 0 8px;
       color: #fff;
     }
     .pkg-text {
-      font: 500 15px/1.55 var(--ff);
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 1.55;
       margin: 0 0 14px;
       color: #fff;
     }
@@ -535,11 +566,15 @@ const {
       flex-wrap: wrap;
     }
     .package-price {
-      font: 700 22px/1 var(--ff);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1;
       color: #fff;
     }
     .package-old-price {
-      font: 400 18px/1 var(--ff);
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 1;
       text-decoration: line-through;
       color: rgba(255, 255, 255, 0.7);
     }
@@ -557,26 +592,8 @@ const {
       flex-direction: row;
       align-items: center;
       justify-content: flex-start;
-      gap: var(--space-16);
+      gap: var(--space-20);
       margin-top: var(--space-16);
-    }
-
-    .details-btn {
-      text-align: center;
-      width: auto;
-    }
-
-    .package-discount-link {
-      color: #fff;
-      text-decoration: underline;
-      font-weight: 500;
-      font-size: 14px;
-      text-align: center;
-      display: inline-block;
-      margin-top: var(--space-8);
-    }
-    .package-discount-link:hover {
-      color: #ffed4e;
     }
 
     /* Иконка */
@@ -622,8 +639,6 @@ const {
         gap: var(--space-16);
       }
       .price-row {
-        flex-direction: column;
-        align-items: flex-start;
         gap: var(--space-12);
       }
       .current-price {
@@ -642,8 +657,10 @@ const {
 
       .package-buttons {
         flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-10);
+        align-items: stretch;
+      }
+      .package-buttons .btn {
+        width: 100%;
       }
     }
 
