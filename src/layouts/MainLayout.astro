@@ -135,9 +135,16 @@ const breadcrumbsJsonLd =
         href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
       />
     </noscript>
-    {inMedia && (
-      <link rel="preload" href={`${config.siteUrl}/favicon.ico`} as="image" type="image/x-icon" />
-    )}
+    {
+      inMedia && (
+        <link
+          rel="preload"
+          href={`${config.siteUrl}/favicon.ico`}
+          as="image"
+          type="image/x-icon"
+        />
+      )
+    }
 
     <Seo
       title={title ?? "EGEHIM"}
@@ -164,11 +171,18 @@ const breadcrumbsJsonLd =
       href="/rss.xml"
     />
 
-    <link rel="manifest" href={`${config.siteUrl}/site.webmanifest`} />
-    <link rel="icon" href={`${config.siteUrl}/favicon.ico`} type="image/x-icon" sizes="any" />
-    <link rel="icon" href={`${config.siteUrl}/favicon-16x16.png`} type="image/png" sizes="16x16" />
-    <link rel="icon" href={`${config.siteUrl}/favicon-32x32.png`} type="image/png" sizes="32x32" />
-    <link rel="apple-touch-icon" href={`${config.siteUrl}/apple-touch-icon.png`} sizes="180x180" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+    <link
+      rel="icon"
+      href="/favicon-16x16.png"
+      type="
+      image
+      png"
+      sizes="16x16"
+    />
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
     <YandexMetrika />
 
