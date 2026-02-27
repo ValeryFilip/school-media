@@ -164,9 +164,10 @@ const {
       text-wrap: balance;
     }
 
-    /* сетка: узкая левая, широкая правая */
+    /* Сетка: левая колонка (факты) занимает основную ширину, правая (фото) — фиксированный диапазон.
+       minmax(0, 0.8fr) у правой колонки не даёт фото растягивать её по min-content и оставлять пустой зазор. */
     .author {
-      --author-cols: 1.2fr 0.8fr;
+      --author-cols: minmax(0, 1.2fr) minmax(0, 0.8fr);
     }
     .author__shell {
       display: grid;
@@ -175,9 +176,10 @@ const {
       align-items: stretch;
     }
 
-    /* Левая колонка задает реальную высоту */
+    /* Левая колонка заполняет свою ячейку по ширине */
     .author__left {
       min-width: 0;
+      width: 100%;
       display: grid;
       grid-template-rows: auto 1fr auto; /* имя | факты | соцсети */
     }
@@ -204,15 +206,15 @@ const {
       border-radius: var(--radius-24);
       border-color: var(--border);
       box-shadow: var(--shadow-1);
-      background: #fff;
-      color: #222;
+      background: var(--white);
+      color: var(--black);
       font-size: var(--text);
       font-weight: 500;
       line-height: 1.5;
     }
     .author__facts li:last-child {
       background: var(--blue);
-      color: #fff;
+      color: var(--white);
       border-color: var(--blue);
       box-shadow: none;
     }
@@ -226,7 +228,7 @@ const {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: #fff;
+      background: var(--white);
       border: 1px solid var(--border);
       box-shadow: var(--shadow-1);
       display: flex;
@@ -269,7 +271,7 @@ const {
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
-      background: #fff;
+      background: var(--white);
       box-shadow: var(--shadow-1);
     }
     .author__photo img {

@@ -176,7 +176,7 @@ const {
     position: relative;
     z-index: 1;
     width: min(560px, 96vw);
-    background: #fff;
+    background: var(--white);
     color: var(--black, #1f2937);
     border: 1px solid color-mix(in oklab, var(--blue, #4f8ef7) 22%, #dbeafe);
     border-radius: 20px;
@@ -192,7 +192,7 @@ const {
     width: 36px;
     height: 36px;
     border-radius: 12px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     background: #f8fafc;
     font-size: 22px;
     line-height: 1;
@@ -222,9 +222,9 @@ const {
   input[type="tel"] {
     padding: 12px 14px;
     font-size: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--white);
     outline: none;
   }
   input:focus {
@@ -238,7 +238,7 @@ const {
     margin-top: -2px;
   }
   fieldset.docs {
-    border: 1px dashed #e5e7eb;
+    border: 1px dashed var(--border);
     border-radius: 14px;
     padding: 12px;
     display: grid;
@@ -284,17 +284,17 @@ const {
     font-size: 14px;
   }
   .status.ok {
-    color: #0a7f35;
+    color: var(--green);
   }
   .status.err {
-    color: #b91c1c;
+    color: var(--error);
   }
   .debug {
     margin: 6px 0 0;
     max-height: 160px;
     overflow: auto;
-    background: #0b1020;
-    color: #e6f0ff;
+    background: var(--black);
+    color: var(--white);
     padding: 8px 10px;
     border-radius: 10px;
     font-size: 12px;

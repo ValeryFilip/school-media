@@ -95,10 +95,10 @@ const { questions } = Astro.props;
   }
 
   .test__wrapper {
-    background: #fff;
+    background: var(--white);
     border-radius: clamp(8px, 1.2vw, 12px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 2px solid #dfdfdf;
+    border: 2px solid var(--border);
     padding: clamp(24px, 3vw, 32px);
   }
   .test__wrapper:hover {
@@ -120,7 +120,7 @@ const { questions } = Astro.props;
   .test__question-text {
     font-size: clamp(16px, 1.8vw, 18px);
     font-weight: 600;
-    color: #111;
+    color: var(--black);
     margin: 0;
     line-height: 1.5;
   }
@@ -137,7 +137,7 @@ const { questions } = Astro.props;
     gap: clamp(10px, 1.2vw, 12px);
     padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
     background: #f9f9f9;
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--border);
     border-radius: clamp(6px, 0.8vw, 8px);
     transition: all 0.2s ease;
     cursor: pointer;
@@ -150,20 +150,20 @@ const { questions } = Astro.props;
 
   .test__question-item:has(input:checked) {
     background: #e6f2ff;
-    border-color: #366ef0;
+    border-color: var(--blue);
   }
 
   .test__question-input {
     width: clamp(18px, 2vw, 20px);
     height: clamp(18px, 2vw, 20px);
     cursor: pointer;
-    accent-color: #366ef0;
+    accent-color: var(--blue);
     flex-shrink: 0;
   }
 
   .test__question-item label {
     font-size: clamp(14px, 1.5vw, 16px);
-    color: #333;
+    color: var(--gray);
     cursor: pointer;
     flex: 1;
     line-height: 1.5;
@@ -178,9 +178,9 @@ const { questions } = Astro.props;
     width: 100%;
     padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
     font-size: clamp(14px, 1.5vw, 16px);
-    color: #333;
+    color: var(--gray);
     background: #f9f9f9;
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--border);
     border-radius: clamp(6px, 0.8vw, 8px);
     transition: all 0.2s ease;
     outline: none;
@@ -188,7 +188,7 @@ const { questions } = Astro.props;
   }
 
   .test__text-input::placeholder {
-    color: #999;
+    color: var(--gray);
   }
 
   .test__text-input:hover {
@@ -197,8 +197,8 @@ const { questions } = Astro.props;
   }
 
   .test__text-input:focus {
-    background: #fff;
-    border-color: #366ef0;
+    background: var(--white);
+    border-color: var(--blue);
     box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.1);
   }
 
@@ -211,8 +211,8 @@ const { questions } = Astro.props;
 
   .test__answer-button-text,
   .test__next-button {
-    background: #366ef0;
-    color: #fff;
+    background: var(--blue);
+    color: var(--white);
     border: none;
     border-radius: clamp(6px, 0.8vw, 8px);
     padding: clamp(12px, 1.6vw, 16px) clamp(24px, 3vw, 32px);
@@ -237,14 +237,14 @@ const { questions } = Astro.props;
   .test__answer-result {
     padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
     border-radius: clamp(6px, 0.8vw, 8px);
-    background: #fff;
-    border-left: 4px solid #366ef0;
+    background: var(--white);
+    border-left: 4px solid var(--blue);
   }
 
   .test__answer-result-text {
     font-size: clamp(14px, 1.6vw, 16px);
     font-weight: 600;
-    color: #111;
+    color: var(--black);
     margin: 0;
   }
 
@@ -252,13 +252,13 @@ const { questions } = Astro.props;
     padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
     border-radius: clamp(6px, 0.8vw, 8px);
     background: #e6f2ff;
-    border-left: 4px solid #366ef0;
+    border-left: 4px solid var(--blue);
   }
 
   .test__answer-explanation,
   .test__answer-hint {
     font-size: clamp(14px, 1.5vw, 15px);
-    color: #444;
+    color: var(--gray);
     line-height: 1.6;
     margin: 0;
   }
@@ -266,21 +266,21 @@ const { questions } = Astro.props;
   /* Стили для правильного ответа */
   .test__answer-result[data-result="correct"] {
     background: #e6f9f8;
-    border-left-color: #2aa5a1;
+    border-left-color: var(--green);
   }
 
   .test__answer-result[data-result="correct"] .test__answer-result-text {
-    color: #2aa5a1;
+    color: var(--green);
   }
 
   /* Стили для неправильного ответа */
   .test__answer-result[data-result="incorrect"] {
     background: #ffe6e9;
-    border-left-color: #c05b66;
+    border-left-color: var(--error);
   }
 
   .test__answer-result[data-result="incorrect"] .test__answer-result-text {
-    color: #c05b66;
+    color: var(--error);
   }
 
   @media (max-width: 600px) {

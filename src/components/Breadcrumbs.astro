@@ -125,7 +125,7 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
   }
   .breadcrumbs {
     font-size: 12px;
-    color: #888;
+    color: var(--gray);
     margin: 0;
     margin-bottom: clamp(16px, 2vw, 24px);
   }
@@ -142,18 +142,18 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
   .bc-item {
     display: inline-flex;
     align-items: center;
-    color: #666;
+    color: var(--gray);
   }
   .bc-item::after {
     content: "›";
     margin: 0 0.5rem;
-    color: #666;
+    color: var(--gray);
   }
   .bc-item:last-child::after {
     content: "";
   }
   .bc-link {
-    color: #0d6efd;
+    color: var(--blue);
     text-decoration: none;
   }
   .bc-link:hover,
@@ -162,19 +162,19 @@ const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
     outline: none;
   }
   .bc-item[aria-current="page"] {
-    color: #333;
+    color: var(--gray);
   }
   .breadcrumbs :focus-visible {
-    outline: 3px solid #1a73e8;
+    outline: 3px solid var(--blue);
     outline-offset: 2px;
   }
   .bc-home {
-    color: #999;
+    color: var(--gray);
     display: flex;
     align-items: center;
   }
   .bc-home:hover {
-    color: #0d6efd;
+    color: var(--blue);
   }
   .bc-home-icon {
     width: 2em;

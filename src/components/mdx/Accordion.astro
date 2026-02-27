@@ -20,9 +20,9 @@ const { title, note, id } = Astro.props;
 <style>
   .accordion {
     margin: clamp(16px, 2vw, 24px) 0;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     border-radius: clamp(8px, 1vw, 12px);
-    background: #fff;
+    background: var(--white);
     overflow: hidden;
   }
 
@@ -38,10 +38,10 @@ const { title, note, id } = Astro.props;
 
     font-weight: 600;
     font-size: clamp(15px, 1.4vw, 17px);
-    color: #111;
+    color: var(--black);
 
     background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border);
     transition: background 0.2s ease;
   }
 
@@ -80,6 +80,6 @@ const { title, note, id } = Astro.props;
   .accordion__note {
     margin-top: 12px;
     font-size: 14px;
-    color: #374151;
+    color: var(--gray);
   }
 </style>

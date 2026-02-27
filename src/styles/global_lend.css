@@ -8,9 +8,10 @@
   --bg: #e7eff6;
   --border: #dfdfdf;
   --gray: #888;
-
-  /* Фон страницы */
-  --page-bg: var(--bg);
+  --green: #10b981;
+  --error: #ef4444;
+  --coral: #ff6b35;
+  --overlay: rgba(0, 0, 0, 0.75);
 
   /* Типографика */
   --ff: "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial,
@@ -49,17 +50,21 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  
 }
 
 html {
   color-scheme: light;
   font-family: var(--ff);
   font-variant-numeric: lining-nums tabular-nums;
+  background: var(--bg, #f1f5fb);
+  /* Сглаживание шрифтов: grayscale-антиалиасинг вместо subpixel (часто выглядит ровнее на Retina/HiDPI) */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
-
   font-size: var(--text);
 }
 
@@ -104,7 +109,7 @@ a:hover {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--page-bg, #f1f5fb);
+  
 }
 .content {
   flex: 1 0 auto;

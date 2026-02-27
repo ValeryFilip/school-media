@@ -321,7 +321,7 @@ const {
       border-radius: var(--radius-24);
       overflow: hidden;
       box-shadow: var(--shadow-1);
-      background: #ddd;
+      background: var(--border);
       height: 100%;
       min-height: var(--lead-figure-minh);
     }
@@ -343,7 +343,7 @@ const {
       width: min(520px, 92%);
     }
     .lead-steps .card {
-      background: #fff;
+      background: var(--white);
       color: var(--black);
       border: 1px solid var(--border);
       display: flex;
@@ -380,7 +380,7 @@ const {
     }
 
     .lead-form-wrap {
-      color: #fff;
+      color: var(--white);
       display: grid;
       gap: var(--space-16);
       align-content: start;
@@ -388,11 +388,11 @@ const {
     .lead-form-wrap .h2,
     .lead-form-wrap h2 {
       margin: 0;
-      color: #fff;
+      color: var(--white);
     }
     .lead-subtitle {
       margin: 6px 0 var(--space-8, 8px);
-      color: #eaf1ff;
+      color: var(--bg);
     }
 
     form.lead-form {
@@ -406,7 +406,7 @@ const {
       font-size: 14px;
       font-weight: 500;
       line-height: 1.2;
-      color: #eaf1ff;
+      color: var(--bg);
     }
     .lead-input {
       display: block;
@@ -420,10 +420,10 @@ const {
       color: var(--black);
     }
     .lead-input::placeholder {
-      color: #9ba3af;
+      color: var(--gray);
     }
     .lead-input:focus {
-      border-color: #b8caff;
+      border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
       outline: none;
     }
@@ -432,7 +432,7 @@ const {
       display: grid;
       gap: 10px;
       font-size: 14px;
-      color: #eaf1ff;
+      color: var(--bg);
     }
     .lead-consents label {
       display: flex;
@@ -445,7 +445,7 @@ const {
       accent-color: var(--orange);
     }
     .lead-consents a {
-      color: #fff;
+      color: var(--white);
       text-decoration: underline;
     }
 
@@ -457,7 +457,7 @@ const {
       width: max-content;
     }
     .lead-actions .btn--ghost {
-      background: #fff;
+      background: var(--white);
       color: var(--black);
       border: 1px solid var(--border);
     }
@@ -468,17 +468,17 @@ const {
       font-weight: 500;
     }
     .lead-status.ok {
-      color: #10b981;
+      color: var(--green);
     }
     .lead-status.err {
-      color: #ef4444;
+      color: var(--error);
     }
     .lead-debug {
       margin: 6px 0 0;
       max-height: 160px;
       overflow: auto;
-      background: rgba(0, 0, 0, 0.8);
-      color: #e6f0ff;
+      background: var(--overlay);
+      color: var(--bg);
       padding: 8px 10px;
       border-radius: 10px;
       font-size: 12px;
@@ -496,7 +496,7 @@ const {
       margin: 0;
       font-size: 16px;
       font-weight: 500;
-      color: #eaf1ff;
+      color: var(--bg);
     }
     .lead-msg-list {
       display: flex;
@@ -508,7 +508,7 @@ const {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      background: #fff;
+      background: var(--white);
       box-shadow: var(--shadow-1);
       transition:
         transform 0.15s var(--easing),

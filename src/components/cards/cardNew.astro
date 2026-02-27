@@ -68,7 +68,7 @@ if (!href && post) {
 }
 
 // --- цвет категории ---
-const categoryColor = category ? getCategoryHex(category) : "#427eff";
+const categoryColor = category ? getCategoryHex(category) : "#366ef0"; /* --blue */
 ---
 
 <style>
@@ -114,7 +114,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   }
   .card__body-text {
     font-size: clamp(14px, 2.5vw, 16px);
-    color: #666;
+    color: var(--gray);
     margin: 0 0 15px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -129,7 +129,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   }
   .card__body-tags-label {
     font-size: clamp(10px, 2.5vw, 12px);
-    color: #666;
+    color: var(--gray);
   }
   .card__body-tag {
     font-size: clamp(10px, 2.5vw, 12px);
@@ -142,7 +142,7 @@ const categoryColor = category ? getCategoryHex(category) : "#427eff";
   .card__body-meta {
     display: flex;
     font-size: clamp(10px, 2.5vw, 12px);
-    color: #666;
+    color: var(--gray);
     margin-bottom: 10px;
     gap: 8px;
   }

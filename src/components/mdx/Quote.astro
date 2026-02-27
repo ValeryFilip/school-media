@@ -48,8 +48,8 @@ const { author, role, image } = Astro.props;
     margin: clamp(1rem, 3vw, 2rem) 0;
     padding: clamp(16px, 2vw, 24px) clamp(20px, 2.5vw, 28px)
       clamp(16px, 2vw, 24px) clamp(44px, 5vw, 60px);
-    border-left: 4px solid #366ef0;
-    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+    border-left: 4px solid var(--blue);
+    background: linear-gradient(135deg, #f0f7ff 0%, var(--white) 100%);
     border-radius: clamp(8px, 1vw, 12px);
     box-shadow: 0 4px 12px rgba(54, 110, 240, 0.08);
   }
@@ -60,7 +60,7 @@ const { author, role, image } = Astro.props;
     top: clamp(12px, 2vw, 20px);
     font-size: clamp(24spx, 4vw, 48px);
     font-weight: 700;
-    color: #366ef0;
+    color: var(--blue);
     opacity: 0.3;
     line-height: 1;
   }
@@ -68,7 +68,7 @@ const { author, role, image } = Astro.props;
   .quote-content {
     font-size: clamp(8px, 1.8vw, 18px);
     line-height: 1.7;
-    color: #222;
+    color: var(--black);
     font-style: italic;
     margin-bottom: clamp(12px, 1.5vw, 16px);
   }
@@ -95,7 +95,7 @@ const { author, role, image } = Astro.props;
     height: clamp(40px, 5vw, 48px);
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fff;
+    border: 2px solid var(--white);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
@@ -109,12 +109,12 @@ const { author, role, image } = Astro.props;
     font-style: normal;
     font-weight: 600;
     font-size: clamp(10px, 1.5vw, 15px);
-    color: #111;
+    color: var(--black);
   }
 
   .quote-role {
     font-size: clamp(8px, 1.3vw, 13px);
-    color: #666;
+    color: var(--gray);
   }
 
   @media (max-width: 600px) {

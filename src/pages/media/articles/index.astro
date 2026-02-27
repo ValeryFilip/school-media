@@ -339,12 +339,12 @@ const currentPageServer = Math.max(
     font-weight: 700;
     font-size: 64px;
     line-height: 1.1;
-    color: #111;
+    color: var(--black);
   }
   .page-desc {
     margin: 0 0 26px;
     font-size: 24px;
-    color: #222;
+    color: var(--black);
     line-height: 1.4;
   }
 
@@ -353,7 +353,7 @@ const currentPageServer = Math.max(
     font-weight: 700;
     font-size: 26px;
     line-height: 1.2;
-    color: #222;
+    color: var(--black);
     letter-spacing: 0.2px;
   }
 
@@ -377,15 +377,15 @@ const currentPageServer = Math.max(
   }
   .control__label {
     font-size: 14px;
-    color: #555;
+    color: var(--gray);
   }
   .control__input {
     appearance: none;
     padding: 10px 12px;
     font-size: 14px;
-    border: 1px solid #d8dee4;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--white);
     min-width: 200px;
   }
   .control--search .control__input {
@@ -418,10 +418,10 @@ const currentPageServer = Math.max(
     min-width: 38px;
     height: 38px;
     padding: 0 10px;
-    border: 1px solid #d0d7de;
+    border: 1px solid var(--border);
     border-radius: 10px;
-    background: #fff;
-    color: #111;
+    background: var(--white);
+    color: var(--black);
     text-decoration: none;
     font-weight: 600;
   }
@@ -429,9 +429,9 @@ const currentPageServer = Math.max(
     background: #f7f9fc;
   }
   .pager__link.is-active {
-    background: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
+    background: var(--blue);
+    color: var(--white);
+    border-color: var(--blue);
     cursor: default;
   }
 
@@ -442,9 +442,9 @@ const currentPageServer = Math.max(
   }
   .btn {
     appearance: none;
-    border: 1px solid #222;
-    background: #fff;
-    color: #222;
+    border: 1px solid var(--black);
+    background: var(--white);
+    color: var(--black);
     padding: 12px 20px;
     border-radius: 999px;
     cursor: pointer;

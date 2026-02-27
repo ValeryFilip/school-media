@@ -169,8 +169,8 @@ const { pageUtmSource = "main-page" } = Astro.props;
 
 <style>
   .contact-bottom {
-    background: #000;
-    color: #fff;
+    background: var(--black);
+    color: var(--white);
     width: 100%;
     margin-top: clamp(24px, 6vw, 48px); /* отступ сверху, чтобы не прилипал */
     padding-block: clamp(24px, 5vw, 56px); /* вертикальные внутренние отступы */
@@ -242,7 +242,7 @@ const { pageUtmSource = "main-page" } = Astro.props;
 
   .footer-center a {
     display: block;
-    color: #fff;
+    color: var(--white);
     text-decoration: none;
     font-size: 16px;
     margin-bottom: 10px;
@@ -252,7 +252,7 @@ const { pageUtmSource = "main-page" } = Astro.props;
   }
   .footer-extra a {
     display: block;
-    color: #fff;
+    color: var(--white);
     text-decoration: none;
     font-size: 16px;
     margin-bottom: 10px;

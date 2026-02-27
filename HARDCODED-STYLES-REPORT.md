@@ -1,10 +1,10 @@
 # Отчёт: захардкоженные шрифты и цвета в компонентах
 
-Ниже перечислены все места, где заданы **жёстко прописанные** значения шрифтов (font-size в px, шорткат `font:` с числами) и цвета (hex, rgb, rgba) вместо переменных из глобала (`--ff`, `--h1`–`--h4`, `--lead`, `--text`, `--blue`, `--black`, `--white`, `--gray`, `--border` и т.д.).
+Ниже перечислены все места, где заданы **жёстко прописанные** значения шрифтов (font-size в px, шорткат `font:` с числами) и цвета (hex, rgb, rgba) вместо переменных из глобала (`--ff`, `--h1`–`--h4`, `--lead`, `--text`, `--blue`, `--black`, `--white`, `--gray`, `--border`, `--coral`, `--overlay` и т.д.).
 
 **Глобальные токены (использовать вместо литер):**
 - Шрифты: `--ff`, `--h1`, `--h2`, `--h3`, `--h4`, `--lead`, `--text`
-- Цвета: `--blue` (#366ef0), `--black` (#111), `--white` (#fff), `--gray` (#888), `--border` (#dfdfdf), `--orange`, `--bg`
+- Цвета: `--blue` (#366ef0), `--black` (#111), `--white` (#fff), `--gray` (#888), `--border` (#dfdfdf), `--orange`, `--bg`, `--green`, `--error` (#ef4444), `--coral` (#ff6b35), `--overlay` (rgba(0,0,0,0.75))
 
 ---
 
@@ -52,7 +52,7 @@
 | Файл | Строка | Что захардкожено |
 |------|--------|------------------|
 | PicButtonText.astro | 121 | font-weight: 800 |
-| Quote.astro | 62, 111 | font-weight: 700, 600; font-size: clamp(24spx…), clamp(8px…), clamp(10px…), clamp(8px…) |
+| Quote.astro | 62, 111 | font-weight: 700, 600; font-size: clamp(24px…), clamp(8px…), clamp(10px…), clamp(8px…) |
 | Accordion.astro | 39, 57-58, 82 | font-weight: 600, 400; font-size: 34px, 14px |
 | Banner.astro | 85, 117, 121, 125 | font-weight: 700; font-size: 20px, 14px |
 | FAQ.astro | 64, 89, 129, 135, 145 | font-weight: 600, 700; font-size: 14px |
@@ -110,90 +110,52 @@
 ## 2. Цвета (color, background, border — hex, rgb, rgba)
 
 ### Компоненты mainpage
-| Файл | Строка | Значение |
-|------|--------|----------|
-| AboutSection.astro | 94, 168, 169, 181, 208, 220, 247, 293, 294, 315, 347 | #fff, #000, #eaf0ff |
-| AuthorSection.astro | 209, 218 | color: #222; color: #fff |
-| LeadCapture.astro | 382, 390, 394, 408, 422, 425, 434, 447, 470, 473, 480, 497 | #fff, #eaf1ff, #9ba3af, #b8caff, #10b981, #ef4444, #e6f0ff; background: #ddd, #fff, rgba(0,0,0,0.8) |
-| AdSocialBanner.astro | 104, 119 | color: #fff |
-| AdFreeBanner.astro | 101, 117, 123 | color: #fff |
-| CasesSlider.astro | 158, 204 | color: #111, #fff |
-| Faq.astro | 154 | color: #fff |
-| KursiFormat.astro | 173 | color: #fff |
-| KursiHero.astro | 104, 125 | background: #fff, #ddd |
+**Исправлено:** цвета заменены на переменные `:root` (var(--white), var(--black), var(--bg), var(--gray), var(--green), var(--border), var(--blue), var(--overlay)) в: AboutSection, AuthorSection, LeadCapture, AdSocialBanner, AdFreeBanner, CasesSlider, Faq, KursiFormat, KursiHero, UnisMarquee. Оставлены без замены (нет токена): LeadCapture — #ef4444. Оверлей заменён на var(--overlay).
 
 ### Компоненты stepik
-| Файл | Строка | Значение |
-|------|--------|----------|
-| PaymentPopup.astro | 149, 155, 188, 195, 205 | background: rgba(0,0,0,0.7), #fff; border: #f3f3f3; color: #666 |
-| PlatformSlider.astro | 78, 79, 106, 118, 119, 123 | background: #fff, #e5e7eb, #d1d5db; color: #374151, #111827; border: #e5e7eb |
-| CourseOffer.astro | 363, 386, 391, 399, 447, 517, 522, 527, 539, 544, 548, 570, 579 | color: #fff, rgba(255,255,255,0.9/0.7), #ff725e, #ffed4e; background: #ff6b35, #ff8c42, #fff; border: #ff8c42, #e3edfb |
-| CourseWhy.astro | 300, 351, 357, 391, 400, 405 | color: #000, #222, #fff |
-| MegaSection.astro | 499, 512, 557, 604, 611, 656, 662, 684, 744, 754, 815, 829 | color: #fff; background: #f7f7f9, #fff, #bbb, #3390ff, #e2e8f0, #cbd5e1 |
-| PriceBlock.astro | 145, 150, 163, 168 | color: #222, #555, #444 |
-| ReviewsSection.astro | 351, 359, 363, 384, 388, 576, 585, 592, 613, 625, 634-635, 661, 669 | color: #fff, #ffd700, #333, #ddd; background: #fff; border: #fff, #ffd700 |
-| SkillsGrid.astro | 34, 47 | color: #fff, #222; background: #fff |
-| SupportSection.astro | 260, 275, 285, 290 | color: #222, #fff |
-| stepikHero.astro | 225 | color: #eaf0ff |
-| ModulesSlider.astro | 82, 88, 106, 127, 135, 153, 162 | color: #fff, #191c21, #222; background: #fff, #e2e8f0, #cbd5e1 |
+**Исправлено:** заменены на переменные в PaymentPopup, PlatformSlider, CourseWhy, SkillsGrid, SupportSection, stepikHero, PriceBlock, MegaSection, ReviewsSection, CourseOffer, ModulesSlider (var(--white), var(--black), var(--gray), var(--border), var(--blue), var(--bg), var(--coral), var(--overlay)). Оверлеи и коралловый CTA/спиннер — var(--overlay), var(--coral).
+
+**Нет близкого токена (оставлено как есть):**
+- **CourseOffer.astro:** `#ffed4e` (жёлтый), `#e3edfb` (светлая граница), `rgba(255,255,255,0.9/0.7/0.15/0.6)`, `rgba(255,107,53,0.4/0.6)` — полупрозрачные значения и акценты.
+- **MegaSection.astro:** `#f7f7f9`, `#bbb`, `#e2e8f0`, `#cbd5e1` (светло-серые/слейт фоны).
+- **ReviewsSection.astro:** `#ffd700` (золотой звёзды/акцент) — хардкод допустим, используется только здесь.
+- **ModulesSlider.astro:** `#e2e8f0`, `#cbd5e1` (слейт фоны кнопок слайдера) — хардкод допустим.
 
 ### Компоненты cards
-| Файл | Строка | Значение |
-|------|--------|----------|
-| caseCard.astro | 283, 316 | background: rgba(0,0,0,0.8), rgba(255,255,255,0.9) |
-| cardNew.astro | 117, 132, 145 | color: #666 |
-| CardHorizontal.astro | 120, 146 | color: #666 |
-| cursCard.astro | 149 | color: #b9f81a |
+**Исправлено:** заменены на переменные в cardNew, CardHorizontal, cursCard (var(--gray), var(--green)); дефолтный цвет категории в JS — #366ef0 (--blue); оверлей в caseCard — var(--overlay).
+
+**Оставлено без замены (нет токена):** caseCard.astro — `rgba(255,255,255,0.9)` (фон кнопки «Закрыть»), `box-shadow: 0 10px 30px rgba(0,0,0,0.5)`.
 
 ### Компоненты mdx
-| Файл | Строка | Значение |
-|------|--------|----------|
-| VideoTabs.astro | 130, 132, 138-139, 141, 147-148 | border: #ccc; background-color: #f9f9f9; color: #000 |
-| PicButtonText.astro | 68, 122, 126 | background-color: #366ef0; color: #ffffff, rgba(255,255,255,0.9) |
-| Quote.astro | 63, 72, 99, 113, 118 | color: #366ef0, #222, #111, #666; border: #fff |
-| Accordion.astro | 25, 41, 43, 66, 83 | background: #fff, #f9fafb, #f3f4f6; color: #111, #374151 |
-| EgeCalculator.astro | 47, 72, 85, 96, 803, 810 | border: #e5e7eb, #d1d5db; background: #366ef0; color: #666; inline #ef4444 в JS |
-| TestComponent.astro | 98, 123, 139, 147, 148, 152-153, 160, 166, 181, 182, 192, 196-197, 201-202, 215-216, 229, 242, 256, 270, 271, 275, 280-281, 285 | много #111, #333, #444, #999, #fff, #366ef0, #b3d9ff, #2aa5a1, #c05b66 и фоны |
-| Table.astro | 31, 39, 54, 56, 62, 73 | background: #fff, #f5f5f5, #f9f9f9, #f0f7ff; color: #111 |
-| MultiAnswer.astro, OneAnswer.astro | 68, 95, 111, 119-120, 124-125, 132, 138, 150, 151, 163, 175, 182, 189, 196, 203-204, 208, 213-214, 218 | те же паттерны: #111, #333, #366ef0, #b3d9ff, #fff, #e6f2ff, #2aa5a1, #c05b66 |
-| FAQ.astro | 45, 47, 66, 67, 72, 86, 87, 111 | border: #e5e5e5; background: #fff, #f9f9f9, #f0f7ff, #366ef0; color: #111, #fff, #444 |
-| Banner.astro | 22, 28, 34, 40, 92 | border: "#b3d9ff", "#ffe0b3", "#b3eceb", "#ffb3bd"; color: #333 |
+**Исправлено:** везде, где был подходящий токен, заменено на переменные: VideoTabs (border, color), PicButtonText (--blue, --white), Quote (--blue, --black, --white, --gray), Accordion (--border, --white, --black, --gray), Table (--white, --black, --border), FAQ (--border, --white, --black, --blue, --gray), EgeCalculator (--border, --blue, --gray), Banner (--gray), MultiAnswer/OneAnswer/TestComponent (--white, --border, --black, --blue, --gray, --green, --error).
+
+**Оставлено без замены (нет подходящего токена):**
+- Светлые фоны: `#f9f9f9`, `#f5f5f5`, `#f9fafb`, `#f3f4f6`, `#f0f7ff`, `#e6f2ff` — в Table, Accordion, FAQ, VideoTabs, тестах. **Опционально:** можно добавить в `:root` один токен `--bg-subtle: #f5f5f5` и заменить эти значения для единообразия (не обязательно).
+- Конфиг тем в Banner.astro (JS): `#e6f2ff`, `#b3d9ff` и т.д. — задаются через inline style, оставлены как есть.
+- Полупрозрачные: `rgba(255,255,255,0.9)` в PicButtonText; тени и `rgba(54,110,240,…)` — без токенов.
+- EgeCalculator: inline-стили в JS (#ef4444, #fef2f2 и т.д.) — при желании можно подставлять hex из --error.
 
 ### Остальные компоненты
-| Файл | Строка | Значение |
-|------|--------|----------|
-| SiteFooter.astro | 158, 159, 203, 207, 215, 227, 232, 242, 287, 286 | background: #000, #0060f7; color: #fff, rgba(163,165,167,0.9); border: #fff, #0060f7 |
-| UnifiedMenu.astro | 582, 600, 615, 668, 707, 718, 748, 751-752, 756, 762, 779, 788, 810, 831, 854, 861, 879, 909, 929, 935, 947, 969, 988, 998, 999, 1010, 1041 | color: #111, #3376e0, #666, #fff; background: #fff, #f4f4f4, #f8f9fa, #3376e0, #2352b9, rgba(0,0,0,0.35); border: #eee, #e9ecef, #3376e0 |
-| ui/SupportFab.astro | 139, 194-195 | color: #fff, #111; background: #ffffff |
-| ui/ScrollToTop.astro | 23 | color: #fff |
-| Breadcrumbs.astro | 128, 145, 150, 156, 165, 172, 177 | color: #888, #666, #0d6efd, #333, #999 |
-| article/TableOfContents.astro | 75, 102, 107 | background: #ffffff; color: #0d6efd, #0a58ca |
-| article/ProgressBar.astro | 23 | background: rgba(0,0,0,0.05) |
-| Pagination.astro | 88, 89, 97, 101-103 | background: #fff, #f7f9fc, #0d6efd; color: #111, #fff; border: #d0d7de, #0d6efd |
-| PopupForm.astro | 179, 196, 202, 227, 246, 287, 290, 296, 297 | background: #fff, #f8fafc, #eef2ff, #fbfbfd, #0b1020; color: #0a7f35, #b91c1c, #e6f0ff; border: #e5e7eb |
-| slots/PlainSlot.astro | 126, 137, 205, 215, 222 | background: #f9f9f9, #fff, #f2f4f7; color: #fff, rgba(17,17,17,0.6) |
-| slots/TgChecker.astro | 55, 75, 87, 125, 132 | inline style color:#c0392b; background: #f9f9f9, #fff |
-| slots/CalcSlot.astro | 85, 93, 116, 127-128 | background: #f9f9f9, #fff, #333; color: #888, #fff |
+**Исправлено:** заменены на переменные в SiteFooter (--black, --white), UnifiedMenu (--black, --white, --gray, --blue, --border), ui/SupportFab, ui/ScrollToTop (--white, --black), Breadcrumbs (--gray, --blue), article/TableOfContents (--white, --blue), Pagination (--white, --black, --blue, --border), PopupForm (--white, --border, --green, --error, --black), slots/PlainSlot, CalcSlot, TgChecker (--white, --black, --gray).
+
+**Оставлено без замены (нет токена / особый случай):**
+- SiteFooter: `rgba(163,165,167,0.9)` — приглушённый серый текст.
+- UnifiedMenu: `#f4f4f4`, `#f8f9fa` (светлые фоны), `rgba(0,0,0,0.35)` (оверлей меню).
+- article/ProgressBar: `rgba(0,0,0,0.05)`, градиент с #0d6efd/#6ea8fe.
+- PopupForm: светлые фоны `#f8fafc`, `#eef2ff`, `#fbfbfd`.
+- slots: `#f9f9f9`, `#f2f4f7`; TgChecker — inline `color:#c0392b` в JS; PlainSlot — `rgba(17,17,17,0.6)`.
 
 ### Layouts
-| Файл | Строка | Значение |
-|------|--------|----------|
-| ArticleLayoutNew.astro | 479, 556, 580, 675 | background-color: #e3fdff, #f0f0f0; color: #666 |
+**Исправлено:** ArticleLayoutNew.astro — `color: #666` → `var(--gray)`.
+
+**Оставлено без замены:** `background-color: #e3fdff`, `#f0f0f0` — нет подходящего токена для светлого циан/серого фона. MainLayout: `theme-color` в meta — литерал #366ef0 (соответствует --blue), можно оставить.
 
 ### Страницы (pages)
-| Файл | Строка | Значение |
-|------|--------|----------|
-| privacy.astro | 266 | color: #222 |
-| payment.astro | 108 | color: #222 |
-| agreement.astro | 132 | color: #222 |
-| marketing-consent.astro | 152 | color: #222 |
-| thank-you.astro | 111, 118, 133, 142, 187, 199, 261, 269 | color: #1f2937, #6b7280, #4b5563, #374151, #3b82f6; background: #10b981, #f8fafc, #3b82f6, #2563eb, #f3f4f6, #e5e7eb |
-| refer.astro | 259, 264 | background: #f9f9f9, #fff |
-| 404.astro | 48 | color: #555 |
-| media/tags/[tag].astro | 169 | color: #929292 |
-| media/search.astro | 198, 200, 208, 230, 247, 269, 281, 289, 295, 313, 316, 326 | border: #d0d7de, #1a73e8; background: #fff, #f7f9fc, #f0f2f5, #f7f7f9; color: #666, #111, #555, #444 |
-| media/category/[category].astro | 156 | color: #929292 |
-| media/articles/index.astro | 342, 347, 361, 385, 393, 428, 429, 434, 437, 438-439, 451, 452, 464 | color: #111, #222, #555; background: #fff, #f7f9fc, #0d6efd, #fefefe; border: #d8dee4, #d0d7de, #0d6efd, #222 |
+**Исправлено:** privacy, payment, agreement, marketing-consent — `#222` → `var(--black)`; refer — `#fff` → `var(--white)`; 404 — `#555` → `var(--gray)`; media/tags/[tag], media/category/[category] — `#929292` → `var(--gray)`; media/search — `#fff`, `#111`, `#666`, `#555`, `#444`, границы и `#1a73e8` → `var(--white)`, `var(--black)`, `var(--gray)`, `var(--border)`, `var(--blue)`; media/articles/index — `#111`, `#222`, `#555`, `#fff`, `#0d6efd`, границы → `var(--black)`, `var(--gray)`, `var(--white)`, `var(--blue)`, `var(--border)`.
+
+**Не трогаем:** thank-you.astro — по запросу не изменяли.
+
+**Оставлено без замены:** refer — `#f9f9f9`; media/search, media/articles/index — светлые фоны `#f7f9fc`, `#f0f2f5`, `#f7f7f9`, `#fefefe`; rgba и outline в media.
 
 ### global_lend.css (использование литер, не определение :root)
 | Строка | Значение |
@@ -206,7 +168,7 @@
 ## 3. Рекомендации
 
 - **Шрифты:** где по смыслу подходят «заголовок» / «лид» / «основной текст», заменить `font-size: Npx` и `font: … Npx …` на `font-size: var(--h1)` / `var(--h2)` / `var(--h3)` / `var(--lead)` / `var(--text)`. `font-weight` можно оставить числами или ввести токены (например `--fw-500`, `--fw-700`), если нужна единая палитра.
-- **Цвета:** заменить повторяющиеся hex/rgba на переменные: например `#366ef0` → `var(--blue)`, `#111`/`#222` → `var(--black)` или добавить `--black-soft: #222`, `#fff` → `var(--white)`, `#666`/`#888` → `var(--gray)` или расширить палитру серых в :root.
-- **Фоны и границы:** те же подстановки (`--white`, `--border`, `--blue` и т.д.), при необходимости добавить в глобал токены вроде `--bg-soft`, `--border-subtle` и использовать их в компонентах вместо литер.
+- **Цвета:** заменить повторяющиеся hex/rgba на переменные: например `#366ef0` → `var(--blue)`, `#111`/`#222` → `var(--black)`, `#fff` → `var(--white)`, `#666`/`#888` → `var(--gray)`, тёмный оверлей → `var(--overlay)`, коралловый CTA → `var(--coral)`.
+- **Фоны и границы:** те же подстановки (`--white`, `--border`, `--blue`, `--overlay` и т.д.), при необходимости добавить в глобал токены вроде `--bg-soft`, `--border-subtle`.
 
 Файл можно использовать как чек-лист для поочерёдной замены захардкоженных значений на глобальные переменные.

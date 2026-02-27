@@ -166,7 +166,11 @@ const {
                 class="btn btn--blue vet-discount-btn"
                 aria-label="Оплатить со скидкой 5%"
                 data-payment-url={buyWithDiscount.paymentUrl}
-                onclick={!buyWithDiscount.paymentUrl ? buyWithDiscount.onClick : undefined}
+                onclick={
+                  !buyWithDiscount.paymentUrl
+                    ? buyWithDiscount.onClick
+                    : undefined
+                }
               >
                 {buyWithDiscount.text}
               </a>
@@ -234,7 +238,11 @@ const {
                   class="btn btn--ghost package-discount-link"
                   aria-label="Оплатить пакет со скидкой"
                   data-payment-url={p.buyWithDiscount.paymentUrl}
-                  onclick={!p.buyWithDiscount.paymentUrl ? p.buyWithDiscount.onClick : undefined}
+                  onclick={
+                    !p.buyWithDiscount.paymentUrl
+                      ? p.buyWithDiscount.onClick
+                      : undefined
+                  }
                 >
                   {p.buyWithDiscount.text}
                 </a>
@@ -364,7 +372,7 @@ const {
     .vet-header {
       background: var(--blue);
       border-radius: 24px;
-      color: #fff;
+      color: var(--white);
       position: relative;
       padding: 50px 40px 40px;
       overflow: hidden;
@@ -389,7 +397,7 @@ const {
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.6);
       background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+      color: var(--white);
       font-weight: 500;
       font-size: 14px;
       line-height: 1.2;
@@ -400,14 +408,14 @@ const {
       font-size: var(--h2);
       line-height: 1.3;
       margin: 0 0 12px;
-      color: #fff;
+      color: var(--white);
     }
     .vet-sub {
       font-weight: 500;
       font-size: 20px;
       line-height: 1.6;
       margin: 0 0 16px;
-      color: #fff;
+      color: var(--white);
     }
 
     .vet-list {
@@ -417,7 +425,7 @@ const {
       font-weight: 500;
       font-size: 16px;
       line-height: 1.6;
-      color: #fff;
+      color: var(--white);
     }
     .vet-list li {
       margin-bottom: var(--space-8);
@@ -477,15 +485,15 @@ const {
     }
 
     .vet-discount-btn {
-      background: #ff6b35 !important;
-      border: 2px solid #ff8c42 !important;
+      background: var(--coral) !important;
+      border: 2px solid var(--coral) !important;
       box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4) !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.5px !important;
     }
     .vet-discount-btn:hover {
-      background: #ff8c42 !important;
+      background: var(--coral) !important;
       transform: translateY(-2px) !important;
       box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6) !important;
     }
@@ -532,30 +540,30 @@ const {
     }
 
     .package {
-      --pkg-bg: #ff725e; /* локальная тема пакетов */
+      --pkg-bg: var(--coral); /* локальная тема пакетов */
       background: var(--orange);
       border-radius: 24px;
       padding: 24px 20px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-      border: 1.5px solid #e3edfb;
+      border: 1.5px solid var(--bg);
       position: relative;
       overflow: hidden;
       box-sizing: border-box;
-      color: #fff;
+      color: var(--white);
     }
     .pkg-title {
       font-weight: 600;
       font-size: 20px;
       line-height: 1.3;
       margin: 0 0 8px;
-      color: #fff;
+      color: var(--white);
     }
     .pkg-text {
       font-weight: 500;
       font-size: 15px;
       line-height: 1.55;
       margin: 0 0 14px;
-      color: #fff;
+      color: var(--white);
     }
 
     .price-row {
@@ -569,7 +577,7 @@ const {
       font-weight: 700;
       font-size: 22px;
       line-height: 1;
-      color: #fff;
+      color: var(--white);
     }
     .package-old-price {
       font-weight: 400;
@@ -579,8 +587,8 @@ const {
       color: rgba(255, 255, 255, 0.7);
     }
     .package-discount {
-      background: #fff;
-      color: #ff725e;
+      background: var(--white);
+      color: var(--coral);
       font-weight: 700;
       font-size: 14px;
       padding: 2px 8px;

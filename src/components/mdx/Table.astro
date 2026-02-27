@@ -30,7 +30,7 @@ const { striped = true, bordered = true } = Astro.props;
     margin: clamp(1rem, 3vw, 2rem) 0;
     border-radius: clamp(6px, 0.8vw, 8px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    background: #fff;
+    background: var(--white);
   }
 
   /* Буквенные переносы: фиксируем раскладку колонок и ломаем последовательности где угодно */
@@ -38,7 +38,7 @@ const { striped = true, bordered = true } = Astro.props;
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* критично для равномерных колонок и переносов */
-    background: #fff;
+    background: var(--white);
   }
 
   .table-wrapper :global(th),
@@ -55,8 +55,8 @@ const { striped = true, bordered = true } = Astro.props;
   .table-wrapper :global(th) {
     background: #f5f5f5;
     font-weight: 600;
-    color: #111;
-    border-bottom: 2px solid #ddd;
+    color: var(--black);
+    border-bottom: 2px solid var(--border);
   }
 
   /* Зебра */
@@ -67,7 +67,7 @@ const { striped = true, bordered = true } = Astro.props;
   /* Границы */
   .table-wrapper.bordered :global(td),
   .table-wrapper.bordered :global(th) {
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--border);
   }
 
   /* Hover строки */

@@ -195,9 +195,9 @@ const indexData = posts.map((p) => ({
       width: 100%;
       padding: 14px 18px;
       font-size: 1rem;
-      border: 1px solid #d0d7de;
+      border: 1px solid var(--border);
       border-radius: 12px; /* скругления */
-      background: #fff;
+      background: var(--white);
       color: var(--text-color, #333);
       outline: none;
       transition:
@@ -205,7 +205,7 @@ const indexData = posts.map((p) => ({
         box-shadow 0.2s ease;
     }
     .search-input:focus-visible {
-      border-color: #1a73e8;
+      border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
     }
     .visually-hidden {
@@ -227,9 +227,9 @@ const indexData = posts.map((p) => ({
       grid-template-columns: 150px 1fr 140px 180px 180px 220px; /* img | title | date | author | category | tags */
       gap: 12px;
       padding: 10px 12px;
-      color: #666;
+      color: var(--gray);
       font-size: 0.9rem;
-      border-bottom: 1px solid #e6e6e6;
+      border-bottom: 1px solid var(--border);
       margin-top: 10px;
       align-items: center;
     }
@@ -244,13 +244,13 @@ const indexData = posts.map((p) => ({
       list-style: none;
       margin: 0;
       padding: 0;
-      background: #fff;
-      border: 1px solid #e6e6e6;
+      background: var(--white);
+      border: 1px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
     }
     .result + .result {
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border);
     }
 
     /* Строка результата — фикс 150px под превью */
@@ -279,20 +279,20 @@ const indexData = posts.map((p) => ({
       object-position: center;
       border-radius: 12px;
       background: #f0f2f5;
-      border: 1px solid #eee;
+      border: 1px solid var(--border);
       display: block;
       flex: 0 0 150px;
     }
 
     .result-title {
       font-weight: 600;
-      color: #111;
+      color: var(--black);
       line-height: 1.3;
     }
     .result-date,
     .result-author,
     .result-category {
-      color: #555;
+      color: var(--gray);
       font-size: 0.95rem;
       white-space: nowrap;
       overflow: hidden;
@@ -310,10 +310,10 @@ const indexData = posts.map((p) => ({
       padding: 4px 8px;
       font-size: 0.85rem;
       line-height: 1;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--border);
       border-radius: 999px;
       background: #f7f7f9;
-      color: #444;
+      color: var(--gray);
       white-space: nowrap;
       max-width: 100%;
       text-overflow: ellipsis;
@@ -322,8 +322,8 @@ const indexData = posts.map((p) => ({
 
     .no-results {
       padding: 14px 16px;
-      color: #666;
-      background: #fff;
+      color: var(--gray);
+      background: var(--white);
     }
 
     /* Адаптив */
