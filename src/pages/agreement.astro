@@ -186,32 +186,5 @@ const webPageJsonLd = buildWebPageJsonLd({
         font-size: clamp(18px, 5vw, 24px);
       }
     }
-
-    @media print {
-      header,
-      nav,
-      footer {
-        display: none !important;
-      }
-      .policy {
-        padding: 0;
-      }
-      .policy .container {
-        max-width: none;
-        padding: 0;
-      }
-      .policy h1 {
-        font-size: 28px;
-      }
-      .policy h2 {
-        font-size: 20px;
-        margin: 18px 0 8px;
-      }
-      .policy p,
-      .policy li {
-        font-size: 14px;
-        line-height: 1.6;
-      }
-    }
   </style>
 </MainLayout>

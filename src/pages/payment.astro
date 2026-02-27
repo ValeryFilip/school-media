@@ -87,8 +87,8 @@ const webPageJsonLd = buildWebPageJsonLd({
         <p>
           Оформляя оплату на платформе Stepik, вы соглашаетесь с условиями
           обработки персональных данных, установленными Stepik и его платёжными
-          партнёрами. Сайт <strong>{new URL(siteBase).host}</strong> не собирает
-          и не хранит платёжные реквизиты банковских карт.
+          партнёрами. Сайт <strong>{new URL(siteBase).host}</strong> не собирает и
+          не хранит платёжные реквизиты банковских карт.
         </p>
         <p>
           По вопросам, связанным с оплатой или возвратами, рекомендуем
@@ -160,34 +160,6 @@ const webPageJsonLd = buildWebPageJsonLd({
       }
       .policy h2 {
         font-size: clamp(18px, 5vw, 24px);
-      }
-    }
-
-    /* печать */
-    @media print {
-      header,
-      nav,
-      footer {
-        display: none !important;
-      }
-      .policy {
-        padding: 0;
-      }
-      .policy .container {
-        max-width: none;
-        padding: 0;
-      }
-      .policy h1 {
-        font-size: 28px;
-      }
-      .policy h2 {
-        font-size: 20px;
-        margin: 18px 0 8px;
-      }
-      .policy p,
-      .policy li {
-        font-size: 14px;
-        line-height: 1.6;
       }
     }
   </style>

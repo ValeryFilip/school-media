@@ -8,7 +8,8 @@
  *  - image?: string            // относительный или абсолютный (OG/Twitter)
  *  - url?: string              // каноникал; если не передан — текущий путь
  *  - type?: 'website' | 'article'
- *  - noindex?: boolean
+ *  - index?: boolean           // индексировать страницу (default true)
+ *  - follow?: boolean          // следовать по ссылкам (default true)
  *  - addSiteSuffix?: boolean   // добавлять " — {siteName}" к <title>
  *  - siteName?: string         // по умолчанию из config.siteName
  *  - imageAlt?: string         // опционально: alt для OG
@@ -19,7 +20,8 @@ interface Props {
   image?: string;
   url?: string;
   type?: "website" | "article";
-  noindex?: boolean;
+  index?: boolean;
+  follow?: boolean;
   addSiteSuffix?: boolean;
   siteName?: string;
   imageAlt?: string;
@@ -32,7 +34,8 @@ const {
   image,
   url,
   type = "website",
-  noindex = false,
+  index = true,
+  follow = true,
   addSiteSuffix = true,
   siteName: siteNameProp,
   imageAlt,
@@ -62,7 +65,7 @@ const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
 <title>{titleFinal}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="robots" content={noindex ? "noindex,nofollow" : "index,follow"} />
+<meta name="robots" content={`${index ? "index" : "noindex"},${follow ? "follow" : "nofollow"}`} />
 
 <!-- Open Graph -->
 <meta property="og:locale" content="ru_RU" />

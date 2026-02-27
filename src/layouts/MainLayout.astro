@@ -27,7 +27,8 @@ interface Props {
   image?: string;
   url?: string;
   seoType?: "website" | "article";
-  noindex?: boolean;
+  index?: boolean;
+  follow?: boolean;
   addSiteSuffix?: boolean;
   siteName?: string;
   imageAlt?: string;
@@ -58,7 +59,8 @@ const {
   image,
   url,
   seoType = "website",
-  noindex = false,
+  index = true,
+  follow = true,
   addSiteSuffix = true,
   siteName,
   imageAlt,
@@ -154,7 +156,8 @@ const breadcrumbsJsonLd =
       image={image ?? "/images/technical/og-home.png"}
       url={url}
       type={seoType}
-      noindex={noindex}
+      index={index}
+      follow={follow}
       addSiteSuffix={addSiteSuffix}
       siteName={siteName}
       imageAlt={imageAlt}

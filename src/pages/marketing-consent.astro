@@ -41,9 +41,8 @@ const webPageJsonLd = buildWebPageJsonLd({
           Настоящим, руководствуясь Федеральным законом от 13.03.2006
           №&nbsp;38-ФЗ «О рекламе» и Федеральным законом от 27.07.2006
           №&nbsp;152-ФЗ «О персональных данных», я даю согласие самозанятому
-          Филипенко Валерию Юрьевичу, владельцу сайта <strong
->{siteBase}</strong
-            > (далее — Оператор), на получение от Оператора рекламной информации и сообщений,
+          Филипенко Валерию Юрьевичу, владельцу сайта <strong>{siteBase}</strong
+          > (далее — Оператор), на получение от Оператора рекламной информации и сообщений,
           а также на обработку моих персональных данных в целях рассылок.
         </p>
       </section>
@@ -204,33 +203,6 @@ const webPageJsonLd = buildWebPageJsonLd({
       }
       .policy h2 {
         font-size: clamp(18px, 5vw, 24px);
-      }
-    }
-
-    @media print {
-      header,
-      nav,
-      footer {
-        display: none !important;
-      }
-      .policy {
-        padding: 0;
-      }
-      .policy .container {
-        max-width: none;
-        padding: 0;
-      }
-      .policy h1 {
-        font-size: 28px;
-      }
-      .policy h2 {
-        font-size: 20px;
-        margin: 18px 0 8px;
-      }
-      .policy p,
-      .policy li {
-        font-size: 14px;
-        line-height: 1.6;
       }
     }
   </style>
