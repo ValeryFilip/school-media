@@ -125,4 +125,65 @@ const webPageJsonLd = buildWebPageJsonLd({
       </section>
     </div>
   </main>
+  <style>
+    .policy {
+      color: var(--black);
+      padding: var(--space-32, 32px) 0;
+    }
+    .policy .container {
+      max-width: var(--container, 900px);
+      padding: 0 var(--pad-desktop, 50px);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .policy h1 {
+      font-size: var(--h1, 3px);
+      line-height: 1.2;
+      margin: 0 0 var(--space-16, 16px);
+      font-weight: 700;
+    }
+    .policy h2 {
+      font-size: var(--h2, 24px);
+      line-height: 1.25;
+      margin: 28px 0 12px;
+      font-weight: 700;
+    }
+    .policy p,
+    .policy li {
+      font-size: 20px;
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
+
+    .policy a {
+      color: var(--blue, #0d6efd);
+      text-decoration: none;
+    }
+    .policy a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
+    }
+  </style>
 </MainLayout>

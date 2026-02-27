@@ -85,14 +85,20 @@ const tgUrl =
       {
         footerPhoto1 && (
           <div class="caseCard__footer-photo-1">
-            <img src={footerPhoto1} alt={footerPhoto1Alt} />
+            <img
+              src={footerPhoto1}
+              alt={footerPhoto1Alt ?? `Скриншот отзыва (1), ${studentName}`}
+            />
           </div>
         )
       }
       {
         footerPhoto2 && (
           <div class="caseCard__footer-photo-2">
-            <img src={footerPhoto2} alt={footerPhoto2Alt} />
+            <img
+              src={footerPhoto2}
+              alt={footerPhoto2Alt ?? `Скриншот отзыва (2), ${studentName}`}
+            />
           </div>
         )
       }

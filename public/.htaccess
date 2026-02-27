@@ -1,0 +1,23 @@
+# При отсутствии страницы показывать кастомную 404 (Astro собирает в 404.html)
+ErrorDocument 404 /404.html
+
+# Кеш для статических файлов (особенно важно для Astro /_astro/* с хешами)
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|mjs|map|woff2|woff|ttf|otf|svg|png|jpg|jpeg|webp|avif|gif|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# (опционально) Включить expires, если модуль доступен
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
