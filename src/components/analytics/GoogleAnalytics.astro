@@ -1,18 +1,29 @@
 ---
-/** Google Analytics (GA4) — gtag.js */
+/** Google Analytics (GA4) — gtag.js. Загрузка после window.load, чтобы не влиять на LCP/FCP. */
 interface Props {
   measurementId?: string;
 }
 const { measurementId = "G-1BVZRRN140" } = Astro.props;
 ---
 
-<!-- Google tag (gtag.js) -->
-<script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
 <script is:inline define:vars={{ measurementId }}>
   window.dataLayer = window.dataLayer || [];
   function gtag() {
     dataLayer.push(arguments);
   }
-  gtag("js", new Date());
-  gtag("config", measurementId);
+  function loadGoogleAnalytics() {
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + measurementId;
+    document.head.appendChild(s);
+    gtag("js", new Date());
+    gtag("config", measurementId);
+  }
+  if (document.readyState === "complete") {
+    setTimeout(loadGoogleAnalytics, 0);
+  } else {
+    window.addEventListener("load", function () {
+      setTimeout(loadGoogleAnalytics, 0);
+    });
+  }
 </script>
