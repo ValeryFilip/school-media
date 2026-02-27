@@ -19,6 +19,9 @@ export default defineConfig({
 
     // Настройка Vite для поддержки алиасов
     vite: {
+        build: {
+            cssCodeSplit: false, // один общий CSS-файл вместо чанков
+        },
         resolve: {
             alias: {
                 '~': path.resolve(__dirname, './src'),
