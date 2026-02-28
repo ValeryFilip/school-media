@@ -85,6 +85,12 @@ const {
 
 const inMedia = Astro.url.pathname.startsWith("/media");
 const pathname = Astro.url.pathname;
+
+// Логотипы: курсы — весь сайт кроме медиа, академия — раздел медиа
+const menuLogoSrc = inMedia
+  ? "/images/technical/egehim(academy).webp"
+  : "/images/technical/egehim(kursi).webp";
+const menuLogoAlt = inMedia ? "ЕГЭХИМ — академия" : "ЕГЭХИМ — курсы";
 // UTM source по странице: для попапа и кнопок CTA (меню, футер)
 const pageUtmSource =
   pathname === "/"
@@ -145,7 +151,7 @@ const breadcrumbsJsonLd =
     }
 
     <Seo
-      title={title ?? "EGEHIM"}
+      title={title ?? "ЕГЭХИМ"}
       description={description ??
         "Подготовка к ЕГЭ по химии: курсы, разборы и материалы"}
       image={image ?? "/images/technical/og-home.png"}
@@ -201,7 +207,8 @@ const breadcrumbsJsonLd =
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <UnifiedMenu
       context={inMedia ? "media" : "landing"}
-      logoSrc={logoSrc}
+      logoSrc={menuLogoSrc}
+      logoAlt={menuLogoAlt}
       ctaHref={ctaHref}
       pageUtmSource={pageUtmSource}
     />

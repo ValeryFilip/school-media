@@ -1,137 +1,208 @@
-# Рефакторинг URL статей и раздела «медиа»
+# План переезда: /media/ → /academy/
 
-Документ для будущей реализации: анализ двух вариантов смены формата ссылок на статьи и категории.
+## Целевая структура URL
 
----
-
-## Текущая структура
-
-| Назначение | Текущий URL | Файл |
-|------------|-------------|------|
-| Главная блога | `egehim.ru/media/` | `src/pages/media/index.astro` |
-| Каталог статей | `egehim.ru/media/articles/` | `src/pages/media/articles/index.astro` |
-| Страница статьи | `egehim.ru/media/articles/[slug]/` | `src/pages/media/articles/[slug].astro` |
-| Категория | `egehim.ru/media/category/[category]/` | `src/pages/media/category/[category].astro` |
-| Тег | `egehim.ru/media/tags/[tag]/` | `src/pages/media/tags/[tag].astro` |
-| Поиск | `egehim.ru/media/search` | `src/pages/media/search.astro` |
-
-У каждой статьи в frontmatter есть поле `category` (например: «Школьникам», «Видео», «Материалы для ЕГЭ и ОГЭ по химии»). Для URL используется slugified-значение (например `shkolnkam`, `video`).
+| Было | Стало |
+|------|--------|
+| `/media/` | `/academy/` |
+| `/media/category/КАТЕГОРИЯ` | `/academy/КАТЕГОРИЯ` |
+| `/media/tags/ТЕГ` | `/academy/tags/ТЕГ` (оставить как есть — только замена префикса) |
+| `/media/articles/СЛАГ` | `/academy/КАТЕГОРИЯ/СЛАГ` |
+| `/media/articles` | `/academy/articles` |
+| `/media/search` | `/academy/search` |
 
 ---
 
-## Вариант 1: Статьи в корне без /media/
+## 1. Структура файлов (страницы)
 
-**Целевая схема:**
-- Статья: `egehim.ru/[КАТЕГОРИЯ]/[SLUG]` (без префикса)
-- `/media/` остаётся только для: тегов, категорий (листинг), главной блога (и при необходимости каталога статей)
+### 1.1 Переименование папки и маршрутов
 
-**Плюсы:** короткие и «человеческие» URL статей.  
-**Минусы:** динамический маршрут `[category]/[slug]` в корне; нужно аккуратно генерировать только пары из реальных статей, чтобы не пересекаться с существующими страницами (`/privacy`, `/organika` и т.д.).
+- **Папка:** `src/pages/media/` → `src/pages/academy/`
+- **Главная академии:** `src/pages/media/index.astro` → `src/pages/academy/index.astro`
+- **Поиск:** `src/pages/media/search.astro` → `src/pages/academy/search.astro`
+- **Банк статей:** `src/pages/media/articles/index.astro` → `src/pages/academy/articles/index.astro`
+- **Теги:** `src/pages/media/tags/[tag].astro` → `src/pages/academy/tags/[tag].astro`
 
-### Что делать
+### 1.2 Категории: убрать сегмент `category`
 
-1. **Новая страница статьи** — `src/pages/[category]/[slug].astro`:
-   - В `getStaticPaths()` по коллекции статей возвращать `{ params: { category: slugify(fm.category), slug: post.slug } }`.
-   - Внутри страницы: загрузка по `slug`, проверка `slugify(fm.category) === params.category` (иначе редирект на правильный URL или 404).
-   - Перенести логику из `media/articles/[slug].astro` (layout, JSON-LD, breadcrumbs, рекомендации).
+- **Было:** `src/pages/media/category/[category].astro` → URL `/media/category/novosti`
+- **Стало:** `src/pages/academy/[category].astro` → URL `/academy/novosti`
+- Файл: перенести логику из `media/category/[category].astro` в `academy/[category].astro` (один динамический сегмент).
 
-2. **Обновить все ссылки на статьи** — везде вместо `basePath + "/articles/" + slug` использовать `"/" + slugify(category) + "/" + slug`:
-   - `CardHorizontal.astro`, `cardNew.astro` — есть `post.data.category`, подставлять в ссылку.
-   - `ArticleLayoutNew.astro` — `articlePath`, `articleUrl`, ссылки «назад в категорию», шаринг.
-   - `media/articles/index.astro` — в шаблонах карточек ссылка на статью с категорией.
-   - `media/search.astro` — абсолютный путь `/${slugify(p.category)}/${p.slug}`.
-   - `media/category/[category].astro`, `media/tags/[tag].astro` — при рендере карточек передавать category поста + slug.
-   - `rss.xml.ts` — `link` на статью: `${siteUrl}/${slugify(post.data.category)}/${post.slug}/`.
+### 1.3 Статьи: домен/academy/КАТЕГОРИЯ/СЛАГ
 
-3. **Старый URL** `/media/articles/[slug]`:
-   - Либо удалить файл (старые ссылки дадут 404).
-   - Либо оставить редирект 301 на `/${category}/${slug}` (лучше для SEO).
+- **Было:** `src/pages/media/articles/[slug].astro` → URL `/media/articles/statya-slug`
+- **Стало:** `src/pages/academy/[category]/[slug].astro` → URL `/academy/novosti/statya-slug`
+- Новый файл: `src/pages/academy/[category]/[slug].astro`.
+- В `getStaticPaths()` возвращать `{ params: { category: slugify(post.data.category), slug: post.slug } }`.
+- Удалить старый `media/articles/[slug].astro` после переноса.
 
-4. **Остальное:** меню, баннеры — ссылки на «Все статьи» и категории оставить на `/media/articles` и `/media/category/...`. Breadcrumbs на странице статьи: при необходимости вести на `/media` и `/media/category/...`.
-
-**Оценка:** один новый маршрут + правки в 7–9 файлах; время — порядка 1–2 часов.
-
----
-
-## Вариант 2: Заменить media → library (рекомендуемый)
-
-**Целевая схема:**
-- Везде префикс **`/library/`** вместо `/media/`.
-- Статья: **`egehim.ru/library/[КАТЕГОРИЯ]/[SLUG]`** (например `/library/shkolnkam/nazvanie-stati`).
-- Категория (листинг): **`egehim.ru/library/[КАТЕГОРИЯ]`** (например `/library/shkolnkam`), без сегмента `category` в пути.
-- Теги: **`egehim.ru/library/tags/[tag]`** — структура «как есть», только база `media` → `library`.
-- Главная блога: **`egehim.ru/library/`**.
-- Каталог статей (если нужен): **`egehim.ru/library/articles/`**.
-
-**Плюсы:** один префикс для всего раздела, нет маршрутов в корне, понятные URL, проще массовая замена строк и правка структуры папок.
-
-### Что делать
-
-#### 1. Структура страниц
-
-- Переименовать **`src/pages/media/`** → **`src/pages/library/`**.
-- **Категория (листинг):** перенести логику из `media/category/[category].astro` в **`library/[category].astro`** (URL станет `/library/школьникам` без слова `category`).
-- **Статья:** новая страница **`library/[category]/[slug].astro`**:
-  - `getStaticPaths()`: по коллекции статей возвращать `{ params: { category: slugify(category), slug } }`.
-  - Внутри: загрузка по `slug`, проверка совпадения `slugify(fm.category)` с `params.category`.
-- **Теги:** оставить ту же структуру — **`library/tags/[tag].astro`** (содержимое как сейчас).
-- **Главная блога:** **`library/index.astro`** (аналог текущего `media/index.astro`).
-- **Каталог статей:** **`library/articles/index.astro`** (аналог `media/articles/index.astro`).
-- В **`library/[category].astro`** в `getStaticPaths()` возвращать только slug’и категорий, которые реально есть у статей (не `articles`, не `tags`), чтобы не конфликтовать с `library/articles/` и `library/tags/`.
-
-#### 2. Замена путей и переменных
-
-| Где | Что менять |
-|-----|------------|
-| **MainLayout** | `pathname.startsWith("/media")` → `"/library"`, `<base href="/media/">` → `"/library/"`. |
-| **Breadcrumbs** | Проверка и пути с `/media` → `/library`. |
-| **UnifiedMenu** | `/media`, `/media/articles`, `/media/category/...` → `/library`, `/library/articles`, категории как `/library/[category]`. |
-| **CardHorizontal, cardNew, AdMediaBanner** | `basePath = "/media"` → `"/library"`, ссылка на статью: **`/library/${slugify(category)}/${slug}`**. |
-| **ArticleLayoutNew** | `base = "/media"` → `"/library"`, ссылки: статья **`/library/${categorySlug}/${slug}`**, категория **`/library/${categorySlug}`**. |
-| **Страницы library/** | Во всех (index, articles/index, [category], [category]/[slug], tags/[tag], search) заменить `siteUrl + "/media/..."` и внутренние ссылки на `/library/...`. |
-| **RSS** | URL статей: **`/library/${slugify(category)}/${slug}/`**. |
-| **404, SiteFooter** | Ссылки «В медиа» / «Медиа» → `/library/` (и при желании текст «Библиотека»). |
-| **seoData** | `inMedia` и `homeHref` с `/media/` → проверка по `/library/` и `.../library/`. |
-| **Контент (MDX)** | Прямые ссылки вида `/media/articles/...` в статьях заменить на **`/library/КАТЕГОРИЯ/slug`** (по одной категории и slug для каждой статьи). |
-
-#### 3. Редиректы (для SEO)
-
-- `/media` → `/library`
-- `/media/articles` → `/library/articles`
-- `/media/articles/:slug` → `/library/:category/:slug` (category из frontmatter по slug)
-- `/media/category/:category` → `/library/:category`
-- `/media/tags/:tag` → `/library/tags/:tag`
-
-Редиректы задать в конфиге хостинга (Netlify, Vercel, nginx и т.п.) или в `astro.config.mjs`, если поддерживается.
-
-**Оценка:** переименование папки + правки в ~15–20 файлах; время — порядка 1–2 часов.
+**Важно:** порядок маршрутов в Astro — более специфичные выше. Должны существовать:
+- `academy/articles/index.astro` (банк) — чтобы `/academy/articles` не попадал в `[category]`
+- `academy/tags/[tag].astro`
+- `academy/search.astro`
+- `academy/[category]/[slug].astro` — статьи
+- `academy/[category].astro` — страницы категорий
 
 ---
 
-## Файлы и места, где встречается /media или формирование ссылок
+## 2. Замены по файлам (пошагово)
 
-(Удобно для поиска при реализации.)
+### 2.1 Layouts
 
-- `src/pages/404.astro` — ссылка «В медиа»
-- `src/pages/media/` — вся папка → `library/`
-- `src/pages/rss.xml.ts` — URL статей
-- `src/layouts/MainLayout.astro` — `inMedia`, `<base href>`
-- `src/layouts/ArticleLayoutNew.astro` — `base`, ссылки на статью и категорию
-- `src/components/Breadcrumbs.astro` — `inMedia`, `homeHref`
-- `src/components/UnifiedMenu.astro` — ссылки на медиа/категории/статьи
-- `src/components/cards/CardHorizontal.astro` — `basePath`, формирование `href`
-- `src/components/cards/cardNew.astro` — `basePath`, ссылки на статью и категорию
-- `src/components/mainpage/AdMediaBanner.astro` — `basePath`
-- `src/components/article/TableOfContents.astro` — комментарий/пример пути
-- `src/components/SiteFooter.astro` — ссылка «Медиа»
-- `src/lib/seoData.ts` — `inMedia`, `homeHref`
-- `src/content/articles/*.mdx` — прямые ссылки вида `(/media/articles/...)`
+| Файл | Что менять |
+|------|------------|
+| `src/layouts/MainLayout.astro` | `pathname.startsWith("/media")` → `pathname.startsWith("/academy")`; `"media"` (pageUtmSource) → `"academy"`; `<base href="/media/" />` → `<base href="/academy/" />`; класс `media-page` → можно оставить или переименовать в `academy-page`. |
+| `src/layouts/ArticleLayoutNew.astro` | `pathname.startsWith("/media")` → `pathname.startsWith("/academy")`; `base = "/media"` → `base = "/academy"`; `articleUrl` / `articlePath`: с `/articles/${slug}` на `/${categorySlug}/${slug}` (category из fm); ссылка на категорию: `base/category/...` → `base/...` (т.е. `/${categorySlug}`); теги: `base/tags/...` остаётся, только base → `/academy`. CatBadge: `href={base}/category/${categorySlug}` → `href={base}/${categorySlug}`. |
+
+### 2.2 Компоненты
+
+| Файл | Что менять |
+|------|------------|
+| `src/components/SiteFooter.astro` | `href="/media"` → `href="/academy"`. Текст «Медиа» по желанию оставить или заменить на «Академия». |
+| `src/components/Breadcrumbs.astro` | Все проверки и подстановки `/media` → `/academy`; переменная `inMedia` → `inAcademy` (опционально); `homeHref` с `/media/` → `/academy/`. |
+| `src/components/UnifiedMenu.astro` | Все `href="/media..."` → `href="/academy..."`: `/media` → `/academy`, `/media/category/...` → `/academy/...` (без `category` в пути), `/media/articles` → `/academy/articles`. Контекст `context === "media"` оставить или переименовать в `"academy"` (и там, где передаётся в меню). |
+| `src/components/cards/cardNew.astro` | `basePath = "/media"` → `basePath = "/academy"`. Ссылка на статью: вместо `${basePath}/articles/${post.slug}` делать `${basePath}/${slugify(post.data.category)}/${post.slug}`. Ссылка на категорию: `${basePath}/category/${slugify(category)}` → `${basePath}/${slugify(category)}`. |
+| `src/components/cards/CardHorizontal.astro` | Аналогично: `basePath = "/academy"`; ссылка на статью: `${basePath}/${slugify(post.data.category)}/${post.slug}`; кнопка тега: сейчас ведёт на `basePath/category/${slugify(tag)}` — для тегов оставить `basePath/tags/${slugify(tag)}` (не category). |
+| `src/components/mainpage/AdMediaBanner.astro` | `basePath = "/media"` → `basePath = "/academy"`. |
+| `src/components/article/TableOfContents.astro` | В комментарии: `"/media/articles/slug"` → `"/academy/category-slug/slug"`. Логика не меняется (articlePath передаётся с страницы). |
+
+### 2.3 Страницы (после переноса в academy/)
+
+| Файл | Что менять |
+|------|------------|
+| `src/pages/academy/index.astro` (бывший media/index) | Все `url`, `href`, `basePath`: `/media` → `/academy`; ссылки на категории: `/media/category/${slugify(...)}` → `/academy/${slugify(...)}`; UTM: `media-page` / `media-lead` → `academy-page` / `academy-lead` (по желанию). |
+| `src/pages/academy/articles/index.astro` | `pageUrl`: `/media/articles/` → `/academy/articles/`; `basePath="/media"` → `basePath="/academy"`. |
+| `src/pages/academy/articles/[slug].astro` → удалить; логика в `academy/[category]/[slug].astro` | См. раздел 1.3. |
+| `src/pages/academy/[category]/[slug].astro` (новый) | Взять логику из `media/articles/[slug].astro`. `pageUrl`: `${siteUrl}/academy/${slugify(fm.category)}/${slug}/`. Breadcrumbs: категория — `${siteUrl}/academy/${slugify(fm.category)}/`. `getStaticPaths`: `params: { category: slugify(post.data.category), slug: post.slug }`. Получение статьи: по `category` + `slug` (getCollection + find по slug и category). |
+| `src/pages/academy/[category].astro` (из media/category/[category]) | `pageUrl`: `/media/category/${slug}` → `/academy/${slug}`; все `basePath="/media"` → `"/academy"`. Импорты путей поправить (на уровень выше убрать category). |
+| `src/pages/academy/tags/[tag].astro` | `pageUrl`: `/media/tags/...` → `/academy/tags/...`; `basePath="/media"` → `"/academy"`. |
+| `src/pages/academy/search.astro` | Форма: `action="search"` — при base `/academy/` получится `/academy/search`. В клиентском скрипте ссылка на статью: сейчас `articles/${p.slug}/`; нужно `categorySlug/${p.slug}/`. В indexData добавить поле `categorySlug` (slugify категории) и в рендере использовать `href = \`${p.categorySlug}/${p.slug}/\``. |
+
+### 2.4 Прочие страницы
+
+| Файл | Что менять |
+|------|------------|
+| `src/pages/404.astro` | `href="/media/"` → `href="/academy/"`; текст «В медиа» → «В академию» (по желанию). |
+
+### 2.5 Утилиты и конфиг
+
+| Файл | Что менять |
+|------|------------|
+| `src/lib/seoData.ts` | `inMedia` → по смыслу (или оставить имя); `homeHref`: `/media/` → `/academy/`. |
+
+### 2.6 RSS и sitemap
+
+| Файл | Что менять |
+|------|------------|
+| `src/pages/rss.xml.ts` | URL статей: `${siteUrl}/media/articles/${post.slug}/` → `${siteUrl}/academy/${slugify(post.data.category)}/${post.slug}/`. Нужен доступ к category (уже есть в post.data). |
+| `scripts/generate-sitemap.js` | Фильтры: `\/media\/tags\/` → `\/academy\/tags\/`; `\/media\/search\/` → `\/academy\/search\/`. |
 
 ---
 
-## Итог
+## 3. Контент (MDX): внутренние ссылки на статьи
 
-- **Вариант 1** — статьи в корне, без префикса; технически возможен, но добавляет динамический маршрут в корень и редиректы со старых URL.
-- **Вариант 2** — замена media → library с форматами `/library/КАТЕГОРИЯ/НАЗВАНИЕ` и `/library/КАТЕГОРИЯ`, теги как `/library/tags/...` — проще внедрять и поддерживать, все пути под одним префиксом.
+Все внутренние ссылки вида `/media/articles/...` заменить на `/academy/КАТЕГОРИЯ_СЛАГ/СЛАГ_СТАТЬИ`.
 
-Для будущей работы достаточно выбрать один вариант и последовательно пройти список файлов выше, обновляя пути и формирование ссылок на статьи и категории.
+Файлы и строки (grep по `/media/articles/`):
+
+| Файл | Замена |
+|------|--------|
+| `src/content/articles/kak-ne-volnovatsya-na-ekzamene-ege.mdx` | `/media/articles/shkola-i-ege` → `/academy/.../shkola-i-ege` (подставить slug категории статьи shkola-i-ege); `/media/articles/raspisanie-ege-2026` → по категории статьи raspisanie-ege-2026. |
+| `src/content/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx` | Аналогично: stepen-okislenia, kak-nazivat-veschestva-v-himii, kak-ne-volnovatsya-na-ekzamene-ege — нужны slug категорий для каждой целевой статьи. |
+| `src/content/articles/stepen-okislenia.mdx` | kak-podgotovitsya-k-ege-po-himii-s-nulya, kak-nazivat-veschestva-v-himii. |
+| `src/content/articles/shkola-i-ege.mdx` | raspisanie-ege-2026, kak-ne-volnovatsya-na-ekzamene-ege. |
+| `src/content/articles/kak-nazivat-veschestva-v-himii.mdx` | kak-podgotovitsya-k-ege-po-himii-s-nulya, stepen-okislenia, klassifikatsia-neorganicheskih-veschestv. |
+| `src/content/articles/raspisanie-ege-2026.mdx` | kak-podgotovitsya-k-ege-po-himii-s-nulya, shkola-i-ege, kak-ne-volnovatsya-na-ekzamene-ege, shkala-perevoda-ballov-ege. |
+| `src/content/articles/shkala-perevoda-ballov-ege.mdx` | raspisanie-ege-2026. |
+
+Формат новой ссылки: `/academy/{categorySlug}/{articleSlug}`.
+
+**Соответствие категория → slug (slugify):**
+- «Школьникам» → `shkolnkam`
+- «Материалы для ЕГЭ и ОГЭ по химии» → `materialy-dlya-ege-i-oge-po-himii`
+- «Видео» → `video`
+
+**Конкретные замены в MDX:**
+
+| Статья (файл) | Старая ссылка | Новая ссылка |
+|---------------|---------------|--------------|
+| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnkam/shkola-i-ege` |
+| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
+| kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/stepen-okislenia` | `/academy/materialy-dlya-ege-i-oge-po-himii/stepen-okislenia` |
+| kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/kak-nazivat-veschestva-v-himii` | `/academy/materialy-dlya-ege-i-oge-po-himii/kak-nazivat-veschestva-v-himii` |
+| kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| stepen-okislenia.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| stepen-okislenia.mdx | `/media/articles/kak-nazivat-veschestva-v-himii` | `/academy/materialy-dlya-ege-i-oge-po-himii/kak-nazivat-veschestva-v-himii` |
+| shkola-i-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
+| shkola-i-ege.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| kak-nazivat-veschestva-v-himii.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| kak-nazivat-veschestva-v-himii.mdx | `/media/articles/stepen-okislenia` | `/academy/materialy-dlya-ege-i-oge-po-himii/stepen-okislenia` |
+| kak-nazivat-veschestva-v-himii.mdx | `/media/articles/klassifikatsia-neorganicheskih-veschestv` | `/academy/materialy-dlya-ege-i-oge-po-himii/klassifikatsia-neorganicheskih-veschestv` |
+| raspisanie-ege-2026.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| raspisanie-ege-2026.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnkam/shkola-i-ege` |
+| raspisanie-ege-2026.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| raspisanie-ege-2026.mdx | `/media/articles/shkala-perevoda-ballov-ege` | `/academy/shkolnkam/shkala-perevoda-ballov-ege` |
+| shkala-perevoda-ballov-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
+
+---
+
+## 4. Чек-лист перед деплоем
+
+- [ ] Папка `src/pages/media` переименована в `src/pages/academy`.
+- [ ] Маршруты: `[category].astro`, `[category]/[slug].astro`, `articles/index`, `tags/[tag]`, `search`, `index` — на месте и без конфликтов.
+- [ ] Во всех компонентах и layout’ах нет вхождений `/media` в путях (кроме упоминаний в комментариях/доках).
+- [ ] Карточки (CardNew, CardHorizontal) ведут на `/academy/{categorySlug}/{slug}` и на категорию `/academy/{categorySlug}`.
+- [ ] Breadcrumbs и меню ведут на `/academy/`, `/academy/articles`, `/academy/{category}`, `/academy/tags/...`.
+- [ ] Статья открывается по `/academy/{category}/{slug}`; JSON-LD и canonical используют этот URL.
+- [ ] Поиск: в выдаче ссылки вида `/academy/{categorySlug}/{slug}/`.
+- [ ] RSS: URL статей в формате `/academy/{categorySlug}/{slug}/`.
+- [ ] Sitemap: фильтры обновлены на `/academy/tags/` и `/academy/search`.
+- [ ] Все MDX-статьи: внутренние ссылки переведены на `/academy/.../...`.
+- [ ] 404: кнопка «В академию» ведёт на `/academy/`.
+- [ ] Редиректы (если нужны): настроить 301 с `/media/...` на `/academy/...` (в хостинге или в Astro middleware).
+
+---
+
+## 5. Редиректы (рекомендация)
+
+Чтобы старые ссылки не давали 404:
+
+- `/media` → `/academy`
+- `/media/` → `/academy/`
+- `/media/articles` → `/academy/articles`
+- `/media/articles/` → `/academy/articles/`
+- `/media/articles/{slug}` → `/academy/{categorySlug}/{slug}` (нужна таблица или правило: slug → category для каждой статьи)
+- `/media/category/{category}` → `/academy/{category}`
+- `/media/tags/{tag}` → `/academy/tags/{tag}`
+- `/media/search` → `/academy/search`
+
+Редиректы можно реализовать в `astro.config.mjs` (redirects) или на уровне хостинга (netlify.toml, vercel.json, _redirects и т.д.).
+
+---
+
+## 6. Документация и чек-листы в репозитории
+
+После переезда обновить упоминания URL в:
+
+- `SEO_CHECKLIST.md` — заменить все `/media...` на `/academy...`.
+- `PRODUCTION_READINESS_CHECKLIST.md` — пути и примеры.
+- `FONT-SHORTHAND-ALL-PLACES.md`, `FONT-OVERRIDES.md`, `HARDCODED-STYLES-REPORT.md`, `IMAGE_OPTIMIZATION_REPORT.md` — пути к файлам `media/` заменить на `academy/`.
+
+---
+
+## 7. Краткая сводка замен в коде
+
+| Тип | Было | Стало |
+|-----|------|--------|
+| Префикс раздела | `/media` | `/academy` |
+| Главная раздела | `/media/` | `/academy/` |
+| Категория | `/media/category/{slug}` | `/academy/{slug}` |
+| Теги | `/media/tags/{tag}` | `/academy/tags/{tag}` |
+| Статья | `/media/articles/{slug}` | `/academy/{categorySlug}/{slug}` |
+| Банк статей | `/media/articles` | `/academy/articles` |
+| Поиск | `/media/search` | `/academy/search` |
+| base href | `/media/` | `/academy/` |
+| UTM / класс | media-page, media-lead | academy-page, academy-lead (опционально) |
+
+Готово к использованию как пошаговый план переезда.
