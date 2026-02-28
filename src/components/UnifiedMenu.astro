@@ -33,16 +33,13 @@ if (context === "media") {
     ];
     mediaCategories = categories.map((category) => ({
       label: category,
-      href: `/media/category/${slugify(category)}`,
+      href: `/academy/${slugify(category)}`,
     }));
   } catch (error) {
     console.warn("Could not load categories:", error);
     mediaCategories = [
-      {
-        label: "Материалы для ЕГЭ и ОГЭ по химии",
-        href: "/media/category/ege-oge",
-      },
-      { label: "материалы по химии", href: "/media/category/materials" },
+      { label: "Задания из ЕГЭ по химии", href: "/academy/zadaniya-iz-ege-po-himii" },
+      { label: "Школьникам", href: "/academy/shkolnikam" },
     ];
   }
 }
@@ -73,7 +70,7 @@ if (context === "media") {
           {
             context === "media" && (
               <li class="menu__item">
-                <a href="/media/articles" class="menu__link">
+                <a href="/academy/articles" class="menu__link">
                   Все статьи
                 </a>
               </li>
@@ -228,10 +225,10 @@ if (context === "media") {
 
           <li class="menu__item menu__item-courses">
             <a
-              href={context === "landing" ? "/media" : "/allcourses"}
+              href={context === "landing" ? "/academy" : "/allcourses"}
               class="menu__link"
             >
-              {context === "landing" ? "Медиа" : "Курсы"}
+              {context === "landing" ? "Академия" : "Курсы"}
             </a>
           </li>
         </ul>
@@ -343,7 +340,7 @@ if (context === "media") {
         {
           context === "media" && (
             <li class="mnav__item">
-              <a href="/media/articles">Все статьи</a>
+              <a href="/academy/articles">Все статьи</a>
             </li>
           )
         }
@@ -505,8 +502,8 @@ if (context === "media") {
         }
 
         <li class="mnav__item">
-          <a href={context === "landing" ? "/media" : "/allcourses"}
-            >{context === "landing" ? "Медиа" : "Курсы"}</a
+          <a href={context === "landing" ? "/academy" : "/allcourses"}
+            >{context === "landing" ? "Академия" : "Курсы"}</a
           >
         </li>
       </ul>

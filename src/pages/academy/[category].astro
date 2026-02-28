@@ -1,34 +1,26 @@
 ---
-// src/pages/tags/[tag].astro
-import MainLayout from "../../../layouts/MainLayout.astro";
-import config from "../../../config.ts";
+// src/pages/academy/[category].astro
+import MainLayout from "../../layouts/MainLayout.astro";
+import config, { categoryDescriptions } from "../../config.ts";
 import { getCollection } from "astro:content";
-import CardNew from "../../../components/cards/cardNew.astro";
-import CardHorizontal from "../../../components/cards/CardHorizontal.astro";
-import Pagination from "../../../components/Pagination.astro";
-import { slugify } from "../../../lib/slugify";
-import { withReadingTime } from "../../../lib/withReadingTime";
-
+import CardNew from "../../components/cards/cardNew.astro";
+import CardHorizontal from "../../components/cards/CardHorizontal.astro";
+import Pagination from "../../components/Pagination.astro";
+import { slugify } from "../../lib/slugify";
+import { withReadingTime } from "../../lib/withReadingTime";
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
     return data.visible !== false;
   });
-  const seen = new Set<string>();
-  const tags = posts.flatMap((p) =>
-    Array.isArray(p.data.tags) ? p.data.tags : []
-  );
-  const unique = Array.from(new Set(tags.filter(Boolean).map(String)));
-
-  return unique.reduce<{ params: { tag: string } }[]>((acc, t) => {
-    const s = slugify(t);
-    if (!s || seen.has(s)) return acc;
-    seen.add(s);
-    acc.push({ params: { tag: s } });
-    return acc;
-  }, []);
+  const categories = Array.from(
+    new Set(posts.map((p) => p.data.category)),
+  ).filter(Boolean);
+  return categories.map((original) => ({
+    params: { category: slugify(String(original)) },
+  }));
 }
 
-const { tag: slug } = Astro.params;
+const { category: slug } = Astro.params;
 
 const allRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
@@ -36,27 +28,22 @@ const allRaw = await getCollection("articles", ({ data }) => {
 
 const all = withReadingTime(allRaw);
 
-// Найти оригинальное имя тега по слагу
-const tagMap = new Map<string, string>();
+// найти оригинальное имя категории по слагу
+let originalCategory = undefined as string | undefined;
 for (const p of all) {
-  const tags = Array.isArray(p.data.tags) ? p.data.tags : [];
-  for (const t of tags) {
-    const s = slugify(String(t));
-    if (s && !tagMap.has(s)) tagMap.set(s, String(t));
+  const cat = p.data.category;
+  if (cat && slugify(String(cat)) === slug) {
+    originalCategory = String(cat);
+    break;
   }
 }
-const originalTag = tagMap.get(slug) || slug;
 
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const posts = all
-  .filter(
-    (p) =>
-      Array.isArray(p.data.tags) &&
-      p.data.tags.some((t) => slugify(String(t)) === slug)
-  )
-  .sort(
-    (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime()
-  );
+const posts = (
+  originalCategory
+    ? all.filter((p) => p.data.category === originalCategory)
+    : []
+).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
 
 // Левая колонка - основные статьи
 const leftCards = posts;
@@ -66,25 +53,24 @@ const shuffled = [...posts].sort(() => Math.random() - 0.5);
 const rightCards = shuffled.slice(0, 5);
 
 // Пагинация для левой колонки
-const PER_PAGE = 6;
+const PER_PAGE = 6; // 6 карточек на странице (как в tags.astro)
 const currentPage = Math.max(
   1,
-  Number(Astro.url.searchParams.get("page") || "1")
+  Number(Astro.url.searchParams.get("page") || "1"),
 );
 const totalPages = Math.max(1, Math.ceil(leftCards.length / PER_PAGE));
 const pagedLeftCards = leftCards.slice(
   (currentPage - 1) * PER_PAGE,
-  currentPage * PER_PAGE
+  currentPage * PER_PAGE,
 );
 
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-function humanizeTag(t: string): string {
-  const s = t.trim();
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-const pageTitle = humanizeTag(originalTag);
-const pageDesc = `Подборка статей по тегу «${pageTitle}»: разборы, полезные материалы и практические советы по теме.`;
-const pageUrl = `${siteUrl}/media/tags/${encodeURIComponent(slug)}/`;
+const pageTitle = `${originalCategory ?? ""}`;
+const catKey = String(originalCategory || "").toLowerCase();
+const pageDesc =
+  (catKey && categoryDescriptions[catKey]) ||
+  `Все статьи в категории «${originalCategory ?? ""}»: понятные объяснения, примеры, советы и подборки материалов по теме.`;
+const pageUrl = `${siteUrl}/academy/${encodeURIComponent(slug)}/`;
 
 const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
 
@@ -97,39 +83,43 @@ const totalArticles = posts.length;
   description={pageDesc}
   url={`${pageUrl}${currentPage > 1 ? `?page=${currentPage}` : ""}`}
   image={posts[0]?.data?.image || "/images/technical/og-home.png"}
-  index={false}
-  follow={true}
   prevUrl={currentPage > 1 ? `${pageUrl}?page=${currentPage - 1}` : undefined}
   nextUrl={currentPage < totalPages
     ? `${pageUrl}?page=${currentPage + 1}`
     : undefined}
   breadcrumbs={breadcrumbs}
 >
-  <main class="main container" aria-labelledby="tag-title">
-    <section class="header" role="region" aria-labelledby="tag-title">
+  <main class="main container" aria-labelledby="category-title">
+    <section class="header" role="region" aria-labelledby="category-title">
       <div class="header__wrapper">
-        <h1 id="tag-title" class="header__title" data-count={totalArticles}>{pageTitle}</h1>
+        <h1
+          id="category-title"
+          class="header__title"
+          data-count={totalArticles}
+        >
+          {pageTitle}
+        </h1>
         <p class="header__description">{pageDesc}</p>
       </div>
     </section>
 
-    <section class="main-cards">
+    <section class="main-cards" role="region" aria-labelledby="category-title">
       <div class="left-block__grid" id="grid-initial">
         {
           pagedLeftCards.map((post) => (
             <div class="ad-media__card">
-              <CardNew post={post} basePath="/media" />
+              <CardNew post={post} basePath="/academy" />
             </div>
           ))
         }
       </div>
 
-      <div class="popular" role="region" aria-labelledby="tag-popular-title">
-        <h2 id="tag-popular-title" class="popular__title">Популярное</h2>
+      <div class="popular" role="region" aria-labelledby="popular-title">
+        <h2 id="popular-title" class="popular__title">Популярное</h2>
         <div class="popular__cards">
           {
             rightCards.map((post) => (
-              <CardHorizontal post={post} basePath="/media" />
+              <CardHorizontal post={post} basePath="/academy" />
             ))
           }
         </div>
@@ -141,7 +131,7 @@ const totalArticles = posts.length;
       leftCards.map((post) => (
         <template id={`tmpl-${post.slug}`}>
           <div class="ad-media__card">
-            <CardNew post={post} basePath="/media" />
+            <CardNew post={post} basePath="/academy" />
           </div>
         </template>
       ))
@@ -161,6 +151,8 @@ const totalArticles = posts.length;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     margin-bottom: 60px;
+    justify-content: space-between;
+    align-items: center;
   }
   .header__wrapper p {
     margin: 0;

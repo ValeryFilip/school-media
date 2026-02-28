@@ -21,7 +21,7 @@ interface Props {
   text?: string;
   href?: string;
 
-  // Базовый путь для ссылок (например /media)
+  // Базовый путь для ссылок (например /academy)
   basePath?: string;
   wrapperClass?: string;
 }
@@ -37,7 +37,7 @@ const {
   title: manualTitle,
   text: manualText,
   href: manualHref,
-  basePath = "/media",
+  basePath = "/academy",
   wrapperClass,
 }: Props = Astro.props;
 
@@ -69,11 +69,10 @@ const readingTime =
 // --- label для UI ---
 const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : "";
 
-// Ссылка
+// Ссылка (статьи: /academy/КАТЕГОРИЯ/СЛАГ)
 let href = manualHref;
 if (!href && post) {
-  const slug = post.slug;
-  href = `${basePath}/articles/${slug}`;
+  href = `${basePath}/${slugify(post.data.category)}/${post.slug}`;
 }
 
 // Цвет категории (только текст, без обводки)
@@ -223,7 +222,7 @@ const categoryColor = category ? getCategoryHex(category) : "#366ef0"; /* --blue
                 type="button"
                 class="card__body-tag"
                 style={`color: ${categoryColor};`}
-                onclick={`event.stopPropagation(); window.location.href='${basePath}/category/${slugify(tag)}';`}
+                onclick={`event.stopPropagation(); window.location.href='${basePath}/tags/${slugify(tag)}';`}
               >
                 {tag}
               </button>

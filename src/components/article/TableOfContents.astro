@@ -12,7 +12,7 @@ interface TocItem {
 interface Props {
   items?: TocItem[];
   levels?: string; // например "h2,h3"
-  articlePath?: string; // путь к статье, например "/media/articles/slug"
+  articlePath?: string; // путь к статье, например "/academy/category-slug/slug"
 }
 
 const { items = [], levels = "h2,h3", articlePath } = Astro.props;

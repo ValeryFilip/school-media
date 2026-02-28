@@ -119,7 +119,7 @@
 Формат новой ссылки: `/academy/{categorySlug}/{articleSlug}`.
 
 **Соответствие категория → slug (slugify):**
-- «Школьникам» → `shkolnkam`
+- «Школьникам» → `shkolnikam`
 - «Материалы для ЕГЭ и ОГЭ по химии» → `materialy-dlya-ege-i-oge-po-himii`
 - «Видео» → `video`
 
@@ -127,40 +127,40 @@
 
 | Статья (файл) | Старая ссылка | Новая ссылка |
 |---------------|---------------|--------------|
-| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnkam/shkola-i-ege` |
-| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
+| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnikam/shkola-i-ege` |
+| kak-ne-volnovatsya-na-ekzamene-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnikam/raspisanie-ege-2026` |
 | kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/stepen-okislenia` | `/academy/materialy-dlya-ege-i-oge-po-himii/stepen-okislenia` |
 | kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/kak-nazivat-veschestva-v-himii` | `/academy/materialy-dlya-ege-i-oge-po-himii/kak-nazivat-veschestva-v-himii` |
-| kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
-| stepen-okislenia.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| kak-podgotovitsya-k-ege-po-himii-s-nulya.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnikam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| stepen-okislenia.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnikam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
 | stepen-okislenia.mdx | `/media/articles/kak-nazivat-veschestva-v-himii` | `/academy/materialy-dlya-ege-i-oge-po-himii/kak-nazivat-veschestva-v-himii` |
-| shkola-i-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
-| shkola-i-ege.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
-| kak-nazivat-veschestva-v-himii.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| shkola-i-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnikam/raspisanie-ege-2026` |
+| shkola-i-ege.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnikam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| kak-nazivat-veschestva-v-himii.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnikam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
 | kak-nazivat-veschestva-v-himii.mdx | `/media/articles/stepen-okislenia` | `/academy/materialy-dlya-ege-i-oge-po-himii/stepen-okislenia` |
 | kak-nazivat-veschestva-v-himii.mdx | `/media/articles/klassifikatsia-neorganicheskih-veschestv` | `/academy/materialy-dlya-ege-i-oge-po-himii/klassifikatsia-neorganicheskih-veschestv` |
-| raspisanie-ege-2026.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnkam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
-| raspisanie-ege-2026.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnkam/shkola-i-ege` |
-| raspisanie-ege-2026.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnkam/kak-ne-volnovatsya-na-ekzamene-ege` |
-| raspisanie-ege-2026.mdx | `/media/articles/shkala-perevoda-ballov-ege` | `/academy/shkolnkam/shkala-perevoda-ballov-ege` |
-| shkala-perevoda-ballov-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnkam/raspisanie-ege-2026` |
+| raspisanie-ege-2026.mdx | `/media/articles/kak-podgotovitsya-k-ege-po-himii-s-nulya` | `/academy/shkolnikam/kak-podgotovitsya-k-ege-po-himii-s-nulya` |
+| raspisanie-ege-2026.mdx | `/media/articles/shkola-i-ege` | `/academy/shkolnikam/shkola-i-ege` |
+| raspisanie-ege-2026.mdx | `/media/articles/kak-ne-volnovatsya-na-ekzamene-ege` | `/academy/shkolnikam/kak-ne-volnovatsya-na-ekzamene-ege` |
+| raspisanie-ege-2026.mdx | `/media/articles/shkala-perevoda-ballov-ege` | `/academy/shkolnikam/shkala-perevoda-ballov-ege` |
+| shkala-perevoda-ballov-ege.mdx | `/media/articles/raspisanie-ege-2026` | `/academy/shkolnikam/raspisanie-ege-2026` |
 
 ---
 
 ## 4. Чек-лист перед деплоем
 
-- [ ] Папка `src/pages/media` переименована в `src/pages/academy`.
-- [ ] Маршруты: `[category].astro`, `[category]/[slug].astro`, `articles/index`, `tags/[tag]`, `search`, `index` — на месте и без конфликтов.
-- [ ] Во всех компонентах и layout’ах нет вхождений `/media` в путях (кроме упоминаний в комментариях/доках).
-- [ ] Карточки (CardNew, CardHorizontal) ведут на `/academy/{categorySlug}/{slug}` и на категорию `/academy/{categorySlug}`.
-- [ ] Breadcrumbs и меню ведут на `/academy/`, `/academy/articles`, `/academy/{category}`, `/academy/tags/...`.
-- [ ] Статья открывается по `/academy/{category}/{slug}`; JSON-LD и canonical используют этот URL.
-- [ ] Поиск: в выдаче ссылки вида `/academy/{categorySlug}/{slug}/`.
-- [ ] RSS: URL статей в формате `/academy/{categorySlug}/{slug}/`.
-- [ ] Sitemap: фильтры обновлены на `/academy/tags/` и `/academy/search`.
-- [ ] Все MDX-статьи: внутренние ссылки переведены на `/academy/.../...`.
-- [ ] 404: кнопка «В академию» ведёт на `/academy/`.
-- [ ] Редиректы (если нужны): настроить 301 с `/media/...` на `/academy/...` (в хостинге или в Astro middleware).
+- [x] Папка `src/pages/media` удалена; маршруты перенесены в `src/pages/academy`.
+- [x] Маршруты: `[category].astro`, `[category]/[slug].astro`, `articles/index`, `tags/[tag]`, `search`, `index` — на месте и без конфликтов.
+- [x] Во всех компонентах и layout’ах нет вхождений `/media` в путях (остались только CSS `@media`, классы `ad-media__*`, контекст меню `"media"`, путь к картинке `logo_media.svg`).
+- [x] Карточки (CardNew, CardHorizontal) ведут на `/academy/{categorySlug}/{slug}` и на категорию `/academy/{categorySlug}`.
+- [x] Breadcrumbs и меню ведут на `/academy/`, `/academy/articles`, `/academy/{category}`, `/academy/tags/...`.
+- [x] Статья открывается по `/academy/{category}/{slug}`; JSON-LD и canonical используют этот URL.
+- [x] Поиск: в выдаче ссылки вида `/academy/{categorySlug}/{slug}/`.
+- [x] RSS: URL статей в формате `/academy/{categorySlug}/{slug}/`.
+- [x] Sitemap: фильтры обновлены на `/academy/tags/` и `/academy/search`.
+- [x] Все MDX-статьи: внутренние ссылки переведены на `/academy/.../...`.
+- [x] 404: кнопка «В академию» ведёт на `/academy/`.
+- [x] Редиректы: скрипт `scripts/generate-htaccess-redirects.js` дополняет `dist/.htaccess` правилами 301 для Таймвеб (Apache).
 
 ---
 
@@ -177,7 +177,7 @@
 - `/media/tags/{tag}` → `/academy/tags/{tag}`
 - `/media/search` → `/academy/search`
 
-Редиректы можно реализовать в `astro.config.mjs` (redirects) или на уровне хостинга (netlify.toml, vercel.json, _redirects и т.д.).
+**Реализация (Таймвеб):** скрипт `scripts/generate-htaccess-redirects.js` запускается после сборки и дополняет `dist/.htaccess` правилами RewriteRule 301. В `package.json` в команду build добавлен вызов: `node scripts/generate-htaccess-redirects.js`. Исходный `public/.htaccess` копируется в dist при сборке, затем скрипт дописывает в конец блок редиректов.
 
 ---
 

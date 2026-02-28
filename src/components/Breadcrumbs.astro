@@ -26,14 +26,14 @@ const configHost =
   Astro.site?.host ??
   (config?.siteUrl ? new URL(String(config.siteUrl)).host : null);
 
-const inMedia = Astro.url.pathname.startsWith("/media");
+const inAcademy = Astro.url.pathname.startsWith("/academy");
 
 /** Это «наш» внутренний абсолютный URL? (текущий хост или хост из Astro.site) */
 function isInternalAbsolute(u: URL): boolean {
   return u.host === siteHost || Boolean(configHost && u.host === configHost);
 }
 
-/** Нормализация href в АБСОЛЮТНЫЙ URL на текущем домене (+/media при необходимости) */
+/** Нормализация href в АБСОЛЮТНЫЙ URL на текущем домене (+/academy при необходимости) */
 function normalizeHref(h?: string): string | undefined {
   if (!h) return undefined;
 
@@ -48,22 +48,22 @@ function normalizeHref(h?: string): string | undefined {
 
     // внутренний абсолютный → перепривязываем к текущему origin
     let path = u.pathname;
-    if (inMedia && path !== "/" && !path.startsWith("/media/")) {
-      path = "/media" + (path.startsWith("/") ? path : "/" + path);
+    if (inAcademy && path !== "/" && !path.startsWith("/academy/")) {
+      path = "/academy" + (path.startsWith("/") ? path : "/" + path);
     }
     return `${siteOrigin}${path}${u.search}${u.hash}`;
   }
 
   // Внутренний путь ("/..." или "path/...")
   let path = h.startsWith("/") ? h : `/${h.replace(/^\/+/, "")}`;
-  if (inMedia && path !== "/" && !path.startsWith("/media/")) {
-    path = "/media" + path;
+  if (inAcademy && path !== "/" && !path.startsWith("/academy/")) {
+    path = "/academy" + path;
   }
   return `${siteOrigin}${path}`;
 }
 
 /* ===== Рендер ===== */
-const homeHref = inMedia ? `${siteOrigin}/media/` : `${siteOrigin}/`;
+const homeHref = inAcademy ? `${siteOrigin}/academy/` : `${siteOrigin}/`;
 const rendered: Crumb[] = [{ name: "home-icon", href: homeHref }, ...items];
 ---
 

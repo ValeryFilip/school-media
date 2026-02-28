@@ -1,8 +1,8 @@
 ---
-// src/pages/search.astro
+// src/pages/academy/search.astro
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
-import { getSlugFileName } from "../../lib/slugify";
+import { getSlugFileName, slugify } from "../../lib/slugify";
 
 // 1) Во время сборки собираем все видимые статьи
 const posts = await getCollection("articles", ({ data }) => {
@@ -10,19 +10,20 @@ const posts = await getCollection("articles", ({ data }) => {
 });
 const indexData = posts.map((p) => ({
   slug: getSlugFileName(p.slug),
+  categorySlug: slugify(String(p.data.category || "")),
   title: p.data.title,
   description: p.data.description || "",
   tags: Array.isArray(p.data.tags) ? p.data.tags : [],
   category: p.data.category || "",
   author: p.data.author || "",
   date: new Date(p.data.date).toISOString(),
-  image: p.data.image || "", // картинка для выдачи
+  image: p.data.image || "",
 }));
 ---
 
 <MainLayout
   index={false}
-follow={false}
+  follow={false}
   title="Поиск по сайту"
   description="Поиск статей и материалов по химии, ЕГЭ, ОГЭ и подготовке к экзаменам на egehim.ru."
 >
@@ -83,7 +84,7 @@ follow={false}
     const initialQuery = params.get("q") || "";
     input.value = initialQuery;
 
-    const FALLBACK_IMG = "/images/placeholder.svg"; // подставь свой плейсхолдер
+    const FALLBACK_IMG = "/images/placeholder.svg";
 
     function formatDate(iso) {
       try {
@@ -97,7 +98,6 @@ follow={false}
       }
     }
 
-    // экранизация
     function esc(s = "") {
       return String(s)
         .replace(/&/g, "&amp;")
@@ -123,8 +123,8 @@ follow={false}
       list.innerHTML = items
         .slice(0, 20)
         .map((p) => {
-          // ✅ ссылка без /media/ - base href добавит автоматически
-          const href = `articles/${p.slug}/`;
+          // Ссылка на статью: /academy/КАТЕГОРИЯ/СЛАГ (base /academy/ задаётся в layout)
+          const href = `${p.categorySlug}/${p.slug}/`;
           const img = p.image || FALLBACK_IMG;
           return `
           <li class="result">
@@ -173,7 +173,6 @@ follow={false}
 
   <!-- ВАЖНО: глобальные стили для динамически вставленных элементов -->
   <style is:global>
-    /* Контейнер 1300 + паддинги 50 */
     .search-wrap {
       max-width: 1300px;
       padding-inline: 50px;
@@ -188,7 +187,6 @@ follow={false}
       margin-top: 0;
     }
 
-    /* Поисковая форма и инпут со скруглениями */
     .search-form {
       margin: 1rem 0 0.75rem;
     }
@@ -197,7 +195,7 @@ follow={false}
       padding: 14px 18px;
       font-size: 1rem;
       border: 1px solid var(--border);
-      border-radius: 12px; /* скругления */
+      border-radius: 12px;
       background: var(--white);
       color: var(--text-color, #333);
       outline: none;
@@ -222,10 +220,9 @@ follow={false}
       padding: 0;
     }
 
-    /* Шапка колонок (десктоп) */
     .results-head {
       display: grid;
-      grid-template-columns: 150px 1fr 140px 180px 180px 220px; /* img | title | date | author | category | tags */
+      grid-template-columns: 150px 1fr 140px 180px 180px 220px;
       gap: 12px;
       padding: 10px 12px;
       color: var(--gray);
@@ -240,7 +237,6 @@ follow={false}
       }
     }
 
-    /* Список результатов */
     .search-results {
       list-style: none;
       margin: 0;
@@ -254,7 +250,6 @@ follow={false}
       border-top: 1px solid var(--border);
     }
 
-    /* Строка результата — фикс 150px под превью */
     .result-link {
       display: grid;
       grid-template-columns: 150px 1fr 140px 180px 180px 220px;
@@ -270,10 +265,9 @@ follow={false}
       background: #f7f9fc;
     }
 
-    /* Квадрат 150×150 с обрезкой */
     .result-image {
-      inline-size: 150px; /* width */
-      block-size: 150px; /* height */
+      inline-size: 150px;
+      block-size: 150px;
       width: 150px;
       height: 150px;
       object-fit: cover;
@@ -300,7 +294,6 @@ follow={false}
       text-overflow: ellipsis;
     }
 
-    /* Теги как чипсы */
     .result-tags {
       display: flex;
       flex-wrap: wrap;
@@ -327,7 +320,6 @@ follow={false}
       background: var(--white);
     }
 
-    /* Адаптив */
     @media (max-width: 1400px) {
       .result-link {
         grid-template-columns: 150px 1fr 130px 160px 160px 1fr;

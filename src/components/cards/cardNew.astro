@@ -30,7 +30,7 @@ const {
   text: manualText,
   category: manualCategory,
   href: manualHref,
-  basePath = "/media",
+  basePath = "/academy",
   wrapperClass,
 }: Props = Astro.props;
 
@@ -61,10 +61,10 @@ const readingTime =
 // --- label для UI ---
 const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : "";
 
-// --- ссылка ---
+// --- ссылка (статьи: /academy/КАТЕГОРИЯ/СЛАГ) ---
 let href = manualHref;
 if (!href && post) {
-  href = `${basePath}/articles/${post.slug}`;
+  href = `${basePath}/${slugify(post.data.category)}/${post.slug}`;
 }
 
 // --- цвет категории ---
@@ -201,7 +201,7 @@ const categoryColor = category ? getCategoryHex(category) : "#366ef0"; /* --blue
             <div class="card__body-tags">
               <div class="card__body-tags-label">Категория:</div>
               <a
-                href={`${basePath}/category/${slugify(category)}`}
+                href={`${basePath}/${slugify(category)}`}
                 class="card__body-tag"
                 style={`color: ${categoryColor};`}
                 onclick="event.stopPropagation();"

@@ -83,20 +83,20 @@ const {
   webPageJsonLd,
 } = Astro.props as Props;
 
-const inMedia = Astro.url.pathname.startsWith("/media");
+const inAcademy = Astro.url.pathname.startsWith("/academy");
 const pathname = Astro.url.pathname;
 
-// Логотипы: курсы — весь сайт кроме медиа, академия — раздел медиа
-const menuLogoSrc = inMedia
+// Логотипы: курсы — весь сайт кроме академии, академия — раздел академии
+const menuLogoSrc = inAcademy
   ? "/images/technical/egehim(academy).webp"
   : "/images/technical/egehim(kursi).webp";
-const menuLogoAlt = inMedia ? "ЕГЭХИМ — академия" : "ЕГЭХИМ — курсы";
+const menuLogoAlt = inAcademy ? "ЕГЭХИМ — академия" : "ЕГЭХИМ — курсы";
 // UTM source по странице: для попапа и кнопок CTA (меню, футер)
 const pageUtmSource =
   pathname === "/"
     ? "main-page"
-    : pathname.startsWith("/media")
-      ? "media"
+    : pathname.startsWith("/academy")
+      ? "academy"
       : pathname.replace(/^\/|\/$/g, "").split("/")[0] || "main-page";
 const origin = Astro.url.origin;
 const siteNameFinal = getSiteName(siteName, config.siteName);
@@ -110,7 +110,7 @@ const breadcrumbsJsonLd =
         origin,
         siteNameFinal,
         breadcrumbs,
-        inMedia,
+        inAcademy,
         Astro.url.pathname,
       )
     : null;
@@ -122,7 +122,7 @@ const breadcrumbsJsonLd =
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#366ef0" />
-    {inMedia && <base href="/media/" />}
+    {inAcademy && <base href="/academy/" />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -140,7 +140,7 @@ const breadcrumbsJsonLd =
       />
     </noscript>
     {
-      inMedia && (
+      inAcademy && (
         <link
           rel="preload"
           href={`${config.siteUrl}/favicon.ico`}
@@ -203,10 +203,10 @@ const breadcrumbsJsonLd =
     {faqJsonLd && <JsonLd data={faqJsonLd} />}
     {webPageJsonLd && <JsonLd data={webPageJsonLd} />}
   </head>
-  <body class={`page is-loading ${inMedia ? "media-page" : ""}`}>
+  <body class={`page is-loading ${inAcademy ? "academy-page" : ""}`}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     <UnifiedMenu
-      context={inMedia ? "media" : "landing"}
+      context={inAcademy ? "media" : "landing"}
       logoSrc={menuLogoSrc}
       logoAlt={menuLogoAlt}
       ctaHref={ctaHref}

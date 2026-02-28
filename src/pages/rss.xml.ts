@@ -4,6 +4,7 @@ export const prerender = true;
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import config from '../config';
+import { slugify } from '../lib/slugify';
 
 export async function GET(context: { site: URL | undefined }) {
   const posts = await getCollection('articles', ({ data }) => data.visible !== false);
@@ -16,7 +17,8 @@ export async function GET(context: { site: URL | undefined }) {
     description: config.description,
     site: context.site ?? new URL(config.siteUrl),
     items: posts.map((post) => {
-      const url = `${siteUrl}/media/articles/${post.slug}/`;
+      const categorySlug = slugify(String(post.data.category || ''));
+      const url = `${siteUrl}/academy/${categorySlug}/${post.slug}/`;
       const descHtml = [
         post.data.image ? `<p><img src="${siteUrl}${post.data.image}" alt="${post.data.title}" /></p>` : '',
         post.data.description ? `<p>${post.data.description}</p>` : '',

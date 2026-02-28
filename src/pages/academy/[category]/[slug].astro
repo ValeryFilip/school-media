@@ -1,5 +1,5 @@
 ---
-// src/pages/articles/[slug].astro
+// src/pages/academy/[category]/[slug].astro — статья по URL /academy/КАТЕГОРИЯ/СЛАГ
 import MainLayout from "../../../layouts/MainLayout.astro";
 import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
 import config from "../../../config.ts";
@@ -10,15 +10,25 @@ import { buildArticleJsonLd } from "../../../lib/seoData";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
-    return data.visible !== false; // только видимые статьи (по умолчанию true)
+    return data.visible !== false;
   });
-  return posts.map((post) => ({ params: { slug: post.slug } }));
+  return posts.map((post) => ({
+    params: {
+      category: slugify(String(post.data.category)),
+      slug: post.slug,
+    },
+  }));
 }
 
-const { slug } = Astro.params;
+const { category: categorySlug, slug } = Astro.params;
 
-const entry = await getEntryBySlug("articles", slug);
+const entry = await getEntryBySlug("articles", slug!);
 if (!entry) throw new Error(`Статья "${slug}" не найдена`);
+
+// Проверка: slug категории в URL должен совпадать с категорией статьи
+if (slugify(String(entry.data.category)) !== categorySlug) {
+  return Astro.redirect("/404");
+}
 
 // Проверка видимости статьи
 if (entry.data.visible === false) {
@@ -51,20 +61,17 @@ const byCategory = all.filter(
 );
 const recommendations = [...byTag, ...byCategory].slice(0, 4);
 
-// Полный URL (приоритет — Astro.site из astro.config)
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageUrl = `${siteUrl}/media/articles/${slug}/`;
+const pageUrl = `${siteUrl}/academy/${categorySlug}/${slug}/`;
 
-// Хлебные крошки (категория тоже через /media/)
 const breadcrumbs = [
   {
     name: `${fm.category}`,
-    href: `${siteUrl}/media/category/${slugify(fm.category)}/`,
+    href: `${siteUrl}/academy/${slugify(fm.category)}/`,
   },
-  { name: fm.title }, // текущая страница — без href
+  { name: fm.title },
 ];
 
-// Article JSON-LD для статей (keywords, articleSection)
 const articleJsonLd = buildArticleJsonLd({
   origin: siteUrl,
   url: pageUrl,
@@ -93,7 +100,7 @@ const articleJsonLd = buildArticleJsonLd({
   breadcrumbs={breadcrumbs}
   articleJsonLd={articleJsonLd}
 >
-  <ArticleLayoutNew fm={fm} slug={slug} headings={headings}>
+  <ArticleLayoutNew fm={fm} slug={slug!} headings={headings}>
     <Content />
   </ArticleLayoutNew>
 </MainLayout>

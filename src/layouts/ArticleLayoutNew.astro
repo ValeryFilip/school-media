@@ -36,15 +36,15 @@ interface Props {
 }
 const { fm, slug, headings = [] } = Astro.props;
 
-/* === окружение и базовый префикс (/media) === */
+/* === окружение и базовый префикс (/academy) === */
 const origin = Astro.url.origin;
-const inMedia = Astro.url.pathname.startsWith("/media");
-const base = inMedia ? "/media" : "";
+const inAcademy = Astro.url.pathname.startsWith("/academy");
+const base = inAcademy ? "/academy" : "";
 
-/* === абсолютные URL === */
-const articleUrl = `${origin}${base}/articles/${slug}`;
-const articlePath = `${base}/articles/${slug}`;
+/* === абсолютные URL (статьи: /academy/КАТЕГОРИЯ/СЛАГ) === */
 const categorySlug = slugify(String(fm.category || ""));
+const articleUrl = `${origin}${base}/${categorySlug}/${slug}`;
+const articlePath = `${base}/${categorySlug}/${slug}`;
 
 /* === утилиты === */
 function toDate(value: unknown): Date | null {
@@ -193,7 +193,7 @@ const sameCategoryTop = allArticles
           <div class="article__meta-category">
             <CatBadge
               name={fm.category}
-              href={`${base}/category/${categorySlug}`}
+              href={`${base}/${categorySlug}`}
               variant="soft"
               size="sm"
             />

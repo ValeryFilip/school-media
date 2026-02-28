@@ -1,5 +1,5 @@
 ---
-// src/pages/articles/index.astro
+// src/pages/academy/articles/index.astro
 import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
@@ -40,7 +40,7 @@ const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle = "Все статьи";
 const pageDesc =
   "Архив статей по химии, подготовке к ЕГЭ и ОГЭ: теория, разборы заданий, советы и материалы от преподавателей.";
-const pageUrl = `${siteUrl}/media/articles/`;
+const pageUrl = `${siteUrl}/academy/articles/`;
 const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
 
 const breadcrumbsLd = {
@@ -93,7 +93,7 @@ const currentPageServer = Math.max(
           <template id={`tmpl-${p.slug}`}>
             {/* Универсальная карточка CardNew для медиа-раздела */}
             <div class="ad-media__card">
-              <CardNew post={p} basePath="/media" />
+              <CardNew post={p} basePath="/academy" />
             </div>
           </template>
         ))

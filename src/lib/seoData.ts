@@ -113,10 +113,10 @@ export function buildBreadcrumbsJsonLd(
   origin: string,
   siteName: string,
   breadcrumbs: Array<{ name: string; href?: string }>,
-  inMedia: boolean = false,
+  inAcademy: boolean = false,
   currentPath?: string
 ) {
-  const homeHref = inMedia ? `${origin}/media/` : `${origin}/`;
+  const homeHref = inAcademy ? `${origin}/academy/` : `${origin}/`;
   const renderedCrumbs = [{ name: "home-icon", href: homeHref }, ...breadcrumbs];
 
   return {
