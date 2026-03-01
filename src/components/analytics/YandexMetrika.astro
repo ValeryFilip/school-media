@@ -2,7 +2,7 @@
 
 ---
 
-<!-- Yandex.Metrika: грузим после загрузки страницы, чтобы не блокировать основной поток -->
+<!-- Yandex.Metrika: грузим после DOMContentLoaded (раньше, чем load), не блокируем рендер -->
 <script type="text/javascript" is:inline>
   function loadYandexMetrika() {
     (function (m, e, t, r, i, k, a) {
@@ -21,6 +21,7 @@
       k.src = r;
       a.parentNode.insertBefore(k, a);
     })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
     ym(104058532, "init", {
       ssr: true,
       webvisor: true,
@@ -30,21 +31,21 @@
       trackLinks: true,
     });
   }
-  if (document.readyState === "complete") {
-    setTimeout(loadYandexMetrika, 0);
+
+  if (document.readyState !== "loading") {
+    loadYandexMetrika();
   } else {
-    window.addEventListener("load", function () {
-      setTimeout(loadYandexMetrika, 0);
-    });
+    document.addEventListener("DOMContentLoaded", loadYandexMetrika);
   }
 </script>
-<noscript
-  ><div>
+
+<noscript>
+  <div>
     <img
       src="https://mc.yandex.ru/watch/104058532"
       style="position:absolute; left:-9999px;"
       alt=""
     />
-  </div></noscript
->
+  </div>
+</noscript>
 <!-- /Yandex.Metrika counter -->
