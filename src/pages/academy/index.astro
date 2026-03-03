@@ -38,7 +38,11 @@ const categoriesList = [
   { id: "ege", label: "Экзамен ЕГЭ", slug: "Экзамен ЕГЭ" },
   { id: "vuz", label: "Поступление в ВУЗ", slug: "Поступление в ВУЗ" },
   { id: "org", label: "Органическая химия", slug: "Органическая химия" },
-  { id: "ege-zadaniya", label: "Задания из ЕГЭ по химии", slug: "Задания из ЕГЭ по химии" },
+  {
+    id: "ege-zadaniya",
+    label: "Задания из ЕГЭ по химии",
+    slug: "Задания из ЕГЭ по химии",
+  },
   { id: "neorg", label: "Неорганическая химия", slug: "Неорганическая химия" },
   { id: "obshaya", label: "Общая химия", slug: "Общая химия" },
 ];
@@ -92,9 +96,9 @@ const section10Vertical = section10Posts.slice(0, 6);
 // SEO (приоритет — Astro.site из astro.config)
 const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle =
-  "Синтез медиа — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам";
+  "Академия ЕГЭХИМ — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам";
 const pageDesc =
-  "Статьи, разборы и материалы по химии: подготовка к ЕГЭ и ОГЭ, теория, практика и советы от экспертов.";
+  "Академия ЕГЭХИМ — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам.";
 
 // Пропсы для рекламного баннера
 const adFreeProps = {
@@ -148,12 +152,21 @@ const leadProps = {
       <section id="school">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Школьникам")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Школьникам")}`}
+              class="category-title-link"
+            >
               Школьникам
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-first container">
@@ -173,12 +186,21 @@ const leadProps = {
       <section id="news">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Новости")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Новости")}`}
+              class="category-title-link"
+            >
               Новости
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-2 container">
@@ -205,12 +227,21 @@ const leadProps = {
       <section id="parents">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Родителям")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Родителям")}`}
+              class="category-title-link"
+            >
               Родителям
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-3 container">
@@ -235,12 +266,21 @@ const leadProps = {
       <section id="zadachi">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Задачи в химии")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Задачи в химии")}`}
+              class="category-title-link"
+            >
               Задачи в химии
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-4 container">
@@ -260,12 +300,21 @@ const leadProps = {
       <section id="ege">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Экзамен ЕГЭ")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Экзамен ЕГЭ")}`}
+              class="category-title-link"
+            >
               Экзамен ЕГЭ
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">
@@ -285,12 +334,21 @@ const leadProps = {
       <section id="vuz">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Поступление в ВУЗ")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Поступление в ВУЗ")}`}
+              class="category-title-link"
+            >
               Поступление в ВУЗ
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">
@@ -310,12 +368,21 @@ const leadProps = {
       <section id="org">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Органическая химия")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Органическая химия")}`}
+              class="category-title-link"
+            >
               Органическая химия
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">
@@ -335,12 +402,21 @@ const leadProps = {
       <section id="ege-zadaniya">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Задания из ЕГЭ по химии")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Задания из ЕГЭ по химии")}`}
+              class="category-title-link"
+            >
               Задания из ЕГЭ по химии
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">
@@ -360,12 +436,21 @@ const leadProps = {
       <section id="neorg">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Неорганическая химия")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Неорганическая химия")}`}
+              class="category-title-link"
+            >
               Неорганическая химия
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">
@@ -385,12 +470,21 @@ const leadProps = {
       <section id="obshaya">
         <div class="grid1__title container">
           <h2 class="grid1__title">
-            <a href={`/academy/${slugify("Общая химия")}`} class="category-title-link">
+            <a
+              href={`/academy/${slugify("Общая химия")}`}
+              class="category-title-link"
+            >
               Общая химия
             </a>
           </h2>
           <div class="grid__arrow">
-            <img class="arrow" src="/images/mycollection/001-down-arrow.png" alt="" width="42" height="42" />
+            <img
+              class="arrow"
+              src="/images/mycollection/001-down-arrow.png"
+              alt=""
+              width="42"
+              height="42"
+            />
           </div>
         </div>
         <div class="home-grid-5 container">

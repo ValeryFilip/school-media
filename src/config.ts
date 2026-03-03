@@ -7,7 +7,7 @@ export interface SiteConfig {
 }
 
 const config: SiteConfig = {
-  siteName: 'Химия ЕГЭ с Валерием Филипенко',
+  siteName: 'ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко',
   siteUrl: 'https://egehim.ru',
   description: 'Современная онлайн-школа подготовки к ЕГЭ и ОГЭ по химии под руководством Валерия Филипенко',
   author: 'Филипенко Валерий',

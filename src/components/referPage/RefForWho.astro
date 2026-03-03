@@ -1,0 +1,240 @@
+<section class="p3who" aria-label="Кому подходит">
+  <div class="p3who__wrap">
+    <header class="p3who__head">
+      <h2 class="p3who__h2">Кому подходит партнёрка</h2>
+      <p class="p3who__p">
+        Выбирай свой формат — мы дадим материалы и подскажем связки.
+      </p>
+    </header>
+
+    <div class="p3who__grid">
+      <!-- LEFT TOP -->
+      <article class="w w--leftTop">
+        <div class="w__icon">🎓</div>
+        <div class="w__title">Репетиторы</div>
+        <div class="w__text">
+          Рекомендация “как от эксперта” → высокая конверсия.
+        </div>
+        <div class="w__meta">
+          <span class="pill">пост</span><span class="pill">разбор</span><span
+            class="pill">закреп</span
+          >
+        </div>
+      </article>
+
+      <!-- RIGHT TOP -->
+      <article class="w w--rightTop">
+        <div class="w__icon">🧑‍🎓</div>
+        <div class="w__title">Ученики</div>
+        <div class="w__text">
+          Приводи друзей — особенно если вы готовитесь вместе.
+        </div>
+        <div class="w__meta">
+          <span class="pill">друзья</span><span class="pill">класс</span>
+        </div>
+      </article>
+
+      <!-- LEFT BOTTOM (new audience under tutors) -->
+      <article class="w w--leftBottom">
+        <div class="w__icon">🏫</div>
+        <div class="w__title">Учителя в школе</div>
+        <div class="w__text">
+          Можно рекомендовать ученикам/родителям через “по делу” материалы.
+        </div>
+        <div class="w__meta">
+          <span class="pill">кружок</span><span class="pill">класс</span>
+        </div>
+      </article>
+
+      <!-- RIGHT BOTTOM -->
+      <article class="w w--rightBottom">
+        <div class="w__icon">👨‍👩‍👧‍👦</div>
+        <div class="w__title">Родители</div>
+        <div class="w__text">
+          Чаты родителей — сильный канал, если подать аккуратно.
+        </div>
+        <div class="w__meta">
+          <span class="pill">чаты</span><span class="pill">совет</span>
+        </div>
+      </article>
+
+      <!-- FULL WIDTH -->
+      <article class="w w--wide">
+        <div class="w__icon">📣</div>
+        <div class="w__title">Админы сообществ и блогеры</div>
+        <div class="w__text">
+          Дадим связки: <b>пост → бесплатный материал → курс</b> + тексты и визуалы.
+        </div>
+        <div class="w__meta">
+          <span class="pill pill--accent">готовые материалы</span>
+          <span class="pill">связки</span>
+          <span class="pill">поддержка</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* typography via your globals */
+  .p3who {
+    font-family: var(
+      --ff,
+      "Raleway",
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif
+    );
+  }
+  .p3who__h2 {
+    font-size: var(--h2, clamp(26px, 4vw, 42px));
+    line-height: 1.2;
+    margin: 0 0 var(--space-12, 12px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .p3who__p {
+    font-size: var(--text, clamp(14px, 1vw, 18px));
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 600;
+    opacity: 0.86;
+  }
+  .w__title {
+    font-size: var(--h3, clamp(14px, 3.2vw, 20px));
+  }
+  .w__text {
+    font-size: var(--text, clamp(14px, 1vw, 18px));
+  }
+
+  .p3who {
+    margin: 20px;
+    border-radius: 28px;
+    background: #060a12;
+    color: #eef2ff;
+    padding: clamp(26px, 5vw, 56px) 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .p3who::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background:
+      radial-gradient(
+        520px 260px at 18% 18%,
+        rgba(34, 197, 94, 0.14),
+        transparent 60%
+      ),
+      radial-gradient(
+        520px 260px at 80% 50%,
+        rgba(167, 139, 250, 0.18),
+        transparent 60%
+      );
+    pointer-events: none;
+  }
+  .p3who__wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 28px);
+  }
+  .p3who__head {
+    max-width: 70ch;
+    margin-bottom: 18px;
+  }
+
+  .p3who__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .w {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 14px;
+    backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+  }
+  .w__icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .w__title {
+    font-weight: 900;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .w__text {
+    opacity: 0.82;
+    line-height: 1.55;
+    font-weight: 600;
+  }
+  .w__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .pill {
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.92;
+  }
+  .pill--accent {
+    background: linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.22),
+      rgba(96, 165, 250, 0.22)
+    );
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  /* grid: 1 1 / 1 1 / 111 */
+  .w--leftTop {
+    grid-column: 1 / span 6;
+  }
+  .w--rightTop {
+    grid-column: 7 / span 6;
+  }
+  .w--leftBottom {
+    grid-column: 1 / span 6;
+  }
+  .w--rightBottom {
+    grid-column: 7 / span 6;
+  }
+  .w--wide {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 980px) {
+    .p3who__grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .w--leftTop,
+    .w--rightTop,
+    .w--leftBottom,
+    .w--rightBottom,
+    .w--wide {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 560px) {
+    .p3who {
+      margin: 12px;
+      border-radius: 22px;
+    }
+  }
+</style>

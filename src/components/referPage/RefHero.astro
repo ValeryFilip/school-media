@@ -1,0 +1,549 @@
+---
+interface Props {
+  formAction?: string;
+}
+const { formAction = "/api/referral/apply" } = Astro.props as Props;
+---
+
+<section class="p3 hero" aria-label="Partner Program Hero">
+  <div class="p3__bg" aria-hidden="true">
+    <div class="p3__orb p3__orb--a"></div>
+    <div class="p3__orb p3__orb--b"></div>
+    <div class="p3__grid"></div>
+  </div>
+
+  <div class="p3__wrap">
+    <div class="p3__content">
+      <div class="p3__badge">
+        <span class="dot"></span>
+        Партнёрская программа · доступ после модерации (24–48ч)
+      </div>
+
+      <h1 class="p3__h1">
+        Зарабатывай на рекомендациях<br />
+        <span class="grad">без спама и “впаривания”</span>
+      </h1>
+
+      <p class="p3__lead">
+        Ты рекомендуешь ЕГЭХИМ своей аудитории — мы считаем оплаты и платим
+        вознаграждение. Ссылку/промокод выдаём после проверки заявки.
+      </p>
+
+      <div class="p3__ctaRow">
+        <a class="btn btn--primary" href="#apply">Подать заявку</a>
+        <a class="btn btn--ghost" href="#calc">Рассчитать доход</a>
+      </div>
+
+      <div class="p3__bento">
+        <div class="card card--wide">
+          <div class="kpi">
+            <div class="kpi__v">до 15%</div>
+            <div class="kpi__t">вознаграждение за оплату</div>
+          </div>
+          <div class="chips">
+            <span class="chip">прозрачный учёт</span>
+            <span class="chip">материалы партнёру</span>
+            <span class="chip">выплаты 1–2×/мес</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">⚡</div>
+          <div class="t1">Быстрый старт</div>
+          <div class="t2">Получишь ссылку после проверки и готовые тексты.</div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🧾</div>
+          <div class="t1">Честная атрибуция</div>
+          <div class="t2">Мы отслеживаем начисления по правилам программы.</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="p3__panel">
+      <div class="panel__top">
+        <div class="panel__title">Заявка на партнёрство</div>
+        <div class="panel__sub">
+          Заполни 30 секунд — ответим за 24–48 часов.
+        </div>
+      </div>
+
+      <form class="form" method="post" action={formAction}>
+        <label class="field">
+          <span>Имя</span>
+          <input name="name" placeholder="Валерий" autocomplete="name" />
+        </label>
+
+        <label class="field">
+          <span>Telegram ник *</span>
+          <input
+            name="tg"
+            placeholder="@username"
+            required
+            autocomplete="off"
+          />
+        </label>
+
+        <label class="field">
+          <span>Ссылка на площадку</span>
+          <input name="link" placeholder="t.me/канал или профиль" />
+        </label>
+
+        <div class="seg">
+          <button class="seg__btn is-on" type="button" data-val="tutor"
+            >Репетитор</button
+          >
+          <button class="seg__btn" type="button" data-val="student"
+            >Ученик</button
+          >
+          <button class="seg__btn" type="button" data-val="parent"
+            >Родитель</button
+          >
+          <button class="seg__btn" type="button" data-val="admin">Админ</button>
+          <input type="hidden" name="role" value="tutor" />
+        </div>
+
+        <button class="btn btn--panel" type="submit">Отправить заявку</button>
+
+        <div class="panel__fine">
+          Нажимая кнопку, вы соглашаетесь с обработкой данных. Мы не выдаём
+          ссылку автоматически — только после модерации.
+        </div>
+      </form>
+
+      <div class="panel__trust">
+        <div class="trustItem">
+          <span class="trustDot"></span>
+          <b>Безопасно</b> · агрегированные данные, без персональных сведений учеников
+        </div>
+        <div class="trustItem">
+          <span class="trustDot trustDot--b"></span>
+          <b>Поддержка</b> · поможем с подачей и связками под аудиторию
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script is:inline>
+    // мини-сегмент без зависимостей
+    const seg = document.querySelector(".seg");
+    if (seg) {
+      const hidden = seg.querySelector('input[type="hidden"]');
+      const btns = [...seg.querySelectorAll(".seg__btn")];
+      btns.forEach((b) =>
+        b.addEventListener("click", () => {
+          btns.forEach((x) => x.classList.remove("is-on"));
+          b.classList.add("is-on");
+          hidden.value = b.dataset.val || "tutor";
+        }),
+      );
+    }
+  </script>
+</section>
+
+<style>
+  /* === Popular SaaS Bento Hero (self-contained) === */
+  .p3.hero {
+    position: relative;
+    padding: clamp(28px, 5vw, 64px) 0;
+    overflow: hidden;
+    background: #070a12;
+    color: #eef2ff;
+    border-radius: 28px;
+    margin: 20px;
+  }
+  .p3__wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 28px);
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(16px, 3vw, 28px);
+    align-items: start;
+    position: relative;
+    z-index: 2;
+  }
+
+  .p3__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .p3__orb {
+    position: absolute;
+    filter: blur(50px);
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0);
+  }
+  .p3__orb--a {
+    width: 520px;
+    height: 520px;
+    left: -140px;
+    top: -160px;
+    background:
+      radial-gradient(circle at 30% 30%, #7c3aed, transparent 60%),
+      radial-gradient(circle at 70% 70%, #22c55e, transparent 60%);
+    animation: floatA 10s ease-in-out infinite;
+  }
+  .p3__orb--b {
+    width: 560px;
+    height: 560px;
+    right: -180px;
+    bottom: -200px;
+    background:
+      radial-gradient(circle at 30% 30%, #3b82f6, transparent 58%),
+      radial-gradient(circle at 70% 60%, #f97316, transparent 60%);
+    animation: floatB 12s ease-in-out infinite;
+  }
+  .p3__grid {
+    position: absolute;
+    inset: -2px;
+    background:
+      linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(
+      circle at 30% 20%,
+      rgba(0, 0, 0, 0.9),
+      transparent 70%
+    );
+    opacity: 0.6;
+  }
+  @keyframes floatA {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(40px, 30px);
+    }
+  }
+  @keyframes floatB {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(-30px, -40px);
+    }
+  }
+
+  .p3__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(10px);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.86);
+    margin-bottom: 16px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+  }
+
+  .p3__h1 {
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 1.05;
+    margin: 0 0 14px;
+    letter-spacing: -0.03em;
+  }
+  .grad {
+    background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399, #fb923c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .p3__lead {
+    margin: 0 0 18px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(16px, 1.5vw, 18px);
+    line-height: 1.65;
+    max-width: 60ch;
+  }
+
+  .p3__ctaRow {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .btn {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition:
+      transform 0.18s ease,
+      filter 0.18s ease;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+  }
+  .btn--primary {
+    background: linear-gradient(135deg, #f97316, #fb7185);
+    color: #0b0f19;
+    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.25);
+  }
+  .btn--ghost {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #eef2ff;
+    backdrop-filter: blur(10px);
+  }
+
+  .p3__bento {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 14px 14px;
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    position: relative;
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: auto -60px -80px auto;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(167, 139, 250, 0.22),
+      transparent 60%
+    );
+    transform: rotate(10deg);
+    pointer-events: none;
+  }
+  .card--wide {
+    grid-column: 1 / -1;
+  }
+
+  .kpi {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .kpi__v {
+    font-size: 26px;
+    font-weight: 900;
+  }
+  .kpi__t {
+    color: rgba(255, 255, 255, 0.74);
+    font-weight: 700;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .chip {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .t1 {
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .t2 {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.55;
+    font-weight: 650;
+  }
+
+  /* Panel */
+  .p3__panel {
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(14px);
+    padding: 16px;
+    box-shadow: 0 18px 70px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+  .p3__panel::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background:
+      radial-gradient(
+        500px 280px at 70% 10%,
+        rgba(96, 165, 250, 0.22),
+        transparent 60%
+      ),
+      radial-gradient(
+        520px 260px at 10% 90%,
+        rgba(251, 146, 60, 0.2),
+        transparent 60%
+      );
+    pointer-events: none;
+  }
+  .p3__panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel__title {
+    font-weight: 950;
+    font-size: 18px;
+  }
+  .panel__sub {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.45;
+    font-weight: 650;
+  }
+
+  .form {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+  }
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+  .field > span {
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.78);
+    letter-spacing: 0.02em;
+  }
+  .field input {
+    background: rgba(9, 12, 22, 0.55);
+    color: #eef2ff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    padding: 12px 12px;
+    outline: none;
+    font: inherit;
+  }
+  .field input:focus {
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+    border-color: rgba(96, 165, 250, 0.35);
+  }
+
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    align-items: stretch;
+  }
+  .seg__btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    padding: 10px 10px;
+    font-weight: 850;
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      filter 0.15s ease,
+      background 0.15s ease;
+  }
+  .seg__btn:hover {
+    transform: translateY(-1px);
+  }
+  .seg__btn.is-on {
+    background: linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.35),
+      rgba(167, 139, 250, 0.28)
+    );
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .btn--panel {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    color: #0b0f19;
+    font-weight: 950;
+    box-shadow: 0 12px 40px rgba(96, 165, 250, 0.2);
+  }
+
+  .panel__fine {
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 650;
+  }
+
+  .panel__trust {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+  }
+  .trustItem {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: rgba(255, 255, 255, 0.76);
+    font-weight: 650;
+    line-height: 1.4;
+    font-size: 13px;
+  }
+  .trustDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-top: 4px;
+    background: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+    flex: 0 0 auto;
+  }
+  .trustDot--b {
+    background: #fb923c;
+    box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.18);
+  }
+
+  @media (max-width: 980px) {
+    .p3__wrap {
+      grid-template-columns: 1fr;
+    }
+    .p3__panel {
+      order: -1;
+    }
+    .seg {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

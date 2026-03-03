@@ -1,0 +1,376 @@
+<section id="calc" class="p3 calc" aria-label="Калькулятор">
+  <div class="wrap">
+    <header class="head">
+      <h2>Калькулятор дохода</h2>
+      <p>Учитываем бонус за приведённых учеников + 15% с продаж на Stepik.</p>
+    </header>
+
+    <div class="panel">
+      <div class="panel__grid">
+        <!-- left -->
+        <div class="controls">
+          <div class="rowTop">
+            <span class="pill">🎛️ параметры</span>
+            <span class="pill pill--soft">быстрый расчёт</span>
+          </div>
+
+          <div class="field">
+            <div class="label">
+              <span>Количество учеников</span>
+              <b id="studentsOut">5</b>
+            </div>
+            <input
+              id="students"
+              class="range"
+              type="range"
+              min="0"
+              max="40"
+              value="5"
+            />
+            <div class="meta">
+              <span>0</span><span>40</span>
+            </div>
+            <div class="hintLine" id="tierHint">Тариф: 1–5 → 3000 ₽/ученик</div>
+          </div>
+
+          <label class="field">
+            <span class="label2">Сумма продаж на Stepik (₽)</span>
+            <input
+              id="stepikSales"
+              class="input"
+              type="number"
+              min="0"
+              step="100"
+              value="0"
+            />
+          </label>
+
+          <div class="hint">
+            <div class="hint__t">💡 Важно</div>
+            <div class="hint__d">
+              Это ориентир. Финальные условия и выдача ссылки — после модерации.
+            </div>
+          </div>
+        </div>
+
+        <!-- right -->
+        <aside class="summary">
+          <div class="sumTop">
+            <div class="sumLabel">Итого</div>
+            <div class="sumValue" id="total">≈ 15 000 ₽</div>
+          </div>
+
+          <div class="line">
+            <span>Продажи Stepik</span>
+            <b id="salesOut">0 ₽</b>
+          </div>
+
+          <div class="line">
+            <span>Ученики</span>
+            <b id="studentsOut2">5</b>
+          </div>
+
+          <a class="cta" href="#apply">Подать заявку</a>
+          <div class="fine">Подключим после модерации (24–48ч).</div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const fmt = (n) => new Intl.NumberFormat("ru-RU").format(Math.round(n));
+
+    const students = document.getElementById("students");
+    const studentsOut = document.getElementById("studentsOut");
+    const studentsOut2 = document.getElementById("studentsOut2");
+    const stepikSales = document.getElementById("stepikSales");
+
+    const tierHint = document.getElementById("tierHint");
+    const total = document.getElementById("total");
+    const salesOut = document.getElementById("salesOut");
+
+    function perStudentRate(count) {
+      if (count <= 0) return 0;
+      if (count <= 5) return 3000;
+      if (count <= 10) return 3500;
+      return 4000;
+    }
+
+    function tierText(count) {
+      if (count <= 0) return "Тариф: —";
+      if (count <= 5) return "Тариф: 1–5 → 3000 ₽/ученик";
+      if (count <= 10) return "Тариф: 6–10 → 3500 ₽/ученик";
+      return "Тариф: 10+ → 4000 ₽/ученик";
+    }
+
+    function recalc() {
+      const s = Number(students.value);
+      const sales = Math.max(0, Number(stepikSales.value || 0));
+
+      const rate = perStudentRate(s);
+      const studentsBonus = s * rate;
+      const stepikCommission = sales * 0.15;
+
+      const sum = studentsBonus + stepikCommission;
+
+      studentsOut.textContent = s;
+      studentsOut2.textContent = s;
+      tierHint.textContent = tierText(s);
+
+      salesOut.textContent = fmt(sales) + " ₽";
+      total.textContent = "≈ " + fmt(sum) + " ₽";
+    }
+
+    [students, stepikSales].forEach((el) =>
+      el.addEventListener("input", recalc),
+    );
+    recalc();
+  </script>
+</section>
+
+<style>
+  /* typography via your globals */
+  .p3.calc {
+    font-family: var(
+      --ff,
+      "Raleway",
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif
+    );
+  }
+  .head h2 {
+    font-size: var(--h2, clamp(26px, 4vw, 42px));
+    line-height: 1.2;
+    margin: 0 0 var(--space-12, 12px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .head p {
+    font-size: var(--text, clamp(14px, 1vw, 18px));
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 600;
+    opacity: 0.86;
+  }
+
+  .p3.calc {
+    margin: 20px;
+    border-radius: 28px;
+    background: #0b1020;
+    color: #eaf0ff;
+    padding: clamp(26px, 5vw, 56px) 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .p3.calc::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background:
+      radial-gradient(
+        520px 260px at 20% 20%,
+        rgba(59, 130, 246, 0.18),
+        transparent 60%
+      ),
+      radial-gradient(
+        520px 260px at 80% 70%,
+        rgba(249, 115, 22, 0.16),
+        transparent 60%
+      );
+    pointer-events: none;
+  }
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 3vw, 28px);
+  }
+  .head {
+    max-width: 72ch;
+    margin-bottom: 18px;
+  }
+
+  .panel {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    padding: 14px;
+    box-shadow: 0 18px 70px rgba(0, 0, 0, 0.35);
+  }
+  .panel__grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .controls {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px;
+  }
+  .rowTop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .pill {
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.92;
+  }
+  .pill--soft {
+    opacity: 0.85;
+  }
+
+  .field {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .label span {
+    opacity: 0.9;
+    font-weight: 800;
+  }
+  .label b {
+    font-size: 16px;
+  }
+
+  .range {
+    width: 100%;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.7;
+  }
+  .hintLine {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.85;
+  }
+
+  .label2 {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0.82;
+    letter-spacing: 0.02em;
+  }
+  .input {
+    background: rgba(9, 12, 22, 0.55);
+    color: #eaf0ff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    padding: 12px 12px;
+    outline: none;
+    font: inherit;
+  }
+  .input:focus {
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+    border-color: rgba(96, 165, 250, 0.35);
+  }
+
+  .hint {
+    margin-top: 12px;
+    border-radius: 16px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .hint__t {
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .hint__d {
+    opacity: 0.82;
+    line-height: 1.55;
+    font-weight: 600;
+  }
+
+  .summary {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+  }
+  .sumLabel {
+    opacity: 0.78;
+    font-weight: 800;
+  }
+  .sumValue {
+    font-weight: 950;
+    font-size: clamp(20px, 2.6vw, 30px);
+    letter-spacing: -0.02em;
+  }
+  .line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-weight: 850;
+  }
+  .line span {
+    opacity: 0.78;
+  }
+  .line b {
+    font-weight: 950;
+  }
+
+  .cta {
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 950;
+    color: #0b0f19;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    box-shadow: 0 12px 40px rgba(96, 165, 250, 0.18);
+  }
+  .fine {
+    opacity: 0.72;
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 650;
+  }
+
+  @media (max-width: 980px) {
+    .panel__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .p3.calc {
+      margin: 12px;
+      border-radius: 22px;
+    }
+  }
+</style>

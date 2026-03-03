@@ -25,7 +25,8 @@ import AuthorSection from "../components/mainpage/AuthorSection.astro";
 
 /* SEO */
 const seo = {
-  title: "Курс по ОВР для ЕГЭ 2026 | Химия ЕГЭ с Валерием Филипенко",
+  title:
+    "Курс по ОВР для ЕГЭ 2026 | ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко",
   description:
     "Онлайн-курс по ОВР для ЕГЭ: теория, практика, тренажёры и поддержка. Начни бесплатно и выйди на 80–100 баллов!",
   image: "/images/technical/og-home.png",
@@ -432,7 +433,10 @@ const pageUrl = `${origin}${Astro.url.pathname}`;
 const courseJsonLd = buildCourseJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
+  name: seo.title.replace(
+    " | ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко",
+    "",
+  ),
   description: seo.description.trim(),
   ratingValue: 4.9,
   reviewCount: reviewsProps.stats.find((s) => s.value.includes("4,9"))
@@ -452,7 +456,10 @@ const productPrice = offerProps.price.replace(/[^\d]/g, "");
 const productJsonLd = buildProductJsonLd({
   origin,
   url: pageUrl,
-  name: seo.title.replace(" | Химия ЕГЭ с Валерием Филипенко", ""),
+  name: seo.title.replace(
+    " | ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко",
+    "",
+  ),
   description: seo.description.trim(),
   price: productPrice,
   priceCurrency: "RUB",
