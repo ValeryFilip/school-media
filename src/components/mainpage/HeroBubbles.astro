@@ -1,0 +1,348 @@
+---
+/**
+ * HeroOnly.astro
+ * Хиро как на скрине: концентрические кольца, большой заголовок, подпись с зелёной точкой, CTA,
+ * плавающие иконки в кружках. Без меню/шапки.
+ *
+ * Подставь свои иконки/SVG вместо эмодзи (или передай через props).
+ */
+
+type Bubble = { x: string; y: string; content: string };
+
+const {
+  title = "За 9 месяцев подготовим к ЕГЭ по химии с полного нуля до 80+ баллов и бюджета",
+  note = "Понятная система обучения без тревоги и стресса, поддержка до самого экзамена",
+  cta = "Записаться на курс",
+  ctaHref = "#courses-cards",
+  bubbles = [
+    { x: "23%", y: "17%", content: "⚗️" },
+    { x: "77%", y: "18%", content: "🧬" },
+    { x: "16%", y: "46%", content: "📚" },
+    { x: "24%", y: "66%", content: "🧠" },
+    { x: "83%", y: "46%", content: "📝" },
+    { x: "77%", y: "66%", content: "🎓" },
+  ] as Bubble[],
+} = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true"></div>
+
+  <div class="hero__wrap">
+    <div class="hero__content">
+      <h1 class="hero__title">
+        {
+          title.split("\n").map((line: string, i: number) => (
+            <>
+              {line}
+              {i < title.split("\n").length - 1 ? <br /> : null}
+            </>
+          ))
+        }
+      </h1>
+
+      <div class="hero__meta">
+        <span class="hero__dot" aria-hidden="true"></span>
+        <p class="hero__note">{note}</p>
+      </div>
+
+      <a class="hero__cta" href={ctaHref}>
+        {cta}
+      </a>
+    </div>
+
+    <div class="hero__bubbles" aria-hidden="true">
+      {
+        bubbles.map((b: Bubble) => (
+          <div class="bubble" style={`--x:${b.x};--y:${b.y};`}>
+            <span class="bubble__inner">{b.content}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  :root {
+    /* layout */
+    --hero-min: min(860px, 100svh);
+    --pad-x: clamp(16px, 3vw, 44px);
+
+    /* type */
+    --title: clamp(36px, 4.4vw, 72px);
+    --title-lh: 1.03;
+    --note: clamp(14px, 1.35vw, 18px);
+
+    /* colors */
+    --bg-top: #f7faff;
+
+    --ink: rgba(16, 20, 26, 0.9);
+    --muted: rgba(16, 20, 26, 0.62);
+
+    --brand: #2f6bff;
+    --brand2: #5a88ff;
+
+    /* rings */
+    --ring: rgba(47, 107, 255, 0.1);
+    --ring2: rgba(47, 107, 255, 0.07);
+
+    /* bubble */
+    --bubble: rgba(255, 255, 255, 0.62);
+    --bubble-stroke: rgba(255, 255, 255, 0.9);
+
+    /* fx */
+    --shadow: 0 18px 42px rgba(35, 70, 150, 0.22);
+  }
+
+  .hero {
+    position: relative;
+    min-height: var(--hero-min);
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--bg-top), var(--bg));
+    font-family: var(--ff);
+    margin-bottom: -120px !important;
+  }
+
+  /* Background: soft glow + rings like on screenshot */
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero__bg::before {
+    content: "";
+    position: absolute;
+    inset: -24%;
+    background:
+      radial-gradient(
+        circle at 50% 58%,
+        rgba(47, 107, 255, 0.2),
+        rgba(47, 107, 255, 0.1) 28%,
+        rgba(47, 107, 255, 0.04) 48%,
+        rgba(47, 107, 255, 0) 72%
+      ),
+      radial-gradient(
+        circle at 50% 80%,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0) 62%
+      );
+  }
+
+  .hero__bg::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    width: min(1320px, 170vw);
+    aspect-ratio: 1 / 1;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+
+    /* rings */
+    background:
+      repeating-radial-gradient(
+        circle at center,
+        transparent 0 64px,
+        var(--ring) 64px 65px
+      ),
+      repeating-radial-gradient(
+        circle at center,
+        transparent 0 128px,
+        var(--ring2) 128px 129px
+      );
+
+    opacity: 0.85;
+    /* fade out outer rings */
+    mask-image: radial-gradient(circle at center, #000 58%, transparent 78%);
+  }
+
+  .hero__wrap {
+    position: relative;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(48px, 9vh, 110px) var(--pad-x) clamp(56px, 9vh, 120px);
+    min-height: var(--hero-min);
+
+    display: grid;
+    place-items: center;
+  }
+
+  .hero__content {
+    text-align: center;
+    max-width: min(980px, 94vw);
+    display: grid;
+    gap: clamp(16px, 2.4vh, 24px);
+  }
+
+  .hero__title {
+    margin: 0;
+    font-weight: 800;
+    font-size: var(--title);
+    line-height: var(--title-lh);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .hero__meta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: var(--note);
+  }
+
+  .hero__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(64, 200, 140, 0.95);
+    box-shadow: 0 0 0 6px rgba(64, 200, 140, 0.18);
+    flex: 0 0 auto;
+  }
+
+  .hero__note {
+    margin: 0;
+  }
+
+  .hero__cta {
+    justify-self: center;
+    margin-top: clamp(2px, 0.8vh, 10px);
+    padding: 16px 34px;
+    border-radius: 999px;
+    text-decoration: none;
+
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+
+    background: linear-gradient(180deg, var(--brand2), var(--brand));
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    transition:
+      transform 140ms ease,
+      box-shadow 140ms ease;
+  }
+  .hero__cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 24px 56px rgba(35, 70, 150, 0.28);
+  }
+
+  /* Bubbles layer */
+  .hero__bubbles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .bubble {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    transform: translate(-50%, -50%);
+    width: clamp(44px, 4.8vw, 58px);
+    height: clamp(44px, 4.8vw, 58px);
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+
+    background: var(--bubble);
+    border: 1px solid var(--bubble-stroke);
+    box-shadow: 0 18px 44px rgba(35, 70, 150, 0.16);
+    backdrop-filter: blur(10px);
+  }
+
+  .bubble__inner {
+    font-size: clamp(16px, 2vw, 22px);
+    transform: translateY(1px);
+    user-select: none;
+  }
+
+  /* Минимум media: только чтобы убрать пузыри на очень узких экранах, если начнут мешать */
+  @media (max-width: 420px) {
+    .bubble:nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cta {
+      transition: none;
+    }
+    .hero__bubbles .bubble {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  (function initHeroBubbles() {
+    const hero = document.querySelector(".hero");
+    const container = document.querySelector(".hero__bubbles");
+    if (!hero || !container) return;
+
+    const bubbles = container.querySelectorAll(".bubble");
+    const n = bubbles.length;
+    if (n === 0) return;
+
+    const radius = 38;
+    const pushRadius = 12;
+    const speed = 0.0004;
+    const lerp = 0.06;
+    const touchPushDuration = 3000;
+
+    let time = Math.random() * Math.PI * 2;
+    let hovered = false;
+    let touchPushed = false;
+    let touchPushTimer: ReturnType<typeof setTimeout> | null = null;
+    let currentPush = 0;
+
+    hero.addEventListener("mouseenter", () => {
+      hovered = true;
+    });
+    hero.addEventListener("mouseleave", () => {
+      hovered = false;
+    });
+
+    hero.addEventListener(
+      "touchstart",
+      () => {
+        touchPushed = true;
+        if (touchPushTimer) clearTimeout(touchPushTimer);
+        touchPushTimer = setTimeout(() => {
+          touchPushed = false;
+          touchPushTimer = null;
+        }, touchPushDuration);
+      },
+      { passive: true },
+    );
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    function update() {
+      if (!prefersReducedMotion) time += speed;
+      const pushed = hovered || touchPushed;
+      currentPush += ((pushed ? pushRadius : 0) - currentPush) * lerp;
+      const r = radius + currentPush;
+
+      bubbles.forEach((el, i) => {
+        const angle = (i / n) * Math.PI * 2 + time;
+        const x = 50 + r * Math.cos(angle);
+        const y = 50 + r * Math.sin(angle);
+        (el as HTMLElement).style.setProperty("--x", `${x}%`);
+        (el as HTMLElement).style.setProperty("--y", `${y}%`);
+      });
+
+      requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  })();
+</script>

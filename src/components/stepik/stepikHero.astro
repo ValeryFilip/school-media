@@ -295,6 +295,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
     }
 
     /* Адаптив */
+    /* ОТКАТ мобильного отступа: убрать .hero-grid .text { flex: 0 1 auto }, в .features вернуть padding-top: var(--space-40) и var(--space-32), удалить эти два комментария */
     @media (max-width: 1100px) {
       .hero-card {
         padding: 24px;
@@ -306,11 +307,15 @@ const toBtnClass = (v?: CTA["variant"]) => {
         flex-direction: column;
         gap: var(--space-20);
       }
+      /* Не даём .text расти — убираем лишний зазор между кнопками и фактами */
+      .hero-grid .text {
+        flex: 0 1 auto;
+      }
       .features {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-20);
-        padding-top: var(--space-40);
+        padding-top: var(--space-24);
       }
       .feature {
         min-width: 0;
@@ -333,7 +338,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
       .features {
         grid-template-columns: 1fr;
         gap: var(--space-20);
-        padding-top: var(--space-32);
+        padding-top: var(--space-20);
       }
       .hero-title {
         font-size: var(--h2);

@@ -16,6 +16,8 @@ import { getCollection } from "astro:content";
 import TypeChoose from "../components/mainpage/typeChoose.astro";
 import { withReadingTime } from "../lib/withReadingTime";
 import { buildFAQJsonLd } from "../lib/seoData";
+import HeroBubbles from "../components/mainpage/HeroBubbles.astro";
+import UnifiedMenu from "../components/UnifiedMenu.astro";
 
 // Получаем самые новые 3 видимые статьи для AdMediaBanner
 // Сортируем по дате публикации от новых к старым
@@ -579,8 +581,17 @@ const courseCardsnewProps = {
 >
   <link slot="head" rel="preload" as="image" href="/images/girl-lead1.webp" />
 
+  <UnifiedMenu
+    context="landing"
+    logoSrc="/images/technical/egehim(kursi).webp"
+    logoAlt="ЕГЭХИМ — курсы"
+    ctaHref="/allcourses"
+    pageUtmSource="main-page"
+    fixed
+  />
+
   <section id="hero">
-    <KursiHero {...heroProps} />
+    <HeroBubbles />
   </section>
   <section id="about">
     <AboutSection {...aboutProps} />

@@ -10,6 +10,8 @@ interface Props {
   ctaHref?: string;
   /** UTM source по странице (main-page, media, allcourses, …) для кнопок попапа */
   pageUtmSource?: string;
+  /** Фиксировать меню поверх контента (для главной) */
+  fixed?: boolean;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
   ctaText = "Записаться на пробный урок",
   ctaHref = "#signup",
   pageUtmSource = "main-page",
+  fixed = false,
 } = Astro.props;
 
 // Получаем категории из коллекций для медиа
@@ -45,7 +48,7 @@ if (context === "media") {
 }
 ---
 
-<header class="menu">
+<header class:list={["menu", fixed && "menu--fixed"]}>
   <div class="menu__wrapper">
     <div class="menu__left">
       <div class="menu__logo">
@@ -582,6 +585,14 @@ if (context === "media") {
     margin-bottom: 50px;
     font-size: var(--text);
     line-height: 1.5;
+  }
+  .menu--fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    margin-bottom: 0;
   }
   .menu__wrapper {
     max-width: 1200px;
