@@ -6,7 +6,7 @@ import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
 import { calcReadingTime } from "../../../lib/calcReadingTime";
-import { buildArticleJsonLd } from "../../../lib/seoData";
+import { buildArticleJsonLd, buildVideoJsonLd } from "../../../lib/seoData";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -85,6 +85,19 @@ const articleJsonLd = buildArticleJsonLd({
   keywords: fm.tags?.length ? fm.tags : undefined,
   articleSection: fm.category,
 });
+
+// VideoObject JSON-LD — если в статье указано видео (YouTube/Rutube/VK)
+const videoJsonLd =
+  (fm as any).videoUrl &&
+  buildVideoJsonLd({
+    origin: siteUrl,
+    pageUrl,
+    name: fm.title,
+    description: (fm.description || "").slice(0, 300),
+    embedUrl: (fm as any).videoUrl,
+    uploadDate: new Date(fm.date as any).toISOString().slice(0, 10),
+    thumbnailUrl: fm.image,
+  });
 ---
 
 <MainLayout
@@ -99,6 +112,7 @@ const articleJsonLd = buildArticleJsonLd({
     : new Date(fm.date as any).toISOString()}
   breadcrumbs={breadcrumbs}
   articleJsonLd={articleJsonLd}
+  videoJsonLd={videoJsonLd}
 >
   <ArticleLayoutNew fm={fm} slug={slug!} headings={headings}>
     <Content />

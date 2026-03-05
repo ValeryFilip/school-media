@@ -246,29 +246,35 @@ export function buildCourseJsonLd(params: {
 
 /**
  * Генерирует JSON-LD для Product + Offer
+ * image обязателен для rich results в Google.
+ * brand задаётся типом Brand (рекомендация Google для Product).
  */
 export function buildProductJsonLd(params: {
   origin: string;
   url: string;
   name: string;
   description: string;
+  image: string;
   price: string;
   priceCurrency?: string;
   availability?: string;
 }) {
-  const { origin, url, name, description, price, priceCurrency = "RUB", availability = "https://schema.org/InStock" } = params;
-  
+  const { origin, url, name, description, image, price, priceCurrency = "RUB", availability = "https://schema.org/InStock" } = params;
+
   // Извлекаем только цифры из цены
   const priceNumber = String(price).replace(/[^0-9]/g, "");
+  const imageUrl = absUrl(origin, image);
 
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name,
     description: description.trim(),
+    image: imageUrl,
     brand: {
-      "@type": "Organization",
+      "@type": "Brand",
       name: ORGANIZATION_DATA.name,
+      url: origin,
     },
     url,
     offers: {
@@ -277,6 +283,12 @@ export function buildProductJsonLd(params: {
       priceCurrency,
       url,
       availability,
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
+        returnFees: "https://schema.org/FreeReturn",
+      },
     },
   };
 }
@@ -300,7 +312,8 @@ export function buildFAQJsonLd(items: Array<{ q: string; a: string }>) {
 }
 
 /**
- * Генерирует JSON-LD для VideoObject
+ * Генерирует JSON-LD для VideoObject.
+ * uploadDate и thumbnailUrl обязательны для Google.
  */
 export function buildVideoJsonLd(params: {
   origin: string;
@@ -310,9 +323,23 @@ export function buildVideoJsonLd(params: {
   contentUrl?: string;
   embedUrl?: string;
   encodingFormat?: string;
+  /** Дата публикации видео (ISO 8601). По умолчанию — дата для валидной разметки. */
+  uploadDate?: string;
+  /** URL превью видео. По умолчанию — общее OG-изображение сайта. */
+  thumbnailUrl?: string;
 }) {
-  const { origin, pageUrl, name, description, contentUrl, embedUrl, encodingFormat } = params;
-  
+  const {
+    origin,
+    pageUrl,
+    name,
+    description,
+    contentUrl,
+    embedUrl,
+    encodingFormat,
+    uploadDate = "2024-01-01",
+    thumbnailUrl,
+  } = params;
+
   const result: any = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
@@ -320,6 +347,8 @@ export function buildVideoJsonLd(params: {
     description,
     inLanguage: "ru-RU",
     url: pageUrl,
+    uploadDate,
+    thumbnailUrl: thumbnailUrl ? absUrl(origin, thumbnailUrl) : absUrl(origin, "/images/technical/og-home.png"),
   };
 
   // Если есть embedUrl (YouTube, VK, Rutube), используем его
@@ -331,10 +360,12 @@ export function buildVideoJsonLd(params: {
   if (contentUrl) {
     result.contentUrl = absUrl(origin, contentUrl);
     // Определяем формат по расширению, если не указан
-    const format = encodingFormat || (() => {
-      const ext = contentUrl.split(".").pop()?.toLowerCase();
-      return ext === "mp4" ? "video/mp4" : "video/webm";
-    })();
+    const format =
+      encodingFormat ||
+      (() => {
+        const ext = contentUrl.split(".").pop()?.toLowerCase();
+        return ext === "mp4" ? "video/mp4" : "video/webm";
+      })();
     result.encodingFormat = format;
   }
 
