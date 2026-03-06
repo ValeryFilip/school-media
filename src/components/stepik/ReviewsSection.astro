@@ -1,11 +1,9 @@
 ---
+import { REVIEW_IMAGES } from "../../data/reviews";
+
 interface Stat {
   value: string;
   text: string;
-}
-interface Pic {
-  src: string;
-  alt?: string;
 }
 interface Props {
   id?: string;
@@ -42,93 +40,8 @@ const {
   moreReviewsText = "больше отзывов",
 } = Astro.props as Props;
 
-// Локальные картинки отзывов (одинаковые для всех страниц)
-const topImages = [
-  {
-    src: "/images/stepik/reviews/Screenshot_1.webp",
-    alt: "Отзыв 1",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_2.webp",
-    alt: "Отзыв 2",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_3.webp",
-    alt: "Отзыв 3",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_4.webp",
-    alt: "Отзыв 4",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_5.webp",
-    alt: "Отзыв 5",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_6.webp",
-    alt: "Отзыв 6",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_7.webp",
-    alt: "Отзыв 7",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_8.webp",
-    alt: "Отзыв 8",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_9.webp",
-    alt: "Отзыв 9",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_10.webp",
-    alt: "Отзыв 10",
-  },
-];
-
-const bottomImages = [
-  {
-    src: "/images/stepik/reviews/Screenshot_11.webp",
-    alt: "Отзыв 11",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_12.webp",
-    alt: "Отзыв 12",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_13.webp",
-    alt: "Отзыв 13",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_14.webp",
-    alt: "Отзыв 14",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_15.webp",
-    alt: "Отзыв 15",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_16.webp",
-    alt: "Отзыв 16",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_17.webp",
-    alt: "Отзыв 17",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_18.webp",
-    alt: "Отзыв 18",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_19.webp",
-    alt: "Отзыв 19",
-  },
-  {
-    src: "/images/stepik/reviews/Screenshot_20.webp",
-    alt: "Отзыв 20",
-  },
-];
-
+const topImages = REVIEW_IMAGES.slice(0, 10);
+const bottomImages = REVIEW_IMAGES.slice(10, 20);
 const topDup = [...topImages, ...topImages];
 const bottomDup = [...bottomImages, ...bottomImages];
 ---

@@ -7,6 +7,7 @@ import {
   buildVideoJsonLd,
   buildFAQJsonLd,
 } from "../lib/seoData";
+import { PRODUCT_REVIEWS } from "../data/reviews";
 
 import CourseWhy from "../components/stepik/CourseWhy.astro";
 import ReviewsSection from "../components/stepik/ReviewsSection.astro";
@@ -637,6 +638,7 @@ const productJsonLd = buildProductJsonLd({
   image: seo.image,
   price: productPrice,
   priceCurrency: "RUB",
+  reviews: PRODUCT_REVIEWS,
 });
 
 // VideoObject JSON-LD (берем первое видео из платформы)
