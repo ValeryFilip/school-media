@@ -1,0 +1,266 @@
+---
+/* src/components/partners/ReferRules.astro */
+
+const quickRules = [
+  {
+    icon: "account_balance_wallet",
+    title: "Минимальная выплата",
+    value: "1 000 Рублей",
+    color: "var(--blue)",
+  },
+  {
+    icon: "cookie",
+    title: "Срок сохранения ссылки",
+    value: "30 дней",
+    color: "var(--blue)",
+  },
+  {
+    icon: "block",
+    title: "Запрещенные методы",
+    value: "Спам, реклама на бренд",
+    color: "#ef4444",
+  },
+  {
+    icon: "calendar_month",
+    title: "Расписание выплат",
+    value: "Каждую пятницу",
+    color: "var(--blue)",
+  },
+];
+
+const detailedRules = [
+  {
+    icon: "task_alt",
+    title: "Регистрация и модерация",
+    text: "Все участники проходят автоматическую модерацию. Мы внимательно проверяем источники трафика на соответствие образовательным стандартам ЕГЭ. Регистрация доступна всем ученикам.",
+    color: "var(--blue)",
+  },
+  {
+    icon: "monetization_on",
+    title: "Начисление комиссии",
+    text: "Вы получаете 15% комиссии с первой успешной оплаты курса приведенным другом. Комиссия рассчитывается от чистой оплаченной суммы (сумма после вычета любых скидок ученика).",
+    color: "var(--blue)",
+  },
+  {
+    icon: "warning",
+    title: "Ограничения продвижения",
+    text: "Запрещенные действия влекут бан аккаунта и блокировку выплат:",
+    list: [
+      "Покупка рекламы по брендовым запросам (например: Школа Химии).",
+      "Массовая отправка нежелательных сообщений (Спам).",
+      "Создание групп, маскирующихся под официальные ресурсы школы.",
+    ],
+    color: "#ef4444",
+  },
+  {
+    icon: "payments",
+    title: "Способы вывода средств",
+    text: "Доступен вывод средств прямо на Российские банковские карты, кошельки ЮMoney, а также переводом для ИП и самозанятых. Комиссии за перевод оплачивает партнер.",
+    color: "var(--blue)",
+  },
+];
+---
+
+<section class="section partner-rules">
+  <div class="container">
+    <div class="partner-rules__header">
+      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+        Условия
+      </div>
+      <h2 class="h2">Правила программы</h2>
+      <p class="partner-rules__desc">
+        Основные правила партнёрской организации. Мы верим в открытость и
+        честное сотрудничество.
+      </p>
+    </div>
+
+    <!-- Quick Stats Rules -->
+    <div class="partner-rules__quick">
+      {
+        quickRules.map((rule) => (
+          <article class="rule-mini card">
+            <div
+              class="rule-mini__icon"
+              style={`background: ${rule.color}10; color: ${rule.color}`}
+            >
+              <span class="material-symbols-outlined">{rule.icon}</span>
+            </div>
+            <div class="rule-mini__content">
+              <h4 class="rule-mini__title">{rule.title}</h4>
+              <p class="rule-mini__value">{rule.value}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Detailed List -->
+    <div class="partner-rules__detailed card">
+      <h3 class="detailed-title">Подробные условия участия</h3>
+      <div class="detailed-list">
+        {
+          detailedRules.map((item) => (
+            <div class="detailed-item">
+              <div class="detailed-item__icon" style={`color: ${item.color}`}>
+                <span class="material-symbols-outlined">{item.icon}</span>
+              </div>
+              <div class="detailed-item__content">
+                <h4 class="detailed-item__title">{item.title}</h4>
+                <p class="detailed-item__text">{item.text}</p>
+                {item.list && (
+                  <ul class="detailed-item__bullets">
+                    {item.list.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-rules {
+    padding: clamp(60px, 8vw, 100px) 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .partner-rules__desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin-bottom: var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-rules__quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-50);
+  }
+
+  .rule-mini {
+    padding: var(--space-24);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+    transition: transform 0.3s;
+  }
+
+  .rule-mini:hover {
+    transform: translateY(-2px);
+  }
+
+  .rule-mini__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rule-mini__title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--black);
+  }
+
+  .rule-mini__value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray);
+    margin: 0;
+  }
+
+  /* Detailed Board */
+  .partner-rules__detailed {
+    padding: var(--space-50);
+    text-align: left;
+  }
+
+  .detailed-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0 0 var(--space-40);
+    color: var(--black);
+  }
+
+  .detailed-list {
+    display: grid;
+    gap: var(--space-40);
+  }
+
+  .detailed-item {
+    display: flex;
+    gap: var(--space-24);
+  }
+
+  .detailed-item__icon {
+    flex-shrink: 0;
+  }
+
+  .detailed-item__icon .material-symbols-outlined {
+    font-size: 32px;
+  }
+
+  .detailed-item__title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+
+  .detailed-item__text {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--gray);
+    margin: 0;
+    max-width: 800px;
+  }
+
+  .detailed-item__bullets {
+    margin: 16px 0 0 24px;
+    padding: 0;
+    list-style-type: disc;
+    color: var(--gray);
+    font-size: 17px;
+    display: grid;
+    gap: 8px;
+  }
+
+  @media (max-width: 800px) {
+    .partner-rules__detailed {
+      padding: var(--space-24);
+    }
+    .detailed-title {
+      font-size: 24px;
+    }
+    .detailed-item {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .detailed-item__text {
+      font-size: 15px;
+    }
+  }
+
+  /* Badge helper */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

@@ -1,28 +1,54 @@
 ---
 /**
- * Таблица для статей (жёсткий перенос «по буквам»)
- * Использование в MDX:
- * <Table>
- *   | Название | Описание |
- *   |----------|----------|
- *   | Пункт 1  | Оченьдлинноесловобезпробеловкотороенадоразбивать |
- * </Table>
+ * Таблица для статей (жёсткий перенос «по буквам»).
+ * threshold — минимальный тестовый балл (по Рособрнадзору): все строки, где значение во 2-й колонке < threshold, подсвечиваются светло-красным.
  */
 interface Props {
-  striped?: boolean; // зебра-стиль
-  bordered?: boolean; // границы
+  striped?: boolean;
+  bordered?: boolean;
+  /** Минимальный тестовый балл для поступления: строки ниже подсвечиваются */
+  threshold?: number;
 }
 
-const { striped = true, bordered = true } = Astro.props;
+const { striped = true, bordered = true, threshold } = Astro.props;
 ---
 
 <div
   class={`table-wrapper ${striped ? "striped" : ""} ${bordered ? "bordered" : ""}`}
   role="region"
   aria-label="Таблица"
+  {...(threshold != null ? { "data-threshold": threshold } : {})}
 >
   <slot />
 </div>
+
+{threshold != null && (
+  <script>
+    (function () {
+      function applyThresholds() {
+        document.querySelectorAll(".table-wrapper[data-threshold]").forEach((wrapper) => {
+          const threshold = parseInt(wrapper.getAttribute("data-threshold") || "0", 10);
+          const table = wrapper.querySelector("table");
+          if (!table) return;
+          const rows = table.querySelectorAll("tbody tr");
+          rows.forEach((tr) => {
+            const cells = tr.querySelectorAll("td");
+            if (cells.length < 2) return;
+            const testScore = parseInt(cells[1].textContent?.trim() || "", 10);
+            if (!Number.isNaN(testScore) && testScore < threshold) {
+              tr.classList.add("below-threshold");
+            }
+          });
+        });
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", applyThresholds);
+      } else {
+        applyThresholds();
+      }
+    })();
+  </script>
+)}
 
 <style>
   .table-wrapper {
@@ -73,6 +99,14 @@ const { striped = true, bordered = true } = Astro.props;
   /* Hover строки */
   .table-wrapper :global(tbody tr:hover) {
     background: #f0f7ff;
+  }
+
+  /* Строки ниже порога — один светло-красный тон для всех */
+  .table-wrapper :global(tbody tr.below-threshold td) {
+    background: #ffebee !important;
+  }
+  .table-wrapper :global(tbody tr.below-threshold:hover td) {
+    background: #ffcdd2 !important;
   }
 
   /* Насильно переносим и внутри ссылок / кодовых элементов */

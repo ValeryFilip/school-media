@@ -23,7 +23,9 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 ---
 
 <div class="slider" data-total={questions.length}>
-  <div class="slider__counter" aria-live="polite">Вопрос 1 из {questions.length}</div>
+  <div class="slider__counter" aria-live="polite">
+    Вопрос 1 из {questions.length}
+  </div>
   <div class="slider__wrapper">
     <div class="slider__track">
       {
@@ -53,12 +55,12 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 
   .slider__counter {
     position: absolute;
-    top: 12px;
-    right: 16px;
+    top: 10px;
+    left: 4%;
     z-index: 2;
     font-size: 14px;
     font-weight: 500;
-    color: var(--muted, #6c757d);
+    color: var(--gray);
     pointer-events: none;
   }
 
@@ -125,7 +127,8 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
         return;
       }
       counterEl.hidden = false;
-      counterEl.textContent = "Вопрос " + (currentIndex + 1) + " из " + (total || questionCount);
+      counterEl.textContent =
+        "Вопрос " + (currentIndex + 1) + " из " + (total || questionCount);
     }
 
     function showStep(index) {

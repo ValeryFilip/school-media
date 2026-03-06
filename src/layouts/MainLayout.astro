@@ -195,15 +195,17 @@ const breadcrumbsJsonLd =
   </head>
   <body class={`page is-loading ${inAcademy ? "academy-page" : ""}`}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
-    {pathname !== "/" && (
-      <UnifiedMenu
-        context={inAcademy ? "media" : "landing"}
-        logoSrc={menuLogoSrc}
-        logoAlt={menuLogoAlt}
-        ctaHref={ctaHref}
-        pageUtmSource={pageUtmSource}
-      />
-    )}
+    {
+      pathname !== "/" && (
+        <UnifiedMenu
+          context={inAcademy ? "media" : "landing"}
+          logoSrc={menuLogoSrc}
+          logoAlt={menuLogoAlt}
+          ctaHref={ctaHref}
+          pageUtmSource={pageUtmSource}
+        />
+      )
+    }
     {
       showBreadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} />

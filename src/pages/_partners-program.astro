@@ -1,0 +1,40 @@
+---
+/* src/pages/partners-program.astro */
+import MainLayout from "../layouts/MainLayout.astro";
+import ReferHero from "../components/partners/ReferHero.astro";
+import ReferStats from "../components/partners/ReferStats.astro";
+import ReferBenefits from "../components/partners/ReferBenefits.astro";
+import ReferHowItWorks from "../components/partners/ReferHowItWorks.astro";
+import ReferPlacement from "../components/partners/ReferPlacement.astro";
+import ReferRules from "../components/partners/ReferRules.astro";
+import ReferCalculator from "../components/partners/ReferCalculator.astro";
+import ReferFaq from "../components/partners/ReferFaq.astro";
+import ReferForm from "../components/partners/ReferForm.astro";
+import UnifiedMenu from "../components/UnifiedMenu.astro";
+
+const seo = {
+  title: "Партнерская программа ЕГЭХИМ — помогай друзьям и зарабатывай",
+  description:
+    "Присоединяйся к партнерской программе нашей школы химии. Делись материалами и получай 15% комиссии с каждой регистрации.",
+};
+---
+
+<MainLayout
+  title={seo.title}
+  description={seo.description}
+  showBreadcrumbs={false}
+>
+  <ReferHero />
+  <ReferStats />
+  <ReferBenefits />
+  <ReferHowItWorks />
+  <ReferPlacement />
+  <ReferRules />
+  <ReferCalculator />
+  <ReferFaq />
+  <ReferForm />
+</MainLayout>
+
+<style>
+  /* Дополнительные стили страницы если нужны */
+</style>

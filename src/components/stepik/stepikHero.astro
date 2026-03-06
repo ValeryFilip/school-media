@@ -73,7 +73,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
 ---
 
 <div class="section stepik-hero" aria-labelledby={`${id}-title`}>
-  <div class="hero-inner">
+  <div class="container hero-inner">
     <article class="card hero-card">
       {/* Ярлыки (не навигация — просто подписи) */}
       {
@@ -137,32 +137,6 @@ const toBtnClass = (v?: CTA["variant"]) => {
 
   <style>
     /* ===== Контейнер как у оффера ===== */
-    .stepik-hero {
-    }
-    .hero-inner {
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      box-sizing: border-box;
-    }
-    @media (max-width: 1100px) {
-      .hero-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .hero-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
 
     /* ===== Карточка hero ===== */
     .hero-card {

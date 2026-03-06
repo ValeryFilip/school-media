@@ -1,0 +1,175 @@
+---
+/* src/components/partners/ReferFaq.astro */
+
+const faqs = [
+  {
+    q: "Где отслеживать статистику переходов?",
+    a: "За прогрессом, количеством кликов и регистраций можно наблюдать в режиме реального времени в личном кабинете партнера в разделе 'Статистика'. Информация обновляется круглосуточно. Дополнительно данные синхронизируются с Google Таблицами.",
+  },
+  {
+    q: "Кого можно приглашать в программу?",
+    a: "Любого человека, который готовится к ЕГЭ по химии и ещё ни разу не регистрировался на платформе нашей школы. Это могут быть ваши одноклассники, друзья из секций, подписчики или просто знакомые.",
+  },
+  {
+    q: "Что получит мой друг за регистрацию?",
+    a: "Это выгодно вам обоим: вы получаете фиксированную комиссию (в среднем около 1500 рублей или % от продаж), а ваш друг получает разовую скидку или бонусный доступ к материалам при входе.",
+  },
+  {
+    q: "Как выплачиваются заработанные деньги?",
+    a: "Выплаты производятся еженедельно или ежемесячно (в зависимости от оборота) на банковские карты РФ, ЮMoney или расчетный счет для самозанятых/ИП. Заявка на вывод обычно обрабатывается в течение 24 часов.",
+  },
+];
+---
+
+<section class="section partner-faq">
+  <div class="container max-w-4xl">
+    <div class="partner-faq__header">
+      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+        Вопросы и ответы
+      </div>
+      <h2 class="h2">База знаний</h2>
+      <p class="partner-faq__desc">
+        Всё, что вам нужно знать о получении вознаграждений за приглашения в
+        нашу онлайн-школу химии.
+      </p>
+    </div>
+
+    <div class="partner-faq__list">
+      {
+        faqs.map((faq, idx) => (
+          <details class="faq-item" open={idx === 0}>
+            <summary class="faq-item__summary">
+              <h4 class="faq-item__question">{faq.q}</h4>
+              <div class="faq-item__toggle">
+                <span class="material-symbols-outlined">add</span>
+              </div>
+            </summary>
+            <div class="faq-item__content">
+              <div class="faq-item__box">
+                <p class="faq-item__text">{faq.a}</p>
+              </div>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-faq {
+    padding: 0;
+    background: var(--bg);
+  }
+
+  .partner-faq__desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin-bottom: var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-faq__list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .faq-item {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    transition: all 0.3s var(--easing);
+  }
+
+  .faq-item[open] {
+    box-shadow: var(--shadow-2);
+    border-color: rgba(54, 110, 240, 0.2);
+  }
+
+  .faq-item__summary {
+    list-style: none;
+    padding: var(--space-24) var(--space-32);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .faq-item__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item__question {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0;
+    transition: color 0.3s;
+  }
+
+  .faq-item[open] .faq-item__question {
+    color: var(--blue);
+  }
+
+  .faq-item__toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .faq-item[open] .faq-item__toggle {
+    background: var(--orange);
+    color: var(--white);
+    transform: rotate(135deg);
+  }
+
+  .faq-item__content {
+    padding: 0 var(--space-32) var(--space-32);
+  }
+
+  .faq-item__box {
+    padding: var(--space-20);
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid var(--blue);
+  }
+
+  .faq-item__text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--gray);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    .faq-item__summary {
+      padding: var(--space-20);
+    }
+    .faq-item__question {
+      font-size: 16px;
+    }
+    .faq-item__content {
+      padding: 0 var(--space-20) var(--space-20);
+    }
+  }
+
+  /* Badge helper */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

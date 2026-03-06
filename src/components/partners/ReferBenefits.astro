@@ -1,0 +1,284 @@
+---
+/* src/components/partners/ReferBenefits.astro */
+
+const benefits = [
+  {
+    icon: "currency_ruble",
+    title: "Высокие ставки комиссий",
+    desc: "Лучшая на рынке выплата в размере 15% за каждое приглашение, без ограничений по доходу.",
+  },
+  {
+    icon: "query_stats",
+    title: "Аналитика в реальном времени",
+    desc: "Отслеживайте клики, регистрации и ваши заработки в удобном личном кабинете.",
+  },
+  {
+    icon: "schedule",
+    title: "Автоматические выплаты",
+    desc: "Не нужно подавать ручные заявки. Мы отправляем выплаты регулярными переводами.",
+  },
+];
+---
+
+<section class="section partner-benefits">
+  <div class="container">
+    <div class="partner-benefits__header">
+      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+        Преимущества
+      </div>
+      <h2 class="h2">Почему выбирают нас?</h2>
+      <p class="partner-benefits__header-desc">
+        Мы предоставляем все передовые инструменты для вашего успеха. Наша
+        программа построена на прозрачности и щедром награждении.
+      </p>
+    </div>
+
+    <div class="partner-benefits__grid">
+      <!-- Список преимуществ -->
+      <div class="partner-benefits__list">
+        {
+          benefits.map((item) => (
+            <article class="benefit-item card">
+              <div class="benefit-item__icon">
+                <span class="material-symbols-outlined">{item.icon}</span>
+              </div>
+              <div class="benefit-item__content">
+                <h4 class="benefit-item__title">{item.title}</h4>
+                <p class="benefit-item__desc">{item.desc}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Декоративный виджет -->
+      <div class="partner-benefits__visual">
+        <div class="revenue-widget card">
+          <div class="revenue-widget__header">
+            <span class="revenue-widget__label">Сводка доходов</span>
+            <span class="material-symbols-outlined">more_horiz</span>
+          </div>
+
+          <div class="revenue-widget__main">
+            <div class="revenue-widget__total text-center">
+              <span class="total-label">Всего заработано</span>
+              <p class="total-value">42 500 ₽</p>
+              <span class="total-badge">+12%</span>
+            </div>
+
+            <div class="revenue-widget__chart">
+              <div class="bar" style="height: 40%"></div>
+              <div class="bar" style="height: 65%"></div>
+              <div class="bar" style="height: 45%"></div>
+              <div class="bar active" style="height: 90%"></div>
+              <div class="bar" style="height: 55%"></div>
+              <div class="bar active" style="height: 100%"></div>
+              <div class="bar" style="height: 70%"></div>
+            </div>
+
+            <button
+              class="btn btn--blue"
+              style="width: 100%; border-radius: 12px; padding: 12px"
+              >Вывести средства</button
+            >
+          </div>
+        </div>
+
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-benefits {
+    padding: 0;
+  }
+
+  .partner-benefits__header-desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin: 0 0 var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-benefits__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-50);
+    align-items: center;
+  }
+
+  .partner-benefits__list {
+    display: grid;
+    gap: var(--space-20);
+  }
+
+  .benefit-item {
+    padding: var(--space-24);
+    display: flex;
+    gap: var(--space-20);
+    transition: border-color 0.3s var(--easing);
+  }
+
+  .benefit-item:hover {
+    border-color: var(--blue);
+  }
+
+  .benefit-item__icon {
+    flex-shrink: 0;
+    color: var(--blue);
+  }
+
+  .benefit-item__icon .material-symbols-outlined {
+    font-size: 32px;
+  }
+
+  .benefit-item__title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+
+  .benefit-item__desc {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  /* Виджет */
+  .partner-benefits__visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .revenue-widget {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 400px;
+    padding: var(--space-32);
+    transform: rotate(2deg);
+    transition: transform 0.5s var(--easing);
+    box-shadow: var(--shadow-2);
+  }
+
+  .revenue-widget:hover {
+    transform: rotate(0deg);
+  }
+
+  .revenue-widget__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-32);
+    color: var(--gray);
+  }
+
+  .revenue-widget__label {
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .revenue-widget__total {
+    margin-bottom: var(--space-32);
+  }
+
+  .total-label {
+    display: block;
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+
+  .total-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--black);
+    margin: 0 0 8px;
+  }
+
+  .total-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #ecfdf5;
+    color: #10b981;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .revenue-widget__chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    margin-bottom: var(--space-32);
+  }
+
+  .bar {
+    flex: 1;
+    background: rgba(54, 110, 240, 0.1);
+    border-radius: 4px 4px 0 0;
+    transition: height 1s ease;
+  }
+
+  .bar.active {
+    background: var(--blue);
+  }
+
+  /* Бейдж (костыль если нет в глобал) */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.4;
+    z-index: 1;
+  }
+
+  .blob-1 {
+    width: 200px;
+    height: 200px;
+    background: var(--blue);
+    top: -30px;
+    right: -30px;
+  }
+
+  .blob-2 {
+    width: 250px;
+    height: 250px;
+    background: var(--orange);
+    bottom: -50px;
+    left: -50px;
+  }
+
+  @media (max-width: 1100px) {
+    .partner-benefits__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-40);
+    }
+    .partner-benefits__visual {
+      order: -1;
+    }
+  }
+</style>

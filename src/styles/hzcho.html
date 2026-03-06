@@ -1,0 +1,1736 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Design System Demo — tokens showcase</title>
+    <link rel="stylesheet" href="new-global.css" />
+
+    <style>
+      /* ===== DEMO-ONLY (topbar, nav, hero, panels, swatches, shadow/space demos) ===== */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: var(--z-dropdown);
+        background: color-mix(in oklab, var(--color-surface) 85%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--color-border);
+      }
+      .topbar__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-16);
+        padding: var(--space-12) 0;
+      }
+      .brand {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-8);
+        min-width: 0;
+      }
+      .brand__dot {
+        width: var(--space-12);
+        height: var(--space-12);
+        border-radius: var(--radius-pill);
+        background: var(--color-brand);
+        box-shadow: var(--shadow-1);
+        flex: 0 0 auto;
+      }
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-12);
+        justify-content: flex-end;
+      }
+      .nav a {
+        font-family: var(--label-font-family);
+        font-size: var(--label-font-size);
+        font-weight: var(--label-font-weight);
+        line-height: var(--label-line-height);
+
+        padding: var(--space-8) var(--space-12);
+        border-radius: var(--radius-sm);
+        border: 1px solid transparent;
+        transition:
+          background var(--dur-1) var(--ease),
+          border-color var(--dur-1) var(--ease);
+      }
+      .nav a:hover {
+        background: var(--brand-50);
+        border-color: var(--brand-200);
+        text-decoration: none;
+      }
+
+      .hero {
+        padding: var(--space-48) 0;
+      }
+      .hero__grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: var(--space-32);
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .hero__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        padding: var(--space-24);
+        border-radius: var(--radius-xl);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        box-shadow: var(--shadow-1);
+      }
+      .panel--elevated {
+        background: var(--color-elevated);
+        box-shadow: var(--shadow-2);
+      }
+
+      .swatch {
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+        overflow: hidden;
+        box-shadow: var(--shadow-1);
+        background: var(--color-surface);
+      }
+      .swatch__top {
+        height: calc(3.5 * var(--rem));
+      }
+      .swatch__body {
+        padding: var(--space-12) var(--space-16);
+        display: grid;
+        gap: var(--space-4);
+      }
+      .colorscale-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        align-items: stretch;
+      }
+      .colorscale-swatch {
+        flex: 1;
+        min-width: calc(3.25 * var(--rem));
+        height: var(--space-48);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--label-sm-font-family);
+        font-size: var(--fs-12);
+        font-weight: var(--fw-semibold);
+      }
+      .colorscale-name {
+        text-shadow: 0 0 2px color-mix(in srgb, white 50%, transparent);
+      }
+      .gradient-demo {
+        min-height: 80px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+        padding: var(--space-12) var(--space-16);
+        display: flex;
+        align-items: flex-end;
+      }
+      .gradient-demo__name {
+        font-family: var(--caption-font-family);
+        font-size: var(--fs-12);
+        font-weight: var(--fw-medium);
+        color: var(--color-text);
+        text-shadow:
+          0 0 4px var(--color-surface),
+          0 1px 2px color-mix(in srgb, var(--gray-900) 15%, transparent);
+      }
+      .gradient-demo--bright .gradient-demo__name {
+        color: var(--color-text-inverse);
+        text-shadow: 0 1px 3px
+          color-mix(in srgb, var(--gray-900) 50%, transparent);
+      }
+
+      /* Shadows / radii showcase blocks */
+      .shadowbox {
+        padding: var(--space-16);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        display: grid;
+        gap: var(--space-8);
+      }
+      .shadow-1 {
+        box-shadow: var(--shadow-1);
+      }
+      .shadow-2 {
+        box-shadow: var(--shadow-2);
+      }
+      .shadow-3 {
+        box-shadow: var(--shadow-3);
+      }
+
+      /* Spacing demo */
+      .space-demo {
+        display: grid;
+        gap: var(--space-12);
+      }
+      .space-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+      }
+      .bar {
+        height: var(--space-12);
+        border-radius: var(--radius-pill);
+        background: var(--brand-200);
+      }
+      .w-4 {
+        width: var(--space-4);
+      }
+      .w-8 {
+        width: var(--space-8);
+      }
+      .w-12 {
+        width: var(--space-12);
+      }
+      .w-16 {
+        width: var(--space-16);
+      }
+      .w-20 {
+        width: var(--space-20);
+      }
+      .w-24 {
+        width: var(--space-24);
+      }
+      .w-32 {
+        width: var(--space-32);
+      }
+      .w-40 {
+        width: var(--space-40);
+      }
+      .w-48 {
+        width: var(--space-48);
+      }
+      .w-64 {
+        width: var(--space-64);
+      }
+    </style>
+  </head>
+
+  <body class="page">
+    <a class="skip-link" href="#content">Перейти к содержимому</a>
+
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <span class="brand__dot" aria-hidden="true"></span>
+          <div style="min-width: 0">
+            <div class="text-label-lg">Lend UI</div>
+            <div class="text-caption">Design System tokens demo</div>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Навигация">
+          <a href="#typography">Типографика</a>
+          <a href="#colors">Цвета</a>
+          <a href="#color-scales">Шкалы 50–900</a>
+          <a href="#components">Компоненты</a>
+          <a href="#spacing">Отступы</a>
+          <a href="#elevation">Тени</a>
+          <a href="#modal">Оверлей</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content" class="content">
+      <div class="page-stack">
+        <!-- HERO -->
+        <section class="section hero" aria-labelledby="hero-title">
+          <div class="container">
+            <div class="hero__grid">
+              <div class="panel panel--elevated">
+                <div class="text-overline">Foundations</div>
+                <div
+                  id="hero-title"
+                  class="text-display"
+                  style="margin: var(--space-12) 0 var(--space-12)"
+                >
+                  Единая дизайн-система на CSS-токенах
+                </div>
+                <p class="text-lead" style="margin-bottom: var(--space-20)">
+                  Страница демонстрирует применение
+                  <span class="text-b">всех токенов</span> в разных местах:
+                  типографика, цвета, отступы, радиусы, тени, формы, состояния,
+                  оверлей, z-index и motion.
+                </p>
+
+                <div class="btnrow">
+                  <button class="btn btn--primary" type="button">
+                    Primary action
+                  </button>
+                  <button class="btn btn--blue" type="button">
+                    Brand action
+                  </button>
+                  <a
+                    class="btn btn--ghost"
+                    href="#demo-modal"
+                    role="button"
+                    aria-haspopup="dialog"
+                  >
+                    Открыть модалку
+                  </a>
+                  <button class="btn btn--ghost" type="button" disabled>
+                    Disabled
+                  </button>
+                </div>
+
+                <div
+                  style="
+                    margin-top: var(--space-20);
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: var(--space-12);
+                  "
+                >
+                  <span class="badge badge--brand"
+                    ><span class="dot" aria-hidden="true"></span>Brand</span
+                  >
+                  <span class="badge badge--success"
+                    ><span class="dot" aria-hidden="true"></span>Success</span
+                  >
+                  <span class="badge badge--danger"
+                    ><span class="dot" aria-hidden="true"></span>Danger</span
+                  >
+                  <span class="badge"
+                    ><span class="dot" aria-hidden="true"></span>Neutral</span
+                  >
+                </div>
+              </div>
+
+              <aside class="panel card">
+                <h3 style="margin-top: 0">Что тут смотреть</h3>
+                <ul
+                  style="
+                    margin: 0;
+                    padding-left: var(--space-20);
+                    display: grid;
+                    gap: var(--space-8);
+                  "
+                >
+                  <li>
+                    <span class="text-sb">Текст-стили</span>: display → h1..h6 →
+                    body → label → caption → overline
+                  </li>
+                  <li>
+                    <span class="text-sb">Семантические цвета</span>:
+                    bg/surface/text/border/brand/accent/status
+                  </li>
+                  <li>
+                    <span class="text-sb">Компоненты</span>: кнопки, карточки,
+                    формы, бейджи
+                  </li>
+                  <li>
+                    <span class="text-sb">Тени/радиусы</span>: уровни elevation
+                  </li>
+                  <li><span class="text-sb">Отступы</span>: spacing scale</li>
+                  <li>
+                    <span class="text-sb">Overlay</span>: модалка + z-index
+                  </li>
+                </ul>
+
+                <div
+                  style="
+                    margin-top: var(--space-20);
+                    border-top: 1px solid var(--color-border);
+                    padding-top: var(--space-16);
+                  "
+                >
+                  <div class="text-label">Токены в цифрах</div>
+                  <div class="text-caption mono">
+                    container: <b>var(--container)</b> • section-gap:
+                    <b>var(--section-gap)</b><br />
+                    radius: sm/md/lg/xl • shadows: 1/2/3 • motion: dur-1/dur-2
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <!-- TYPOGRAPHY -->
+        <section id="typography" class="section" aria-labelledby="typo-title">
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Typography</div>
+              <h2 id="typo-title" style="margin-top: var(--space-8)">
+                Полный ряд текст-стилей
+              </h2>
+              <p
+                class="text-body-sm text-muted"
+                style="margin-bottom: var(--space-16)"
+              >
+                Классы и токены для шрифтов: display, h1–h6, body, label,
+                caption, overline, утилиты.
+              </p>
+
+              <div class="grid" style="gap: var(--space-20)">
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-caption mono">.text-display</div>
+                  <div class="text-display">Display: Большой заголовок</div>
+                  <p
+                    class="text-caption mono"
+                    style="margin: var(--space-8) 0 0"
+                  >
+                    --display-font-family, --fs-display, --fw-bold, --lh-tight,
+                    --ls-tight
+                  </p>
+                </div>
+
+                <div class="grid grid--3">
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h1 / .text-h1</div>
+                    <div class="text-h1">Заголовок H1</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h1, --lh-tight, --ls-tight
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h2 / .text-h2</div>
+                    <div class="text-h2">Заголовок H2</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h2, --ls-tight
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h3 / .text-h3</div>
+                    <div class="text-h3">Заголовок H3</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h3, --lh-snug
+                    </p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h4 / .text-h4</div>
+                    <div class="text-h4">Заголовок H4</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h4
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h5 / .text-h5</div>
+                    <div class="text-h5">Заголовок H5</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h5, --fw-semibold
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">h6 / .text-h6</div>
+                    <div class="text-h6">Заголовок H6</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --fs-h6
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid--3">
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">.text-lead</div>
+                    <p class="text-lead">
+                      Lead (body-lg): вступления и важные абзацы. Размер
+                      --fs-18.
+                    </p>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --body-lg-font-*, --fs-18
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">.text-body</div>
+                    <p class="text-body">
+                      Body: основной текст интерфейса. Стабильный и
+                      предсказуемый.
+                    </p>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --body-font-*, --fs-16
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">.text-body-sm</div>
+                    <p class="text-body-sm">
+                      Small body: второстепенные пояснения, таблицы, карточки.
+                    </p>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --body-sm-font-*, --fs-14
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid--3">
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">Labels</div>
+                    <div class="text-label-lg">Label LG — кнопки, табы</div>
+                    <div class="text-label">Label — поля, формы</div>
+                    <div class="text-label-sm">Label SM — бейджи</div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --label-lg: --fs-15; --label: --fs-14; --label-sm: --fs-12
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">Caption / Overline</div>
+                    <div class="text-caption">
+                      Caption: подсказки, подписи (--fs-12)
+                    </div>
+                    <div
+                      class="text-overline"
+                      style="margin-top: var(--space-12)"
+                    >
+                      Overline: секция, категория (--fs-11)
+                    </div>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --caption-*, --overline-*
+                    </p>
+                  </div>
+                  <div class="card" style="padding: var(--space-20)">
+                    <div class="text-caption mono">Утилиты</div>
+                    <p class="text-body">
+                      <span class="text-muted">.text-muted</span> — приглушённый
+                      цвет
+                    </p>
+                    <p class="text-body">
+                      <span class="text-b">.text-b</span> — bold
+                    </p>
+                    <p class="text-body">
+                      <span class="text-sb">.text-sb</span> — semibold
+                    </p>
+                    <p
+                      class="text-caption mono"
+                      style="margin: var(--space-8) 0 0"
+                    >
+                      --color-text-muted, --fw-bold, --fw-semibold
+                    </p>
+                  </div>
+                </div>
+
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-caption mono">Числа (tabular-nums)</div>
+                  <div class="text-h4 mono num-display">1 234 567.89</div>
+                  <p
+                    class="text-caption mono"
+                    style="margin: var(--space-8) 0 0"
+                  >
+                    .mono.num-display, font-variant-numeric: tabular-nums
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COLORS -->
+        <section id="colors" class="section" aria-labelledby="colors-title">
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Color tokens</div>
+              <h2 id="colors-title" style="margin-top: var(--space-8)">
+                Семантические цвета
+              </h2>
+              <p class="text-body-sm text-muted">
+                Все блоки ниже используют токены вида
+                <span class="mono">--color-*</span>. Компоненты зависят от
+                смысла, а не от “синий/оранжевый”.
+              </p>
+
+              <div class="grid grid--3" style="margin-top: var(--space-16)">
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="background: var(--color-bg)"
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-bg</div>
+                    <div class="text-caption mono">background</div>
+                  </div>
+                </div>
+
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="
+                      background: var(--color-surface);
+                      border-bottom: 1px solid var(--color-border);
+                    "
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-surface</div>
+                    <div class="text-caption mono">cards / surfaces</div>
+                  </div>
+                </div>
+
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="background: var(--color-brand)"
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-brand</div>
+                    <div class="text-caption mono">brand accents</div>
+                  </div>
+                </div>
+
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="background: var(--color-accent)"
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-accent</div>
+                    <div class="text-caption mono">primary action</div>
+                  </div>
+                </div>
+
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="background: var(--color-success)"
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-success</div>
+                    <div class="text-caption mono">success states</div>
+                  </div>
+                </div>
+
+                <div class="swatch">
+                  <div
+                    class="swatch__top"
+                    style="background: var(--color-danger)"
+                  ></div>
+                  <div class="swatch__body">
+                    <div class="text-label">--color-danger</div>
+                    <div class="text-caption mono">error states</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid--3" style="margin-top: var(--space-16)">
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-label">Text tokens</div>
+                  <p
+                    class="text-body"
+                    style="
+                      margin-bottom: var(--space-8);
+                      color: var(--color-text);
+                    "
+                  >
+                    --color-text: основной текст
+                  </p>
+                  <p
+                    class="text-body-sm"
+                    style="margin: 0; color: var(--color-text-muted)"
+                  >
+                    --color-text-muted: второстепенный текст
+                  </p>
+                </div>
+
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-label">Border tokens</div>
+                  <div
+                    style="
+                      height: var(--space-16);
+                      border-radius: var(--radius-pill);
+                      background: var(--color-border);
+                    "
+                  ></div>
+                  <div
+                    style="
+                      margin-top: var(--space-12);
+                      height: var(--space-16);
+                      border-radius: var(--radius-pill);
+                      background: var(--color-border-strong);
+                    "
+                  ></div>
+                  <p class="text-caption" style="margin-top: var(--space-12)">
+                    --color-border / --color-border-strong
+                  </p>
+                </div>
+
+                <div
+                  class="card"
+                  style="
+                    padding: var(--space-20);
+                    background: var(--color-brand);
+                    color: var(--color-text-inverse);
+                  "
+                >
+                  <div class="text-label">Inverse text</div>
+                  <p class="text-body-sm" style="margin: 0">
+                    --color-text-inverse на брендовой подложке
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COLOR SCALES (50–900) -->
+        <section
+          id="color-scales"
+          class="section"
+          aria-labelledby="color-scales-title"
+        >
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Color scale</div>
+              <h2 id="color-scales-title" style="margin-top: var(--space-8)">
+                Шкалы цветов 50–900
+              </h2>
+              <p
+                class="text-body-sm text-muted"
+                style="margin-bottom: var(--space-16)"
+              >
+                Палитры от базового цвета через
+                <span class="mono">color-mix</span>. Gray — фиксированная;
+                brand, accent, success, danger — от
+                <span class="mono">--color-*</span>.
+              </p>
+
+              <div class="grid" style="gap: var(--space-24)">
+                <div>
+                  <div class="text-label" style="margin-bottom: var(--space-8)">
+                    Gray (--gray-*)
+                  </div>
+                  <div class="colorscale-row">
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--gray-50)"
+                    >
+                      <span class="colorscale-name">50</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--gray-100)"
+                    >
+                      <span class="colorscale-name">100</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--gray-200)"
+                    >
+                      <span class="colorscale-name">200</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--gray-300)"
+                    >
+                      <span class="colorscale-name">300</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--gray-400)"
+                    >
+                      <span class="colorscale-name">400</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--gray-500);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">500</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--gray-600);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">600</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--gray-700);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">700</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--gray-800);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">800</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--gray-900);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">900</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-label" style="margin-bottom: var(--space-8)">
+                    Brand (--brand-*) от --color-brand
+                  </div>
+                  <div class="colorscale-row">
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--brand-50)"
+                    >
+                      <span class="colorscale-name">50</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--brand-100)"
+                    >
+                      <span class="colorscale-name">100</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--brand-200)"
+                    >
+                      <span class="colorscale-name">200</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--brand-300)"
+                    >
+                      <span class="colorscale-name">300</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--brand-400)"
+                    >
+                      <span class="colorscale-name">400</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--brand-500);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">500</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--brand-600);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">600</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--brand-700);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">700</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--brand-800);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">800</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--brand-900);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">900</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-label" style="margin-bottom: var(--space-8)">
+                    Accent (--accent-*) от --color-accent
+                  </div>
+                  <div class="colorscale-row">
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--accent-50)"
+                    >
+                      <span class="colorscale-name">50</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--accent-100)"
+                    >
+                      <span class="colorscale-name">100</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--accent-200)"
+                    >
+                      <span class="colorscale-name">200</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--accent-300)"
+                    >
+                      <span class="colorscale-name">300</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--accent-400)"
+                    >
+                      <span class="colorscale-name">400</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--accent-500);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">500</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--accent-600);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">600</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--accent-700);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">700</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--accent-800);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">800</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--accent-900);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">900</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-label" style="margin-bottom: var(--space-8)">
+                    Success (--success-*) от --color-success
+                  </div>
+                  <div class="colorscale-row">
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--success-50)"
+                    >
+                      <span class="colorscale-name">50</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--success-100)"
+                    >
+                      <span class="colorscale-name">100</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--success-200)"
+                    >
+                      <span class="colorscale-name">200</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--success-300)"
+                    >
+                      <span class="colorscale-name">300</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--success-400)"
+                    >
+                      <span class="colorscale-name">400</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--success-500);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">500</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--success-600);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">600</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--success-700);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">700</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--success-800);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">800</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--success-900);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">900</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-label" style="margin-bottom: var(--space-8)">
+                    Danger (--danger-*) от --color-danger
+                  </div>
+                  <div class="colorscale-row">
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--danger-50)"
+                    >
+                      <span class="colorscale-name">50</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--danger-100)"
+                    >
+                      <span class="colorscale-name">100</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--danger-200)"
+                    >
+                      <span class="colorscale-name">200</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--danger-300)"
+                    >
+                      <span class="colorscale-name">300</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="background: var(--danger-400)"
+                    >
+                      <span class="colorscale-name">400</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--danger-500);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">500</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--danger-600);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">600</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--danger-700);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">700</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--danger-800);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">800</span>
+                    </div>
+                    <div
+                      class="colorscale-swatch"
+                      style="
+                        background: var(--danger-900);
+                        color: var(--color-text-inverse);
+                      "
+                    >
+                      <span class="colorscale-name">900</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: var(--space-8)">
+                  <div
+                    class="text-label"
+                    style="margin-bottom: var(--space-12)"
+                  >
+                    Варианты карточек (.card / .card--*)
+                  </div>
+                  <div class="grid grid--3" style="gap: var(--space-12)">
+                    <div class="card" style="padding: var(--space-16)">
+                      <div class="text-caption mono">.card</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        Базовая, surface
+                      </p>
+                    </div>
+                    <div
+                      class="card card--muted"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-caption mono">.card--muted</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        gray-100
+                      </p>
+                    </div>
+                    <div
+                      class="card card--brand"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-caption mono">.card--brand</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        brand-50
+                      </p>
+                    </div>
+                    <div
+                      class="card card--accent"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-caption mono">.card--accent</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        accent-50
+                      </p>
+                    </div>
+                    <div
+                      class="card card--success"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-caption mono">.card--success</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        success-50
+                      </p>
+                    </div>
+                    <div
+                      class="card card--danger"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-caption mono">.card--danger</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        danger-50
+                      </p>
+                    </div>
+                    <div
+                      class="card card--brand-dark"
+                      style="padding: var(--space-16)"
+                    >
+                      <div class="text-overline">.card--brand-dark</div>
+                      <p
+                        class="text-body-sm"
+                        style="margin: var(--space-8) 0 0"
+                      >
+                        Тёмная, inverse-текст
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: var(--space-24)">
+                  <div
+                    class="text-label"
+                    style="margin-bottom: var(--space-12)"
+                  >
+                    Градиенты (--gradient-*)
+                  </div>
+                  <div class="grid grid--3" style="gap: var(--space-12)">
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-brand-subtle)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-subtle</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-brand-soft)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-soft</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-brand-edge)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-edge</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-accent-subtle)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-accent-subtle</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-accent-soft)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-accent-soft</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-hero)"
+                    >
+                      <span class="gradient-demo__name">--gradient-hero</span>
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-muted)"
+                    >
+                      <span class="gradient-demo__name">--gradient-muted</span>
+                    </div>
+                    <div
+                      class="gradient-demo"
+                      style="background: var(--gradient-brand-accent)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-accent</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo gradient-demo--bright"
+                      style="background: var(--gradient-brand-vivid)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-vivid</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo gradient-demo--bright"
+                      style="background: var(--gradient-accent-vivid)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-accent-vivid</span
+                      >
+                    </div>
+                    <div
+                      class="gradient-demo gradient-demo--bright"
+                      style="background: var(--gradient-brand-accent-vivid)"
+                    >
+                      <span class="gradient-demo__name"
+                        >--gradient-brand-accent-vivid</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMPONENTS -->
+        <section id="components" class="section" aria-labelledby="comp-title">
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Components</div>
+              <h2 id="comp-title" style="margin-top: var(--space-8)">
+                Кнопки, карточки, формы
+              </h2>
+
+              <div
+                class="grid grid--3"
+                style="margin-top: var(--space-16); align-items: start"
+              >
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-label">Buttons</div>
+                  <p class="text-caption">
+                    Все состояния: hover/active/disabled + focus-visible
+                  </p>
+                  <div class="btnrow" style="margin-top: var(--space-12)">
+                    <button class="btn btn--primary" type="button">
+                      Primary
+                    </button>
+                    <button class="btn btn--blue" type="button">Brand</button>
+                    <button class="btn btn--ghost" type="button">Ghost</button>
+                    <button class="btn btn--ghost" type="button" disabled>
+                      Disabled
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-label">Card content</div>
+                  <h4 style="margin-top: var(--space-12)">Карточка</h4>
+                  <p class="text-body-sm text-muted">
+                    Использует: surface + border + radius-xl + shadow-1 +
+                    spacing tokens.
+                  </p>
+                  <div
+                    style="display: flex; gap: var(--space-12); flex-wrap: wrap"
+                  >
+                    <span class="badge badge--brand"
+                      ><span class="dot" aria-hidden="true"></span>Brand</span
+                    >
+                    <span class="badge badge--success"
+                      ><span class="dot" aria-hidden="true"></span>Success</span
+                    >
+                  </div>
+                </div>
+
+                <div class="card" style="padding: var(--space-20)">
+                  <div class="text-label">Links</div>
+                  <p class="text-body-sm">
+                    Обычная ссылка:
+                    <a href="#typography">перейти к типографике</a>
+                  </p>
+                  <p class="text-body-sm">
+                    Кнопка-ссылка:
+                    <a class="btn btn--ghost" href="#colors" role="button"
+                      >К цветам</a
+                    >
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="card"
+                style="margin-top: var(--space-16); padding: var(--space-20)"
+              >
+                <div class="text-label">Form (states demo)</div>
+                <p class="text-caption">
+                  Показаны normal/focus/error/success и базовые размеры
+                </p>
+
+                <form
+                  class="formgrid"
+                  action="#"
+                  method="post"
+                  style="margin-top: var(--space-16)"
+                >
+                  <div class="field">
+                    <label class="label" for="name">Имя</label>
+                    <input
+                      class="input"
+                      id="name"
+                      name="name"
+                      placeholder="Иван"
+                    />
+                    <p class="help">Подсказка: токены текста + muted</p>
+                  </div>
+
+                  <div class="field">
+                    <label class="label" for="email">Email (error)</label>
+                    <input
+                      class="input"
+                      id="email"
+                      name="email"
+                      placeholder="name@example.com"
+                      aria-invalid="true"
+                    />
+                    <p class="error">Ошибка: некорректный email</p>
+                  </div>
+
+                  <div class="field">
+                    <label class="label" for="plan">Тариф</label>
+                    <select class="select" id="plan" name="plan">
+                      <option>Старт</option>
+                      <option>Про</option>
+                      <option>Бизнес</option>
+                    </select>
+                    <p class="success">Ок: поле заполнено</p>
+                  </div>
+
+                  <div class="field">
+                    <label class="label" for="msg">Сообщение</label>
+                    <textarea
+                      class="textarea"
+                      id="msg"
+                      name="msg"
+                      placeholder="Напишите коротко…"
+                    ></textarea>
+                    <p class="help">
+                      Inset shadow: <span class="mono">--shadow-inset</span>
+                    </p>
+                  </div>
+
+                  <div
+                    style="
+                      grid-column: 1 / -1;
+                      display: flex;
+                      gap: var(--space-12);
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <button class="btn btn--primary" type="button">
+                      Отправить
+                    </button>
+                    <button class="btn btn--ghost" type="reset">
+                      Сбросить
+                    </button>
+                    <a
+                      class="btn btn--blue"
+                      href="#demo-modal"
+                      role="button"
+                      aria-haspopup="dialog"
+                      >Открыть модалку</a
+                    >
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SPACING -->
+        <section id="spacing" class="section" aria-labelledby="spacing-title">
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Spacing scale</div>
+              <h2 id="spacing-title" style="margin-top: var(--space-8)">
+                Отступы (spacing tokens)
+              </h2>
+              <p class="text-body-sm text-muted">
+                Ниже каждый бар — это ширина, заданная токеном (например
+                <span class="mono">--space-24</span>).
+              </p>
+
+              <div class="card" style="padding: var(--space-20)">
+                <div class="space-demo">
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-4</span
+                    ><span class="bar w-4"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-8</span
+                    ><span class="bar w-8"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-12</span
+                    ><span class="bar w-12"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-16</span
+                    ><span class="bar w-16"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-20</span
+                    ><span class="bar w-20"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-24</span
+                    ><span class="bar w-24"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-32</span
+                    ><span class="bar w-32"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-40</span
+                    ><span class="bar w-40"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-48</span
+                    ><span class="bar w-48"></span>
+                  </div>
+                  <div class="space-row">
+                    <span class="text-label-sm mono">--space-64</span
+                    ><span class="bar w-64"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid--3" style="margin-top: var(--space-16)">
+                <div
+                  class="card"
+                  style="
+                    padding: var(--space-20);
+                    border-radius: var(--radius-sm);
+                  "
+                >
+                  <div class="text-label">Radius SM</div>
+                  <p class="text-caption mono">--radius-sm</p>
+                </div>
+                <div
+                  class="card"
+                  style="
+                    padding: var(--space-20);
+                    border-radius: var(--radius-md);
+                  "
+                >
+                  <div class="text-label">Radius MD</div>
+                  <p class="text-caption mono">--radius-md</p>
+                </div>
+                <div
+                  class="card"
+                  style="
+                    padding: var(--space-20);
+                    border-radius: var(--radius-xl);
+                  "
+                >
+                  <div class="text-label">Radius XL</div>
+                  <p class="text-caption mono">--radius-xl</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ELEVATION -->
+        <section
+          id="elevation"
+          class="section"
+          aria-labelledby="elevation-title"
+        >
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Elevation</div>
+              <h2 id="elevation-title" style="margin-top: var(--space-8)">
+                Тени и уровни
+              </h2>
+              <p class="text-body-sm text-muted">
+                Демонстрация: <span class="mono">--shadow-1</span>,
+                <span class="mono">--shadow-2</span>,
+                <span class="mono">--shadow-3</span> и inset.
+              </p>
+
+              <div class="grid grid--3" style="margin-top: var(--space-16)">
+                <div class="shadowbox shadow-1">
+                  <div class="text-label">Shadow 1</div>
+                  <div class="text-caption mono">--shadow-1</div>
+                  <p class="text-body-sm text-muted" style="margin: 0">
+                    Карточки / базовый elevation
+                  </p>
+                </div>
+
+                <div class="shadowbox shadow-2">
+                  <div class="text-label">Shadow 2</div>
+                  <div class="text-caption mono">--shadow-2</div>
+                  <p class="text-body-sm text-muted" style="margin: 0">
+                    Dropdown / hover panels
+                  </p>
+                </div>
+
+                <div class="shadowbox shadow-3">
+                  <div class="text-label">Shadow 3</div>
+                  <div class="text-caption mono">--shadow-3</div>
+                  <p class="text-body-sm text-muted" style="margin: 0">
+                    Modal / самый высокий уровень
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="card"
+                style="margin-top: var(--space-16); padding: var(--space-20)"
+              >
+                <div class="text-label">Inset shadow</div>
+                <p class="text-caption" style="margin-bottom: var(--space-12)">
+                  Используется в инпутах
+                </p>
+                <input
+                  class="input"
+                  placeholder="Фокусни меня (видно inset + focus ring)"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- OVERLAY / MODAL -->
+        <section id="modal" class="section" aria-labelledby="modal-title">
+          <div class="container">
+            <div class="panel">
+              <div class="text-overline">Overlay + z-index</div>
+              <h2 id="modal-title" style="margin-top: var(--space-8)">
+                Оверлей и модалка
+              </h2>
+              <p class="text-body-sm text-muted">
+                Модалка сделана без JS, через <span class="mono">:target</span>.
+                Использует <span class="mono">--overlay</span> и
+                <span class="mono">--z-modal</span>.
+              </p>
+
+              <div class="btnrow" style="margin-top: var(--space-16)">
+                <a
+                  class="btn btn--blue"
+                  href="#demo-modal"
+                  role="button"
+                  aria-haspopup="dialog"
+                  >Открыть модалку</a
+                >
+                <a class="btn btn--ghost" href="#content" role="button"
+                  >Закрыть (если открыта)</a
+                >
+              </div>
+
+              <div
+                class="card"
+                style="margin-top: var(--space-16); padding: var(--space-20)"
+              >
+                <div class="text-label">Toast (z-index: --z-toast)</div>
+                <p class="text-body-sm text-muted" style="margin: 0">
+                  Тост закреплён в правом нижнем углу, поверх всего (кроме
+                  модалки).
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="section footer">
+          <div class="container">
+            <div class="text-label">Дальше что правим/добавляем?</div>
+            <p class="text-body-sm" style="margin-top: var(--space-8)">
+              Напиши, чего не хватает: шкала цветов (50–900), состояния ссылок,
+              таблицы, табы, селекты, пагинация, типы кнопок, размеры контролов,
+              тёмная тема. Мы прямо на этой демо-странице будем итеративно
+              улучшать.
+            </p>
+          </div>
+        </footer>
+      </div>
+    </main>
+
+    <!-- Modal (CSS :target) -->
+    <div
+      id="demo-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Демо модальное окно"
+    >
+      <div class="modal__card">
+        <div class="modal__head">
+          <div>
+            <div class="text-label-lg">Модальное окно</div>
+            <div class="text-caption">overlay + shadow-3 + z-index</div>
+          </div>
+          <a class="iconbtn" href="#content" aria-label="Закрыть"> ✕ </a>
+        </div>
+        <div class="modal__body">
+          <p class="text-body">
+            Здесь используются токены: <span class="mono">--overlay</span>,
+            <span class="mono">--z-modal</span>,
+            <span class="mono">--shadow-3</span>, радиусы, border и типографика.
+          </p>
+          <div class="btnrow" style="margin-top: var(--space-16)">
+            <button class="btn btn--primary" type="button">Подтвердить</button>
+            <a class="btn btn--ghost" href="#content" role="button">Отмена</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" role="status" aria-live="polite">
+      <div class="text-label">Toast</div>
+      <div class="text-caption">
+        z-index: <span class="mono">--z-toast</span> • shadow-2 • radius-lg
+      </div>
+    </div>
+  </body>
+</html>

@@ -112,6 +112,7 @@ const { questions } = Astro.props;
   }
 
   .test__question {
+    margin-top: clamp(12px, 1.6vw, 16px);
     display: flex;
     flex-direction: column;
     gap: clamp(16px, 2vw, 20px);
@@ -163,7 +164,7 @@ const { questions } = Astro.props;
 
   .test__question-item label {
     font-size: clamp(14px, 1.5vw, 16px);
-    color: var(--gray);
+    color: var(--black);
     cursor: pointer;
     flex: 1;
     line-height: 1.5;
@@ -399,10 +400,10 @@ const { questions } = Astro.props;
       }
 
       const checkedInputs = Array.from(questionInputs).filter(
-        (input) => input.checked
+        (input) => input.checked,
       );
       const correctAnswers = Array.from(questionInputs).filter(
-        (input) => input.dataset.correct == "true"
+        (input) => input.dataset.correct == "true",
       );
 
       if (checkedInputs.length === 0) {
@@ -436,7 +437,7 @@ const { questions } = Astro.props;
       test.dispatchEvent(
         new CustomEvent("test:next", {
           bubbles: true,
-        })
+        }),
       );
     });
   });

@@ -1,0 +1,195 @@
+---
+/* src/components/partners/ReferHowItWorks.astro */
+
+const steps = [
+  {
+    number: "1",
+    icon: "person_add",
+    title: "Регистрация",
+    desc: "Создайте партнерский аккаунт в несколько кликов. Это займет меньше 2 минут.",
+  },
+  {
+    number: "2",
+    icon: "link",
+    title: "Личная ссылка",
+    desc: "Получите уникальную ссылку для автоматического учета всех приглашений.",
+  },
+  {
+    number: "3",
+    icon: "share",
+    title: "Приглашение",
+    desc: "Рассылайте ссылку в соцсетях, мессенджерах или напрямую друзьям.",
+  },
+  {
+    number: "4",
+    icon: "payments",
+    title: "15% от продаж",
+    desc: "Зарабатывайте 15% за каждого друга, оплатившего любой курс школы.",
+  },
+];
+---
+
+<section class="section partner-how">
+  <div class="container">
+    <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+      Инструкция
+    </div>
+    <h2 class="h2">Как это работает</h2>
+    <p class="partner-how__desc text-center">
+      Простой и понятный процесс позволит вам начать зарабатывать буквально за
+      четыре шага.
+    </p>
+
+    <div class="partner-how__steps">
+      <div class="steps-line"></div>
+      {
+        steps.map((step) => (
+          <div class="step-card">
+            <div class="step-card__num-box">
+              <div class="step-card__circle">
+                <span class="step-card__number">{step.number}</span>
+              </div>
+              <div class="step-card__icon">
+                <span class="material-symbols-outlined">{step.icon}</span>
+              </div>
+            </div>
+            <h4 class="step-card__title">{step.title}</h4>
+            <p class="step-card__text">{step.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-how {
+    padding: clamp(60px, 8vw, 100px) 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .partner-how__desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin-bottom: var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-how__steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-32);
+  }
+
+  /* Линия между шагами только на десктопе */
+  .steps-line {
+    position: absolute;
+    top: 48px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--border);
+    z-index: 1;
+  }
+
+  .step-card {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-card__num-box {
+    position: relative;
+    margin-bottom: var(--space-24);
+  }
+
+  .step-card__circle {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 4px solid #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s var(--easing);
+  }
+
+  .step-card:hover .step-card__circle {
+    border-color: rgba(54, 110, 240, 0.3);
+  }
+
+  .step-card__number {
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--orange);
+  }
+
+  .step-card__icon {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--blue);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(54, 110, 240, 0.3);
+  }
+
+  .step-card__icon .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .step-card__title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--black);
+  }
+
+  .step-card__text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  @media (max-width: 1000px) {
+    .partner-how__steps {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-40) var(--space-24);
+    }
+    .steps-line {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .partner-how__steps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Badge helper */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

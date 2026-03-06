@@ -1,0 +1,165 @@
+---
+/* src/components/partners/ReferStats.astro */
+
+const stats = [
+  {
+    icon: "percent",
+    label: "Комиссия",
+    value: "15%",
+    note: "С каждого друга",
+    color: "var(--orange)",
+  },
+  {
+    icon: "group",
+    label: "Партнеры",
+    value: "5000+",
+    note: "Растущее комьюнити",
+    color: "var(--blue)",
+  },
+  {
+    icon: "calendar_month",
+    label: "Выплаты",
+    value: "Раз в месяц",
+    note: "Гарантированно",
+    color: "var(--green)",
+  },
+  {
+    icon: "headset_mic",
+    label: "Поддержка",
+    value: "24/7",
+    note: "На связи",
+    color: "var(--blue)",
+  },
+];
+---
+
+<section class="section partner-stats">
+  <div class="container">
+    <div class="partner-stats__header">
+      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+        Статистика
+      </div>
+      <h2 class="h2">Факты о программе</h2>
+      <p class="partner-stats__desc">
+        Прозрачность — наш приоритет. Вот почему тысячи партнеров любят работать
+        с нами.
+      </p>
+    </div>
+
+    <div class="partner-stats__grid">
+      {
+        stats.map((stat) => (
+          <article class="card stat-card">
+            <div
+              class="stat-card__icon"
+              style={`background: ${stat.color}15; color: ${stat.color}`}
+            >
+              <span class="material-symbols-outlined">{stat.icon}</span>
+            </div>
+            <div class="stat-card__content">
+              <span class="stat-card__label">{stat.label}</span>
+              <p class="stat-card__value">{stat.value}</p>
+              <span class="stat-card__note">{stat.note}</span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  .partner-stats {
+    background: var(--white);
+    padding: clamp(60px, 8vw, 100px) 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .partner-stats__desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin: 0 0 var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-stats__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-24);
+  }
+
+  .stat-card {
+    padding: var(--space-32);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+    transition:
+      transform 0.3s var(--easing),
+      box-shadow 0.3s var(--easing),
+      border-color 0.3s var(--easing);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--blue);
+    box-shadow: var(--shadow-2);
+  }
+
+  .stat-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat-card__icon .material-symbols-outlined {
+    font-size: 28px;
+  }
+
+  .stat-card__label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+
+  .stat-card__value {
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 800;
+    color: var(--black);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .stat-card__note {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  /* Для отображения бейджа (если нет глобального) */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

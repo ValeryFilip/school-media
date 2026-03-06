@@ -430,3 +430,36 @@ h3,
     font-size: 13px;
   }
 }
+
+/* Decorative Blobs Utility */
+.section-blob-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob--blue { background: var(--blue); }
+.blob--orange { background: var(--orange); }
+.blob--green { background: var(--green); }
+
+.blob--top-left { top: -150px; left: -150px; }
+.blob--top-right { top: -150px; right: -150px; }
+.blob--bottom-left { bottom: -150px; left: -150px; }
+.blob--bottom-right { bottom: -150px; right: -150px; }
+
+.blob--xl { width: 600px; height: 600px; }
+.blob--lg { width: 450px; height: 450px; }
+.blob--md { width: 300px; height: 300px; }
+
+.section-blob-wrapper > .container {
+  position: relative;
+  z-index: 1;
+}

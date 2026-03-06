@@ -1,0 +1,562 @@
+---
+/* src/components/partners/ReferCalculator.astro */
+---
+
+<section class="section partner-calc">
+  <div class="container">
+    <div class="partner-calc__header">
+      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
+        Калькулятор
+      </div>
+      <h2 class="h2">Рассчитайте свой доход</h2>
+      <p class="partner-calc__desc">
+        Узнайте, сколько вы сможете заработать, инвестируя свое время в помощь
+        друзьям.
+      </p>
+    </div>
+
+    <div class="partner-calc__grid">
+      <!-- Настройки -->
+      <div class="partner-calc__settings card">
+        <h4 class="settings-title">Параметры расчета</h4>
+
+        <!-- Слайдер учеников -->
+        <div class="calc-group">
+          <div class="calc-group__labels">
+            <label class="calc-label">Приглашенные ученики</label>
+            <span class="calc-value" id="studentsValue">5</span>
+          </div>
+          <input
+            type="range"
+            id="studentsRange"
+            min="1"
+            max="50"
+            value="5"
+            class="calc-range"
+          />
+          <div class="calc-range__hints">
+            <span>1 ученик</span>
+            <span>50 учеников</span>
+          </div>
+        </div>
+
+        <!-- Оплата на Stepik -->
+        <div class="calc-group">
+          <label class="calc-label">Сумма оплат на Stepik (₽)</label>
+          <div class="calc-input-wrapper">
+            <span class="material-symbols-outlined input-icon"
+              >currency_ruble</span
+            >
+            <input
+              type="number"
+              id="stepikRevenue"
+              value="10000"
+              min="0"
+              step="1000"
+              class="calc-input"
+            />
+          </div>
+          <p class="calc-input__hint">
+            Вы получаете 15% от любой суммы оплат на Stepik.
+          </p>
+        </div>
+
+        <!-- Сетка тарифов -->
+        <div class="calc-rates">
+          <div class="rate-box">
+            <span class="rate-range">1-4</span>
+            <span class="rate-label">ученика</span>
+            <span class="rate-price">3 000 ₽ <small>/шт</small></span>
+          </div>
+          <div class="rate-box active">
+            <span class="rate-range">5-9</span>
+            <span class="rate-label">учеников</span>
+            <span class="rate-price">4 000 ₽ <small>/шт</small></span>
+          </div>
+          <div class="rate-box premium">
+            <span class="rate-range">10+</span>
+            <span class="rate-label">учеников</span>
+            <span class="rate-price">5 000 ₽ <small>/шт</small></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Результат -->
+      <div class="partner-calc__result">
+        <div class="result-board card">
+          <h4 class="result-board__title">Ваш потенциальный доход</h4>
+
+          <div class="result-list">
+            <div class="result-item">
+              <div class="result-item__info">
+                <div class="result-item__icon">
+                  <span class="material-symbols-outlined">group</span>
+                </div>
+                <div>
+                  <p class="result-item__label">За учеников</p>
+                  <p class="result-item__subtext">
+                    <span id="calcStudentsCount">5</span> чел. × <span
+                      id="calcStudentRate">4 000</span
+                    > ₽
+                  </p>
+                </div>
+              </div>
+              <p class="result-item__value" id="calcStudentsTotal">20 000 ₽</p>
+            </div>
+
+            <div class="result-item">
+              <div class="result-item__info">
+                <div class="result-item__icon">
+                  <span class="material-symbols-outlined">school</span>
+                </div>
+                <div>
+                  <p class="result-item__label">За Stepik (15%)</p>
+                  <p class="result-item__subtext">
+                    от <span id="calcStepikBase">10 000</span> ₽
+                  </p>
+                </div>
+              </div>
+              <p class="result-item__value" id="calcStepikTotal">1 500 ₽</p>
+            </div>
+          </div>
+
+          <div class="result-footer">
+            <span class="grand-label">Итоговая сумма</span>
+            <p class="grand-total" id="calcGrandTotal">21 500 ₽</p>
+            <a href="#apply" class="btn btn--blue" style="width: 100%"
+              >Начать зарабатывать</a
+            >
+          </div>
+
+          <!-- Декор -->
+          <div class="result-decor blob-1"></div>
+          <div class="result-decor blob-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initCalculator() {
+    const studentsRange = document.getElementById(
+      "studentsRange",
+    ) as HTMLInputElement | null;
+    const studentsValueDisplay = document.getElementById(
+      "studentsValue",
+    ) as HTMLElement | null;
+    const stepikRevenueInput = document.getElementById(
+      "stepikRevenue",
+    ) as HTMLInputElement | null;
+    const calcStudentsCount = document.getElementById(
+      "calcStudentsCount",
+    ) as HTMLElement | null;
+    const calcStudentRate = document.getElementById(
+      "calcStudentRate",
+    ) as HTMLElement | null;
+    const calcStudentsTotal = document.getElementById(
+      "calcStudentsTotal",
+    ) as HTMLElement | null;
+    const calcStepikBase = document.getElementById(
+      "calcStepikBase",
+    ) as HTMLElement | null;
+    const calcStepikTotal = document.getElementById(
+      "calcStepikTotal",
+    ) as HTMLElement | null;
+    const calcGrandTotal = document.getElementById(
+      "calcGrandTotal",
+    ) as HTMLElement | null;
+    const rateBoxes = document.querySelectorAll(".rate-box");
+
+    if (!studentsRange || !stepikRevenueInput) return;
+
+    const formatCurrency = (num: number) => {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
+
+    const calculate = () => {
+      const students = parseInt(studentsRange.value) || 0;
+      const stepikTotal = parseInt(stepikRevenueInput.value) || 0;
+
+      let rate = 3000;
+      let activeIdx = 0;
+      if (students >= 5 && students <= 9) {
+        rate = 4000;
+        activeIdx = 1;
+      } else if (students >= 10) {
+        rate = 5000;
+        activeIdx = 2;
+      }
+
+      // Обновляем визуальное состояние плашек тарифов
+      rateBoxes.forEach((box, idx) => {
+        if (idx === activeIdx) (box as HTMLElement).classList.add("active");
+        else (box as HTMLElement).classList.remove("active");
+      });
+
+      const studentsEarnings = students * rate;
+      const stepikEarnings = Math.round(stepikTotal * 0.15);
+      const totalEarnings = studentsEarnings + stepikEarnings;
+
+      // Update DOM with safe checks
+      if (studentsValueDisplay)
+        studentsValueDisplay.textContent = students.toString();
+      if (calcStudentsCount)
+        calcStudentsCount.textContent = students.toString();
+      if (calcStudentRate) calcStudentRate.textContent = formatCurrency(rate);
+      if (calcStudentsTotal)
+        calcStudentsTotal.textContent = formatCurrency(studentsEarnings) + " ₽";
+      if (calcStepikBase)
+        calcStepikBase.textContent = formatCurrency(stepikTotal);
+      if (calcStepikTotal)
+        calcStepikTotal.textContent = formatCurrency(stepikEarnings) + " ₽";
+      if (calcGrandTotal)
+        calcGrandTotal.textContent = formatCurrency(totalEarnings) + " ₽";
+    };
+
+    studentsRange.addEventListener("input", calculate);
+    stepikRevenueInput.addEventListener("input", calculate);
+    calculate();
+  }
+
+  // Запуск при загрузке и при навигации (для SPA-подобного поведения Astro если включено)
+  initCalculator();
+  document.addEventListener("astro:after-swap", initCalculator);
+</script>
+
+<style>
+  .partner-calc {
+    padding: 0;
+  }
+
+  .partner-calc__desc {
+    font-size: var(--text);
+    color: var(--gray);
+    margin-bottom: var(--space-50);
+    max-width: 60ch;
+  }
+
+  .partner-calc__grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--space-32);
+    align-items: start;
+  }
+
+  .partner-calc__settings {
+    padding: var(--space-40);
+  }
+
+  .settings-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: var(--space-32);
+    color: var(--black);
+  }
+
+  .calc-group {
+    margin-bottom: var(--space-32);
+  }
+
+  .calc-group__labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .calc-label {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--black);
+  }
+
+  .calc-value {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--blue);
+  }
+
+  .calc-range {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .calc-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--blue);
+    border: 4px solid var(--white);
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .calc-range__hints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  .calc-input-wrapper {
+    position: relative;
+    margin-top: 12px;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+    font-size: 20px;
+  }
+
+  .calc-input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    outline: none;
+  }
+
+  .calc-input:focus {
+    border-color: var(--blue);
+    background: var(--white);
+  }
+
+  .calc-input__hint {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 8px;
+  }
+
+  /* Тарифы */
+  .calc-rates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: var(--space-40);
+  }
+
+  .rate-box {
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s;
+    background: var(--white);
+  }
+
+  .rate-box.active {
+    border-color: var(--blue);
+    background: rgba(54, 110, 240, 0.05);
+  }
+
+  .rate-box.premium.active {
+    border-color: var(--orange);
+    background: rgba(240, 153, 54, 0.05);
+  }
+
+  .rate-range {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .active .rate-range {
+    background: var(--blue);
+    color: var(--white);
+  }
+  .active.premium .rate-range {
+    background: var(--orange);
+    color: var(--white);
+  }
+
+  .rate-label {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+  .rate-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--black);
+  }
+  .rate-price small {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray);
+  }
+
+  /* Результат */
+  .partner-calc__result {
+    position: sticky;
+    top: 100px;
+  }
+
+  .result-board {
+    background: var(--black);
+    color: var(--white);
+    padding: var(--space-40);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .result-board__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: var(--space-32);
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .result-list {
+    margin-bottom: var(--space-40);
+    position: relative;
+    z-index: 2;
+  }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-24);
+  }
+
+  .result-item__info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .result-item__icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-item__label {
+    font-size: 14px;
+    color: #94a3b8;
+    margin: 0;
+  }
+  .result-item__subtext {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin: 0;
+  }
+  .result-item__value {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .result-footer {
+    position: relative;
+    z-index: 2;
+    padding-top: var(--space-32);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .grand-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .grand-total {
+    font-size: clamp(40px, 4vw, 56px);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0 0 var(--space-32);
+  }
+
+  /* Декор */
+  .result-decor {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.2;
+    z-index: 1;
+  }
+
+  .blob-1 {
+    width: 200px;
+    height: 200px;
+    background: var(--blue);
+    top: -50px;
+    right: -50px;
+  }
+  .blob-2 {
+    width: 250px;
+    height: 250px;
+    background: var(--orange);
+    bottom: -100px;
+    left: -100px;
+  }
+
+  @media (max-width: 1000px) {
+    .partner-calc__grid {
+      grid-template-columns: 1fr;
+    }
+    .partner-calc__result {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .partner-calc__settings {
+      padding: var(--space-24);
+    }
+    .calc-rates {
+      grid-template-columns: 1fr;
+    }
+    .result-board {
+      padding: var(--space-24);
+    }
+  }
+
+  /* Badge helper */
+  .partner-hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(54, 110, 240, 0.1);
+    color: var(--blue);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
