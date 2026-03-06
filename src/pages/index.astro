@@ -155,21 +155,21 @@ const adSocialProps = {
     {
       href: "https://www.youtube.com/@chemistry_exam",
       label: "YouTube",
-      icon: "images/technical/youtube.webp",
+      icon: "/images/technical/youtube.webp",
       width: 36,
       height: 36,
     },
     {
       href: "https://t.me/+KznfEhtzkeNlZjIy",
       label: "Telegram",
-      icon: "images/technical/telegram.webp",
+      icon: "/images/technical/telegram.webp",
       width: 36,
       height: 36,
     },
     {
       href: "https://vk.com/chemistry_exam",
       label: "ВКонтакте",
-      icon: "images/technical/vk.webp",
+      icon: "/images/technical/vk.webp",
       width: 36,
       height: 36,
     },
@@ -180,42 +180,6 @@ const adSocialProps = {
     height: 240,
     alt: "Иллюстрация соцсетей",
   },
-};
-
-/* 5) Автор */
-const authorProps = {
-  id: "author",
-  heading: "Автор курса",
-  name: "Филипенко Валерий",
-  facts: [
-    "Преподаю уже 9 лет. С 2014 года",
-    "Помог подготовиться к ЕГЭ по химии более 1500 ученикам",
-    "Профессиональный химик с красным дипломом. Специалист по ракетным топливам",
-    "Сам несколько раз сдал ЕГЭ по химии на 100 баллов",
-    "Эксперт ФИПИ по подготовке к ЕГЭ и ОГЭ по химии",
-    "Каждый второй сдает ЕГЭ на 80+ и 95% ОГЭ на оценку 5",
-  ],
-  socials: [
-    {
-      href: "https://t.me/+KznfEhtzkeNlZjIy",
-      label: "Telegram",
-      icon: "https://i.ibb.co/B2sgbb2r/003-telegram.png",
-    },
-    {
-      href: "https://www.youtube.com/@chemistry_exam",
-      label: "YouTube",
-      icon: "https://i.ibb.co/N6xJKVrh/002-youtube.png",
-    },
-    {
-      href: "https://vk.com/chemistry_exam",
-      label: "ВКонтакте",
-      icon: "https://i.ibb.co/4wPdvNQp/001-vk.png",
-    },
-  ],
-  photoSrc: "/images/1234.webp",
-  photoAlt: "Валерий Филипенко",
-  moreHref: "https://t.me/+KznfEhtzkeNlZjIy",
-  moreText: "Подробнее об авторе →",
 };
 
 /* 7) Самостоятельные курсы (карточки) */
@@ -606,7 +570,7 @@ const courseCardsnewProps = {
   </section>
 
   <section id="author">
-    <AuthorSection {...authorProps} />
+    <AuthorSection />
   </section>
 
   <section id="ad-social">

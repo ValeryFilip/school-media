@@ -8,12 +8,16 @@ interface Social {
   target?: string;
   rel?: string;
 }
+interface FactCard {
+  number: string;
+  text: string;
+}
 interface Props {
   id?: string;
   className?: string;
   heading?: string;
   name?: string;
-  facts?: string[];
+  facts?: FactCard[];
   socials?: Social[];
   photoSrc?: string;
   photoAlt?: string;
@@ -29,32 +33,42 @@ const {
   heading = "Автор курса",
   name = "Филипенко Валерий",
   facts = [
-    "Преподаю уже 9 лет. С 2014 года",
-    "Помог подготовиться к ЕГЭ по химии более 1500 ученикам",
-    "Профессиональный химик с красным дипломом. Специалист по ракетным топливам",
-    "Сам несколько раз сдал ЕГЭ по химии на 100 баллов",
-    "Эксперт ФИПИ по подготовке к ЕГЭ и ОГЭ по химии",
-    "Каждый второй сдает ЕГЭ на 80+ и 95% ОГЭ на оценку 5",
+    { number: "9 лет", text: "Преподаю химию с 2016 года" },
+
+    { number: "100", text: " баллов - мой результат на ЕГЭ по химии" },
+    {
+      number: "2000+",
+      text: "учеников подготовил к ЕГЭ по химии за все время",
+    },
+    {
+      number: "80+",
+      text: "баллов у каждого второго на курсе и 95% сдают ОГЭ на оценку 5",
+    },
+    {
+      number: "7",
+      text: "авторских курсов для подготовки к ЕГЭ по химии на stepik",
+    },
+    { number: "2", text: "человека сдали ЕГЭ на 100 баллов за 2025 год" },
   ],
   socials = [
     {
       href: "https://t.me/+KznfEhtzkeNlZjIy",
       label: "Telegram",
-      icon: "/images/technical/telegram.webp",
+      icon: "https://i.ibb.co/B2sgbb2r/003-telegram.png",
       target: "_blank",
       rel: "noopener",
     },
     {
       href: "https://www.youtube.com/@chemistry_exam",
       label: "YouTube",
-      icon: "/images/technical/youtube.webp",
+      icon: "https://i.ibb.co/N6xJKVrh/002-youtube.png",
       target: "_blank",
       rel: "noopener",
     },
     {
-      href: "https://www.vk.com/chemistry_exam",
+      href: "https://vk.com/chemistry_exam",
       label: "ВКонтакте",
-      icon: "/images/technical/vk.webp",
+      icon: "https://i.ibb.co/4wPdvNQp/001-vk.png",
       target: "_blank",
       rel: "noopener",
     },
@@ -72,7 +86,7 @@ const {
   class={`section author ${className}`.trim()}
   aria-labelledby={`${id}-title`}
 >
-  <div class="author-inner">
+  <div class="author-inner container">
     <h2 id={`${id}-title`} class="author__heading">{heading}</h2>
 
     <div class="author__shell">
@@ -82,8 +96,16 @@ const {
           <span class="author__name--hl">{name}</span>
         </h3>
 
-        <ul class="author__facts">
-          {facts.map((f) => <li class="card author__fact">{f}</li>)}
+        <ul class="author__facts" role="list">
+          {
+            facts.map((f) => (
+              <li class="author__fact">
+                <span class="author__fact-number">{f.number}</span>
+                <span class="author__fact-accent" aria-hidden="true" />
+                <p class="author__fact-text">{f.text}</p>
+              </li>
+            ))
+          }
         </ul>
 
         <nav class="author__socials" aria-label="Социальные сети автора">
@@ -131,30 +153,7 @@ const {
 
   <style>
     /* ===== Контейнер как у оффера ===== */
-    .author {}
-    .author-inner {
-      max-width: var(--container);
-      margin: 0 auto;
-      padding: 0 var(--pad-desktop);
-      box-sizing: border-box;
-    }
-    @media (max-width: 1100px) {
-      .author-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
-    }
-    @media (max-width: 600px) {
-      .author-inner {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: 0 var(--pad-mobile);
-      }
+    .author {
     }
 
     /* ===== Стили компонента ===== */
@@ -164,10 +163,8 @@ const {
       text-wrap: balance;
     }
 
-    /* Сетка: левая колонка (факты) занимает основную ширину, правая (фото) — фиксированный диапазон.
-       minmax(0, 0.8fr) у правой колонки не даёт фото растягивать её по min-content и оставлять пустой зазор. */
     .author {
-      --author-cols: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      --author-cols: minmax(0, 1.5fr) minmax(0, 0.8fr);
     }
     .author__shell {
       display: grid;
@@ -202,21 +199,34 @@ const {
       margin: 0 0 var(--space-16);
     }
     .author__fact {
-      padding: 22px;
+      padding: var(--space-20);
       border-radius: var(--radius-24);
-      border-color: var(--border);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow-1);
       background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+    .author__fact-number {
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.1;
       color: var(--black);
+      letter-spacing: -0.02em;
+    }
+    .author__fact-accent {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--blue);
+    }
+    .author__fact-text {
+      margin: 0;
       font-size: var(--text);
       font-weight: 500;
-      line-height: 1.5;
-    }
-    .author__facts li:last-child {
-      background: var(--blue);
-      color: var(--white);
-      border-color: var(--blue);
-      box-shadow: none;
+      line-height: 1.45;
+      color: var(--black);
     }
 
     .author__socials {

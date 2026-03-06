@@ -25,32 +25,32 @@ const {
     {
       href: "https://www.youtube.com/",
       label: "YouTube",
-      icon: "images/technical/youtube.webp",
+      icon: "/images/technical/youtube.webp",
       width: 36,
       height: 36,
     },
     {
       href: "https://t.me/",
       label: "Telegram",
-      icon: "images/technical/telegram.webp",
+      icon: "/images/technical/telegram.webp",
       width: 36,
       height: 36,
     },
     {
       href: "https://vk.com/",
       label: "ВКонтакте",
-      icon: "images/technical/vk.webp",
+      icon: "/images/technical/vk.webp",
       width: 36,
       height: 36,
     },
   ],
-  image = {
-    src: "images/mainpage/social.webp",
-    width: 420,
-    height: 280,
-    alt: "Иллюстрация соцсетей",
-  },
 } = Astro.props as Props;
+
+const floatClasses = [
+  "ad-social__tile--float",
+  "ad-social__tile--float-slow",
+  "ad-social__tile--float-fast",
+];
 ---
 
 <div class="section ad-social" aria-labelledby={`${id}-title`}>
@@ -58,59 +58,91 @@ const {
     <div class="ad-social__card">
       <header class="ad-social__text">
         <h2 id={`${id}-title`} class="ad-social__title">{title}</h2>
-        <ul class="ad-social__list" aria-label="Наши социальные сети">
+      </header>
+
+      <div class="ad-social__scene-wrap">
+        <div class="ad-social__scene">
+          <div
+            class="ad-social__bubble ad-social__bubble--smile ad-social__bubble--smile-1"
+            aria-hidden="true"
+          >
+            <span class="ad-social__bubble-text">тапни иконку&nbsp✨</span>
+          </div>
+          <div
+            class="ad-social__bubble ad-social__bubble--heart ad-social__bubble--heart-left"
+            aria-hidden="true"
+          >
+            ❤
+          </div>
+          <div
+            class="ad-social__bubble ad-social__bubble--heart ad-social__bubble--heart-right"
+            aria-hidden="true"
+          >
+            ❤
+          </div>
+          <div
+            class="ad-social__bubble ad-social__bubble--fire ad-social__bubble--fire-1"
+            aria-hidden="true"
+          >
+            🔥
+          </div>
+
           {
-            socials.map((s) => (
-              <li class="ad-social__item">
+            /* Порядок: 0=слева, 1=справа круг (TG), 2=центр квадрат (VK). YT→0, TG→1, VK→2 */
+            socials.map((s, i) => {
+              const pos = [0, 1, 2][i] ?? i;
+              return (
                 <a
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
+                  class={`ad-social__tile ad-social__tile--${pos} ${floatClasses[pos] ?? floatClasses[0]}`}
                 >
-                  <img
-                    src={s.icon}
-                    width={s.width ?? 36}
-                    height={s.height ?? 36}
-                    alt={s.label}
-                  />
+                  <span class="ad-social__tile-icon-wrap">
+                    <img
+                      src={s.icon}
+                      width={s.width ?? 96}
+                      height={s.height ?? 96}
+                      alt=""
+                      class="ad-social__tile-icon"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
                 </a>
-              </li>
-            ))
+              );
+            })
           }
-        </ul>
-      </header>
-
-      <figure class="ad-social__figure">
-        <img
-          src={image.src}
-          width={image.width ?? 420}
-          height={image.height ?? 280}
-          alt={image.alt}
-          loading="lazy"
-          decoding="async"
-        />
-      </figure>
+        </div>
+      </div>
     </div>
   </div>
 
   <style>
     .ad-social__card {
+      position: relative;
       display: grid;
       grid-template-columns: 1fr 0.7fr;
-      gap: var(--space-32);
+
       align-items: center;
       background: var(--blue);
       color: var(--white);
       border-radius: var(--radius-24);
       border: 1px solid var(--border);
       box-shadow: var(--shadow-1);
-      padding: var(--space-32);
+      padding: 0 var(--space-32);
     }
     .ad-social__text {
       display: grid;
       gap: var(--space-24);
-      max-width: 720px;
+    }
+
+    .ad-social__bubble-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--white);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     .ad-social__title {
       font-size: var(--h2);
@@ -119,49 +151,252 @@ const {
       color: var(--white);
     }
 
-    .ad-social__list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-24);
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    /* 3D сцена вместо картинки — вписывается в контейнер */
+    .ad-social__scene-wrap {
+      overflow: hidden;
+      max-width: 100%;
+      width: 100%;
+      min-width: 0;
+      justify-self: end;
+      aspect-ratio: 572 / 477;
     }
-    .ad-social__item a {
-      display: inline-flex;
+    .ad-social__scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .ad-social__scene::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 100%;
+      background: radial-gradient(
+        ellipse 50% 50% at 50% 50%,
+        rgb(79, 81, 239) 50%,
+        transparent 80%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ad-social__tile {
+      position: absolute;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: var(--white);
+      transform-style: preserve-3d;
       transition:
-        transform 0.15s var(--easing),
-        background 0.2s var(--easing);
-      overflow: hidden;
+        transform 180ms ease,
+        box-shadow 180ms ease;
+      box-shadow:
+        0 22px 34px rgba(17, 31, 80, 0.22),
+        0 10px 18px rgba(17, 31, 80, 0.12),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -10px 18px rgba(0, 0, 0, 0.1);
+      isolation: isolate;
     }
-    .ad-social__item a:hover {
-      transform: translateY(-2px);
-      background: #ededed;
+    .ad-social__tile:hover {
+      transform: translateY(-4px) scale(1.02) rotate(var(--ad-social-r, 0deg));
     }
-    .ad-social__item img {
-      width: 36px;
-      height: 36px;
+    .ad-social__tile::before {
+      content: "";
+      position: absolute;
+      inset: 8% 10% auto 10%;
+      height: 34%;
+      border-radius: 999px;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.52) 0%,
+        rgba(255, 255, 255, 0.2) 42%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      filter: blur(2px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .ad-social__tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        radial-gradient(
+          circle at 28% 22%,
+          rgba(255, 255, 255, 0.28),
+          transparent 26%
+        ),
+        radial-gradient(circle at 65% 78%, rgba(0, 0, 0, 0.08), transparent 30%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .ad-social__tile-icon-wrap {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.06));
+      width: 100%;
+      height: 100%;
+    }
+    .ad-social__tile-icon {
+      width: 55%;
+      height: 55%;
       object-fit: contain;
       display: block;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+    }
+    .ad-social__tile--0 {
+      left: 12.24%;
+      top: 25.16%;
+      width: 34.27%;
+      height: 32.29%;
+      border-radius: 19%;
+      background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+      transform: rotate(8deg);
+      z-index: 1;
+    }
+    .ad-social__tile--1 {
+      left: 62.94%;
+      top: 28.51%;
+      width: 26.22%;
+      height: 31.45%;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+      z-index: 3;
+    }
+    .ad-social__tile--2 {
+      left: 36.71%;
+      top: 32.29%;
+      width: 36.36%;
+      height: 43.61%;
+      border-radius: 20%;
+      background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+      transform: rotate(14deg);
+      z-index: 2;
+    }
+    .ad-social__tile--float {
+      animation: ad-social-float 4.2s ease-in-out infinite;
+      will-change: transform;
+    }
+    .ad-social__tile--float-slow {
+      animation: ad-social-float 5.6s ease-in-out infinite;
+      will-change: transform;
+    }
+    .ad-social__tile--float-fast {
+      animation: ad-social-float 3.6s ease-in-out infinite;
+      will-change: transform;
+    }
+    .ad-social__tile--0.ad-social__tile--float {
+      --ad-social-r: 8deg;
+    }
+    .ad-social__tile--1.ad-social__tile--float-slow {
+      --ad-social-r: 0deg;
+    }
+    .ad-social__tile--2.ad-social__tile--float-fast {
+      --ad-social-r: 14deg;
+    }
+    @keyframes ad-social-float {
+      0%,
+      100% {
+        transform: translateY(0) rotate(var(--ad-social-r, 0deg));
+      }
+      50% {
+        transform: translateY(-10px) rotate(var(--ad-social-r, 0deg));
+      }
+    }
+    .ad-social__tile:hover {
+      animation: none;
     }
 
-    .ad-social__figure {
-      margin: 0;
-      justify-self: end;
-      max-width: 100%;
+    .ad-social__bubble {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      pointer-events: none;
     }
-    .ad-social__figure img {
-      display: block;
-      height: auto;
-      object-fit: contain;
+    .ad-social__bubble--smile {
+      width: 15.73%;
+      height: 18.87%;
+      font-size: min(14vw, 54px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.12));
+      z-index: 4;
+      animation: ad-social-bob 4.5s ease-in-out infinite;
+    }
+    .ad-social__bubble--smile-1 {
+      left: 52.45%;
+      top: 5.87%;
     }
 
+    .ad-social__bubble--fire {
+      filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.15));
+      z-index: 4;
+      animation: ad-social-bob 3.5s ease-in-out infinite;
+    }
+    .ad-social__bubble--fire-1 {
+      left: 18%;
+      top: 12%;
+      font-size: min(9vw, 42px);
+      animation-delay: 0.3s;
+    }
+
+    .ad-social__bubble--heart {
+      color: #ff5161;
+      text-shadow: 0 8px 14px rgba(0, 0, 0, 0.12);
+      z-index: 4;
+    }
+    .ad-social__bubble--heart-left {
+      left: 20.28%;
+      top: 70.02%;
+      font-size: min(9vw, 44px);
+      transform: rotate(-16deg);
+      animation: ad-social-pulse-left 2.8s ease-in-out infinite;
+    }
+    .ad-social__bubble--heart-right {
+      left: 79.37%;
+      top: 72.75%;
+      font-size: min(7.5vw, 36px);
+      transform: rotate(10deg);
+      animation: ad-social-pulse-right 2.8s ease-in-out infinite 0.5s;
+    }
+    @keyframes ad-social-bob {
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-8px) rotate(2deg);
+      }
+    }
+    @keyframes ad-social-pulse-left {
+      0%,
+      100% {
+        transform: scale(1) rotate(-16deg);
+      }
+      50% {
+        transform: scale(1.08) rotate(-16deg);
+      }
+    }
+    @keyframes ad-social-pulse-right {
+      0%,
+      100% {
+        transform: scale(1) rotate(10deg);
+      }
+      50% {
+        transform: scale(1.08) rotate(10deg);
+      }
+    }
     @media (max-width: 1100px) {
       .ad-social__card {
         grid-template-columns: 1fr;
@@ -174,11 +409,12 @@ const {
         max-width: 760px;
         margin-inline: auto;
       }
-      .ad-social__list {
+      .ad-social__right {
         justify-content: center;
       }
-      .ad-social__figure {
-        display: none !important;
+      .ad-social__scene-wrap {
+        margin-inline: auto;
+        max-width: 380px;
       }
     }
     @media (max-width: 600px) {
