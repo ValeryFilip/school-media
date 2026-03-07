@@ -784,7 +784,6 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
   <section id="faq" role="region" aria-labelledby="faq-title">
     <Faq {...faqProps} />
   </section>
-  <div {...faqProps.singleOpen ? {} : { "data-faq-singleopen": "0" }}></div>
 
   {/* Попап для оплаты */}
   <PaymentPopup

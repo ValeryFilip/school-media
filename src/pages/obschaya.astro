@@ -748,7 +748,6 @@ const faqJsonLd = buildFAQJsonLd(faqProps.items);
   {/* Оболочка для FAQ (если нужно, чтобы открывался только один пункт) */}
   <section id="faq" role="region" aria-labelledby="faq-title">
     <Faq {...faqProps} />
-    <div data-faq-singleopen={faqProps.singleOpen ? "1" : "0"}></div>
   </section>
   {/* Попап для оплаты */}
   <PaymentPopup

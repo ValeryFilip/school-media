@@ -29,10 +29,10 @@ const indexData = entries.map((p) => ({
 }));
 
 const categories = Array.from(
-  new Set(indexData.map((p) => p.category).filter(Boolean))
+  new Set(indexData.map((p) => p.category).filter(Boolean)),
 ).sort((a, b) => a.localeCompare(b, "ru"));
 const tags = Array.from(
-  new Set(indexData.flatMap((p) => p.tags).filter(Boolean))
+  new Set(indexData.flatMap((p) => p.tags).filter(Boolean)),
 ).sort((a, b) => a.localeCompare(b, "ru"));
 
 // SEO + крошки (приоритет — Astro.site из astro.config)
@@ -55,7 +55,7 @@ const breadcrumbsLd = {
 const BATCH = 12; // 4×3
 const currentPageServer = Math.max(
   1,
-  Number(Astro.url.searchParams.get("page") || "1")
+  Number(Astro.url.searchParams.get("page") || "1"),
 );
 ---
 
@@ -169,7 +169,7 @@ const currentPageServer = Math.max(
   <script is:inline>
     (function () {
       const posts = JSON.parse(
-        document.getElementById("__DATA__").textContent || "[]"
+        document.getElementById("__DATA__").textContent || "[]",
       );
 
       const sortDate = document.getElementById("sort-date");
@@ -200,7 +200,7 @@ const currentPageServer = Math.max(
                 norm(p.description).includes(q) ||
                 norm(p.category).includes(q) ||
                 (Array.isArray(p.tags) &&
-                  p.tags.some((t) => norm(t).includes(q))))
+                  p.tags.some((t) => norm(t).includes(q)))),
           )
           .sort((a, b) => {
             const da = new Date(a.date).getTime() || 0;
@@ -229,7 +229,7 @@ const currentPageServer = Math.max(
         const totalPages = Math.max(1, Math.ceil(filtered.length / BATCH));
         const currentPage = Math.max(
           1,
-          Math.ceil((grid.children.length || 1) / BATCH)
+          Math.ceil((grid.children.length || 1) / BATCH),
         );
         const path = location.pathname;
 
@@ -267,7 +267,7 @@ const currentPageServer = Math.max(
         });
       }
       [sortDate, filterCategory, filterTag].forEach((el) =>
-        el.addEventListener("change", applyFilters)
+        el.addEventListener("change", applyFilters),
       );
       searchInput.addEventListener("input", applyFilters);
       applyFilters();
@@ -275,7 +275,7 @@ const currentPageServer = Math.max(
       // если есть ?page=N — отрисуем соответствующую страницу сразу
       (function initFromQuery() {
         const n = Number(
-          new URL(location.href).searchParams.get("page") || "1"
+          new URL(location.href).searchParams.get("page") || "1",
         );
         if (n > 1) {
           grid.innerHTML = "";
@@ -355,10 +355,6 @@ const currentPageServer = Math.max(
     line-height: 1.2;
     color: var(--black);
     letter-spacing: 0.2px;
-  }
-
-  .articles-section {
-    margin: 0 0 60px;
   }
 
   .controls {

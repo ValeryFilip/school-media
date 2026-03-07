@@ -54,7 +54,8 @@ async function main() {
         !/\/yandex_[a-f0-9]+$/i.test(u) &&
         !/\/academy\/tags\//.test(u) &&
         !/\/thank-you\/?$/i.test(u) &&
-        !/\/academy\/search\/?$/i.test(u)
+        !/\/academy\/search\/?$/i.test(u) &&
+        !/\/referal-example\/?$/i.test(u)
     );
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
