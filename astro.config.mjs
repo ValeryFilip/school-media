@@ -11,6 +11,7 @@ const SITE = 'https://egehim.ru';
 export default defineConfig({
     site: SITE,
     output: 'static',
+    compressHTML: true,
 
     build: {
         inlineStylesheets: 'always',
