@@ -10,7 +10,7 @@ interface Props {
   ctaHref?: string;
   /** UTM source по странице (main-page, media, allcourses, …) для кнопок попапа */
   pageUtmSource?: string;
-  /** Фиксировать меню поверх контента (для главной) */
+  /** Фиксировать меню поверх контента (для главной12) */
   fixed?: boolean;
 }
 
@@ -41,7 +41,10 @@ if (context === "media") {
   } catch (error) {
     console.warn("Could not load categories:", error);
     mediaCategories = [
-      { label: "Задания из ЕГЭ по химии", href: "/academy/zadaniya-iz-ege-po-himii" },
+      {
+        label: "Задания из ЕГЭ по химии",
+        href: "/academy/zadaniya-iz-ege-po-himii",
+      },
       { label: "Школьникам", href: "/academy/shkolnikam" },
     ];
   }
