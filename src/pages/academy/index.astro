@@ -95,8 +95,7 @@ const section10Vertical = section10Posts.slice(0, 6);
 
 // SEO (приоритет — Astro.site из astro.config)
 const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageTitle =
-  "Академия ЕГЭХИМ — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам";
+const pageTitle = "Академия ЕГЭХИМ";
 const pageDesc =
   "Академия ЕГЭХИМ — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам.";
 
@@ -143,6 +142,7 @@ const leadProps = {
   url={`${site}/academy/`}
   seoType="website"
   showBreadcrumbs={false}
+  addSiteSuffix={false}
 >
   <SideCategoryScroller categories={categories} />
 

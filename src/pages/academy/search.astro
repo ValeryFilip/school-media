@@ -25,6 +25,7 @@ const indexData = posts.map((p) => ({
   index={false}
   follow={false}
   title="Поиск по сайту"
+  siteName="Академия ЕГЭХИМ"
   description="Поиск статей и материалов по химии, ЕГЭ, ОГЭ и подготовке к экзаменам на egehim.ru."
 >
   <div class="search-wrap" role="region" aria-labelledby="search-page-title">
@@ -41,7 +42,9 @@ const indexData = posts.map((p) => ({
         class="search-input"
         aria-label="Введите запрос для поиска по сайту"
       />
-      <button type="submit" class="visually-hidden" aria-label="Выполнить поиск">Искать</button>
+      <button type="submit" class="visually-hidden" aria-label="Выполнить поиск"
+        >Искать</button
+      >
     </form>
 
     <!-- Шапка колонок -->
@@ -73,7 +76,7 @@ const indexData = posts.map((p) => ({
   <script type="module">
     // 2) Парсим индекс
     const posts = JSON.parse(
-      document.getElementById("__SEARCH_DATA__").textContent
+      document.getElementById("__SEARCH_DATA__").textContent,
     );
 
     const input = document.getElementById("search-input");
@@ -156,7 +159,7 @@ const indexData = posts.map((p) => ({
           (p.author || "").toLowerCase().includes(q) ||
           dateStr.includes(q) ||
           (Array.isArray(p.tags) ? p.tags : []).some((t) =>
-            (t || "").toLowerCase().includes(q)
+            (t || "").toLowerCase().includes(q),
           )
         );
       });

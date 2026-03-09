@@ -15,7 +15,7 @@ export async function getStaticPaths() {
   });
   const seen = new Set<string>();
   const tags = posts.flatMap((p) =>
-    Array.isArray(p.data.tags) ? p.data.tags : []
+    Array.isArray(p.data.tags) ? p.data.tags : [],
   );
   const unique = Array.from(new Set(tags.filter(Boolean).map(String)));
 
@@ -52,10 +52,10 @@ const posts = all
   .filter(
     (p) =>
       Array.isArray(p.data.tags) &&
-      p.data.tags.some((t) => slugify(String(t)) === slug)
+      p.data.tags.some((t) => slugify(String(t)) === slug),
   )
   .sort(
-    (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime()
+    (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime(),
   );
 
 // Левая колонка - основные статьи
@@ -69,12 +69,12 @@ const rightCards = shuffled.slice(0, 5);
 const PER_PAGE = 6;
 const currentPage = Math.max(
   1,
-  Number(Astro.url.searchParams.get("page") || "1")
+  Number(Astro.url.searchParams.get("page") || "1"),
 );
 const totalPages = Math.max(1, Math.ceil(leftCards.length / PER_PAGE));
 const pagedLeftCards = leftCards.slice(
   (currentPage - 1) * PER_PAGE,
-  currentPage * PER_PAGE
+  currentPage * PER_PAGE,
 );
 
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
@@ -83,6 +83,7 @@ function humanizeTag(t: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 const pageTitle = humanizeTag(originalTag);
+const seoTitle = `Все статьи по тегу «${pageTitle}» — Академия ЕГЭХИМ`;
 const pageDesc = `Подборка статей по тегу «${pageTitle}»: разборы, полезные материалы и практические советы по теме.`;
 const pageUrl = `${siteUrl}/academy/tags/${encodeURIComponent(slug)}/`;
 
@@ -93,8 +94,9 @@ const totalArticles = posts.length;
 ---
 
 <MainLayout
-  title={pageTitle}
+  title={seoTitle}
   description={pageDesc}
+  addSiteSuffix={false}
   url={`${pageUrl}${currentPage > 1 ? `?page=${currentPage}` : ""}`}
   image={posts[0]?.data?.image || "/images/technical/og-home.png"}
   index={false}
@@ -108,7 +110,9 @@ const totalArticles = posts.length;
   <main class="main container" aria-labelledby="tag-title">
     <section class="header" role="region" aria-labelledby="tag-title">
       <div class="header__wrapper">
-        <h1 id="tag-title" class="header__title" data-count={totalArticles}>{pageTitle}</h1>
+        <h1 id="tag-title" class="header__title" data-count={totalArticles}>
+          {pageTitle}
+        </h1>
         <p class="header__description">{pageDesc}</p>
       </div>
     </section>

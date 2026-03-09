@@ -65,7 +65,8 @@ const pagedLeftCards = leftCards.slice(
 );
 
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageTitle = `${originalCategory ?? ""}`;
+const pageTitle = originalCategory ?? "";
+const seoTitle = `Все статьи в категории «${pageTitle}» — Академия ЕГЭХИМ`;
 const catKey = String(originalCategory || "").toLowerCase();
 const pageDesc =
   (catKey && categoryDescriptions[catKey]) ||
@@ -79,8 +80,9 @@ const totalArticles = posts.length;
 ---
 
 <MainLayout
-  title={pageTitle}
+  title={seoTitle}
   description={pageDesc}
+  addSiteSuffix={false}
   url={`${pageUrl}${currentPage > 1 ? `?page=${currentPage}` : ""}`}
   image={posts[0]?.data?.image || "/images/technical/og-home.png"}
   prevUrl={currentPage > 1 ? `${pageUrl}?page=${currentPage - 1}` : undefined}

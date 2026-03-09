@@ -53,11 +53,11 @@ const all = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
 const byTag = all.filter(
-  (p) => p.slug !== slug && p.data.tags?.some((t) => fm.tags?.includes(t))
+  (p) => p.slug !== slug && p.data.tags?.some((t) => fm.tags?.includes(t)),
 );
 const byCategory = all.filter(
   (p) =>
-    p.slug !== slug && p.data.category === fm.category && !byTag.includes(p)
+    p.slug !== slug && p.data.category === fm.category && !byTag.includes(p),
 );
 const recommendations = [...byTag, ...byCategory].slice(0, 4);
 
@@ -102,6 +102,7 @@ const videoJsonLd =
 
 <MainLayout
   title={fm.title}
+  siteName="Академия ЕГЭХИМ"
   description={fm.description}
   image={fm.image}
   url={pageUrl}

@@ -7,7 +7,7 @@
 // ===== КОНСТАНТЫ =====
 
 export const ORGANIZATION_DATA = {
-  name: "ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко",
+  name: "ЕГЭХИМ",
   description: "Подготовка к ЕГЭ по химии с нуля до 80+ баллов. Подготовка к ОГЭ по химии. Самостоятельные курсы, полезные материалы, теория, задания",
   logo: {
     path: "/images/technical/logo.png",
@@ -48,7 +48,7 @@ export function absUrl(origin: string, path?: string | null): string | undefined
  * Заменяет дублирующуюся логику из разных файлов
  */
 export function getSiteName(prop?: string, configSiteName?: string): string {
-  return prop || configSiteName || ORGANIZATION_DATA.name || "ЕГЭХИМ | Школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко";
+  return prop || configSiteName || ORGANIZATION_DATA.name || "ЕГЭХИМ";
 }
 
 

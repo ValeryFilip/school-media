@@ -99,15 +99,29 @@ const SLIDER_PREV = "cases-slider-prev";
 const SLIDER_NEXT = "cases-slider-next";
 ---
 
-<div class="cases-slider-section container" role="region" aria-labelledby="cases-slider-title">
+<div
+  class="cases-slider-section container"
+  role="region"
+  aria-labelledby="cases-slider-title"
+>
   <div class="header-cases">
     <H2Zag title={title} subtitle={subtitle} headingId="cases-slider-title" />
   </div>
 
-  <div class="cases-slider" id={SLIDER_ID} aria-roledescription="карусель" aria-label="Истории успеха учеников">
+  <div
+    class="cases-slider"
+    id={SLIDER_ID}
+    aria-roledescription="карусель"
+    aria-label="Истории успеха учеников"
+  >
     <!-- Кнопки навигации сверху -->
     <div class="cases-slider__controls">
-      <a href={moreReviewsLink} target="_blank" rel="noopener noreferrer" class="cases-slider__more-link">
+      <a
+        href={moreReviewsLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cases-slider__more-link"
+      >
         {moreReviewsText}
       </a>
       <div class="cases-slider__buttons">
@@ -166,6 +180,7 @@ const SLIDER_NEXT = "cases-slider-next";
   .cases-slider__viewport {
     overflow: hidden;
     width: 100%;
+    transition: height 0.4s ease; /* Плавное изменение высоты */
   }
 
   .cases-slider__wrapper {
@@ -174,6 +189,7 @@ const SLIDER_NEXT = "cases-slider-next";
     transition: transform 0.4s ease;
     gap: 30px;
     overflow: visible;
+    align-items: flex-start; /* Слайды не растягиваются по высоте самого высокого */
   }
 
   .cases-slider__slide {
@@ -348,15 +364,49 @@ const SLIDER_NEXT = "cases-slider-next";
 
       (wrapper as HTMLElement).style.transform = `translateX(${translateX}px)`;
 
+      // Динамически обновляем высоту вьюпорта под текущие слайды
+      const viewport = container!.querySelector(
+        ".cases-slider__viewport",
+      ) as HTMLElement;
+      if (viewport) {
+        let maxHeight = 0;
+        // Проверяем высоту видимых слайдов
+        for (let i = currentIndex; i < currentIndex + slidesPerView; i++) {
+          const slide = slides[i];
+          if (slide) {
+            // Учитываем не только саму карточку, но и вылетающие элементы (футер)
+            const slideRect = slide.getBoundingClientRect();
+            let slideFullHeight = slide.offsetHeight;
+
+            // Ищем все картинки в футере текущего слайда
+            const footerImgs = slide.querySelectorAll(".caseCard__footer img");
+            footerImgs.forEach((img) => {
+              const imgRect = (img as HTMLElement).getBoundingClientRect();
+              // Расстояние от верха слайда до низа картинки
+              const imgBottomRelative = imgRect.bottom - slideRect.top;
+              if (imgBottomRelative > slideFullHeight) {
+                slideFullHeight = imgBottomRelative;
+              }
+            });
+
+            if (slideFullHeight > maxHeight) maxHeight = slideFullHeight;
+          }
+        }
+        if (maxHeight > 0) {
+          // Добавляем 20px запаса для теней, поворотов и ховера
+          viewport.style.height = `${maxHeight + 20}px`;
+        }
+      }
+
       // Обновляем состояние кнопок
       if (prevBtn && nextBtn) {
         prevBtn.classList.toggle(
           "cases-slider__button--disabled",
-          currentIndex === 0
+          currentIndex === 0,
         );
         nextBtn.classList.toggle(
           "cases-slider__button--disabled",
-          currentIndex >= maxIndex
+          currentIndex >= maxIndex,
         );
       }
     }
@@ -394,25 +444,33 @@ const SLIDER_NEXT = "cases-slider-next";
     updateSlidesPerView();
     updateSlider();
 
-    // Добавляем поддержку свайпа на мобильных
+    // Добавляем поддержку свайпа на мобильных (только горизонтальный — вертикальный скролл не блокируем)
     if (!container) return;
 
     let startX = 0;
+    let startY = 0;
     let currentX = 0;
     let isDragging = false;
+    /** true = горизонтальный свайп (блокируем скролл), false = вертикальный (пропускаем), null = ещё не определили */
+    let gestureIsHorizontal: boolean | null = null;
 
     function onPointerDown(e: Event) {
       let clientX: number;
+      let clientY: number;
       if (e instanceof TouchEvent && e.touches[0]) {
         clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
       } else if (e instanceof MouseEvent) {
         clientX = e.clientX;
+        clientY = e.clientY;
       } else {
         return;
       }
 
       startX = currentX = clientX;
+      startY = clientY;
       isDragging = true;
+      gestureIsHorizontal = null;
       if (container) {
         container.style.cursor = "grabbing";
       }
@@ -420,36 +478,47 @@ const SLIDER_NEXT = "cases-slider-next";
 
     function onPointerMove(e: Event) {
       if (!isDragging) return;
-      e.preventDefault();
 
       let clientX: number;
+      let clientY: number;
       if (e instanceof TouchEvent && e.touches[0]) {
         clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
       } else if (e instanceof MouseEvent) {
         clientX = e.clientX;
+        clientY = e.clientY;
       } else {
         return;
       }
 
-      currentX = clientX;
+      const deltaX = Math.abs(clientX - startX);
+      const deltaY = Math.abs(clientY - startY);
+
+      // При первом заметном движении определяем: горизонтальный жест → блокируем скролл, вертикальный → отпускаем
+      if (gestureIsHorizontal === null && (deltaX > 10 || deltaY > 10)) {
+        gestureIsHorizontal = deltaX >= deltaY;
+      }
+
+      if (gestureIsHorizontal === true) {
+        e.preventDefault();
+        currentX = clientX;
+      }
     }
 
     function onPointerUp() {
       if (!isDragging) return;
-      isDragging = false;
-      if (container) {
-        container.style.cursor = "";
-      }
-
       const diff = startX - currentX;
-      if (Math.abs(diff) > 50) {
+      if (gestureIsHorizontal === true && Math.abs(diff) > 50) {
         if (diff > 0) {
-          // свайп влево - следующий слайд
           nextSlide();
         } else {
-          // свайп вправо - предыдущий слайд
           prevSlide();
         }
+      }
+      isDragging = false;
+      gestureIsHorizontal = null;
+      if (container) {
+        container.style.cursor = "";
       }
     }
 
