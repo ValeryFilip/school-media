@@ -11,10 +11,10 @@ const SITE = 'https://egehim.ru';
 export default defineConfig({
     site: SITE,
     output: 'static',
+
     build: {
         inlineStylesheets: 'always',
     },
-
     // Подсветка кода в Markdown
     markdown: {
         syntaxHighlight: 'prism',

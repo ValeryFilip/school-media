@@ -216,7 +216,6 @@ const SWIPER_NEXT = `${id}-swiper-next`;
                     src={s.img.src}
                     muted
                     playsinline
-                    autoplay
                     loop
                     preload="metadata"
                     aria-label={s.img.alt ?? ""}
@@ -229,7 +228,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
                     loading={i > 0 ? "lazy" : "eager"}
                     decoding={i > 0 ? "async" : "auto"}
                   />
-                )
+                ),
               )
             }
           </figure>
@@ -354,22 +353,18 @@ const SWIPER_NEXT = `${id}-swiper-next`;
   </div>
 
   <style>
-    .mega {}
-
-    /* ===== СИНЯЯ ПОДЛОЖКА ===== */
+    /* ===== BASE STYLES ===== */
     .mega-bg {
       width: 100%;
       max-width: 1300px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: var(
-        --inner-gap,
-        var(--blue-gap, var(--space-40))
-      ); /* единый параметр внутренних отступов */
+      gap: var(--inner-gap, var(--blue-gap, var(--space-40)));
       border-radius: var(--radius-24);
       padding: var(--space-32) 0;
-      background: linear-gradient(rgba(222, 221, 220, 0.2) 1px, transparent 1px),
+      background:
+        linear-gradient(rgba(222, 221, 220, 0.2) 1px, transparent 1px),
         linear-gradient(90deg, rgba(222, 221, 220, 0.2) 1px, transparent 1px),
         var(--blue);
       background-size:
@@ -380,119 +375,18 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       box-sizing: border-box;
       overflow: hidden;
     }
-    /* Планшет */
-    @media (max-width: 1100px) {
-      .mega-bg {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: var(--space-32) 0;
-      }
 
-      .content-block {
-        padding: 0 var(--page-padding-tablet);
-      }
-
-      .mega-title {
-        font-size: var(--h2-size-tablet);
-        margin-bottom: var(--space-24);
-      }
-
-      .mega-text {
-        font-size: var(--text-size-tablet);
-        line-height: 1.5;
-        margin-bottom: var(--space-24);
-      }
-
-      .mega-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-20);
-      }
-
-      .mega-item {
-        padding: var(--space-20);
-      }
-
-      .mega-item-title {
-        font-size: var(--h3-size-tablet);
-        margin-bottom: var(--space-12);
-      }
-
-      .mega-item-text {
-        font-size: var(--text-size-tablet);
-        line-height: 1.5;
-      }
-    }
-
-    /* Мобилка */
-    @media (max-width: 600px) {
-      .mega-bg {
-        width: 100vw;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        max-width: none;
-        padding: var(--space-24) 0;
-      }
-
-      .content-block {
-        padding: 0 var(--page-padding-mobile);
-      }
-
-      .mega-title {
-        font-size: var(--h2-size-mobile);
-        margin-bottom: var(--space-20);
-      }
-
-      .mega-text {
-        font-size: var(--text-size-mobile);
-        line-height: 1.4;
-        margin-bottom: var(--space-20);
-      }
-
-      .mega-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-16);
-      }
-
-      .mega-item {
-        padding: var(--space-16);
-      }
-
-      .mega-item-title {
-        font-size: var(--h3-size-mobile);
-        margin-bottom: var(--space-8);
-      }
-
-      .mega-item-text {
-        font-size: var(--text-size-mobile);
-        line-height: 1.4;
-      }
-    }
-
-    /* Внутренние блоки-контейнеры */
     .content-block {
       width: 100%;
       max-width: 1300px;
       margin: 0 auto;
-      background: none;
       padding: 0 50px;
     }
     .content-block:has(.swiper-controls) {
       padding-top: 0;
     }
-    @media (max-width: 1100px) {
-      .content-block {
-        padding: 0 24px;
-      }
-    }
-    @media (max-width: 600px) {
-      .content-block {
-        padding: 0 var(--pad-mobile);
-      }
-    }
 
-    /* ====== БЛОК 1: ПЛАТФОРМА ====== */
+    /* --- Platform --- */
     .platform__h2 {
       font-weight: 700;
       font-size: var(--h2);
@@ -527,30 +421,12 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       opacity: 0;
       transition: opacity 0.45s ease;
       image-rendering: auto;
-      image-rendering: smooth;
       backface-visibility: hidden;
       transform: translateZ(0);
       will-change: transform;
     }
     .platform__img.is-active {
       opacity: 1;
-    }
-
-    /* Улучшение качества для высоких DPI экранов */
-    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-      .platform__img {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-        image-rendering: pixelated;
-      }
-    }
-
-    /* Улучшение качества для обычных экранов */
-    @media (-webkit-max-device-pixel-ratio: 1.9), (max-resolution: 191dpi) {
-      .platform__img {
-        image-rendering: auto;
-        image-rendering: smooth;
-      }
     }
 
     .platform__right {
@@ -603,55 +479,28 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       margin-top: auto;
     }
     .platform__dot {
-      inline-size: 12px;
-      block-size: 12px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       border: 0;
       cursor: pointer;
       background: #bbb;
       transition: background-color 0.25s ease;
     }
-    .platform__dot.is-active {
-      background: var(--blue);
-    }
+    .platform__dot.is-active,
     .platform__dot:hover {
       background: var(--blue);
     }
 
-    @media (max-width: 1100px) {
-      .platform__h2 {
-        font-size: var(--h2);
-        margin-bottom: var(--space-20);
-      }
-      .platform__slider {
-        flex-direction: column;
-        gap: var(--space-20);
-        height: auto;
-        box-sizing: border-box;
-      }
-      .platform__left {
-        height: 240px;
-        min-height: 240px;
-      }
-      .platform__right {
-        padding: 20px;
-      }
-    }
-    @media (max-width: 600px) {
-      .platform__h2 {
-        font-size: var(--h2);
-        padding: 0 var(--pad-mobile);
-      }
-      .platform__slider {
-        padding: 0 var(--pad-mobile);
-      }
-      .platform__left {
-        height: 200px;
-        min-height: 200px;
+    /* Quality improvements */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .platform__img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
       }
     }
 
-    /* ====== БЛОК 2: МОДУЛИ ====== */
+    /* --- Modules --- */
     .modules__head {
       display: flex;
       justify-content: space-between;
@@ -670,14 +519,9 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       font-size: var(--lead);
       color: var(--white);
     }
-    .modules {
-      margin-bottom: 0;
-    }
-
     .swiper {
       position: relative;
       width: 100%;
-      height: auto;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -703,11 +547,9 @@ const SWIPER_NEXT = `${id}-swiper-next`;
     .swiper-slide:last-child {
       margin-right: 0;
     }
-
     .module-tag {
       font-weight: 700;
       font-size: var(--lead);
-      line-height: 1;
       color: var(--blue);
       margin-bottom: var(--space-8);
     }
@@ -721,33 +563,16 @@ const SWIPER_NEXT = `${id}-swiper-next`;
     .module-list {
       list-style: disc;
       padding-left: var(--space-16);
-      margin: 0;
       font-weight: 500;
       font-size: var(--text);
       line-height: 1.5;
       color: var(--black);
     }
 
-    /* Кнопки под слайдером по центру */
     .swiper-controls {
       display: flex;
       justify-content: center;
       gap: var(--space-20);
-    }
-
-    /* Стили для десктопа */
-    @media (min-width: 1101px) {
-      .swiper-button-next,
-      .swiper-button-prev {
-        transform: translateY(0);
-      }
-    }
-
-    /* Скрываем кнопки на планшетах и мобилках */
-    @media (max-width: 1100px) {
-      .swiper-controls {
-        display: none;
-      }
     }
     .swiper-button-next,
     .swiper-button-prev {
@@ -762,7 +587,6 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       transition:
         background-color 0.2s ease,
         opacity 0.2s ease;
-      transform: translateY(20px);
     }
     .swiper-button-next:hover,
     .swiper-button-prev:hover {
@@ -773,7 +597,6 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       content: "";
       width: 10px;
       height: 10px;
-      display: block;
       border-top: 2.5px solid var(--black);
       border-right: 2.5px solid var(--black);
     }
@@ -788,43 +611,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       pointer-events: none;
     }
 
-    @media (max-width: 1100px) {
-      .modules__h2 {
-        font-size: var(--h2);
-      }
-      .modules__info {
-        font-size: var(--lead);
-        text-align: left;
-      }
-      .swiper {
-        height: auto;
-      }
-      .swiper-wrapper {
-        gap: var(--space-20);
-      }
-      .swiper-slide {
-        flex: 0 0 calc(100% - 20px);
-        height: auto;
-        margin-right: 0;
-      }
-      .swiper-controls {
-        display: none;
-      }
-    }
-    @media (max-width: 600px) {
-      .modules__h2 {
-        font-size: var(--h2);
-        padding: 0 var(--pad-mobile);
-      }
-      .modules__info {
-        padding: 0 var(--pad-mobile);
-      }
-      .swiper {
-        padding: 0 var(--pad-mobile);
-      }
-    }
-
-    /* ====== БЛОК 3: SKILLS ====== */
+    /* --- Skills --- */
     .skills__h2 {
       font-weight: 700;
       font-size: var(--h2);
@@ -855,31 +642,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       border: 1px solid var(--border);
     }
 
-    @media (max-width: 1100px) {
-      .skills__h2 {
-        font-size: var(--h2);
-        margin-top: var(--space-50);
-      }
-      .skills__row {
-        flex-direction: column;
-        gap: var(--space-16);
-      }
-      .skills__item {
-        font-size: var(--text);
-        line-height: 1.55;
-      }
-    }
-    @media (max-width: 600px) {
-      .skills__h2 {
-        font-size: var(--h2);
-        margin-top: var(--space-40);
-      }
-      .skills__item {
-        line-height: 1.5;
-      }
-    }
-
-    /* Низ */
+    /* --- Bottom --- */
     .bottom-btn-wrap {
       width: 100%;
       max-width: 1300px;
@@ -891,12 +654,92 @@ const SWIPER_NEXT = `${id}-swiper-next`;
     .main-bottom-btn {
       width: 100%;
     }
+
+    /* ===== TABLET (1100px) ===== */
     @media (max-width: 1100px) {
+      .mega-bg {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        max-width: none;
+      }
+      .content-block {
+        padding: 0 24px;
+      }
+
+      .platform__slider {
+        flex-direction: column;
+        height: auto;
+      }
+      .platform__left {
+        height: 240px;
+        min-height: 240px;
+      }
+      .platform__right {
+        padding: 20px;
+      }
+
+      .modules__info {
+        text-align: left;
+      }
+      .swiper-controls {
+        display: none;
+      }
+      .swiper-wrapper {
+        gap: var(--space-20);
+      }
+      .swiper-slide {
+        flex: 0 0 calc(100% - 20px);
+        margin-right: 0;
+      }
+
+      .skills__h2 {
+        margin-top: var(--space-50);
+      }
+      .skills__row {
+        flex-direction: column;
+        gap: var(--space-16);
+      }
+      .skills__item {
+        line-height: 1.55;
+      }
+
       .bottom-btn-wrap {
         padding: 0 24px 20px;
       }
     }
+
+    /* ===== MOBILE (600px) ===== */
     @media (max-width: 600px) {
+      .mega-bg {
+        padding: var(--space-24) 0;
+      }
+      .content-block {
+        padding: 0 var(--pad-mobile);
+      }
+
+      .platform__left {
+        height: 200px;
+        min-height: 200px;
+      }
+      .platform__slider,
+      .platform__h2 {
+        padding: 0 var(--pad-mobile);
+      }
+
+      .modules__h2,
+      .modules__info,
+      .swiper {
+        padding: 0 var(--pad-mobile);
+      }
+
+      .skills__h2 {
+        margin-top: var(--space-40);
+      }
+      .skills__item {
+        line-height: 1.5;
+      }
+
       .bottom-btn-wrap {
         padding: 0 var(--pad-mobile) 20px;
       }
@@ -923,26 +766,34 @@ const SWIPER_NEXT = `${id}-swiper-next`;
 
       let i = 0;
       let timer = null;
+      let isVisible = false;
 
-      function show(idx) {
-        i = (idx + imgs.length) % imgs.length;
+      function updateVideos() {
         imgs.forEach((el, n) => {
-          const on = n === i;
-          el.classList.toggle("is-active", on);
           if (el.tagName === "VIDEO") {
             const v = /** @type {HTMLVideoElement} */ (el);
-            if (on) {
+            const on = n === i;
+            if (on && isVisible) {
               try {
                 v.play();
               } catch {}
             } else {
               try {
                 v.pause();
-                v.currentTime = 0;
+                // v.currentTime = 0; // Можно оставить 0, если хотим всегда с начала, или убрать для продолжения
               } catch {}
             }
           }
         });
+      }
+
+      function show(idx) {
+        i = (idx + imgs.length) % imgs.length;
+        imgs.forEach((el, n) => {
+          const on = n === i;
+          el.classList.toggle("is-active", on);
+        });
+        updateVideos();
         dots.forEach((d, n) => {
           const on = n === i;
           d.classList.toggle("is-active", on);
@@ -979,20 +830,36 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       // Добавляем поддержку свайпа
       let startX = 0;
       let currentX = 0;
+      let startY = 0;
       let isDragging = false;
+      let isHorizontalSwipe = false;
 
       function onPointerDown(e) {
         const t = e.touches ? e.touches[0] : e;
         startX = currentX = t.clientX;
+        startY = t.clientY;
         isDragging = true;
+        isHorizontalSwipe = false;
         root.style.cursor = "grabbing";
       }
 
       function onPointerMove(e) {
         if (!isDragging) return;
-        e.preventDefault();
         const t = e.touches ? e.touches[0] : e;
         currentX = t.clientX;
+
+        const diffX = Math.abs(startX - currentX);
+        const diffY = Math.abs(startY - t.clientY);
+
+        if (!isHorizontalSwipe && diffX < 5 && diffY < 5) return;
+
+        if (!isHorizontalSwipe && diffX > diffY) {
+          isHorizontalSwipe = true;
+        }
+
+        if (isHorizontalSwipe) {
+          if (e.cancelable) e.preventDefault();
+        }
       }
 
       function onPointerUp() {
@@ -1019,6 +886,30 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       root.addEventListener("mousemove", onPointerMove);
       root.addEventListener("mouseup", onPointerUp);
       root.addEventListener("mouseleave", onPointerUp);
+
+      // Intersection Observer для оптимизации
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            isVisible = entry.isIntersecting;
+            updateVideos();
+
+            // Если ушли из фокуса - останавливаем таймер автоплея, если вернулись - запускаем
+            if (AUTOPLAY > 0) {
+              if (isVisible) {
+                if (!timer) {
+                  timer = setInterval(() => show(i + 1), AUTOPLAY);
+                }
+              } else {
+                clearInterval(timer);
+                timer = null;
+              }
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+      observer.observe(root);
     })();
 
     // ===== Слайдер 2: Модули =====
@@ -1047,7 +938,7 @@ const SWIPER_NEXT = `${id}-swiper-next`;
         prevBtn.classList.toggle("swiper-button-disabled", currentIndex === 0);
         nextBtn.classList.toggle(
           "swiper-button-disabled",
-          currentIndex >= maxIndex
+          currentIndex >= maxIndex,
         );
       }
 
@@ -1088,20 +979,36 @@ const SWIPER_NEXT = `${id}-swiper-next`;
       // Добавляем поддержку свайпа для второго слайдера
       let startX = 0;
       let currentX = 0;
+      let startY = 0;
       let isDragging = false;
+      let isHorizontalSwipe = false;
 
       function onPointerDown(e) {
         const t = e.touches ? e.touches[0] : e;
         startX = currentX = t.clientX;
+        startY = t.clientY;
         isDragging = true;
+        isHorizontalSwipe = false;
         swiper.style.cursor = "grabbing";
       }
 
       function onPointerMove(e) {
         if (!isDragging) return;
-        e.preventDefault();
         const t = e.touches ? e.touches[0] : e;
         currentX = t.clientX;
+
+        const diffX = Math.abs(startX - currentX);
+        const diffY = Math.abs(startY - t.clientY);
+
+        if (!isHorizontalSwipe && diffX < 5 && diffY < 5) return;
+
+        if (!isHorizontalSwipe && diffX > diffY) {
+          isHorizontalSwipe = true;
+        }
+
+        if (isHorizontalSwipe) {
+          if (e.cancelable) e.preventDefault();
+        }
       }
 
       function onPointerUp() {
