@@ -5,7 +5,6 @@ import { getCollection } from "astro:content";
 import CardNew from "../components/cards/cardNew.astro";
 import CatBadge from "../components/CatBadge.astro";
 import ProgressBar from "../components/article/ProgressBar.astro";
-import ArticleHero from "../components/article/ArticleHero.astro";
 import CopyLinkButton from "../components/article/CopyLinkButton.astro";
 import { slugify } from "../lib/slugify";
 import { ORGANIZATION_DATA, absAsset } from "../lib/seoData";
@@ -157,7 +156,11 @@ const sameCategoryTop = allArticles
 <!-- Прогресс чтения -->
 <ProgressBar />
 
-<section class="article__section container" role="region" aria-labelledby="article-title">
+<section
+  class="article__section container"
+  role="region"
+  aria-labelledby="article-title"
+>
   <div class="article__wrapper">
     <article class="article">
       <header class="article__header">
@@ -213,7 +216,17 @@ const sameCategoryTop = allArticles
           fm.showHeroImage !== false && heroFromFM && (
             <div class="article__header-image-wrapper">
               <figure class="article__header-image">
-                <ArticleHero heroSrc={heroFromFM} heroAlt={heroAlt} />
+                <div id="heroBox" class="hero">
+                  <img
+                    class="hero__img"
+                    src={heroFromFM}
+                    alt={heroAlt}
+                    loading="eager"
+                    fetchpriority="high"
+                    width={320}
+                    height={180}
+                  />
+                </div>
                 <figcaption class="caption">
                   {(fm as any).imageCaption ?? fm.title}
                 </figcaption>
@@ -224,7 +237,9 @@ const sameCategoryTop = allArticles
         {
           fm.toc !== false && nestedTocItems && nestedTocItems.length > 0 && (
             <nav class="article__inside-content" aria-label="Содержание статьи">
-              <h3 id="article-toc-title" class="article__content-title">Содержание статьи</h3>
+              <h3 id="article-toc-title" class="article__content-title">
+                Содержание статьи
+              </h3>
               <ul class="article__content-list">
                 {nestedTocItems.map((item) => (
                   <li>
@@ -323,7 +338,11 @@ const sameCategoryTop = allArticles
       }
       <div class="article__divider"></div>
       <div class="article__footer">
-        <div class="article__footer-repost" role="group" aria-label="Поделиться статьёй">
+        <div
+          class="article__footer-repost"
+          role="group"
+          aria-label="Поделиться статьёй"
+        >
           <span class="article__footer-repost-title">Поделиться:</span>
           <div class="article__footer-repost-buttons">
             <a
@@ -332,7 +351,11 @@ const sameCategoryTop = allArticles
               rel="noopener"
               aria-label="Поделиться в Telegram"
             >
-              <img src="/images/technical/telegram.webp" alt="" aria-hidden="true" />
+              <img
+                src="/images/technical/telegram.webp"
+                alt=""
+                aria-hidden="true"
+              />
             </a>
             <a
               href={`https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}`}
@@ -348,14 +371,22 @@ const sameCategoryTop = allArticles
               rel="noopener"
               aria-label="Поделиться в WhatsApp"
             >
-              <img src="/images/technical/whatsapp.webp" alt="" aria-hidden="true" />
+              <img
+                src="/images/technical/whatsapp.webp"
+                alt=""
+                aria-hidden="true"
+              />
             </a>
             <CopyLinkButton />
             <a
               href={`mailto:?subject=${encodeURIComponent(fm.title)}&body=${encodeURIComponent(articleUrl)}`}
               aria-label="Поделиться по email"
             >
-              <img src="/images/technical/mail.webp" alt="" aria-hidden="true" />
+              <img
+                src="/images/technical/mail.webp"
+                alt=""
+                aria-hidden="true"
+              />
             </a>
           </div>
         </div>
@@ -379,10 +410,16 @@ const sameCategoryTop = allArticles
 </section>
 {
   sameCategoryTop.length > 0 && (
-    <section class="article__more-section section" role="region" aria-labelledby="article-more-title">
+    <section
+      class="article__more-section section"
+      role="region"
+      aria-labelledby="article-more-title"
+    >
       <div class="article__more container">
         <div class="article__more-header">
-          <h2 id="article-more-title" class="article__more-title">Ещё по теме</h2>
+          <h2 id="article-more-title" class="article__more-title">
+            Ещё по теме
+          </h2>
           <p class="article__more-description">
             Продолжайте изучать тему с другими статьями из категории «
             {fm.category}»
@@ -456,8 +493,18 @@ const sameCategoryTop = allArticles
     padding: 0;
   }
 
-  .article__header-image :global(img) {
+  /* Article Hero Styles */
+  .hero {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__img {
+    display: block;
     width: 100%;
+    height: auto;
     object-fit: cover;
     aspect-ratio: 16/9;
     border-radius: var(--radius-24);
