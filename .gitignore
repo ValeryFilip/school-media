@@ -38,3 +38,6 @@ coverage/
 # Temporary folders
 tmp/
 temp/
+
+   public/images/postgresql-18.3-2-windows-x64.exe
+   *.exe
