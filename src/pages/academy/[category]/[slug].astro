@@ -72,20 +72,6 @@ const breadcrumbs = [
   { name: fm.title },
 ];
 
-const articleJsonLd = buildArticleJsonLd({
-  origin: siteUrl,
-  url: pageUrl,
-  headline: fm.title,
-  description: fm.description,
-  image: fm.image,
-  datePublished: new Date(fm.date as any).toISOString(),
-  dateModified: (fm as any).updated
-    ? new Date((fm as any).updated as any).toISOString()
-    : new Date(fm.date as any).toISOString(),
-  keywords: fm.tags?.length ? fm.tags : undefined,
-  articleSection: fm.category,
-});
-
 // VideoObject JSON-LD — если в статье указано видео (YouTube/Rutube/VK)
 const videoJsonLd =
   (fm as any).videoUrl &&
@@ -98,6 +84,21 @@ const videoJsonLd =
     uploadDate: new Date(fm.date as any).toISOString().slice(0, 10),
     thumbnailUrl: fm.image,
   });
+
+const articleJsonLd = buildArticleJsonLd({
+  origin: siteUrl,
+  url: pageUrl,
+  headline: fm.title,
+  description: fm.description,
+  image: fm.image,
+  datePublished: new Date(fm.date as any).toISOString(),
+  dateModified: (fm as any).updated
+    ? new Date((fm as any).updated as any).toISOString()
+    : new Date(fm.date as any).toISOString(),
+  keywords: fm.tags?.length ? fm.tags : undefined,
+  articleSection: fm.category,
+  videoJson: videoJsonLd,
+});
 ---
 
 <MainLayout

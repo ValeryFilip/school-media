@@ -160,8 +160,9 @@ export function buildArticleJsonLd(params: {
   };
   keywords?: string[];
   articleSection?: string;
+  videoJson?: any; // Вложенный VideoObject
 }) {
-  const { origin, url, headline, description, image, datePublished, dateModified, author, keywords, articleSection } = params;
+  const { origin, url, headline, description, image, datePublished, dateModified, author, keywords, articleSection, videoJson } = params;
 
   // Используем переданного автора или дефолтного из ORGANIZATION_DATA
   const authorName = author?.name || ORGANIZATION_DATA.defaultAuthor.name;
@@ -204,6 +205,7 @@ export function buildArticleJsonLd(params: {
       "@type": "WebPage",
       "@id": url,
     },
+    ...(videoJson && { video: videoJson }),
   };
 }
 
@@ -452,19 +454,37 @@ export function buildVideoJsonLd(params: {
   // Если есть embedUrl (YouTube, VK, Rutube), используем его
   if (embedUrl) {
     result.embedUrl = embedUrl;
+    
+    // Google предпочитает contentUrl, даже если это обычная ссылка на YouTube.
+    // Если contentUrl не передан явно, попробуем извлечь обычную ссылку из embedUrl
+    if (!contentUrl) {
+      if (embedUrl.includes("youtube.com/embed/")) {
+        const videoId = embedUrl.split("youtube.com/embed/")[1]?.split("?")[0];
+        if (videoId) {
+          result.contentUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        }
+      } else if (embedUrl.includes("rutube.ru/play/embed/")) {
+         const videoId = embedUrl.split("rutube.ru/play/embed/")[1]?.split("/")[0]?.split("?")[0];
+         if (videoId) {
+             result.contentUrl = `https://rutube.ru/video/${videoId}/`;
+         }
+      }
+    }
   }
 
-  // Если есть contentUrl (прямая ссылка на видео файл), используем его
-  if (contentUrl) {
-    result.contentUrl = absUrl(origin, contentUrl);
-    // Определяем формат по расширению, если не указан
-    const format =
-      encodingFormat ||
-      (() => {
-        const ext = contentUrl.split(".").pop()?.toLowerCase();
-        return ext === "mp4" ? "video/mp4" : "video/webm";
-      })();
-    result.encodingFormat = format;
+  // Если есть contentUrl (прямая ссылка на видео файл или сгенерированная выше), используем его
+  if (contentUrl || result.contentUrl) {
+    result.contentUrl = result.contentUrl || absUrl(origin, contentUrl);
+    // Определяем формат по расширению, если не указан (только для реальных файлов)
+    if (!result.contentUrl.includes("youtube.com") && !result.contentUrl.includes("rutube.ru")) {
+        const format =
+        encodingFormat ||
+        (() => {
+            const ext = result.contentUrl.split(".").pop()?.toLowerCase();
+            return ext === "mp4" ? "video/mp4" : "video/webm";
+        })();
+        result.encodingFormat = format;
+    }
   }
 
   return result;

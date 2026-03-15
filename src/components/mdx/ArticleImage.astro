@@ -1,0 +1,307 @@
+---
+/**
+ * Компонент для вставки изображений в статьи
+ * Использование в MDX:
+ * <ArticleImage src="/images/articles/my-image.webp" alt="Описание картинки" caption="Подпись к картинке" position="center" />
+ *
+ * Доступные position: 'center' (по умолчанию), 'full', 'left', 'right'
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  position?: "center" | "full" | "left" | "right";
+}
+
+const { src, alt, caption, position = "center" } = Astro.props;
+// Генерируем уникальный ID для модалки, чтобы несколько картинок на странице не конфликтовали
+const modalId = `modal-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<figure class={`article-image position-${position}`}>
+  <!-- Основная картинка, по которой кликаем -->
+  <img
+    src={src}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    class="zoomable-image"
+    data-modal-target={modalId}
+  />
+  {caption && <figcaption class="image-caption">{caption}</figcaption>}
+</figure>
+
+<!-- Модальное окно (Lightbox) -->
+<dialog id={modalId} class="image-modal">
+  <div class="modal-content">
+    <button class="close-modal" aria-label="Закрыть изображение">×</button>
+    <img src={src} alt={alt} class="modal-image" loading="lazy" />
+    {caption && <p class="modal-caption">{caption}</p>}
+  </div>
+</dialog>
+
+<script>
+  // Скрипт выполняется один раз на клиенте, когда компонент загрузился
+  const setupModals = () => {
+    const triggers = document.querySelectorAll(".zoomable-image");
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
+        const targetId = (e.currentTarget as HTMLElement).dataset.modalTarget;
+        if (!targetId) return;
+
+        const modal = document.getElementById(targetId) as HTMLDialogElement;
+        if (modal) {
+          modal.showModal();
+          document.body.style.overflow = "hidden"; // Запрещаем скролл фона
+        }
+      });
+    });
+
+    // Закрытие модального окна
+    const modals = document.querySelectorAll(".image-modal");
+    modals.forEach((modalElement) => {
+      const modal = modalElement as HTMLDialogElement;
+
+      // Закрытие по кнопке-крестику
+      const closeBtn = modal.querySelector(".close-modal");
+      closeBtn?.addEventListener("click", () => {
+        modal.close();
+        document.body.style.overflow = "";
+      });
+
+      // Закрытие при клике ВНЕ картинки (на затемненный фон)
+      modal.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        // Если клик на фон (dialog) или на контейнер (modal-content)
+        if (target === modal || target.classList.contains("modal-content")) {
+          modal.close();
+          document.body.style.overflow = "";
+        }
+      });
+    });
+  };
+
+  // Вызываем функцию инициализации; Astro поддерживает view transitions
+  setupModals();
+  document.addEventListener("astro:page-load", setupModals);
+</script>
+
+<style>
+  .article-image {
+    margin: clamp(1.5rem, 4vw, 2.5rem) 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Основная картинка */
+  .zoomable-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: clamp(8px, 1vw, 12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* Мягкая тень, как в Quote */
+    object-fit: cover;
+    cursor: zoom-in; /* Показываем лупу при наведении */
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .zoomable-image:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Подпись к картинке */
+  .image-caption {
+    margin-top: clamp(8px, 1.2vw, 12px);
+    text-align: center;
+    font-size: clamp(12px, 1.4vw, 14px);
+    color: var(--gray, #666);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* Позиционирование - По центру */
+  .position-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .position-center img {
+    max-width: 80%; /* Чтобы по умолчанию не была слишком гигантской */
+  }
+
+  /* Позиционирование - На всю ширину контейнера */
+  .position-full {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .position-full img {
+    width: 100%;
+  }
+
+  /* Позиционирование - Слева с обтеканием текстом */
+  .position-left {
+    float: left;
+    max-width: 45%;
+    margin: 0.75rem 1.5rem 1rem 0;
+  }
+
+  /* Позиционирование - Справа с обтеканием текстом */
+  .position-right {
+    float: right;
+    max-width: 45%;
+    margin: 0.75rem 0 1rem 1.5rem;
+  }
+
+  /* ====================== */
+  /* СТАТИЧНАЯ МОДАЛКА (DIALOG) */
+  /* ====================== */
+
+  .image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.85); /* Темный полупрозрачный фон */
+    /** Скрыто по умолчанию в диалогах */
+    outline: none;
+    cursor: zoom-out; /* На фоне лупа с минусом, для закрытия кликом мимо */
+    z-index: 9999;
+    backdrop-filter: blur(
+      4px
+    ); /* Приятное размытие фона за модалкой, работает не везде, но выглядит красиво */
+  }
+
+  .image-modal::backdrop {
+    background: transparent; /* Сбрасываем стандартный бэкдроп, мы сами его красим в самой модалке */
+  }
+
+  /* Стили контейнера внутри модалки */
+  .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: clamp(16px, 3vw, 40px);
+    box-sizing: border-box;
+    cursor: default; /* Внутри контента обычный курсор */
+  }
+
+  /* Увеличенная картинка */
+  .modal-image {
+    max-width: 100%;
+    max-height: 85vh; /* Оставляем место для подписи снизу */
+    object-fit: contain;
+    border-radius: clamp(4px, 0.5vw, 8px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Плавный сочный зум */
+  }
+
+  /* Подпись в модалке */
+  .modal-caption {
+    color: white;
+    margin-top: 16px;
+    font-size: clamp(14px, 1.6vw, 18px);
+    text-align: center;
+    max-width: 800px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  /* Кнопка-крестик закрытия */
+  .close-modal {
+    position: absolute;
+    top: max(20px, env(safe-area-inset-top, 20px));
+    right: max(20px, env(safe-area-inset-right, 20px));
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 32px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    z-index: 2;
+  }
+
+  .close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  /* Мобильная версия для позиционирования */
+  @media (max-width: 768px) {
+    .position-left,
+    .position-right {
+      float: none;
+      max-width: 100%;
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .position-left img,
+    .position-right img,
+    .position-center img {
+      max-width: 100%;
+    }
+
+    .close-modal {
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      font-size: 28px;
+    }
+
+    .modal-image {
+      max-height: 80vh;
+    }
+  }
+
+  /* Анимации появления */
+  @keyframes zoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

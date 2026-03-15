@@ -1,0 +1,481 @@
+---
+/**
+ * Блок с карточками курсов (грид + слайдер)
+ */
+
+export interface CourseData {
+  title: string;
+  image: string;
+  pins?: string[]; // Пины/бейджи над картинкой (например, "С нуля", "Хит")
+  features: string[]; // Список особенностей курса (галочки)
+  price: string;
+  oldPrice?: string;
+  discount?: string;
+  link: string;
+  buttonText?: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  courses: CourseData[];
+}
+
+const { title, description, courses } = Astro.props;
+// Генерируем уникальный сброс для скролла, чтобы скрыть скроллбар
+---
+
+<div class="course-promo-wrapper">
+  <div class="course-promo-grid">
+    <!-- Левая колонка: Заголовок и описание -->
+    <div class="promo-header">
+      <h3 class="promo-title">{title}</h3>
+      {description && <p class="promo-description">{description}</p>}
+      
+      <!-- Декоративный элемент или кнопки перелистывания (опционально, в чистом CSS скролле скрыты, но можно добавить градиент) -->
+      <div class="scroll-hint">Листайте вправо <span>→</span></div>
+    </div>
+
+    <!-- Правая колонка: Слайдер -->
+    <div class="promo-slider-container">
+      
+      <!-- Кнопки управления (только для десктопа) -->
+      <button class="slider-nav-btn prev-btn" aria-label="Предыдущий слайд">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="slider-nav-btn next-btn" aria-label="Следующий слайд">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="promo-slider">
+        {courses.map((course) => (
+          <article class="course-card">
+            <!-- Верх: Картинка (16:9) и Пины -->
+            <div class="card-image-wrap">
+              <img src={course.image} alt={course.title} loading="lazy" decoding="async" />
+              
+              {course.pins && course.pins.length > 0 && (
+                <div class="card-pins">
+                  {course.pins.map(pin => <span class="pin">{pin}</span>)}
+                </div>
+              )}
+            </div>
+
+            <!-- Середина: Заголовок и фичи -->
+            <div class="card-content">
+              <h4 class="card-title">{course.title}</h4>
+              
+              <ul class="card-features">
+                {course.features.map(feature => (
+                  <li>
+                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Низ: Цена и Кнопка -->
+            <div class="card-footer">
+              <div class="price-block">
+                <div class="price-row-top">
+                  {course.oldPrice && <span class="old-price">{course.oldPrice}</span>}
+                  {course.discount && <span class="discount-badge">{course.discount}</span>}
+                </div>
+                <div class="price-current">{course.price}</div>
+              </div>
+              
+              <a href={course.link} class="buy-button">
+                {course.buttonText || 'Подробнее'}
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initCoursePromoSliders() {
+    const containers = document.querySelectorAll('.course-promo-wrapper');
+    
+    containers.forEach(container => {
+      const slider = container.querySelector('.promo-slider');
+      const prevBtn = container.querySelector('.prev-btn');
+      const nextBtn = container.querySelector('.next-btn');
+      
+      if (!slider || !prevBtn || !nextBtn) return;
+
+      const scrollAmount = 320 + 24; // Ширина карточки + gap (примерно)
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    });
+  }
+
+  // Запускаем при загрузке страницы и после навигации Astro View Transitions
+  initCoursePromoSliders();
+  document.addEventListener('astro:page-load', initCoursePromoSliders);
+</script>
+
+<style>
+  .course-promo-wrapper {
+    margin: clamp(2.5rem, 5vw, 4rem) 0;
+    width: 100%;
+    /* Если контейнер статьи узкий, вырываемся за его пределы, если нужно, но здесь оставим в потоке */
+  }
+
+  /* Grid Layout: 2 колонки на ПК */
+  .course-promo-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    background: #5f2c82;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #49a09d, #5f2c82);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #49a09d, #4564bb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: clamp(16px, 2vw, 24px);
+    padding: clamp(20px, 3vw, 40px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.03);
+  }
+
+  /* ЛЕВАЯ КОЛОНКА */
+  .promo-header {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+  }
+
+  .promo-title {
+    font-size: clamp(24px, 2.5vw, 32px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 clamp(12px, 1.5vw, 16px) 0;
+    color: var(--white, #1a1a1a);
+    background: linear-gradient(to right, #ffffff, #e2cfef);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .promo-description {
+    font-size: clamp(14px, 1.5vw, 16px);
+    color: var(--white, #000000);
+    line-height: 1.6;
+  }
+
+  .scroll-hint {
+    display: none; /* Покажем на мобильных */
+    color: var(--blue, #366ef0);
+    font-weight: 600;
+    font-size: 14px;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .scroll-hint span {
+    animation: bounceRight 1.5s infinite;
+  }
+
+  @keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+  }
+
+  /* ПРАВАЯ КОЛОНКА: Слайдер */
+  .promo-slider-container {
+    width: 100%;
+    position: relative;
+    border-radius: 16px;
+  }
+
+  /* Кнопки навигации слайдера */
+  .slider-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blue, #366ef0);
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .slider-nav-btn:hover {
+    background: var(--blue, #366ef0);
+    color: white;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .slider-nav-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .prev-btn {
+    left: -20px;
+  }
+
+  .next-btn {
+    right: -20px;
+  }
+
+  .promo-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Плавно магнитится к карточкам */
+    gap: clamp(16px, 2vw, 24px);
+    padding-bottom: 12px; /* Место под тень и бордер */
+    padding-top: 4px;
+    /* Скрываем скроллбар, но оставляем функционал */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .promo-slider::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  /* КАРТОЧКА КУРСА */
+  .course-card {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    width: min(100%, 320px); /* Фикс ширина, но резиновая на очень узких экранах */
+    display: flex;
+    flex-direction: column;
+    background: var(--white, #fff);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(54, 110, 240, 0.1);
+    border-color: rgba(54, 110, 240, 0.2);
+  }
+
+  /* Верхняя часть карточки: Картинка */
+  .card-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Пропорция 16:9 */
+    background: #f0f3f8; /* Заглушка пока грузится */
+    overflow: hidden;
+  }
+
+  .card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    margin: 0px;
+  }
+
+  .course-card:hover .card-image-wrap img {
+    transform: scale(1.05); /* Легкий зум картинки при ховере */
+  }
+
+  /* Пины (бейжди поверх картинки) */
+  .card-pins {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  .pin {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    color: var(--black, #1a1a1a);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Красим первый пин в акцентный цвет, чтобы выделялся */
+  .pin:first-child {
+    background: var(--blue, #366ef0);
+    color: white;
+  }
+
+  /* Середина: Контент */
+  .card-content {
+    padding: 20px;
+    flex: 1; /* Растягиваем, чтобы футер прижался к низу */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 16px 0;
+    color: var(--black, #1a1a1a);
+    line-height: 1.3;
+  }
+
+  /* Кастомный список фич (буллиты) */
+  .card-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--black, #555);
+    line-height: 1.4;
+  }
+
+  .check-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--blue, #366ef0);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Низ: Футер с ценой */
+  .card-footer {
+    padding: 16px 20px;
+    background: #fafbfc;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+    margin-top: auto;
+  }
+
+  .price-block {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+  }
+
+  .price-row-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .old-price {
+    font-size: 12px;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 500;
+  }
+
+  .discount-badge {
+    background: #ffecf0;
+    color: #e51d43; /* Красный цвет для скидки */
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .price-current {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--black, #1a1a1a);
+    line-height: 1;
+  }
+
+  /* Кнопка на карточке */
+  .buy-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    background: var(--blue, #366ef0);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+
+  .buy-button:hover {
+    background: #2757c7;
+    color: #ffffff;
+  }
+  
+  .buy-button:active {
+    transform: scale(0.98);
+  }
+
+  /* АДАПТИВ: Мобильные устройства (1 колонка) */
+  @media (max-width: 900px) {
+    .course-promo-grid {
+      grid-template-columns: 1fr;
+      padding: clamp(16px, 4vw, 24px);
+      gap: 20px;
+    }
+    
+    .promo-header {
+      text-align: center;
+      align-items: center;
+    }
+
+    /* Скрываем кнопки слайдера на мобилках */
+    .slider-nav-btn {
+      display: none;
+    }
+    
+    /* Добавляем отступы по бокам слайдеру на мобилках, чтобы карточки не обрезались жестко по краю контейнера */
+    .promo-slider-container {
+      width: calc(100% + clamp(32px, 8vw, 48px)); 
+      margin-left: calc(clamp(16px, 4vw, 24px) * -1);
+      border-radius: 0;
+    }
+    
+    .promo-slider {
+      padding-left: clamp(16px, 4vw, 24px);
+      padding-right: clamp(16px, 4vw, 24px);
+      scroll-padding-left: clamp(16px, 4vw, 24px); /* Чтобы карточка прилипала не вплотную к левому краю экрана */
+    }
+    
+    .scroll-hint {
+      display: flex;
+      margin-top: 12px;
+    }
+  }
+</style>
