@@ -55,7 +55,11 @@ async function main() {
         !/\/academy\/tags\//.test(u) &&
         !/\/thank-you\/?$/i.test(u) &&
         !/\/academy\/search\/?$/i.test(u) &&
-        !/\/referal-example\/?$/i.test(u)
+        !/\/referal-example\/?$/i.test(u) &&
+        !/\/payment\/?$/i.test(u) &&
+        !/\/privacy\/?$/i.test(u) &&
+        !/\/agreement\/?$/i.test(u) &&
+        !/\/marketing-consent\/?$/i.test(u)
     );
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

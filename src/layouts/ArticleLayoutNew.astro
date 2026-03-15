@@ -37,7 +37,8 @@ const { fm, slug, headings = [] } = Astro.props;
 
 /* === окружение и базовый префикс (/academy) === */
 const origin = Astro.url.origin;
-const inAcademy = Astro.url.pathname.startsWith("/academy");
+const currentPath = Astro.url.pathname; // точный путь текущей статьи (с учётом слэшей)
+const inAcademy = currentPath.startsWith("/academy");
 const base = inAcademy ? "/academy" : "";
 
 /* === абсолютные URL (статьи: /academy/КАТЕГОРИЯ/СЛАГ) === */
@@ -243,12 +244,12 @@ const sameCategoryTop = allArticles
               <ul class="article__content-list">
                 {nestedTocItems.map((item) => (
                   <li>
-                    <a href={`${articlePath}#${item.id}`}>{item.text}</a>
+                    <a href={`${currentPath}#${item.id}`}>{item.text}</a>
                     {item.children && item.children.length > 0 && (
                       <ul class="article__content-sublist">
                         {item.children.map((child: any) => (
                           <li>
-                            <a href={`${articlePath}#${child.id}`}>
+                            <a href={`${currentPath}#${child.id}`}>
                               {child.text}
                             </a>
                           </li>

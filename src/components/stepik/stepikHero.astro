@@ -126,7 +126,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
             <li
               class={`feature ${i === features.length - 1 ? "feature--accent" : ""}`}
             >
-              <h3 class="feature-title">{f.title}</h3>
+              <p class="feature-title">{f.title}</p>
               <span class="feature-text">{f.text}</span>
             </li>
           ))
@@ -263,6 +263,7 @@ const toBtnClass = (v?: CTA["variant"]) => {
     .feature-title {
       margin: 0 0 6px;
       font-size: var(--h3);
+      font-weight: 700;
     }
     .feature-text {
       font-size: var(--text);
