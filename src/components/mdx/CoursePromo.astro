@@ -139,19 +139,34 @@ const { title, description, courses } = Astro.props;
 
   /* Grid Layout: 2 колонки на ПК */
   .course-promo-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: center;
-    background: #5f2c82;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #49a09d, #5f2c82);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #49a09d, #4564bb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: clamp(16px, 2vw, 24px);
-    padding: clamp(20px, 3vw, 40px);
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.03);
-  }
+  background:
+    radial-gradient(circle at left center, rgba(58, 110, 196, 0.30) 0%, rgba(58, 110, 196, 0.12) 22%, transparent 45%),
+    radial-gradient(circle at right center, rgba(8, 32, 84, 0.42) 0%, rgba(8, 32, 84, 0.18) 28%, transparent 52%),
+    linear-gradient(180deg, #0b1f44 0%, #1f4e8a 55%, #2b5b95 100%);
 
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: clamp(18px, 2vw, 28px);
+  padding: clamp(20px, 3vw, 36px);
+  box-shadow:
+    0 12px 30px rgba(8, 24, 60, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.course-promo-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
   /* ЛЕВАЯ КОЛОНКА */
   .promo-header {
     display: flex;
@@ -201,6 +216,7 @@ const { title, description, courses } = Astro.props;
     width: 100%;
     position: relative;
     border-radius: 16px;
+    overflow: hidden;
   }
 
   /* Кнопки навигации слайдера */
