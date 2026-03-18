@@ -2,7 +2,7 @@
  * Генерирует один sitemap.xml из собранного dist/.
  * Запускается после `astro build`. Файл отдаётся по /sitemap.xml без редиректов.
  */
-import { readdir, writeFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,25 +42,29 @@ function pathToUrl(pathStr) {
   return '/' + normalized;
 }
 
+async function isNoindex(htmlPath) {
+  try {
+    const html = await readFile(htmlPath, 'utf8');
+    return /name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html) ||
+           /content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["']/i.test(html);
+  } catch {
+    return false;
+  }
+}
+
 async function main() {
   const paths = await collectPaths(distDir);
   const base = SITE.replace(/\/$/, '');
-  const urls = paths
-    .map((p) => base + pathToUrl(p))
-    .filter(
-      (u) =>
-        !u.endsWith('/404') &&
-        !u.endsWith('/404/') &&
-        !/\/yandex_[a-f0-9]+$/i.test(u) &&
-        !/\/academy\/tags\//.test(u) &&
-        !/\/thank-you\/?$/i.test(u) &&
-        !/\/academy\/search\/?$/i.test(u) &&
-        !/\/referal-example\/?$/i.test(u) &&
-        !/\/payment\/?$/i.test(u) &&
-        !/\/privacy\/?$/i.test(u) &&
-        !/\/agreement\/?$/i.test(u) &&
-        !/\/marketing-consent\/?$/i.test(u)
-    );
+
+  const filtered = [];
+  for (const p of paths) {
+    const url = base + pathToUrl(p);
+    if (url.endsWith('/404') || url.endsWith('/404/')) continue;
+    if (/\/yandex_[a-f0-9]+$/i.test(url)) continue;
+    if (await isNoindex(join(distDir, p))) continue;
+    filtered.push(url);
+  }
+  const urls = filtered;
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

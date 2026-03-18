@@ -61,6 +61,11 @@ function buildRedirectBlock(articleRedirects) {
 
   lines.push(
     '',
+    '# Конкретные редиректы для несовпадающих старых slug',
+    'RewriteRule ^media/tags/neorganicheskaya-himiya/?$ /academy/neorganicheskaya-himiya/ [R=301,L]',
+    'RewriteRule ^media/category/materialy-dlya-ege-i-oge-po-himii/?$ /academy/ [R=301,L]',
+    '',
+    '# Общие правила /media/',
     'RewriteRule ^media/category/(.+)$ /academy/$1 [R=301,L]',
     'RewriteRule ^media/tags/(.+)$ /academy/tags/$1 [R=301,L]',
     'RewriteRule ^media/search/?$ /academy/search/ [R=301,L]'

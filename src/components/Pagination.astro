@@ -150,74 +150,80 @@ const {
 
 <script define:vars={{ perPage }}>
   (function () {
-    const pager = document.querySelector(".pager[data-pathname]");
-    const grid = document.getElementById("grid-initial");
-    if (!pager || !grid) return;
+    function init() {
+      const pager = document.querySelector(".pager[data-pathname]");
+      const grid = document.getElementById("grid-initial");
+      if (!pager || !grid) return;
 
-    const path = pager.getAttribute("data-pathname");
-    const templates = Array.from(
-      document.querySelectorAll('template[id^="tmpl-"]')
-    );
-
-    if (templates.length === 0) return;
-
-    function renderPage(pageIndex) {
-      grid.innerHTML = "";
-      const start = (pageIndex - 1) * perPage;
-      const slice = templates.slice(start, start + perPage);
-      slice.forEach(
-        (t) => t?.content && grid.appendChild(t.content.cloneNode(true))
+      const path = pager.getAttribute("data-pathname");
+      const templates = Array.from(
+        document.querySelectorAll('template[id^="tmpl-"]')
       );
-    }
 
-    function renderPager(currentPage) {
-      const totalPages = Math.max(1, Math.ceil(templates.length / perPage));
+      if (templates.length === 0) return;
 
-      const btn = (label, n, aria) =>
-        `<a class="pager__link${n === currentPage ? " is-active" : ""}" ${n === currentPage ? 'aria-current="page"' : ""} href="${path}?page=${n}" aria-label="${aria}">${label}</a>`;
+      function renderPage(pageIndex) {
+        grid.innerHTML = "";
+        const start = (pageIndex - 1) * perPage;
+        const slice = templates.slice(start, start + perPage);
+        slice.forEach(
+          (t) => t?.content && grid.appendChild(t.content.cloneNode(true))
+        );
+      }
 
-      const numbers = Array.from({ length: totalPages }, (_, i) => i + 1)
-        .map((n) => btn(String(n), n, `Страница ${n}`))
-        .join("");
+      function renderPager(currentPage) {
+        const totalPages = Math.max(1, Math.ceil(templates.length / perPage));
 
-      const prev =
-        currentPage > 1 ? btn("←", currentPage - 1, "Предыдущая страница") : "";
+        const btn = (label, n, aria) =>
+          `<a class="pager__link${n === currentPage ? " is-active" : ""}" ${n === currentPage ? 'aria-current="page"' : ""} href="${path}?page=${n}" aria-label="${aria}">${label}</a>`;
 
-      const next =
-        currentPage < totalPages
-          ? btn("→", currentPage + 1, "Следующая страница")
-          : "";
+        const numbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+          .map((n) => btn(String(n), n, `Страница ${n}`))
+          .join("");
 
-      pager.innerHTML = prev + numbers + next;
+        const prev =
+          currentPage > 1 ? btn("←", currentPage - 1, "Предыдущая страница") : "";
 
-      // SPA-поведение для ссылок
-      pager.querySelectorAll("a").forEach((a) => {
-        a.addEventListener("click", (e) => {
-          if (a.pathname === path) {
-            e.preventDefault();
-            const u = new URL(a.href);
-            const n = Number(u.searchParams.get("page") || "1");
-            renderPage(n);
-            renderPager(n);
-            window.history.replaceState({}, "", a.href);
-          }
+        const next =
+          currentPage < totalPages
+            ? btn("→", currentPage + 1, "Следующая страница")
+            : "";
+
+        pager.innerHTML = prev + numbers + next;
+
+        pager.querySelectorAll("a").forEach((a) => {
+          a.addEventListener("click", (e) => {
+            if (a.pathname === path) {
+              e.preventDefault();
+              const u = new URL(a.href);
+              const n = Number(u.searchParams.get("page") || "1");
+              renderPage(n);
+              renderPager(n);
+              window.history.replaceState({}, "", a.href);
+            }
+          });
         });
+      }
+
+      const initial = Number(
+        new URL(location.href).searchParams.get("page") || "1"
+      );
+      const startPage = initial > 1 ? initial : 1;
+
+      renderPage(startPage);
+      renderPager(startPage);
+
+      window.addEventListener("popstate", () => {
+        const n = Number(new URL(location.href).searchParams.get("page") || "1");
+        renderPage(n > 0 ? n : 1);
+        renderPager(n > 0 ? n : 1);
       });
     }
 
-    const initial = Number(
-      new URL(location.href).searchParams.get("page") || "1"
-    );
-    const startPage = initial > 1 ? initial : 1;
-
-    renderPage(startPage);
-    renderPager(startPage);
-
-    // Поддержка навигации по истории
-    window.addEventListener("popstate", () => {
-      const n = Number(new URL(location.href).searchParams.get("page") || "1");
-      renderPage(n > 0 ? n : 1);
-      renderPager(n > 0 ? n : 1);
-    });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
   })();
 </script>

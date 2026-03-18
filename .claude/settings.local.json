@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node check-links.js)",
+      "Bash(node e:/school-media/check-links.cjs)",
+      "Bash(grep -h \"^tags:\\\\|^category:\" \"e:/school-media/src/content/articles/\"*.mdx)",
+      "Bash(grep -rn \"cid-zcz5dydh\\\\|zcz5dydh\" e:/school-media/src --include=*.astro)"
+    ]
+  }
+}

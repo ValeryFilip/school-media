@@ -40,6 +40,7 @@ interface Props {
   /* меню */
   logoSrc?: string;
   ctaHref?: string;
+  showNav?: boolean;
 
   /* крошки */
   breadcrumbs?: Crumb[];
@@ -71,6 +72,7 @@ const {
 
   logoSrc,
   ctaHref = "/allcourses",
+  showNav = true,
 
   breadcrumbs = [],
   showBreadcrumbs = true,
@@ -196,7 +198,7 @@ const breadcrumbsJsonLd =
   <body class={`page is-loading ${inAcademy ? "academy-page" : ""}`}>
     <a href="#main" class="skip-link">Перейти к основному содержимому</a>
     {
-      pathname !== "/" && (
+      showNav && pathname !== "/" && (
         <UnifiedMenu
           context={inAcademy ? "media" : "landing"}
           logoSrc={menuLogoSrc}

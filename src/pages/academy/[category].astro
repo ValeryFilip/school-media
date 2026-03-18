@@ -4,10 +4,13 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import config, { categoryDescriptions } from "../../config.ts";
 import { getCollection } from "astro:content";
 import CardNew from "../../components/cards/cardNew.astro";
-import CardHorizontal from "../../components/cards/CardHorizontal.astro";
 import Pagination from "../../components/Pagination.astro";
+import FaqSection from "../../components/mainpage/Faq.astro";
+import UnifiedMenu from "../../components/UnifiedMenu.astro";
+import H2Zag from "../../components/text/h2zag.astro";
 import { slugify } from "../../lib/slugify";
 import { withReadingTime } from "../../lib/withReadingTime";
+
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
     return data.visible !== false;
@@ -45,38 +48,85 @@ const posts = (
     : []
 ).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
 
-// Левая колонка - основные статьи
-const leftCards = posts;
+// SEO данные (нужны раньше, чтобы взять featuredSlug)
+const catKey = String(originalCategory || "").toLowerCase();
+const seoData = catKey ? categoryDescriptions[catKey] : null;
 
-// Правая колонка - случайные 5 статей
-const shuffled = [...posts].sort(() => Math.random() - 0.5);
-const rightCards = shuffled.slice(0, 5);
+// Выбор редакции: по slug из конфига, иначе — первая статья категории
+const featuredSlug = seoData?.featuredSlug;
+const featuredPost = featuredSlug
+  ? (all.find((p) => p.slug === featuredSlug) ?? posts[0])
+  : posts[0];
 
-// Пагинация для левой колонки
-const PER_PAGE = 6; // 6 карточек на странице (как в tags.astro)
+// Основной поток — все статьи категории (featured НЕ убирается)
+const streamPosts = posts;
+
+// Пагинация
+const PER_PAGE = 8;
 const currentPage = Math.max(
   1,
   Number(Astro.url.searchParams.get("page") || "1"),
 );
-const totalPages = Math.max(1, Math.ceil(leftCards.length / PER_PAGE));
-const pagedLeftCards = leftCards.slice(
+const totalPages = Math.max(1, Math.ceil(streamPosts.length / PER_PAGE));
+const pagedCards = streamPosts.slice(
   (currentPage - 1) * PER_PAGE,
   currentPage * PER_PAGE,
 );
 
+
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageTitle = originalCategory ?? "";
-const seoTitle = `Все статьи в категории «${pageTitle}» — Академия ЕГЭХИМ`;
-const catKey = String(originalCategory || "").toLowerCase();
+const seoTitle =
+  seoData?.title || `Все статьи в категории «${pageTitle}» — Академия ЕГЭХИМ`;
 const pageDesc =
-  (catKey && categoryDescriptions[catKey]) ||
+  seoData?.shortDesc ||
   `Все статьи в категории «${originalCategory ?? ""}»: понятные объяснения, примеры, советы и подборки материалов по теме.`;
 const pageUrl = `${siteUrl}/academy/${encodeURIComponent(slug)}/`;
-
 const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
-
-// Для отображения количества статей
 const totalArticles = posts.length;
+
+// Топ-8 тегов категории
+const allTags = posts.flatMap((p) =>
+  Array.isArray(p.data.tags) ? p.data.tags : [],
+);
+const tagCounts = allTags.reduce<Record<string, number>>(
+  (acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  },
+  {},
+);
+const popularTags = Object.entries(tagCounts)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 8)
+  .map((t) => t[0]);
+
+// FAQ + Schema
+const faqItems = seoData?.faq ?? [];
+let faqJsonLd = null;
+if (faqItems.length > 0) {
+  faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
+
+// Данные Featured для карточки
+const featuredHref = featuredPost
+  ? `/academy/${slugify(featuredPost.data.category ?? "")}/${featuredPost.slug}`
+  : undefined;
+const featuredDate = featuredPost?.data.date
+  ? new Date(featuredPost.data.date).toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+  : undefined;
 ---
 
 <MainLayout
@@ -90,25 +140,114 @@ const totalArticles = posts.length;
     ? `${pageUrl}?page=${currentPage + 1}`
     : undefined}
   breadcrumbs={breadcrumbs}
+  showBreadcrumbs={false}
+  showNav={false}
+  index={false}
+  faqJsonLd={faqJsonLd}
 >
-  <main class="main container" aria-labelledby="category-title">
-    <section class="header" role="region" aria-labelledby="category-title">
-      <div class="header__wrapper">
-        <h1
-          id="category-title"
-          class="header__title"
-          data-count={totalArticles}
+  <!-- ===================== BENTO DARK HERO ===================== -->
+  <section class="cat-hero" aria-labelledby="category-title">
+    <!-- Меню внутри hero -->
+    <div class="cat-hero__menu">
+      <UnifiedMenu
+        context="media"
+        logoSrc="/images/technical/egehim(academy).webp"
+        logoAlt="ЕГЭХИМ — академия"
+        ctaHref="/allcourses"
+        pageUtmSource="academy"
+      />
+    </div>
+
+    <!-- Breadcrumbs внутри hero -->
+    <nav class="hero-breadcrumbs container" aria-label="Breadcrumb">
+      <ol class="hero-breadcrumbs__list">
+        <li class="hero-breadcrumbs__item">
+          <a href="/academy/" class="hero-breadcrumbs__link">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-label="Главная"
+              class="hero-breadcrumbs__home-icon"
+            >
+              <path fill="currentColor" d="M12 3l9 8h-3v9h-4v-6H10v6H6v-9H3z"
+              ></path>
+            </svg>
+          </a>
+        </li>
+        <li class="hero-breadcrumbs__item">
+          <a href="/academy/" class="hero-breadcrumbs__link">Академия</a>
+        </li>
+        <li
+          class="hero-breadcrumbs__item hero-breadcrumbs__item--current"
+          aria-current="page"
         >
           {pageTitle}
-        </h1>
-        <p class="header__description">{pageDesc}</p>
-      </div>
-    </section>
+        </li>
+      </ol>
+    </nav>
 
-    <section class="main-cards" role="region" aria-labelledby="category-title">
+    <div class="cat-hero__bento container">
+      <!-- ЛЕВАЯ КОЛОНКА: Заголовок + описание -->
+      <div class="bento-tile bento-tile--main">
+        <span class="bento-badge"
+          >Академия ЕГЭХИМ · {totalArticles} материалов</span
+        >
+        <h1 id="category-title" class="bento-title">{pageTitle}</h1>
+        <p class="bento-desc">{pageDesc}</p>
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА: Featured (сверху) + Теги (снизу) -->
+      <div class="bento-right">
+        <!-- Выбор редакции -->
+        {
+          featuredPost && featuredHref && (
+            <a
+              href={featuredHref}
+              class="bento-tile bento-tile--featured"
+              aria-label={`Читать: ${featuredPost.data.title}`}
+            >
+              <div class="bfeat__body">
+                <span class="bfeat__label">⭐ Выбор редакции</span>
+                <h2 class="bfeat__title">{featuredPost.data.title}</h2>
+                {featuredPost.data.description && (
+                  <p class="bfeat__desc">{featuredPost.data.description}</p>
+                )}
+                {featuredDate && (
+                  <span class="bfeat__date">{featuredDate}</span>
+                )}
+              </div>
+            </a>
+          )
+        }
+
+        <!-- Теги -->
+        {
+          popularTags.length > 0 && (
+            <div class="bento-tile bento-tile--tags">
+              <span class="bento-tile__label">Популярные темы</span>
+              <ul class="btags__list">
+                {popularTags.map((tag) => (
+                  <li>
+                    <a href={`/academy/tags/${slugify(tag)}`} class="btag">
+                      {tag}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== СТАТЬИ ===================== -->
+  <section class="main-cards" role="region" aria-labelledby="articles-heading">
+    <div class="main-cards__inner container">
+      <H2Zag title={`Материалы по теме: ${pageTitle}`} subtitle="Популярные статьи и материалы по этой теме для успешной сдачи ЕГЭ по химии!" headingId="articles-heading" />
       <div class="left-block__grid" id="grid-initial">
         {
-          pagedLeftCards.map((post) => (
+          pagedCards.map((post) => (
             <div class="ad-media__card">
               <CardNew post={post} basePath="/academy" />
             </div>
@@ -116,88 +255,998 @@ const totalArticles = posts.length;
         }
       </div>
 
-      <div class="popular" role="region" aria-labelledby="popular-title">
-        <h2 id="popular-title" class="popular__title">Популярное</h2>
-        <div class="popular__cards">
-          {
-            rightCards.map((post) => (
-              <CardHorizontal post={post} basePath="/academy" />
-            ))
-          }
+
+    </div>
+              <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pathname={Astro.url.pathname}
+        perPage={PER_PAGE}
+      />
+  </section>
+
+
+  {/* Шаблоны карточек */}
+  {
+    streamPosts.map((post) => (
+      <template id={`tmpl-${post.slug}`}>
+        <div class="ad-media__card">
+          <CardNew post={post} basePath="/academy" />
         </div>
-      </div>
-    </section>
+      </template>
+    ))
+  }
 
-    {/* Шаблоны карточек для клиентской пагинации */}
-    {
-      leftCards.map((post) => (
-        <template id={`tmpl-${post.slug}`}>
-          <div class="ad-media__card">
-            <CardNew post={post} basePath="/academy" />
+
+  <!-- ===================== SEO ТЕКСТ ===================== -->
+  {
+    seoData?.seoText && (
+      <section class="seo-block" aria-label="О разделе">
+        <div class="seo-block__wrap container">
+          <div class="seo-block__card">
+            <H2Zag title={`О разделе: ${pageTitle}`} />
+            <div class="seo-block__body">
+              {seoData.seoText
+                .trim()
+                .split(/\n\n+/)
+                .map((para) => (
+                  <p>{para.trim()}</p>
+                ))}
+            </div>
           </div>
-        </template>
-      ))
-    }
+        </div>
+      </section>
+    )
+  }
 
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      pathname={Astro.url.pathname}
-      perPage={PER_PAGE}
-    />
-  </main>
+  <!-- ===================== РОАДМАП ===================== -->
+  {
+    seoData?.roadmap && (
+      <section
+        class="roadmap-section"
+        aria-labelledby="roadmap-heading"
+      >
+        <div class="container">
+        <div class="roadmap-section__inner">
+          <H2Zag
+            title={seoData.roadmap.title}
+            subtitle={seoData.roadmap.subtitle}
+            headingId="roadmap-heading"
+          />
+          <ol class="roadmap__list">
+            {seoData.roadmap.steps.map(({ title, desc }, i) => (
+              <li class="roadmap__item">
+                <div class="roadmap__step-num">{i + 1}</div>
+                <div class="roadmap__connector" aria-hidden="true" />
+                <div class="roadmap__content">
+                  <span class="roadmap__item-title">{title}</span>
+                  <span class="roadmap__item-desc">{desc}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ===================== СТАТИСТИКА ЕГЭ ===================== -->
+  {
+    seoData?.examStats && (
+      <section class="examstats">
+        <div class="examstats__body container" aria-labelledby="examstats-heading">
+        <H2Zag
+          title={seoData.examStats.title}
+          subtitle={seoData.examStats.subtitle}
+          headingId="examstats-heading"
+        />
+
+        <!-- Две стат-карточки -->
+        <div class="examstats__top">
+          <!-- Карточка: кол-во заданий -->
+          <div class="examstats__card examstats__card--tasks">
+            <div class="examstats__card-body">
+              <span class="examstats__big-num">{seoData.examStats.tasksCount}</span>
+              <span class="examstats__label">заданий</span>
+              <p class="examstats__card-desc">{seoData.examStats.tasksDesc}</p>
+            </div>
+            <div class="examstats__card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="8" width="48" height="48" rx="10" fill="currentColor" opacity="0.12"/>
+                <rect x="16" y="20" width="32" height="4" rx="2" fill="currentColor" opacity="0.6"/>
+                <rect x="16" y="30" width="24" height="4" rx="2" fill="currentColor" opacity="0.4"/>
+                <rect x="16" y="40" width="20" height="4" rx="2" fill="currentColor" opacity="0.25"/>
+                <circle cx="48" cy="44" r="10" fill="currentColor" opacity="0.9"/>
+                <path d="M44 44l2.5 2.5L52 41" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Карточка: баллы -->
+          <div class="examstats__card examstats__card--points">
+            <div class="examstats__card-body">
+              <span class="examstats__big-num">{seoData.examStats.maxPoints}</span>
+              <span class="examstats__label">первичных баллов</span>
+              <p class="examstats__card-desc">{seoData.examStats.pointsDesc}</p>
+            </div>
+            <div class="examstats__card-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="26" fill="currentColor" opacity="0.1"/>
+                <path d="M32 14v4M32 46v4M14 32h4M46 32h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+                <circle cx="32" cy="32" r="12" fill="currentColor" opacity="0.2"/>
+                <path d="M28 32l3 3 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M32 22v4M32 38v4M22 32h4M38 32h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Большая карточка: разбивка по заданиям -->
+        <div class="examstats__breakdown">
+          <div class="examstats__breakdown-header">
+            <span class="examstats__breakdown-col examstats__breakdown-col--num">№</span>
+            <span class="examstats__breakdown-col examstats__breakdown-col--title">Задание</span>
+            <span class="examstats__breakdown-col examstats__breakdown-col--pts">Баллы</span>
+          </div>
+          <ul class="examstats__task-list">
+            {seoData.examStats.tasks.map(({ number, title, points, desc }) => (
+              <li class="examstats__task">
+                <div class="examstats__task-num">{number}</div>
+                <div class="examstats__task-body">
+                  <span class="examstats__task-title">{title}</span>
+                  <span class="examstats__task-desc" set:html={desc} />
+                </div>
+                <div class={`examstats__task-pts examstats__task-pts--${points >= 3 ? "high" : points === 2 ? "mid" : "low"}`}>
+                  {points}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div class="examstats__breakdown-footer">
+            <span class="examstats__total-label">Итого по неорганике</span>
+            <span class="examstats__total-pts">{seoData.examStats.maxPoints} баллов</span>
+          </div>
+        </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ===================== FAQ ===================== -->
+
+  {
+    faqItems.length > 0 && (
+      <FaqSection
+        id={`faq-${slug}`}
+        title="Частые вопросы о разделе"
+        subtitle="Вопросы о том, как готовиться к ЕГЭ"
+        items={faqItems.map((f) => ({ q: f.q, a: f.a }))}
+      />
+    )
+  }
 </MainLayout>
-
 <style>
-  .header__wrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    margin-bottom: 60px;
-    justify-content: space-between;
+  :global(body.academy-page) {
+    background-color: #eef2ff;
+    background-image:
+      /* Сетка */
+      linear-gradient(rgba(54, 110, 240, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54, 110, 240, 0.055) 1px, transparent 1px),
+      /* Блок 1 — герой */
+      radial-gradient(ellipse 45% 14% at 8% 8%,   rgba(54, 110, 240, 0.13) 0%, transparent 100%),
+      radial-gradient(ellipse 40% 12% at 92% 17%,  rgba(100, 149, 255, 0.09) 0%, transparent 100%),
+      /* Блок 2 — статьи */
+      radial-gradient(ellipse 42% 13% at 90% 30%,  rgba(54, 110, 240, 0.10) 0%, transparent 100%),
+      radial-gradient(ellipse 38% 11% at 10% 38%,  rgba(130, 100, 255, 0.08) 0%, transparent 100%),
+      /* Блок 3 — роадмап */
+      radial-gradient(ellipse 45% 14% at 8% 52%,   rgba(54, 110, 240, 0.10) 0%, transparent 100%),
+      radial-gradient(ellipse 40% 12% at 92% 60%,  rgba(100, 149, 255, 0.08) 0%, transparent 100%),
+      /* Блок 4 — статистика */
+      radial-gradient(ellipse 42% 13% at 88% 72%,  rgba(54, 110, 240, 0.09) 0%, transparent 100%),
+      radial-gradient(ellipse 38% 11% at 12% 78%,  rgba(130, 100, 255, 0.07) 0%, transparent 100%),
+      /* Блок 5 — SEO текст */
+      radial-gradient(ellipse 45% 14% at 10% 90%,  rgba(54, 110, 240, 0.10) 0%, transparent 100%),
+      radial-gradient(ellipse 40% 12% at 90% 96%,  rgba(100, 149, 255, 0.08) 0%, transparent 100%),
+      /* Базовый градиент */
+      linear-gradient(165deg, #eef2ff 0%, #f7faff 40%, #ffffff 65%, #f0f5ff 85%, #edf4ff 100%);
+    background-size:
+      44px 44px, 44px 44px,
+      100% 100%, 100% 100%, 100% 100%, 100% 100%,
+      100% 100%, 100% 100%, 100% 100%, 100% 100%,
+      100% 100%, 100% 100%, 100% 100%;
+  }
+
+  :global(body.academy-page .page-stack) {
+    row-gap: 0;
+  }
+
+  /* ============================================================
+     HERO BREADCRUMBS
+  ============================================================ */
+  .hero-breadcrumbs {
+    position: relative;
+    z-index: 2;
+    padding-top: 0;
+    padding-bottom: 18px;
+  }
+
+  .hero-breadcrumbs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.35);
+  }
+
+  .hero-breadcrumbs__item::after {
+    content: "›";
+    margin-left: 6px;
+    color: rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-breadcrumbs__item:last-child::after {
+    content: "";
+  }
+
+  .hero-breadcrumbs__item--current {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-breadcrumbs__link {
+    color: rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    display: inline-flex;
     align-items: center;
   }
-  .header__wrapper p {
+
+  .hero-breadcrumbs__link:hover {
+    color: var(--blue, #366ef0);
+    text-decoration: none;
+  }
+
+  .hero-breadcrumbs__home-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ============================================================
+     LIGHT BENTO HERO
+  ============================================================ */
+  .cat-hero {
+    position: relative;
+    overflow: clip;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding-bottom: 48px;
+  }
+
+  .cat-hero__menu {
+    position: relative;
+    z-index: 10;
+  }
+  .cat-hero__menu :global(header) {
+
+    margin-bottom: 20px;
+  }
+
+  /* ---- Bento Grid: 2 колонки ---- */
+  .cat-hero__bento {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* Правая колонка — стек из 2 плиток */
+  .bento-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ---- Общие стили плитки ---- */
+  .bento-tile {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(54, 110, 240, 0.12);
+    border-radius: 20px;
+    padding: 28px 28px;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .bento-tile:hover {
+    border-color: rgba(54, 110, 240, 0.3);
+    box-shadow: 0 4px 24px rgba(54, 110, 240, 0.08);
+  }
+
+  /* ---- ПЛИТКА 1: Заголовок (левая колонка) ---- */
+  .bento-tile--main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 320px;
+  }
+
+  .bento-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid rgba(54, 110, 240, 0.3);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue, #366ef0);
+    margin-bottom: 20px;
+    width: fit-content;
+    background: rgba(54, 110, 240, 0.06);
+  }
+
+  .bento-title {
+    font-size: clamp(28px, 4vw, 54px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #0d1117;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+  }
+
+  .bento-desc {
+    font-size: clamp(13px, 1.2vw, 15px);
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 1.6;
     margin: 0;
   }
-  .header__title::after {
-    content: attr(data-count);
-    margin-left: 8px;
-    color: var(--gray);
+
+  /* ---- ПЛИТКА 2: Featured Article (правая колонка, верх) ---- */
+  .bento-tile--featured {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .bento-tile--featured:hover {
+    text-decoration: none;
+  }
+
+  .bfeat__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .bfeat__label {
+    font-size: 11px;
     font-weight: 700;
-    font-size: 32px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue, #366ef0);
+    width: fit-content;
   }
+
+  .bfeat__title {
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-weight: 700;
+    color: #0d1117;
+    line-height: 1.3;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .bfeat__desc {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .bfeat__date {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.3);
+    margin-top: auto;
+  }
+
+  /* ---- ПЛИТКА 3: Теги (правая колонка, низ) ---- */
+  .bento-tile--tags {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  .bento-tile__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.35);
+  }
+
+  .btags__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btag {
+    display: inline-block;
+    padding: 7px 14px;
+    background: rgba(54, 110, 240, 0.06);
+    border: 1px solid rgba(54, 110, 240, 0.15);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.65);
+    text-decoration: none;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .btag:hover {
+    background: var(--blue, #366ef0);
+    border-color: var(--blue, #366ef0);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ============================================================
+     СТАТЬИ
+  ============================================================ */
   .main-cards {
-    display: grid;
-    grid-template-columns: 1fr 0.3fr;
-    gap: 30px;
-    align-items: start;
+    padding-block: 56px;
+        border-radius: 24px;
+    position: relative;
+    overflow: clip;
+    padding-block: 56px;
+    background-color: #0d1117;
+    background-image:
+      radial-gradient(circle, rgba(246, 253, 255, 0.12) 1px, transparent 1px),
+      radial-gradient(ellipse 55% 80% at 5% 15%,  rgba(54, 110, 240, 0.30) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 70% at 95% 85%, rgba(100, 149, 255, 0.20) 0%, transparent 65%);
+    background-size:
+      30px 30px,
+      100% 100%, 100% 100%;
   }
+
+  .main-cards__inner :global(.h2zag) {
+    margin-bottom: 24px;
+    color: #fff;
+  }
+
+  .main-cards__inner :global(.h2zag-title) {
+    color: #fff;
+  }
+
+  .main-cards__inner :global(.h2zag-subtitle) {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  :global(.main-cards .pager__link) {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    min-width: unset;
+    padding: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+
+  :global(.main-cards .pager__link:hover) {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+
+  :global(.main-cards .pager__link.is-active) {
+    background: var(--blue, #366ef0);
+    border-color: var(--blue, #366ef0);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(54, 110, 240, 0.4);
+  }
+
   .left-block__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
+
   .ad-media__card {
     display: flex;
     align-items: flex-start;
   }
-  .popular__title {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.2;
+
+  /* ============================================================
+     РОАДМАП НЕОРГАНИКИ
+  ============================================================ */
+  .roadmap-section {
+  }
+
+  .roadmap-section__inner {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+    padding: clamp(32px, 5vw, 52px);
+  }
+
+  .roadmap-section__inner :global(.h2zag) {
+    margin-bottom: 32px;
+  }
+
+  .roadmap-section__inner :global(.h2zag-subtitle) {
     margin: 0;
+    font-weight: 400;
+  }
+
+  .roadmap__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    position: relative;
+    align-items: start;
+  }
+
+  .roadmap__item {
+    display: grid;
+    grid-template-columns: 48px 2px 1fr;
+    gap: 0 16px;
+    align-items: start;
+    padding-bottom: 32px;
+  }
+
+  .roadmap__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .roadmap__step-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--blue, #366ef0);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .roadmap__connector {
+    width: 2px;
+    background: var(--border, #e5e7eb);
+    margin-top: 48px;
+    margin-bottom: 0;
+    align-self: stretch;
+  }
+
+  .roadmap__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .roadmap__item-title {
+    font-size: clamp(15px, 1.3vw, 17px);
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .roadmap__item-desc {
+    font-size: 13px;
+    color: var(--gray, #6b7280);
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    .roadmap__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================================
+     SEO ТЕКСТ
+  ============================================================ */
+  .seo-block {
+    padding-block: 56px;
+  }
+
+  .seo-block__card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-24);
+    box-shadow: var(--shadow-1);
+    padding: clamp(32px, 5vw, 52px);
+  }
+
+  .seo-block__card :global(.h2zag) {
+    margin: 0 0 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .seo-block__body {
+    columns: 2;
+    column-gap: 40px;
+    color: var(--black);
+    font-size: clamp(15px, 1.2vw, 16px);
+    line-height: 1.75;
+    font-weight: 500;
+  }
+
+  .seo-block__body p {
+    margin: 0 0 1.4em;
+    break-inside: avoid;
+  }
+
+  /* ============================================================
+     АДАПТИВ
+  ============================================================ */
+  @media (max-width: 1100px) {
+    .main-cards__grid {
+      grid-template-columns: 1fr;
+    }
+    .seo-block__body {
+      columns: 1;
+    }
+    .roadmap__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .cat-hero__bento {
+      grid-template-columns: 1fr;
+    }
+    .bento-tile--main {
+      min-height: unset;
+    }
+    .roadmap__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============================================================
+     СТАТИСТИКА ЕГЭ
+  ============================================================ */
+  .examstats {
+    padding-block: 56px;
+  }
+
+  .examstats__body :global(.h2zag) {
     margin-bottom: 20px;
   }
 
-  .popular__cards {
+  /* ---- Две верхние карточки ---- */
+  .examstats__top {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
   }
 
-  @media (max-width: 1100px) {
-    .main-cards {
+  .examstats__card {
+    position: relative;
+    border-radius: var(--radius-24, 24px);
+    padding: 32px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .examstats__card--tasks {
+    background: #0d1117;
+    color: #fff;
+  }
+
+  /* Сетка на тёмной карточке */
+  .examstats__card--tasks::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(54, 110, 240, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54, 110, 240, 0.07) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+
+  /* Радиальные свечения на тёмной карточке */
+  .examstats__card--tasks::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 10% 110%, rgba(54, 110, 240, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 90% -10%, rgba(54, 110, 240, 0.12) 0%, transparent 55%);
+    pointer-events: none;
+  }
+
+  .examstats__card--points {
+    background: var(--blue, #366ef0);
+    color: #fff;
+  }
+
+  /* Сетка на синей карточке */
+  .examstats__card--points::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+
+  /* Радиальные свечения на синей карточке */
+  .examstats__card--points::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 70% at 95% 105%, rgba(255, 255, 255, 0.15) 0%, transparent 55%),
+      radial-gradient(ellipse 35% 45% at 5% -5%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .examstats__card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .examstats__big-num {
+    font-size: clamp(52px, 7vw, 80px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .examstats__label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 12px;
+  }
+
+  .examstats__card-desc {
+    font-size: clamp(13px, 1.1vw, 14px);
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.55;
+    margin: 0;
+    max-width: 280px;
+  }
+
+  .examstats__card-icon {
+    flex-shrink: 0;
+    width: clamp(72px, 10vw, 100px);
+    height: clamp(72px, 10vw, 100px);
+    color: #fff;
+    opacity: 0.7;
+    align-self: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .examstats__card-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ---- Большая карточка разбивки ---- */
+  .examstats__breakdown {
+    background: var(--white, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-24, 24px);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+
+  .examstats__breakdown-header {
+    display: grid;
+    grid-template-columns: 56px 1fr 72px;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--surface, #f8f9fb);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+  }
+
+  .examstats__breakdown-col {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray, #6b7280);
+  }
+
+  .examstats__breakdown-col--pts {
+    text-align: center;
+  }
+
+  .examstats__task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .examstats__task {
+    display: grid;
+    grid-template-columns: 56px 1fr 72px;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    transition: background 0.15s ease;
+  }
+
+  .examstats__task:last-child {
+    border-bottom: none;
+  }
+
+  .examstats__task:hover {
+    background: var(--surface, #f8f9fb);
+  }
+
+  .examstats__task-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--blue, #366ef0);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .examstats__task-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .examstats__task-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .examstats__task-desc {
+    font-size: 12px;
+    color: var(--gray, #6b7280);
+    line-height: 1.5;
+  }
+
+  .examstats__task-desc :global(a) {
+    color: var(--blue, #366ef0);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .examstats__task-desc :global(a:hover) {
+    text-decoration: none;
+  }
+
+  .examstats__task-pts {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 auto;
+  }
+
+  .examstats__task-pts--low {
+    background: rgba(54, 110, 240, 0.08);
+    color: var(--blue, #366ef0);
+  }
+
+  .examstats__task-pts--mid {
+    background: rgba(251, 146, 60, 0.12);
+    color: #ea6c00;
+  }
+
+  .examstats__task-pts--high {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+  }
+
+  .examstats__breakdown-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    background: var(--surface, #f8f9fb);
+    border-top: 2px solid var(--border, #e5e7eb);
+  }
+
+  .examstats__total-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .examstats__total-pts {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--blue, #366ef0);
+  }
+
+  @media (max-width: 700px) {
+    .examstats__top {
       grid-template-columns: 1fr;
+    }
+
+    .examstats__card {
+      padding: 24px;
+    }
+
+    .examstats__breakdown-header,
+    .examstats__task {
+      grid-template-columns: 44px 1fr 56px;
+      gap: 12px;
+      padding: 12px 16px;
     }
   }
 </style>

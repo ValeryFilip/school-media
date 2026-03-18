@@ -63,6 +63,7 @@ const currentPageServer = Math.max(
   title={pageTitle}
   siteName="Академия ЕГЭХИМ"
   description={pageDesc}
+  index={false}
   url={`${pageUrl}${currentPageServer > 1 ? `?page=${currentPageServer}` : ""}`}
   prevUrl={currentPageServer > 1
     ? `${pageUrl}?page=${currentPageServer - 1}`
