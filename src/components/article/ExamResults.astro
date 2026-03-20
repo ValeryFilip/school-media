@@ -1,0 +1,3418 @@
+---
+// ExamResults.astro — результаты пробников ЕГЭ
+// Навигация: чип месяца → чипы пробников → аккордеон учеников
+// Стандарт данных:
+//   - каждое задание — отдельная строка
+//   - невыполнено: student: "—", correct: реальный правильный ответ
+
+const months = [
+  {
+    id: "mart",
+    label: "Март",
+    exams: [
+      {
+        id: "mart1",
+        label: "Пробник 1",
+        date: "05.03.2026",
+        students: [
+          {
+            id: "s1-1",
+            name: "Вика",
+            primaryScore: 34,
+            primaryMax: 56,
+            testScore: 66,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "15",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Неверно",
+              },
+              {
+                num: "2",
+                student: "521",
+                correct: "512",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка в последовательности",
+              },
+              {
+                num: "3",
+                student: "34",
+                correct: "34",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "495",
+                correct: "495",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "32",
+                correct: "32",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "3521",
+                correct: "3521",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "—",
+                correct: "6254",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "9",
+                student: "54",
+                correct: "54",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "214",
+                correct: "224",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка во второй цифре",
+              },
+              {
+                num: "11",
+                student: "14",
+                correct: "14",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "312",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "135",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "1465",
+                correct: "1465",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "—",
+                correct: "46",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "16",
+                student: "41",
+                correct: "41",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "431",
+                correct: "431",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "1345",
+                correct: "1345",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "421",
+                correct: "421",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "2314",
+                correct: "2314",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "1232",
+                correct: "1232",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "36",
+                correct: "36",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "15",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "432",
+                correct: "412",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка во второй цифре",
+              },
+              {
+                num: "26",
+                student: "15",
+                correct: "15",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "20,16",
+                correct: "10,08",
+                score: 0,
+                maxScore: 1,
+                comment: "Ответ в 2 раза больше верного",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "80",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Уравнение ОВР, баланс и роли указаны корректно.",
+              },
+              {
+                num: "30",
+                status: "Не начато",
+                score: 0,
+                maxScore: 2,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Безупречная цепочка неорганических превращений.",
+              },
+              {
+                num: "32",
+                status: "Частично",
+                score: 3,
+                maxScore: 5,
+                comment: "Верно записаны первые три реакции.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 1,
+                maxScore: 3,
+                comment:
+                  "Выведен только первый элемент, структура не представлена.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+          {
+            id: "s1-2",
+            name: "Даша",
+            primaryScore: 41,
+            primaryMax: 56,
+            testScore: 76,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "512",
+                correct: "512",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "34",
+                correct: "34",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "13",
+                correct: "24",
+                score: 0,
+                maxScore: 1,
+                comment: "Неверно",
+              },
+              {
+                num: "5",
+                student: "495",
+                correct: "495",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "32",
+                correct: "32",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "3521",
+                correct: "3521",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "6254",
+                correct: "6254",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "54",
+                correct: "54",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "224",
+                correct: "224",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "14",
+                correct: "14",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "312",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "135",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "1465",
+                correct: "1465",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "46",
+                correct: "46",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "41",
+                correct: "41",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "431",
+                correct: "431",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "1345",
+                correct: "1345",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "421",
+                correct: "421",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "2314",
+                correct: "2314",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "1232",
+                correct: "1232",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "36",
+                correct: "36",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "15",
+                correct: "15",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "25",
+                student: "412",
+                correct: "412",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "26",
+                student: "—",
+                correct: "15",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "27",
+                student: "10,08",
+                correct: "10,08",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "80",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Всё верно.",
+              },
+              {
+                num: "30",
+                status: "Частично",
+                score: 1,
+                maxScore: 2,
+                comment: "Одна из реакций записана с ошибкой.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Цепочка записана полностью и верно.",
+              },
+              {
+                num: "32",
+                status: "Частично",
+                score: 4,
+                maxScore: 5,
+                comment: "Не записана последняя реакция в цепочке.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 2,
+                maxScore: 3,
+                comment: "Структура представлена, но с ошибкой в одной группе.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+          {
+            id: "s1-3",
+            name: "Миша",
+            primaryScore: 28,
+            primaryMax: 56,
+            testScore: 54,
+            testMax: 100,
+            grade: "3 (Удовл.)",
+            part1: [
+              {
+                num: "1",
+                student: "15",
+                correct: "24",
+                score: 0,
+                maxScore: 1,
+                comment: "Неверно",
+              },
+              {
+                num: "2",
+                student: "512",
+                correct: "512",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "12",
+                correct: "34",
+                score: 0,
+                maxScore: 1,
+                comment: "Неверно",
+              },
+              {
+                num: "4",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "—",
+                correct: "495",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "6",
+                student: "32",
+                correct: "32",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "3521",
+                correct: "3521",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "—",
+                correct: "6254",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "9",
+                student: "54",
+                correct: "54",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "214",
+                correct: "224",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка",
+              },
+              {
+                num: "11",
+                student: "14",
+                correct: "14",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "312",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "135",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "—",
+                correct: "1465",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "15",
+                student: "—",
+                correct: "46",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "16",
+                student: "41",
+                correct: "41",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "431",
+                correct: "431",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "1345",
+                correct: "1345",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "—",
+                correct: "421",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "20",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "2314",
+                correct: "2314",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "—",
+                correct: "1232",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "23",
+                student: "36",
+                correct: "36",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "15",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "—",
+                correct: "412",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "26",
+                student: "15",
+                correct: "15",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "—",
+                correct: "10,08",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "80",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Частично",
+                score: 1,
+                maxScore: 2,
+                comment: "Баланс электронов неверный.",
+              },
+              {
+                num: "30",
+                status: "Не начато",
+                score: 0,
+                maxScore: 2,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "31",
+                status: "Частично",
+                score: 2,
+                maxScore: 4,
+                comment: "Записана только половина цепочки превращений.",
+              },
+              {
+                num: "32",
+                status: "Не начато",
+                score: 0,
+                maxScore: 5,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "33",
+                status: "Не начато",
+                score: 0,
+                maxScore: 3,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "mart2",
+        label: "Пробник 2",
+        date: "12.03.2026",
+        students: [
+          {
+            id: "s2-1",
+            name: "Вика",
+            primaryScore: 38,
+            primaryMax: 56,
+            testScore: 72,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "15",
+                correct: "25",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка в первой цифре",
+              },
+              {
+                num: "4",
+                student: "13",
+                correct: "13",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "246",
+                correct: "246",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "41",
+                correct: "41",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "1234",
+                correct: "1234",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "5362",
+                correct: "5362",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "23",
+                correct: "23",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "—",
+                correct: "45",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "214",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "531",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "2356",
+                correct: "2356",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "524",
+                correct: "524",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "2413",
+                correct: "2413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "—",
+                correct: "312",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "20",
+                student: "413",
+                correct: "413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "1423",
+                correct: "1423",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "2341",
+                correct: "2341",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "48",
+                correct: "48",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "23",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "321",
+                correct: "321",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "26",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "—",
+                correct: "14,2",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "65",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Уравнение ОВР и баланс верны.",
+              },
+              {
+                num: "30",
+                status: "Частично",
+                score: 1,
+                maxScore: 2,
+                comment: "Одна из реакций ионного обмена с ошибкой.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Цепочка неорганических превращений верна.",
+              },
+              {
+                num: "32",
+                status: "Частично",
+                score: 3,
+                maxScore: 5,
+                comment: "Три из пяти реакций органической цепочки.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 2,
+                maxScore: 3,
+                comment: "Формула верная, структура с ошибкой.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+          {
+            id: "s2-2",
+            name: "Даша",
+            primaryScore: 45,
+            primaryMax: 56,
+            testScore: 84,
+            testMax: 100,
+            grade: "5 (Отлично)",
+            part1: [
+              {
+                num: "1",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "25",
+                correct: "25",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "13",
+                correct: "13",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "246",
+                correct: "246",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "41",
+                correct: "41",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "1234",
+                correct: "1234",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "5362",
+                correct: "5362",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "23",
+                correct: "23",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "45",
+                correct: "45",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "214",
+                correct: "214",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "531",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "2356",
+                correct: "2356",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "524",
+                correct: "524",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "2413",
+                correct: "2413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "413",
+                correct: "413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "1423",
+                correct: "1423",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "2341",
+                correct: "2341",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "48",
+                correct: "48",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "23",
+                correct: "23",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "25",
+                student: "321",
+                correct: "321",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "26",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "14,2",
+                correct: "14,2",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "65",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "30",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Верно.",
+              },
+              {
+                num: "32",
+                status: "Выполнено полностью",
+                score: 5,
+                maxScore: 5,
+                comment: "Все пять реакций органической цепочки верны.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 2,
+                maxScore: 3,
+                comment:
+                  "Небольшая ошибка в обозначении функциональной группы.",
+              },
+              {
+                num: "34",
+                status: "Частично",
+                score: 1,
+                maxScore: 4,
+                comment: "Только первое уравнение верно, расчёты отсутствуют.",
+              },
+            ],
+          },
+          {
+            id: "s2-3",
+            name: "Миша",
+            primaryScore: 31,
+            primaryMax: 56,
+            testScore: 60,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "213",
+                correct: "312",
+                score: 0,
+                maxScore: 1,
+                comment: "Неверный порядок элементов",
+              },
+              {
+                num: "3",
+                student: "25",
+                correct: "25",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "13",
+                correct: "13",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "—",
+                correct: "246",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "6",
+                student: "41",
+                correct: "41",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "—",
+                correct: "1234",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "8",
+                student: "5362",
+                correct: "5362",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "23",
+                correct: "23",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "—",
+                correct: "45",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "214",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "531",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "2356",
+                correct: "2356",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "524",
+                correct: "524",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "—",
+                correct: "2413",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "19",
+                student: "312",
+                correct: "312",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "413",
+                correct: "413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "—",
+                correct: "1423",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "22",
+                student: "—",
+                correct: "2341",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "23",
+                student: "48",
+                correct: "48",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "23",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "321",
+                correct: "321",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "26",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "—",
+                correct: "14,2",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "65",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Частично",
+                score: 1,
+                maxScore: 2,
+                comment: "Один из ионов указан неверно.",
+              },
+              {
+                num: "30",
+                status: "Не начато",
+                score: 0,
+                maxScore: 2,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "31",
+                status: "Частично",
+                score: 2,
+                maxScore: 4,
+                comment: "Половина цепочки превращений верна.",
+              },
+              {
+                num: "32",
+                status: "Не начато",
+                score: 0,
+                maxScore: 5,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "33",
+                status: "Не начато",
+                score: 0,
+                maxScore: 3,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "34",
+                status: "Частично",
+                score: 1,
+                maxScore: 4,
+                comment: "Записано одно уравнение, расчёт отсутствует.",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "mart3",
+        label: "Пробник 3",
+        date: "19.03.2026",
+        students: [
+          {
+            id: "s3-1",
+            name: "Вика",
+            primaryScore: 40,
+            primaryMax: 56,
+            testScore: 75,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "124",
+                correct: "142",
+                score: 0,
+                maxScore: 1,
+                comment: "Ошибка в порядке цифр",
+              },
+              {
+                num: "3",
+                student: "23",
+                correct: "23",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "15",
+                correct: "15",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "361",
+                correct: "361",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "4231",
+                correct: "4231",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "7145",
+                correct: "7145",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "421",
+                correct: "421",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "413",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "251",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "3124",
+                correct: "3124",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "63",
+                correct: "63",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "12",
+                correct: "12",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "341",
+                correct: "341",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "3142",
+                correct: "3142",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "213",
+                correct: "213",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "—",
+                correct: "524",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "21",
+                student: "3412",
+                correct: "3412",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "1324",
+                correct: "1324",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "34",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "—",
+                correct: "513",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "26",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "—",
+                correct: "8,96",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "72",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "30",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Верно.",
+              },
+              {
+                num: "32",
+                status: "Частично",
+                score: 3,
+                maxScore: 5,
+                comment: "Три из пяти реакций органической цепочки.",
+              },
+              {
+                num: "33",
+                status: "Не начато",
+                score: 0,
+                maxScore: 3,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+          {
+            id: "s3-2",
+            name: "Даша",
+            primaryScore: 50,
+            primaryMax: 56,
+            testScore: 92,
+            testMax: 100,
+            grade: "5 (Отлично)",
+            part1: [
+              {
+                num: "1",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "142",
+                correct: "142",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "23",
+                correct: "23",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "4",
+                student: "15",
+                correct: "15",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "361",
+                correct: "361",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "6",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "4231",
+                correct: "4231",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "7145",
+                correct: "7145",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "9",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "421",
+                correct: "421",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "24",
+                correct: "24",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "12",
+                student: "413",
+                correct: "413",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "13",
+                student: "251",
+                correct: "251",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "14",
+                student: "3124",
+                correct: "3124",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "63",
+                correct: "63",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "12",
+                correct: "12",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "341",
+                correct: "341",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "3142",
+                correct: "3142",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "19",
+                student: "213",
+                correct: "213",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "524",
+                correct: "524",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "3412",
+                correct: "3412",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "22",
+                student: "1324",
+                correct: "1324",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "23",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "34",
+                correct: "34",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "25",
+                student: "513",
+                correct: "513",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "26",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "8,96",
+                correct: "8,96",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "72",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "30",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "31",
+                status: "Выполнено полностью",
+                score: 4,
+                maxScore: 4,
+                comment: "Верно.",
+              },
+              {
+                num: "32",
+                status: "Выполнено полностью",
+                score: 5,
+                maxScore: 5,
+                comment: "Все пять реакций верны.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 2,
+                maxScore: 3,
+                comment:
+                  "Структура с небольшой ошибкой в расположении заместителей.",
+              },
+              {
+                num: "34",
+                status: "Частично",
+                score: 2,
+                maxScore: 4,
+                comment: "Расчёты частично верны, ошибка в последнем шаге.",
+              },
+            ],
+          },
+          {
+            id: "s3-3",
+            name: "Миша",
+            primaryScore: 33,
+            primaryMax: 56,
+            testScore: 63,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              {
+                num: "1",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "2",
+                student: "142",
+                correct: "142",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "3",
+                student: "12",
+                correct: "23",
+                score: 0,
+                maxScore: 1,
+                comment: "Неверно",
+              },
+              {
+                num: "4",
+                student: "15",
+                correct: "15",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "5",
+                student: "—",
+                correct: "361",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "6",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "7",
+                student: "4231",
+                correct: "4231",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "8",
+                student: "—",
+                correct: "7145",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "9",
+                student: "31",
+                correct: "31",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "10",
+                student: "421",
+                correct: "421",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "11",
+                student: "—",
+                correct: "24",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "12",
+                student: "—",
+                correct: "413",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "13",
+                student: "—",
+                correct: "251",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "14",
+                student: "3124",
+                correct: "3124",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "15",
+                student: "63",
+                correct: "63",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно",
+              },
+              {
+                num: "16",
+                student: "12",
+                correct: "12",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "17",
+                student: "341",
+                correct: "341",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "18",
+                student: "—",
+                correct: "3142",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "19",
+                student: "213",
+                correct: "213",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "20",
+                student: "524",
+                correct: "524",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "21",
+                student: "—",
+                correct: "3412",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "22",
+                student: "—",
+                correct: "1324",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "23",
+                student: "52",
+                correct: "52",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно (Макс.)",
+              },
+              {
+                num: "24",
+                student: "—",
+                correct: "34",
+                score: 0,
+                maxScore: 2,
+                comment: "Не выполнено",
+              },
+              {
+                num: "25",
+                student: "—",
+                correct: "513",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "26",
+                student: "35",
+                correct: "35",
+                score: 1,
+                maxScore: 1,
+                comment: "Верно",
+              },
+              {
+                num: "27",
+                student: "—",
+                correct: "8,96",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+              {
+                num: "28",
+                student: "—",
+                correct: "72",
+                score: 0,
+                maxScore: 1,
+                comment: "Не выполнено",
+              },
+            ],
+            part2: [
+              {
+                num: "29",
+                status: "Выполнено полностью",
+                score: 2,
+                maxScore: 2,
+                comment: "Верно.",
+              },
+              {
+                num: "30",
+                status: "Не начато",
+                score: 0,
+                maxScore: 2,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "31",
+                status: "Частично",
+                score: 2,
+                maxScore: 4,
+                comment: "Записана только половина цепочки превращений.",
+              },
+              {
+                num: "32",
+                status: "Не начато",
+                score: 0,
+                maxScore: 5,
+                comment: "Решение отсутствует.",
+              },
+              {
+                num: "33",
+                status: "Частично",
+                score: 1,
+                maxScore: 3,
+                comment: "Только молекулярная формула, структура отсутствует.",
+              },
+              {
+                num: "34",
+                status: "Не начато",
+                score: 0,
+                maxScore: 4,
+                comment: "Решение отсутствует.",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "aprel",
+    label: "Апрель",
+    exams: [
+      {
+        id: "aprel1",
+        label: "Пробник 1",
+        date: "02.04.2026",
+        students: [
+          {
+            id: "a1-1",
+            name: "Вика",
+            primaryScore: 39,
+            primaryMax: 56,
+            testScore: 74,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              { num: "1",  student: "12",   correct: "12",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "2",  student: "431",  correct: "431",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "3",  student: "25",   correct: "35",   score: 0, maxScore: 1, comment: "Неверно" },
+              { num: "4",  student: "24",   correct: "24",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "5",  student: "163",  correct: "163",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "6",  student: "45",   correct: "45",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "7",  student: "2341", correct: "2341", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "8",  student: "—",    correct: "5136", score: 0, maxScore: 2, comment: "Не выполнено" },
+              { num: "9",  student: "42",   correct: "42",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "10", student: "135",  correct: "135",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "11", student: "23",   correct: "23",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "12", student: "—",    correct: "451",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "13", student: "—",    correct: "312",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "14", student: "2451", correct: "2451", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "15", student: "34",   correct: "34",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "16", student: "51",   correct: "51",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "17", student: "214",  correct: "214",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "18", student: "4132", correct: "4132", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "19", student: "132",  correct: "132",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "20", student: "—",    correct: "241",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "21", student: "4123", correct: "4123", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "22", student: "3214", correct: "3214", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "23", student: "61",   correct: "61",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "24", student: "—",    correct: "42",   score: 0, maxScore: 2, comment: "Не выполнено" },
+              { num: "25", student: "213",  correct: "213",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "26", student: "31",   correct: "31",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "27", student: "—",    correct: "11,2", score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "28", student: "—",    correct: "48",   score: 0, maxScore: 1, comment: "Не выполнено" },
+            ],
+            part2: [
+              { num: "29", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "ОВР записана верно, баланс выставлен." },
+              { num: "30", status: "Частично",            score: 1, maxScore: 2, comment: "Одна реакция из двух верная." },
+              { num: "31", status: "Выполнено полностью", score: 4, maxScore: 4, comment: "Цепочка полная и верная." },
+              { num: "32", status: "Частично",            score: 2, maxScore: 5, comment: "Две реакции из пяти." },
+              { num: "33", status: "Не начато",           score: 0, maxScore: 3, comment: "Решение отсутствует." },
+              { num: "34", status: "Не начато",           score: 0, maxScore: 4, comment: "Решение отсутствует." },
+            ],
+          },
+          {
+            id: "a1-2",
+            name: "Даша",
+            primaryScore: 48,
+            primaryMax: 56,
+            testScore: 89,
+            testMax: 100,
+            grade: "5 (Отлично)",
+            part1: [
+              { num: "1",  student: "12",   correct: "12",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "2",  student: "431",  correct: "431",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "3",  student: "35",   correct: "35",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "4",  student: "24",   correct: "24",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "5",  student: "163",  correct: "163",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "6",  student: "45",   correct: "45",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "7",  student: "2341", correct: "2341", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "8",  student: "5136", correct: "5136", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "9",  student: "42",   correct: "42",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "10", student: "135",  correct: "135",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "11", student: "23",   correct: "23",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "12", student: "451",  correct: "451",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "13", student: "312",  correct: "312",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "14", student: "2451", correct: "2451", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "15", student: "34",   correct: "34",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "16", student: "51",   correct: "51",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "17", student: "214",  correct: "214",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "18", student: "4132", correct: "4132", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "19", student: "132",  correct: "132",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "20", student: "241",  correct: "241",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "21", student: "4123", correct: "4123", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "22", student: "3214", correct: "3214", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "23", student: "61",   correct: "61",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "24", student: "42",   correct: "42",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "25", student: "213",  correct: "213",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "26", student: "31",   correct: "31",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "27", student: "11,2", correct: "11,2", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "28", student: "—",    correct: "48",   score: 0, maxScore: 1, comment: "Не выполнено" },
+            ],
+            part2: [
+              { num: "29", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "30", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "31", status: "Выполнено полностью", score: 4, maxScore: 4, comment: "Верно." },
+              { num: "32", status: "Выполнено полностью", score: 5, maxScore: 5, comment: "Все реакции верны." },
+              { num: "33", status: "Частично",            score: 2, maxScore: 3, comment: "Структура с небольшой ошибкой." },
+              { num: "34", status: "Не начато",           score: 0, maxScore: 4, comment: "Решение отсутствует." },
+            ],
+          },
+        ],
+      },
+      {
+        id: "aprel2",
+        label: "Пробник 2",
+        date: "16.04.2026",
+        students: [
+          {
+            id: "a2-1",
+            name: "Вика",
+            primaryScore: 42,
+            primaryMax: 56,
+            testScore: 79,
+            testMax: 100,
+            grade: "4 (Хорошо)",
+            part1: [
+              { num: "1",  student: "53",   correct: "53",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "2",  student: "214",  correct: "214",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "3",  student: "41",   correct: "41",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "4",  student: "35",   correct: "35",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "5",  student: "512",  correct: "512",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "6",  student: "63",   correct: "63",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "7",  student: "1342", correct: "1342", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "8",  student: "4261", correct: "4261", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "9",  student: "53",   correct: "53",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "10", student: "241",  correct: "241",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "11", student: "15",   correct: "15",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "12", student: "—",    correct: "362",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "13", student: "—",    correct: "145",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "14", student: "1563", correct: "1563", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "15", student: "42",   correct: "42",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "16", student: "21",   correct: "21",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "17", student: "435",  correct: "435",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "18", student: "3241", correct: "3241", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "19", student: "—",    correct: "524",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "20", student: "152",  correct: "152",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "21", student: "2314", correct: "2314", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "22", student: "4132", correct: "4132", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "23", student: "74",   correct: "74",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "24", student: "—",    correct: "51",   score: 0, maxScore: 2, comment: "Не выполнено" },
+              { num: "25", student: "—",    correct: "423",  score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "26", student: "13",   correct: "13",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "27", student: "—",    correct: "6,72", score: 0, maxScore: 1, comment: "Не выполнено" },
+              { num: "28", student: "—",    correct: "90",   score: 0, maxScore: 1, comment: "Не выполнено" },
+            ],
+            part2: [
+              { num: "29", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "30", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "31", status: "Выполнено полностью", score: 4, maxScore: 4, comment: "Верно." },
+              { num: "32", status: "Частично",            score: 3, maxScore: 5, comment: "Три из пяти реакций." },
+              { num: "33", status: "Частично",            score: 1, maxScore: 3, comment: "Только молекулярная формула." },
+              { num: "34", status: "Не начато",           score: 0, maxScore: 4, comment: "Решение отсутствует." },
+            ],
+          },
+          {
+            id: "a2-2",
+            name: "Даша",
+            primaryScore: 52,
+            primaryMax: 56,
+            testScore: 95,
+            testMax: 100,
+            grade: "5 (Отлично)",
+            part1: [
+              { num: "1",  student: "53",   correct: "53",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "2",  student: "214",  correct: "214",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "3",  student: "41",   correct: "41",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "4",  student: "35",   correct: "35",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "5",  student: "512",  correct: "512",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "6",  student: "63",   correct: "63",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "7",  student: "1342", correct: "1342", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "8",  student: "4261", correct: "4261", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "9",  student: "53",   correct: "53",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "10", student: "241",  correct: "241",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "11", student: "15",   correct: "15",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "12", student: "362",  correct: "362",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "13", student: "145",  correct: "145",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "14", student: "1563", correct: "1563", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "15", student: "42",   correct: "42",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "16", student: "21",   correct: "21",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "17", student: "435",  correct: "435",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "18", student: "3241", correct: "3241", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "19", student: "524",  correct: "524",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "20", student: "152",  correct: "152",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "21", student: "2314", correct: "2314", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "22", student: "4132", correct: "4132", score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "23", student: "74",   correct: "74",   score: 2, maxScore: 2, comment: "Верно (Макс.)" },
+              { num: "24", student: "51",   correct: "51",   score: 2, maxScore: 2, comment: "Верно" },
+              { num: "25", student: "423",  correct: "423",  score: 1, maxScore: 1, comment: "Верно" },
+              { num: "26", student: "13",   correct: "13",   score: 1, maxScore: 1, comment: "Верно" },
+              { num: "27", student: "6,72", correct: "6,72", score: 1, maxScore: 1, comment: "Верно" },
+              { num: "28", student: "—",    correct: "90",   score: 0, maxScore: 1, comment: "Не выполнено" },
+            ],
+            part2: [
+              { num: "29", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "30", status: "Выполнено полностью", score: 2, maxScore: 2, comment: "Верно." },
+              { num: "31", status: "Выполнено полностью", score: 4, maxScore: 4, comment: "Верно." },
+              { num: "32", status: "Выполнено полностью", score: 5, maxScore: 5, comment: "Все реакции верны." },
+              { num: "33", status: "Выполнено полностью", score: 3, maxScore: 3, comment: "Структура и формула верны." },
+              { num: "34", status: "Частично",            score: 2, maxScore: 4, comment: "Расчёты частично верны, ошибка в последнем шаге." },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
+---
+
+<div class="exam-results">
+  <!-- Уровень 1: чипы месяцев -->
+  <div class="month-chips" role="group" aria-label="Выбор месяца">
+    {
+      months.map((month, i) => (
+        <button
+          class={`month-chip${i === 0 ? " is-active" : ""}`}
+          data-month={month.id}
+        >
+          {month.label}
+          <span class="chip-count">{month.exams.length}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <!-- Уровень 2: чипы пробников (меняются при смене месяца) -->
+  {
+    months.map((month, mi) => (
+      <div
+        class={`exam-chips${mi === 0 ? " is-active" : ""}`}
+        data-month-panel={month.id}
+        role="group"
+        aria-label="Выбор пробника"
+      >
+        {month.exams.map((exam, ei) => (
+          <button
+            class={`exam-chip${ei === 0 && mi === 0 ? " is-active" : ""}`}
+            data-exam={exam.id}
+            data-month={month.id}
+          >
+            <span class="exam-chip-label">{exam.label}</span>
+            <span class="exam-chip-date">{exam.date}</span>
+          </button>
+        ))}
+      </div>
+    ))
+  }
+
+  <!-- Уровень 3: панели с учениками -->
+  {
+    months.map((month, mi) =>
+      month.exams.map((exam, ei) => (
+        <div
+          class={`exam-panel${mi === 0 && ei === 0 ? " is-active" : ""}`}
+          data-exam-panel={exam.id}
+        >
+          <div class="students-grid">
+            {exam.students.map((student) => (
+              <div class="student-block">
+                <button
+                  class="student-header"
+                  data-toggle={student.id}
+                  aria-expanded="false"
+                >
+                  <div class="student-meta">
+                    <span class="student-name">{student.name}</span>
+                    <span class="student-scores">
+                      <span class="score-pill score-primary">
+                        {student.primaryScore}/{student.primaryMax}
+                      </span>
+                      <span class="score-pill score-test">
+                        {student.testScore} б.
+                      </span>
+                      <span
+                        class={`score-pill score-grade ${student.testScore >= 80 ? "grade-5" : student.testScore >= 60 ? "grade-4" : "grade-3"}`}
+                      >
+                        {student.grade}
+                      </span>
+                    </span>
+                  </div>
+                  <span class="toggle-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M4 6l4 4 4-4"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </button>
+
+                <div
+                  class="student-results"
+                  id={`results-${student.id}`}
+                  hidden
+                >
+                  <div class="summary-row">
+                    <div class="summary-stat">
+                      <span class="stat-value">
+                        {student.primaryScore} / {student.primaryMax}
+                      </span>
+                      <span class="stat-label">Первичный балл</span>
+                    </div>
+                    <div class="summary-stat">
+                      <span class="stat-value stat-test">
+                        {student.testScore} / {student.testMax}
+                      </span>
+                      <span class="stat-label">Тестовый балл</span>
+                    </div>
+                    <div class="summary-stat">
+                      <span class="stat-value stat-p1">
+                        {student.part1.reduce((s, r) => s + r.score, 0)} / {student.part1.reduce((s, r) => s + r.maxScore, 0)}
+                      </span>
+                      <span class="stat-label">Часть 1</span>
+                    </div>
+                    <div class="summary-stat">
+                      <span class="stat-value stat-p2">
+                        {student.part2.reduce((s, r) => s + r.score, 0)} / {student.part2.reduce((s, r) => s + r.maxScore, 0)}
+                      </span>
+                      <span class="stat-label">Часть 2</span>
+                    </div>
+                  </div>
+
+                  <h4 class="section-title">Часть 1 — Краткие ответы</h4>
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>№</th>
+                          <th>Ответ</th>
+                          <th>Верный</th>
+                          <th>Балл</th>
+                          <th>Комментарий</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {student.part1.map((row) => (
+                          <tr>
+                            <td class="cell-num">{row.num}</td>
+                            <td>{row.student}</td>
+                            <td>{row.correct}</td>
+                            <td>
+                              <span
+                                class={`score-badge ${row.score === row.maxScore ? "badge-max" : row.score === 0 ? "badge-zero" : "badge-partial"}`}
+                              >
+                                {row.score}/{row.maxScore}
+                              </span>
+                            </td>
+                            <td class="cell-comment">{row.comment}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <h4 class="section-title">Часть 2 — Развёрнутые ответы</h4>
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>№</th>
+                          <th>Статус</th>
+                          <th>Балл</th>
+                          <th>Комментарий</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {student.part2.map((row) => (
+                          <tr>
+                            <td class="cell-num">{row.num}</td>
+                            <td>
+                              <span
+                                class={`status-tag ${row.score === row.maxScore ? "status-full" : row.score === 0 ? "status-none" : "status-partial"}`}
+                              >
+                                {row.status}
+                              </span>
+                            </td>
+                            <td>
+                              <span
+                                class={`score-badge ${row.score === row.maxScore ? "badge-max" : row.score === 0 ? "badge-zero" : "badge-partial"}`}
+                              >
+                                {row.score}/{row.maxScore}
+                              </span>
+                            </td>
+                            <td class="cell-comment">{row.comment}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )),
+    )
+  }
+</div>
+
+<style>
+  .exam-results {
+    color: var(--color-text);
+  }
+
+  .exam-results button {
+    font: inherit;
+  }
+
+  /* ── Уровень 1: месяцы ── */
+  .month-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .month-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1.5px solid var(--color-border);
+    background: white;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s,
+      color 0.15s;
+  }
+
+  .month-chip:hover {
+    border-color: var(--brand-300);
+    color: var(--color-brand);
+    background: var(--brand-50);
+  }
+
+  .month-chip.is-active {
+    border-color: var(--brand-500);
+    background: var(--brand-500);
+    color: white;
+  }
+
+  .chip-count {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-bold);
+    background: color-mix(in srgb, currentColor 15%, transparent);
+    border-radius: 100px;
+    padding: 1px 6px;
+    line-height: 1.6;
+  }
+
+  /* ── Уровень 2: пробники ── */
+  .exam-chips {
+    display: none;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 0 20px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 20px;
+  }
+
+  .exam-chips.is-active {
+    display: flex;
+  }
+
+  .exam-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background: white;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s,
+      color 0.15s;
+    text-align: left;
+  }
+
+  .exam-chip:hover {
+    border-color: var(--brand-300);
+    background: var(--brand-50);
+    color: var(--color-brand);
+  }
+
+  .exam-chip.is-active {
+    border-color: var(--brand-500);
+    background: var(--brand-50);
+    color: var(--color-brand);
+  }
+
+  .exam-chip-label {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-ui);
+  }
+
+  .exam-chip-date {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-muted);
+    line-height: 1.3;
+  }
+
+  .exam-chip.is-active .exam-chip-date {
+    color: var(--brand-400);
+  }
+
+  /* ── Уровень 3: панель учеников ── */
+  .exam-panel {
+    display: none;
+  }
+
+  .exam-panel.is-active {
+    display: block;
+  }
+
+  /* ── Ученики ── */
+  .students-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .student-block {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+
+  .student-block:has(.student-results:not([hidden])) {
+    border-color: var(--brand-200);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--brand-500) 8%, transparent);
+  }
+
+  .student-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--gray-50);
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    gap: 12px;
+  }
+
+  .student-header:hover {
+    background: var(--brand-50);
+  }
+
+  .student-block:has(.student-results:not([hidden])) .student-header {
+    background: var(--brand-50);
+  }
+
+  .student-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .student-name {
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    min-width: 60px;
+  }
+
+  .student-scores {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .score-pill {
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    padding: 2px 10px;
+    border-radius: 100px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .score-primary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+  .score-test {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+  .grade-5 {
+    background: var(--success-100);
+    color: var(--success-700);
+  }
+  .grade-4 {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+  .grade-3 {
+    background: var(--accent-100);
+    color: var(--accent-700);
+  }
+
+  .toggle-icon {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    display: flex;
+  }
+
+  .student-header[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+    color: var(--color-brand);
+  }
+
+  /* ── Результаты ── */
+  .student-results {
+    padding: 20px 18px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .summary-row {
+    display: flex;
+    background: var(--gray-50);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .summary-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 12px;
+    gap: 4px;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .summary-stat:last-child {
+    border-right: none;
+  }
+
+  .stat-value {
+    font-size: var(--fs-24);
+    font-weight: var(--fw-bold);
+    color: var(--success-600);
+    line-height: 1.1;
+  }
+
+  .stat-test { color: var(--brand-600); }
+  .stat-p1   { color: var(--gray-700); }
+  .stat-p2   { color: var(--accent-700); }
+  .stat-grade.grade-5 {
+    color: var(--success-600);
+  }
+  .stat-grade.grade-4 {
+    color: var(--brand-600);
+  }
+  .stat-grade.grade-3 {
+    color: var(--accent-600);
+  }
+
+  .stat-label {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-13);
+    min-width: 480px;
+  }
+
+  thead tr {
+    background: var(--brand-500);
+  }
+
+  th {
+    padding: 10px 12px;
+    color: white;
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-12);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 9px 12px;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: var(--gray-50);
+  }
+
+  .cell-num {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  .cell-comment {
+    text-align: left;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: var(--fs-12);
+  }
+
+  .score-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-12);
+    line-height: 1.5;
+  }
+
+  .badge-max {
+    background: var(--success-100);
+    color: var(--success-700);
+  }
+  .badge-zero {
+    background: var(--danger-100);
+    color: var(--danger-700);
+  }
+  .badge-partial {
+    background: var(--accent-100);
+    color: var(--accent-700);
+  }
+
+  .status-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+  }
+
+  .status-full {
+    background: var(--success-100);
+    color: var(--success-700);
+  }
+  .status-none {
+    background: var(--danger-100);
+    color: var(--danger-700);
+  }
+  .status-partial {
+    background: var(--accent-100);
+    color: var(--accent-700);
+  }
+</style>
+
+<script>
+  // Месяцы
+  document.querySelectorAll<HTMLButtonElement>(".month-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const monthId = btn.dataset.month!;
+
+      document
+        .querySelectorAll(".month-chip")
+        .forEach((b) => b.classList.remove("is-active"));
+      document
+        .querySelectorAll(".exam-chips")
+        .forEach((p) => p.classList.remove("is-active"));
+      document
+        .querySelectorAll(".exam-panel")
+        .forEach((p) => p.classList.remove("is-active"));
+
+      btn.classList.add("is-active");
+
+      const chipsPanel = document.querySelector<HTMLElement>(
+        `[data-month-panel="${monthId}"]`,
+      );
+      chipsPanel?.classList.add("is-active");
+
+      // Активируем первый пробник этого месяца
+      const firstChip =
+        chipsPanel?.querySelector<HTMLButtonElement>(".exam-chip");
+      if (firstChip) {
+        firstChip.classList.add("is-active");
+        const firstExamId = firstChip.dataset.exam!;
+        document
+          .querySelector<HTMLElement>(`[data-exam-panel="${firstExamId}"]`)
+          ?.classList.add("is-active");
+      }
+    });
+  });
+
+  // Пробники
+  document.querySelectorAll<HTMLButtonElement>(".exam-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const examId = btn.dataset.exam!;
+      const monthId = btn.dataset.month!;
+
+      document
+        .querySelectorAll<HTMLButtonElement>(
+          `.exam-chip[data-month="${monthId}"]`,
+        )
+        .forEach((b) => b.classList.remove("is-active"));
+      document
+        .querySelectorAll(".exam-panel")
+        .forEach((p) => p.classList.remove("is-active"));
+
+      btn.classList.add("is-active");
+      document
+        .querySelector<HTMLElement>(`[data-exam-panel="${examId}"]`)
+        ?.classList.add("is-active");
+    });
+  });
+
+  // Аккордеон учеников
+  document
+    .querySelectorAll<HTMLButtonElement>(".student-header")
+    .forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.toggle!;
+        const results = document.getElementById(`results-${id}`);
+        if (!results) return;
+        const isOpen = !results.hidden;
+        results.hidden = isOpen;
+        btn.setAttribute("aria-expanded", String(!isOpen));
+      });
+    });
+</script>

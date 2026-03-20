@@ -6,8 +6,9 @@ import CardNew from "../components/cards/cardNew.astro";
 import CatBadge from "../components/CatBadge.astro";
 import ProgressBar from "../components/article/ProgressBar.astro";
 import CopyLinkButton from "../components/article/CopyLinkButton.astro";
+import TgBanner from "../components/article/TgBanner.astro";
 import { slugify } from "../lib/slugify";
-import { ORGANIZATION_DATA, absAsset } from "../lib/seoData";
+
 import "../styles/global_lend.css";
 import { withReadingTime } from "../lib/withReadingTime";
 
@@ -56,7 +57,8 @@ function toDate(value: unknown): Date | null {
   return null;
 }
 const dateObj = toDate(fm.date);
-const updatedObj = toDate((fm as any).updated) || dateObj;
+const updatedObj = toDate(fm.updated) ?? null;
+const showUpdated = updatedObj && dateObj && updatedObj.getTime() !== dateObj.getTime();
 
 function formatDate(d: Date | null) {
   if (!d) return "";
@@ -176,7 +178,25 @@ const sameCategoryTop = allArticles
                   height="14"
                   aria-hidden="true"
                 />
-                <span>{formatDate(dateObj)}</span>
+                <time datetime={dateObj.toISOString().slice(0, 10)}>
+                  {showUpdated ? `Опубликовано\u00a0${formatDate(dateObj)}` : formatDate(dateObj)}
+                </time>
+              </div>
+            )
+          }
+          {
+            showUpdated && (
+              <div class="article__meta-date article__meta-date--updated">
+                <img
+                  src="/images/technical/calendar.webp"
+                  alt=""
+                  width="14"
+                  height="14"
+                  aria-hidden="true"
+                />
+                <time datetime={updatedObj!.toISOString().slice(0, 10)}>
+                  Обновлено&nbsp;{formatDate(updatedObj)}
+                </time>
               </div>
             )
           }
@@ -395,16 +415,7 @@ const sameCategoryTop = allArticles
     </article>
     <aside class="article__sidebar" aria-label="Дополнительно">
       <div class="article__sidebar-sticky-wrapper">
-        <div class="article__sidebar-tg">
-          <a
-            href={ORGANIZATION_DATA.social.telegram}
-            target="_blank"
-            rel="noopener"
-            class="article__sidebar-tg-button"
-          >
-            Подписаться на Telegram
-          </a>
-        </div>
+        <TgBanner />
       </div>
     </aside>
   </div>
@@ -472,6 +483,10 @@ const sameCategoryTop = allArticles
     align-items: center;
     color: var(--gray);
     font-size: clamp(13px, 1vw, 14px);
+  }
+
+  .article__meta-date--updated {
+    color: var(--blue, #366ef0);
   }
 
   .article__header-title {
@@ -625,38 +640,6 @@ const sameCategoryTop = allArticles
     gap: var(--space-20);
   }
 
-  .article__sidebar-tg {
-    width: 100%;
-    background-color: #f0f0f0;
-    border-radius: var(--radius-24);
-    background-image: url("/images/chemistry.webp");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    aspect-ratio: 16 / 9;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    padding: var(--space-20);
-  }
-
-  .article__sidebar-tg-button {
-    background-color: var(--white);
-    padding: 12px 24px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: clamp(13px, 1vw, 15px);
-    transition: transform 0.2s var(--easing);
-    text-decoration: none;
-    color: var(--black);
-    display: inline-block;
-  }
-
-  .article__sidebar-tg-button:hover {
-    transform: translateY(-2px);
-  }
 
   /* ===== FOOTER REPOST ===== */
   .article__divider {

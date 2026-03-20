@@ -9,6 +9,7 @@ const articles = defineCollection({
     schema: z.object({
         title: z.string(),
         date: z.date(),
+        updated: z.string().optional(), // дата последнего редактирования (YYYY-MM-DD), проставляется автоматически git-хуком
         description: z.string().optional(),
         tags: z.array(z.string()).default([]),
         category: z.string(),

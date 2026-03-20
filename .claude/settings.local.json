@@ -4,7 +4,12 @@
       "Bash(node check-links.js)",
       "Bash(node e:/school-media/check-links.cjs)",
       "Bash(grep -h \"^tags:\\\\|^category:\" \"e:/school-media/src/content/articles/\"*.mdx)",
-      "Bash(grep -rn \"cid-zcz5dydh\\\\|zcz5dydh\" e:/school-media/src --include=*.astro)"
+      "Bash(grep -rn \"cid-zcz5dydh\\\\|zcz5dydh\" e:/school-media/src --include=*.astro)",
+      "Bash(python -c \":*)",
+      "Bash(python toshno.py src/content/articles/stepen-okislenia.mdx)",
+      "Bash(PYTHONIOENCODING=utf-8 python toshno.py src/content/articles/stepen-okislenia.mdx)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -l \"visible:\" \"e:\\\\school-media/src/content/articles\"/*.mdx)"
     ]
   }
 }

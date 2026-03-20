@@ -92,8 +92,8 @@ const articleJsonLd = buildArticleJsonLd({
   description: fm.description,
   image: fm.image,
   datePublished: new Date(fm.date as any).toISOString(),
-  dateModified: (fm as any).updated
-    ? new Date((fm as any).updated as any).toISOString()
+  dateModified: fm.updated
+    ? new Date(fm.updated).toISOString()
     : new Date(fm.date as any).toISOString(),
   keywords: fm.tags?.length ? fm.tags : undefined,
   articleSection: fm.category,
@@ -109,8 +109,8 @@ const articleJsonLd = buildArticleJsonLd({
   url={pageUrl}
   seoType="article"
   datePublished={new Date(fm.date as any).toISOString()}
-  dateModified={(fm as any).updated
-    ? new Date((fm as any).updated as any).toISOString()
+  dateModified={fm.updated
+    ? new Date(fm.updated).toISOString()
     : new Date(fm.date as any).toISOString()}
   breadcrumbs={breadcrumbs}
   articleJsonLd={articleJsonLd}

@@ -1,0 +1,164 @@
+---
+import "../styles/new-global.css";
+import ExamResults from "../components/article/ExamResults.astro";
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Результаты пробников — Химия ЕГЭ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <header class="page-header">
+        <div class="header-inner">
+          <div class="header-left">
+            <span class="logo-chip">ЕГЭ Химия</span>
+            <div class="header-text">
+              <h1 class="page-title">Результаты пробников</h1>
+              <p class="page-subtitle">Март 2026 · Группа</p>
+            </div>
+          </div>
+          <span class="private-badge">Баллы не 0, хотя от этого кайфуйте</span>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <ExamResults />
+      </main>
+
+      <footer class="page-footer">Чупапи Маняня</footer>
+    </div>
+  </body>
+</html>
+
+<style>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--ff-sans);
+    background: var(--gray-100);
+    color: var(--color-text);
+    min-height: 100dvh;
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* ---- Header ---- */
+  .page-header {
+    background: white;
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-chip {
+    background: var(--brand-500);
+    color: white;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-bold);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .page-title {
+    font-size: var(--fs-18);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    letter-spacing: var(--ls-tight);
+  }
+
+  .page-subtitle {
+    font-size: var(--fs-13);
+    color: var(--color-text-muted);
+    font-weight: var(--fw-medium);
+    margin-top: 2px;
+  }
+
+  .private-badge {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    padding: 3px 10px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Main ---- */
+  .page-main {
+    flex: 1;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* ---- Footer ---- */
+  .page-footer {
+    text-align: center;
+    padding: 20px 24px;
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
+    background: white;
+  }
+
+  @media (max-width: 600px) {
+    .page-header {
+      padding: 12px 16px;
+    }
+
+    .page-main {
+      padding: 20px 16px;
+    }
+
+    .private-badge {
+      display: none;
+    }
+
+    .header-left {
+      gap: 10px;
+    }
+  }
+</style>
