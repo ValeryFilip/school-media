@@ -4,14 +4,13 @@ import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
 import CardNew from "../../../components/cards/cardNew.astro";
-import { withReadingTime } from "../../../lib/withReadingTime";
 
 // Данные (только видимые статьи)
 const entriesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
 
-const entries = withReadingTime(entriesRaw);
+const entries = entriesRaw;
 
 const toISO = (d: unknown) => {
   if (d instanceof Date) return d.toISOString();

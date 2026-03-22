@@ -5,7 +5,6 @@ import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
-import { calcReadingTime } from "../../../lib/calcReadingTime";
 import { buildArticleJsonLd, buildVideoJsonLd } from "../../../lib/seoData";
 
 export async function getStaticPaths() {
@@ -37,7 +36,7 @@ if (entry.data.visible === false) {
 
 const fm = {
   ...entry.data,
-  readingTime: calcReadingTime(entry.body),
+  readingTime: entry.data.readingTime,
   tocManual: entry.data.tocManual
     ? entry.data.tocManual.map((item) => ({
         id: item.id || slugify(item.text),

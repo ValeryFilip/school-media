@@ -9,7 +9,6 @@ import FaqSection from "../../components/mainpage/Faq.astro";
 import UnifiedMenu from "../../components/UnifiedMenu.astro";
 import H2Zag from "../../components/text/h2zag.astro";
 import { slugify } from "../../lib/slugify";
-import { withReadingTime } from "../../lib/withReadingTime";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -29,7 +28,7 @@ const allRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
 
-const all = withReadingTime(allRaw);
+const all = allRaw;
 
 // найти оригинальное имя категории по слагу
 let originalCategory = undefined as string | undefined;

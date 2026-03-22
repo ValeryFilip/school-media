@@ -7,7 +7,6 @@ import CardNew from "../../../components/cards/cardNew.astro";
 import CardHorizontal from "../../../components/cards/CardHorizontal.astro";
 import Pagination from "../../../components/Pagination.astro";
 import { slugify } from "../../../lib/slugify";
-import { withReadingTime } from "../../../lib/withReadingTime";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -34,7 +33,7 @@ const allRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
 
-const all = withReadingTime(allRaw);
+const all = allRaw;
 
 // Найти оригинальное имя тега по слагу
 const tagMap = new Map<string, string>();

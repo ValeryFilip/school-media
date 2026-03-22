@@ -10,7 +10,6 @@ import TgBanner from "../components/article/TgBanner.astro";
 import { slugify } from "../lib/slugify";
 
 import "../styles/global_lend.css";
-import { withReadingTime } from "../lib/withReadingTime";
 
 // типы пропсов
 interface Props {
@@ -138,7 +137,7 @@ const allArticlesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
 
-const allArticles = withReadingTime(allArticlesRaw);
+const allArticles = allArticlesRaw;
 
 function getTimeSafe(p: CollectionEntry<"articles">): number {
   const v = (p.data as any)?.date;

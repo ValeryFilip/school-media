@@ -1,8 +1,5 @@
 // src/content/config.ts
 import { defineCollection, z } from "astro:content";
-import { calcReadingTime } from "../lib/calcReadingTime";
-
-
 
 const articles = defineCollection({
     type: "content",

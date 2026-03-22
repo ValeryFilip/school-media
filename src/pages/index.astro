@@ -14,7 +14,6 @@ import CourseCards from "../components/mainpage/CourseCards.astro";
 import CourseCardsnew from "../components/mainpage/courseCardsnew.astro";
 import { getCollection } from "astro:content";
 import TypeChoose from "../components/mainpage/typeChoose.astro";
-import { withReadingTime } from "../lib/withReadingTime";
 import { buildFAQJsonLd } from "../lib/seoData";
 import HeroBubbles from "../components/mainpage/HeroBubbles.astro";
 import UnifiedMenu from "../components/UnifiedMenu.astro";
@@ -25,7 +24,7 @@ const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
 const allArticlesRaw = await getCollection("articles", ({ data }) => {
   return data.visible !== false;
 });
-const allArticles = withReadingTime(allArticlesRaw);
+const allArticles = allArticlesRaw;
 const latestArticles = allArticles
   .sort((a, b) => {
     // Сортируем по дате: сначала самые новые (большая дата идет первой)
