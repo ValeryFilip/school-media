@@ -57,7 +57,8 @@ function toDate(value: unknown): Date | null {
 }
 const dateObj = toDate(fm.date);
 const updatedObj = toDate(fm.updated) ?? null;
-const showUpdated = updatedObj && dateObj && updatedObj.getTime() !== dateObj.getTime();
+const showUpdated =
+  updatedObj && dateObj && updatedObj.getTime() !== dateObj.getTime();
 
 function formatDate(d: Date | null) {
   if (!d) return "";
@@ -178,7 +179,9 @@ const sameCategoryTop = allArticles
                   aria-hidden="true"
                 />
                 <time datetime={dateObj.toISOString().slice(0, 10)}>
-                  {showUpdated ? `Опубликовано\u00a0${formatDate(dateObj)}` : formatDate(dateObj)}
+                  {showUpdated
+                    ? `Опубликовано\u00a0${formatDate(dateObj)}`
+                    : formatDate(dateObj)}
                 </time>
               </div>
             )
@@ -221,17 +224,87 @@ const sameCategoryTop = allArticles
               size="sm"
             />
           </div>
-          <div class="article__meta-author">
-            <span>{authorName}</span>
-          </div>
         </div>
 
         <h1 id="article-title" class="article__header-title">{fm.title}</h1>
-        {
-          fm.description && (
-            <p class="article__header-description">{fm.description}</p>
-          )
-        }
+
+        <div class="article__header-desc-author">
+          {
+            fm.description && (
+              <p class="article__header-description">{fm.description}</p>
+            )
+          }
+          <div class="article__author-card">
+            <img
+              src="/images/valerii-filipenko.webp"
+              alt="Валерий Филипенко"
+              class="article__author-photo"
+              width="64"
+              height="64"
+            />
+            <div class="article__author-info">
+              <a
+                href="https://t.me/valery_chemistry"
+                target="_blank"
+                rel="noopener"
+                class="article__author-name">Валерий Филипенко</a
+              >
+              <div class="article__author-role">
+                Профессиональный репетитор по химии с опытом работы 10 лет.
+                Обучил более 2000 учеников. Автор научных статей и курсов по
+                химии. Специализируется на подготовке к ЕГЭ и ОГЭ, а также на
+                подготовке к олимпиадам.
+              </div>
+              <div class="article__author-socials">
+                <a
+                  href="https://t.me/+KznfEhtzkeNlZjIy"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Telegram"
+                  class="article__author-social-link"
+                >
+                  <img
+                    src="/images/technical/telegram.webp"
+                    alt=""
+                    aria-hidden="true"
+                    width="20"
+                    height="20"
+                  />
+                </a>
+                <a
+                  href="https://vk.com/chemistry_exam"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="ВКонтакте"
+                  class="article__author-social-link"
+                >
+                  <img
+                    src="/images/technical/vk.webp"
+                    alt=""
+                    aria-hidden="true"
+                    width="20"
+                    height="20"
+                  />
+                </a>
+                <a
+                  href="https://www.youtube.com/@chemistry_exam"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="YouTube"
+                  class="article__author-social-link"
+                >
+                  <img
+                    src="/images/technical/youtube.webp"
+                    alt=""
+                    aria-hidden="true"
+                    width="20"
+                    height="20"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         {
           fm.showHeroImage !== false && heroFromFM && (
             <div class="article__header-image-wrapper">
@@ -496,11 +569,89 @@ const sameCategoryTop = allArticles
     color: var(--black);
   }
 
+  /* ===== DESC + AUTHOR 2-COLUMN ===== */
+  .article__header-desc-author {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-24);
+    align-items: start;
+    margin: 0 0 var(--space-24) 0;
+  }
+
   .article__header-description {
     font-size: clamp(15px, 1.2vw, 18px);
     line-height: 1.6;
-    margin: 0 0 var(--space-24) 0;
+    margin: 0;
     color: var(--gray);
+  }
+
+  /* ===== AUTHOR CARD ===== */
+  .article__author-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .article__author-photo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+
+  .article__author-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4, 4px);
+  }
+
+  .article__author-name {
+    font-size: clamp(14px, 1.2vw, 20px);
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.3;
+    text-decoration: none;
+  }
+
+  .article__author-name:hover {
+    color: var(--blue);
+  }
+
+  .article__author-role {
+    font-size: clamp(13px, 1vw, 16px);
+    color: var(--gray);
+    line-height: 1.3;
+  }
+
+  .article__author-socials {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+    margin-top: var(--space-4, 4px);
+  }
+
+  .article__author-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s var(--easing);
+  }
+
+  .article__author-social-link:hover {
+    border-color: var(--black);
+  }
+
+  .article__author-social-link img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
   }
 
   .article__header-image {
@@ -639,7 +790,6 @@ const sameCategoryTop = allArticles
     gap: var(--space-20);
   }
 
-
   /* ===== FOOTER REPOST ===== */
   .article__divider {
     width: 100%;
@@ -741,6 +891,12 @@ const sameCategoryTop = allArticles
     .article__more-header {
       grid-template-columns: 1fr;
       gap: var(--space-16);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .article__header-desc-author {
+      grid-template-columns: 1fr;
     }
   }
 
