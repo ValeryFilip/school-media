@@ -17,83 +17,72 @@ const {
   title = "Помогай друзьям сдать ЕГЭ",
   highlight = "получай бонусы",
   description = "Присоединяйся к партнерской программе нашей школы химии. Делись качественными материалами для подготовки с одноклассниками и зарабатывай на каждой их регистрации.",
-  ctaPrimary = { text: "Стать партнером", href: "#" },
-  ctaSecondary = { text: "Узнать больше", href: "#" },
+  ctaPrimary = { text: "Стать партнером", href: "#apply" },
+  ctaSecondary = { text: "Узнать больше", href: "#partner-faq" },
 } = Astro.props;
 ---
 
-<section id={id} class="section partner-hero">
+<section id={id} class="section partner-section partner-hero">
   <div class="container text-center">
-    <div class="partner-hero__badge">
-      {badge}
-    </div>
+    <div class="partner-hero__shell card partner-surface">
+      <h1 id={`${id}-title`} class="partner-hero__title">
+        {title} и <span class="partner-hero__highlight">{highlight}</span>
+      </h1>
 
-    <h1 id={`${id}-title`} class="partner-hero__title">
-      {title} и <span class="partner-hero__highlight">{highlight}</span>
-    </h1>
+      <p class="partner-hero__lead">
+        {description}
+      </p>
 
-    <p class="partner-hero__lead">
-      {description}
-    </p>
-
-    <div class="partner-hero__actions">
-      <a href={ctaPrimary.href} class="btn btn--blue">{ctaPrimary.text}</a>
-      <a href={ctaSecondary.href} class="btn btn--ghost">{ctaSecondary.text}</a>
+      <div class="partner-hero__actions btnrow">
+        <a href={ctaPrimary.href} class="btn btn--blue">{ctaPrimary.text}</a>
+        <a href={ctaSecondary.href} class="btn btn--ghost">{ctaSecondary.text}</a>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   .partner-hero {
-    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .partner-hero__badge {
-    display: block;
-    width: max-content;
-    margin: 0 auto var(--space-24);
-    padding: 6px 16px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .partner-hero__shell {
+    padding: clamp(2rem, 4vw, 3.5rem);
+    text-align: center;
+    background:
+      radial-gradient(circle at top right, var(--brand-50), transparent 30%),
+      radial-gradient(circle at bottom left, var(--accent-50), transparent 28%),
+      var(--color-surface);
   }
 
   .partner-hero__title {
-    font-size: var(--h1);
+    font-size: var(--h1-font-size);
     line-height: 1.1;
     font-weight: 800;
     margin: 0 auto var(--space-24);
     max-width: 800px;
-    color: var(--black);
+    color: var(--color-text);
     letter-spacing: -0.02em;
     text-align: center;
   }
 
   .partner-hero__highlight {
-    color: var(--blue);
+    color: var(--color-brand);
   }
 
   .partner-hero__lead {
-    font-size: var(--lead);
-    line-height: 1.6;
-    color: var(--gray);
+    font-size: var(--body-lg-font-size);
+    line-height: var(--body-lg-line-height);
+    color: var(--color-text-secondary);
     max-width: 800px;
     margin: 0 auto var(--space-40);
     text-align: center;
   }
 
   .partner-hero__actions {
-    display: flex;
     justify-content: center;
-    gap: var(--space-16);
-    flex-wrap: wrap;
   }
 
   .partner-hero__actions .btn {
@@ -106,6 +95,10 @@ const {
   @media (max-width: 600px) {
     .partner-hero__actions .btn {
       width: 100%;
+    }
+
+    .partner-hero__shell {
+      padding: var(--space-24);
     }
   }
 </style>

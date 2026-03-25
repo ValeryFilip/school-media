@@ -12,7 +12,8 @@
       "Bash(grep -l \"visible:\" \"e:\\\\school-media/src/content/articles\"/*.mdx)",
       "Bash(node scripts/update-article-dates.mjs --all)",
       "Bash(node -e \"const {readdirSync}=require\\(''fs''\\);const {resolve}=require\\(''path''\\);const dir=resolve\\(process.cwd\\(\\),''src/content/articles''\\);console.log\\(dir\\);console.log\\(readdirSync\\(dir\\).filter\\(f=>f.endsWith\\(''.mdx''\\)\\)\\)\")",
-      "Bash(node -e \"const {readFileSync}=require\\(''fs''\\);const c=readFileSync\\(''src/content/articles/stepen-okislenia.mdx'',''utf-8''\\);const m=c.match\\(/^---\\\\n\\([\\\\s\\\\S]*?\\)\\\\n---/\\);console.log\\(m ? ''ok'' : ''no match''\\);console.log\\(JSON.stringify\\(c.slice\\(0,20\\)\\)\\)\")"
+      "Bash(node -e \"const {readFileSync}=require\\(''fs''\\);const c=readFileSync\\(''src/content/articles/stepen-okislenia.mdx'',''utf-8''\\);const m=c.match\\(/^---\\\\n\\([\\\\s\\\\S]*?\\)\\\\n---/\\);console.log\\(m ? ''ok'' : ''no match''\\);console.log\\(JSON.stringify\\(c.slice\\(0,20\\)\\)\\)\")",
+      "Bash(node -e \":*)"
     ]
   }
 }

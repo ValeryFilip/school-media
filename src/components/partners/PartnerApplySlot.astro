@@ -1,0 +1,237 @@
+﻿---
+/* src/components/partners/PartnerApplySlot.astro */
+---
+
+<div class="utm-box" client:load>
+  <label
+    >Имя:
+    <input type="text" id="firstName" placeholder="Иван" required />
+  </label>
+
+  <label
+    >Фамилия:
+    <input type="text" id="lastName" placeholder="Петров" required />
+  </label>
+
+  <label
+    >Telegram (без @):
+    <input type="text" id="telegramInput" placeholder="vasya_123" required />
+  </label>
+
+  <label
+    >Телефон:
+    <input
+      type="tel"
+      id="phoneInput"
+      placeholder="+7 999 123-45-67"
+      pattern="[0-9+\s\-()]*"
+      inputmode="tel"
+      required
+    />
+  </label>
+
+  <div class="consent-row">
+    <input type="checkbox" id="consentPersonal" required />
+    <label for="consentPersonal">
+      Согласен с
+      <a href="/agreement" target="_blank" rel="noopener"
+        >обработкой персональных данных</a
+      >
+      и
+      <a href="/privacy" target="_blank" rel="noopener"
+        >политикой конфиденциальности</a
+      >
+    </label>
+  </div>
+  <button id="generateUtmBtn" class="btn btn--blue">Подать заявку</button>
+  <div id="generateLoader" class="loader hidden"></div>
+
+  <div class="result result--message hidden" id="utmResult">
+    <p class="result-message">
+      Заявка отправлена. Мы проверим данные и пришлем персональную ссылку
+      отдельно.
+    </p>
+  </div>
+</div>
+
+<style>
+  .utm-box {
+    color: var(--color-text-inverse);
+    background: color-mix(in srgb, var(--color-bg) 8%, transparent);
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+    box-shadow: none;
+    backdrop-filter: blur(8px);
+    padding: var(--space-20) var(--space-24) var(--space-24);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 560px;
+    width: 100%;
+    position: sticky;
+    top: 20px;
+  }
+
+  .utm-box label {
+    display: block;
+    margin-top: var(--space-16);
+    font-weight: 600;
+    font-size: var(--text);
+  }
+
+  .utm-box input,
+  .utm-box select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    font-size: 16px;
+    border: 1px solid color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+    box-sizing: border-box;
+    color: var(--color-text-inverse);
+    outline: none;
+    transition:
+      border-color 0.2s var(--easing),
+      box-shadow 0.2s var(--easing),
+      background 0.2s var(--easing);
+  }
+
+  .utm-box input:focus,
+  .utm-box select:focus {
+    background: color-mix(in srgb, var(--color-bg) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand) 65%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
+  }
+
+  .utm-box input::placeholder {
+    color: color-mix(in srgb, var(--color-text-inverse) 48%, transparent);
+  }
+
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-12);
+    margin-top: var(--space-12);
+  }
+
+  .consent-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--color-accent);
+    margin-top: 2px;
+  }
+
+  .consent-row label {
+    font-size: 15px;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .consent-row a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  #generateUtmBtn.btn {
+    width: 100%;
+    margin-top: var(--space-16);
+  }
+
+  .loader {
+    width: 24px;
+    height: 24px;
+    border: 3px solid color-mix(in srgb, var(--color-text-inverse) 16%, transparent);
+    border-top: 3px solid var(--color-brand);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .result {
+    margin-top: var(--space-20);
+  }
+
+  .result--message {
+    padding: var(--space-16);
+    border: 1px solid color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  }
+
+  .result-message {
+    margin: 0;
+    color: var(--color-text-inverse);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("generateUtmBtn");
+    const loader = document.getElementById("generateLoader");
+    const result = document.getElementById("utmResult");
+
+    btn?.addEventListener("click", async () => {
+      const fn = document.getElementById("firstName").value.trim();
+      const ln = document.getElementById("lastName").value.trim();
+      const tg = document.getElementById("telegramInput").value.trim();
+      const ph = document.getElementById("phoneInput").value.trim();
+
+      const checksOk = ["consentPersonal"].every(
+        (id) => document.getElementById(id)?.checked,
+      );
+
+      if (!fn || !ln || !tg || !ph || !checksOk) {
+        alert("Заполните все поля и подтвердите все условия.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Отправляем...";
+      loader.classList.remove("hidden");
+      result?.classList.add("hidden");
+
+      const utm = `https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign=telegram&utm_content=${encodeURIComponent(tg)}`;
+      const body = new URLSearchParams({
+        name: fn,
+        family: ln,
+        telegram: tg,
+        phone: ph,
+        utm,
+      });
+
+      try {
+        const res = await fetch(
+          "https://script.google.com/macros/s/AKfycbxPmWN7dTyHb_nJH0N2Bu41ZlmUSkei7Qd0zIrQ8ERlFnBUIhuoa7exYh56Hqo-e-eVbQ/exec",
+          { method: "POST", body },
+        );
+        const txt = await res.text();
+        if (res.ok && txt.includes("OK")) {
+          result?.classList.remove("hidden");
+        } else {
+          alert("Ошибка: " + txt);
+        }
+      } catch (e) {
+        alert("Ошибка подключения: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Подать заявку";
+        loader.classList.add("hidden");
+      }
+    });
+  });
+</script>

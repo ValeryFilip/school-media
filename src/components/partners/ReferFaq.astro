@@ -1,10 +1,11 @@
 ---
 /* src/components/partners/ReferFaq.astro */
+import H2Zag from "../text/h2zag.astro";
 
 const faqs = [
   {
-    q: "Где отслеживать статистику переходов?",
-    a: "За прогрессом, количеством кликов и регистраций можно наблюдать в режиме реального времени в личном кабинете партнера в разделе 'Статистика'. Информация обновляется круглосуточно. Дополнительно данные синхронизируются с Google Таблицами.",
+    q: "Где отслеживать статистику оплат?",
+    a: "За прогрессом, количеством кликов и регистраций можно наблюдать в режиме реального времени в личном кабинете партнера. Информация обновляется раз в несколько дней. Выше есть форма для проверки по нику в телегам.",
   },
   {
     q: "Кого можно приглашать в программу?",
@@ -12,32 +13,39 @@ const faqs = [
   },
   {
     q: "Что получит мой друг за регистрацию?",
-    a: "Это выгодно вам обоим: вы получаете фиксированную комиссию (в среднем около 1500 рублей или % от продаж), а ваш друг получает разовую скидку или бонусный доступ к материалам при входе.",
+    a: "Это выгодно вам обоим: вы получаете фиксированную комиссию, а ваш друг получает бесплатное занятие или скидку в 5% на покупку курса. Это отличный способ помочь друзьям с подготовкой к ЕГЭ по химии и одновременно заработать.",
   },
   {
-    q: "Как выплачиваются заработанные деньги?",
-    a: "Выплаты производятся еженедельно или ежемесячно (в зависимости от оборота) на банковские карты РФ, ЮMoney или расчетный счет для самозанятых/ИП. Заявка на вывод обычно обрабатывается в течение 24 часов.",
+    q: "А точно выплатите деньги?",
+    a: "Да, мы гарантируем выплаты. Комиссия начисляется за каждую успешную оплату курсов, совершенную приглашёнными друзьями. Выплаты производятся ежемесячно, и вы можете быть уверены, что получите заслуженное вознаграждение за свои усилия.",
+  },
+  {
+    q: "А если не засчитается оплата другом?",
+    a: " Если оплата не засчитывается, пожалуйста, свяжитесь с нашей поддержкой. Мы всегда готовы помочь разобраться в ситуации и обеспечить правильное начисление комиссии. Важно сохранять все подтверждающие документы и информацию о транзакции для ускорения процесса решения вопроса. Все запросы рассматриваются индивидуально и человеком.",
+  },
+  {
+    q: "Что такое реферальноая ссылка и как она работает?",
+    a: " Реферальная ссылка — это уникальная URL-адрес, который вы получаете после регистрации в нашей партнерской программе. Она содержит специальный код, который позволяет системе отслеживать, что новый пользователь пришёл именно от вас. Когда кто-то кликает на вашу реферальную ссылку и регистрируется на нашей платформе, система автоматически связывает этого нового пользователя с вашим аккаунтом. Это позволяет вам зарабатывать комиссию с каждой успешной оплаты курсов, совершенной приглашёнными друзьями.",
   },
 ];
 ---
 
-<section class="section partner-faq">
+<section class="section partner-section partner-faq" id="partner-faq">
   <div class="container max-w-4xl">
-    <div class="partner-faq__header">
-      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
-        Вопросы и ответы
-      </div>
-      <h2 class="h2">База знаний</h2>
-      <p class="partner-faq__desc">
-        Всё, что вам нужно знать о получении вознаграждений за приглашения в
-        нашу онлайн-школу химии.
-      </p>
+    <div class="partner-section__head">
+      <H2Zag
+        title="База знаний"
+        subtitle="Всё, что вам нужно знать о получении вознаграждений за приглашения в нашу онлайн-школу химии."
+      />
     </div>
 
     <div class="partner-faq__list">
       {
         faqs.map((faq, idx) => (
-          <details class="faq-item" open={idx === 0}>
+          <details
+            class="faq-item card partner-card--interactive"
+            open={idx === 0}
+          >
             <summary class="faq-item__summary">
               <h4 class="faq-item__question">{faq.q}</h4>
               <div class="faq-item__toggle">
@@ -57,33 +65,22 @@ const faqs = [
 </section>
 
 <style>
-  .partner-faq {
-    padding: 0;
-    background: var(--bg);
-  }
-
-  .partner-faq__desc {
-    font-size: var(--text);
-    color: var(--gray);
-    margin-bottom: var(--space-50);
-    max-width: 60ch;
-  }
-
   .partner-faq__list {
     display: grid;
     gap: 16px;
   }
 
   .faq-item {
-    background: var(--white);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    transition: all 0.3s var(--easing);
+    overflow: hidden;
+    transition:
+      box-shadow var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease),
+      transform var(--dur-1) var(--ease);
   }
 
   .faq-item[open] {
     box-shadow: var(--shadow-2);
-    border-color: rgba(54, 110, 240, 0.2);
+    border-color: var(--brand-200);
   }
 
   .faq-item__summary {
@@ -94,6 +91,7 @@ const faqs = [
     align-items: center;
     cursor: pointer;
     user-select: none;
+    gap: var(--space-16);
   }
 
   .faq-item__summary::-webkit-details-marker {
@@ -101,31 +99,29 @@ const faqs = [
   }
 
   .faq-item__question {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--black);
     margin: 0;
-    transition: color 0.3s;
+    transition: color var(--dur-1) var(--ease);
   }
 
   .faq-item[open] .faq-item__question {
-    color: var(--blue);
+    color: var(--color-brand);
   }
 
   .faq-item__toggle {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #f1f5f9;
+    background: var(--gray-100);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    transition: all var(--dur-1) var(--ease);
+    flex: 0 0 auto;
   }
 
   .faq-item[open] .faq-item__toggle {
-    background: var(--orange);
-    color: var(--white);
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
     transform: rotate(135deg);
   }
 
@@ -135,41 +131,27 @@ const faqs = [
 
   .faq-item__box {
     padding: var(--space-20);
-    background: #f8fafc;
-    border-radius: 12px;
-    border-left: 4px solid var(--blue);
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-brand);
   }
 
   .faq-item__text {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--gray);
+    color: var(--color-text-secondary);
     margin: 0;
-    font-weight: 500;
   }
 
   @media (max-width: 600px) {
     .faq-item__summary {
       padding: var(--space-20);
     }
+
     .faq-item__question {
       font-size: 16px;
     }
+
     .faq-item__content {
       padding: 0 var(--space-20) var(--space-20);
     }
-  }
-
-  /* Badge helper */
-  .partner-hero__badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 </style>

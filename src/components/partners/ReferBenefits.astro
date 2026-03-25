@@ -1,5 +1,6 @@
 ---
 /* src/components/partners/ReferBenefits.astro */
+import H2Zag from "../text/h2zag.astro";
 
 const benefits = [
   {
@@ -20,26 +21,21 @@ const benefits = [
 ];
 ---
 
-<section class="section partner-benefits">
+<section class="section partner-section partner-benefits">
   <div class="container">
-    <div class="partner-benefits__header">
-      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
-        Преимущества
-      </div>
-      <h2 class="h2">Почему выбирают нас?</h2>
-      <p class="partner-benefits__header-desc">
-        Мы предоставляем все передовые инструменты для вашего успеха. Наша
-        программа построена на прозрачности и щедром награждении.
-      </p>
+    <div class="partner-section__head">
+      <H2Zag
+        title="Почему выбирают нас?"
+        subtitle="Мы предоставляем все передовые инструменты для вашего успеха. Наша программа построена на прозрачности и щедром награждении."
+      />
     </div>
 
     <div class="partner-benefits__grid">
-      <!-- Список преимуществ -->
       <div class="partner-benefits__list">
         {
           benefits.map((item) => (
-            <article class="benefit-item card">
-              <div class="benefit-item__icon">
+            <article class="card partner-card partner-card--interactive benefit-item">
+              <div class="partner-icon-chip benefit-item__icon">
                 <span class="material-symbols-outlined">{item.icon}</span>
               </div>
               <div class="benefit-item__content">
@@ -51,9 +47,8 @@ const benefits = [
         }
       </div>
 
-      <!-- Декоративный виджет -->
       <div class="partner-benefits__visual">
-        <div class="revenue-widget card">
+        <div class="revenue-widget card partner-surface">
           <div class="revenue-widget__header">
             <span class="revenue-widget__label">Сводка доходов</span>
             <span class="material-symbols-outlined">more_horiz</span>
@@ -92,17 +87,6 @@ const benefits = [
 </section>
 
 <style>
-  .partner-benefits {
-    padding: 0;
-  }
-
-  .partner-benefits__header-desc {
-    font-size: var(--text);
-    color: var(--gray);
-    margin: 0 0 var(--space-50);
-    max-width: 60ch;
-  }
-
   .partner-benefits__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -116,41 +100,29 @@ const benefits = [
   }
 
   .benefit-item {
-    padding: var(--space-24);
     display: flex;
     gap: var(--space-20);
-    transition: border-color 0.3s var(--easing);
-  }
-
-  .benefit-item:hover {
-    border-color: var(--blue);
+    align-items: flex-start;
   }
 
   .benefit-item__icon {
     flex-shrink: 0;
-    color: var(--blue);
   }
 
   .benefit-item__icon .material-symbols-outlined {
-    font-size: 32px;
+    font-size: 1.75rem;
   }
 
   .benefit-item__title {
-    font-size: 20px;
-    font-weight: 700;
     margin: 0 0 8px;
-    color: var(--black);
+    color: var(--color-text);
   }
 
   .benefit-item__desc {
     margin: 0;
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--gray);
-    font-weight: 500;
+    color: var(--color-text-secondary);
   }
 
-  /* Виджет */
   .partner-benefits__visual {
     position: relative;
     display: flex;
@@ -164,8 +136,7 @@ const benefits = [
     max-width: 400px;
     padding: var(--space-32);
     transform: rotate(2deg);
-    transition: transform 0.5s var(--easing);
-    box-shadow: var(--shadow-2);
+    transition: transform 0.5s var(--ease);
   }
 
   .revenue-widget:hover {
@@ -177,7 +148,7 @@ const benefits = [
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-32);
-    color: var(--gray);
+    color: var(--color-text-muted);
   }
 
   .revenue-widget__label {
@@ -193,23 +164,22 @@ const benefits = [
 
   .total-label {
     display: block;
-    font-size: 13px;
-    color: var(--gray);
+    color: var(--color-text-muted);
     margin-bottom: 4px;
   }
 
   .total-value {
     font-size: 32px;
     font-weight: 800;
-    color: var(--black);
+    color: var(--color-text);
     margin: 0 0 8px;
   }
 
   .total-badge {
     display: inline-block;
     padding: 2px 8px;
-    background: #ecfdf5;
-    color: #10b981;
+    background: var(--success-50);
+    color: var(--color-success);
     border-radius: 6px;
     font-size: 12px;
     font-weight: 700;
@@ -225,29 +195,15 @@ const benefits = [
 
   .bar {
     flex: 1;
-    background: rgba(54, 110, 240, 0.1);
+    background: var(--brand-100);
     border-radius: 4px 4px 0 0;
     transition: height 1s ease;
   }
 
   .bar.active {
-    background: var(--blue);
+    background: var(--color-brand);
   }
 
-  /* Бейдж (костыль если нет в глобал) */
-  .partner-hero__badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Blobs */
   .blob {
     position: absolute;
     border-radius: 50%;
@@ -259,7 +215,7 @@ const benefits = [
   .blob-1 {
     width: 200px;
     height: 200px;
-    background: var(--blue);
+    background: var(--color-brand);
     top: -30px;
     right: -30px;
   }
@@ -267,7 +223,7 @@ const benefits = [
   .blob-2 {
     width: 250px;
     height: 250px;
-    background: var(--orange);
+    background: var(--color-accent);
     bottom: -50px;
     left: -50px;
   }
@@ -277,6 +233,7 @@ const benefits = [
       grid-template-columns: 1fr;
       gap: var(--space-40);
     }
+
     .partner-benefits__visual {
       order: -1;
     }

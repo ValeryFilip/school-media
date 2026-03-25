@@ -1,0 +1,173 @@
+﻿---
+/* src/components/partners/ReferFormApply.astro */
+import H2Zag from "../text/h2zag.astro";
+import PartnerApplySlot from "./PartnerApplySlot.astro";
+---
+
+<section class="section partner-section partner-form" id="apply">
+  <div class="container">
+    <div class="partner-form__grid">
+      <div class="partner-form__info partner-section__head">
+        <H2Zag
+          title="Стать партнером школы"
+          subtitle="Заполните небольшую анкету. Наш менеджер свяжется с вами для активации партнерского аккаунта и отдельно пришлет персональную ссылку."
+        />
+
+        <div class="partner-cases" aria-label="Кейсы партнеров">
+          <article class="partner-case card">
+            <div class="partner-case__head">
+              <img
+                class="partner-case__photo"
+                src="/images/mainpage/reviews/anya-photo.webp"
+                alt="Анна Смирнова"
+                loading="lazy"
+                width="56"
+                height="56"
+              />
+              <div class="partner-case__meta">
+                <p class="partner-case__name">Ника Пескова</p>
+                <p class="partner-case__role">11 класс, Москва</p>
+              </div>
+              <div class="partner-case__sum">42 500 ₽</div>
+            </div>
+            <p class="partner-case__text">
+              Поделилась с одноклассниками и собрали группу из друзей на годовой
+              курс. За год отбила половину стоимости курсов и помогла друзьям
+              подготовиться
+            </p>
+          </article>
+
+          <article class="partner-case card">
+            <div class="partner-case__head">
+              <img
+                class="partner-case__photo"
+                src="/images/mainpage/reviews/david-photo.webp"
+                alt="Давид Алексеев"
+                loading="lazy"
+                width="56"
+                height="56"
+              />
+              <div class="partner-case__meta">
+                <p class="partner-case__name">Давид Пичхадзе</p>
+                <p class="partner-case__role">студент, Санкт-Петербург</p>
+              </div>
+              <div class="partner-case__sum">35 000 ₽</div>
+            </div>
+            <p class="partner-case__text">
+              Приглашал на занятия своих знакомых, которые готовились к ЕГЭ по
+              химии. За полгода заработал на оплату курсов для себя и сестры.
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <PartnerApplySlot />
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .partner-form__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-50);
+      align-items: start;
+    }
+
+    .partner-form__info {
+      display: grid;
+      gap: var(--space-24);
+      margin-bottom: 0;
+    }
+
+    .partner-cases {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-16);
+    }
+
+    .partner-case {
+      padding: var(--space-20);
+      background: color-mix(in srgb, var(--color-bg) 8%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-text-inverse) 14%,
+        transparent
+      );
+      box-shadow: none;
+      backdrop-filter: blur(8px);
+    }
+
+    .partner-case__head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-12);
+      align-items: center;
+      margin-bottom: var(--space-12);
+    }
+
+    .partner-case__photo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid
+        color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+    }
+
+    .partner-case__meta,
+    .partner-case__name,
+    .partner-case__role,
+    .partner-case__text {
+      margin: 0;
+    }
+
+    .partner-case__name {
+      color: var(--color-text-inverse);
+      font-weight: var(--fw-bold);
+      line-height: 1.2;
+    }
+
+    .partner-case__role {
+      color: color-mix(in srgb, var(--color-text-inverse) 72%, transparent);
+      font-size: var(--fs-14);
+      margin-top: 4px;
+    }
+
+    .partner-case__sum {
+      padding: var(--space-8) var(--space-12);
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--accent-500) 18%, transparent);
+      color: var(--color-text-inverse);
+      font-weight: var(--fw-bold);
+      white-space: nowrap;
+    }
+
+    .partner-case__text {
+      color: color-mix(in srgb, var(--color-text-inverse) 84%, transparent);
+      font-size: var(--fs-15);
+      line-height: 1.55;
+    }
+
+    .form-card {
+      width: 100%;
+      margin: 0;
+      position: sticky;
+      top: 20px;
+      align-self: start;
+      max-width: 560px;
+    }
+
+    @media (max-width: 1100px) {
+      .partner-form__grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-40);
+      }
+
+      .form-card {
+        position: static;
+      }
+    }
+  </style>
+</section>

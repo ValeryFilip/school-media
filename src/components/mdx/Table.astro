@@ -1,20 +1,23 @@
 ---
 /**
- * Таблица для статей (жёсткий перенос «по буквам»).
- * threshold — минимальный тестовый балл (по Рособрнадзору): все строки, где значение во 2-й колонке < threshold, подсвечиваются светло-красным.
+ * Таблица для статей.
+ * scroll — широкие таблицы: не сжимает текст, уходит в горизонтальный скролл.
+ * fit (по умолчанию) — адаптивные таблицы: шрифт уменьшается под экран.
+ * threshold — строки, где значение во 2-й колонке < threshold, подсвечиваются светло-красным.
  */
 interface Props {
   striped?: boolean;
   bordered?: boolean;
+  layout?: "fit" | "scroll";
   /** Минимальный тестовый балл для поступления: строки ниже подсвечиваются */
   threshold?: number;
 }
 
-const { striped = true, bordered = true, threshold } = Astro.props;
+const { striped = true, bordered = true, layout = "fit", threshold } = Astro.props;
 ---
 
 <div
-  class={`table-wrapper ${striped ? "striped" : ""} ${bordered ? "bordered" : ""}`}
+  class={`table-wrapper layout-${layout} ${striped ? "striped" : ""} ${bordered ? "bordered" : ""}`}
   role="region"
   aria-label="Таблица"
   {...(threshold != null ? { "data-threshold": threshold } : {})}
@@ -51,6 +54,7 @@ const { striped = true, bordered = true, threshold } = Astro.props;
 )}
 
 <style>
+  /* ── Общее ── */
   .table-wrapper {
     overflow-x: auto;
     margin: clamp(1rem, 3vw, 2rem) 0;
@@ -59,11 +63,8 @@ const { striped = true, bordered = true, threshold } = Astro.props;
     background: var(--white);
   }
 
-  /* Буквенные переносы: фиксируем раскладку колонок и ломаем последовательности где угодно */
   .table-wrapper :global(table) {
-    width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* критично для равномерных колонок и переносов */
     background: var(--white);
   }
 
@@ -71,11 +72,9 @@ const { striped = true, bordered = true, threshold } = Astro.props;
   .table-wrapper :global(td) {
     padding: clamp(8px, 1.2vw, 12px) clamp(12px, 1.6vw, 16px);
     text-align: left;
-
-    white-space: normal; /* разрешаем переносы */
-    word-break: break-all; /* ломаем слова по буквам */
-    overflow-wrap: anywhere; /* можно рвать где угодно */
-    line-break: anywhere; /* доп. агрессивный перенос (если поддерживается) */
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .table-wrapper :global(th) {
@@ -96,12 +95,12 @@ const { striped = true, bordered = true, threshold } = Astro.props;
     border: 1px solid var(--border);
   }
 
-  /* Hover строки */
+  /* Hover */
   .table-wrapper :global(tbody tr:hover) {
     background: #f0f7ff;
   }
 
-  /* Строки ниже порога — один светло-красный тон для всех */
+  /* Threshold */
   .table-wrapper :global(tbody tr.below-threshold td) {
     background: #ffebee !important;
   }
@@ -109,27 +108,39 @@ const { striped = true, bordered = true, threshold } = Astro.props;
     background: #ffcdd2 !important;
   }
 
-  /* Насильно переносим и внутри ссылок / кодовых элементов */
-  .table-wrapper :global(td a),
-  .table-wrapper :global(th a),
-  .table-wrapper :global(td code),
-  .table-wrapper :global(th code),
-  .table-wrapper :global(td kbd),
-  .table-wrapper :global(th kbd) {
-    white-space: normal;
-    word-break: break-all;
-    overflow-wrap: anywhere;
-    line-break: anywhere;
+  /* ── fit: таблица растягивается на всю ширину, шрифт уменьшается ── */
+  .table-wrapper.layout-fit :global(table) {
+    width: 100%;
+    table-layout: auto;
+  }
+
+  .table-wrapper.layout-fit :global(th),
+  .table-wrapper.layout-fit :global(td) {
+    font-size: clamp(11px, 1.4vw, 15px);
   }
 
   @media (max-width: 600px) {
-    .table-wrapper :global(th),
-    .table-wrapper :global(td) {
-      padding: 8px 10px;
-      font-size: 10px;
+    .table-wrapper.layout-fit :global(th),
+    .table-wrapper.layout-fit :global(td) {
+      padding: 6px 8px;
+      font-size: clamp(9px, 2.8vw, 12px);
     }
-    .table-wrapper :global(th) {
-      font-size: 10px;
-    }
+  }
+
+  /* ── scroll: таблица естественной ширины, wrapper скроллит внутри себя ── */
+  .table-wrapper.layout-scroll {
+    max-width: 100%;
+  }
+
+  .table-wrapper.layout-scroll :global(table) {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+    font-size: clamp(12px, 1.4vw, 15px);
+  }
+
+  .table-wrapper.layout-scroll :global(th),
+  .table-wrapper.layout-scroll :global(td) {
+    white-space: nowrap;
   }
 </style>

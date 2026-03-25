@@ -1,0 +1,66 @@
+---
+/* src/components/partners/ReferTelegramChecker.astro */
+import H2Zag from "../text/h2zag.astro";
+import TgChecker from "../slots/TgChecker.astro";
+---
+
+<section class="section partner-section partner-checker" id="partner-checker">
+  <div class="container">
+    <div class="partner-checker__grid">
+      <div class="partner-checker__content partner-section__head">
+        <H2Zag
+          title="Проверка статистики по Telegram"
+          subtitle="Введите свой Telegram-ник и получите актуальные данные по ученикам, покупкам на Stepik и сумме к выплате."
+        />
+
+        <a
+          class="btn btn--blue partner-checker__support"
+          href="https://t.me/valery_chemistry"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Написать в поддержку
+        </a>
+      </div>
+
+      <div class="partner-checker__widget">
+        <TgChecker />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-checker__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 575px);
+    gap: var(--space-40);
+    align-items: start;
+  }
+
+  .partner-checker__content {
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  .partner-checker__widget {
+    width: 100%;
+  }
+
+  .partner-checker__support {
+    width: fit-content;
+  }
+
+  @media (max-width: 1100px) {
+    .partner-checker__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .partner-checker__support {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

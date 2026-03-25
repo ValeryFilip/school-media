@@ -10,7 +10,7 @@ const { title = "", subtitle = "", headingId } = Astro.props;
 ---
 
 <div class="h2zag">
-  <h2 class="h2zag-title" {...(headingId ? { id: headingId } : {})}>{title}</h2>
+  <h2 class="h2zag-title" {...headingId ? { id: headingId } : {}}>{title}</h2>
   {subtitle ? <p class="h2zag-subtitle">{subtitle}</p> : null}
 </div>
 
@@ -25,12 +25,14 @@ const { title = "", subtitle = "", headingId } = Astro.props;
     font-weight: 700;
     line-height: 1.2;
     margin: 0;
+    color: rgb(65, 117, 229);
   }
   .h2zag-subtitle {
-    font-size: var(--lead);
+    font-size: clamp(12px, 2vw, 16px);
     font-weight: 400;
-    line-height: 1.6;
+    line-height: 1.2;
     margin: 0 0 var(--space-24) 0;
+    color: rgb(120, 120, 120);
   }
   @media (max-width: 600px) {
     .h2zag-title,

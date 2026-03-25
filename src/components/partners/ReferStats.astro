@@ -1,58 +1,48 @@
 ---
 /* src/components/partners/ReferStats.astro */
+import H2Zag from "../text/h2zag.astro";
 
 const stats = [
   {
     icon: "percent",
     label: "Комиссия",
     value: "15%",
-    note: "С каждого друга",
-    color: "var(--orange)",
+    note: "От суммы оплат на stepik",
+    color: "var(--color-accent)",
   },
   {
     icon: "group",
-    label: "Партнеры",
-    value: "5000+",
-    note: "Растущее комьюнити",
-    color: "var(--blue)",
+    label: "ученики",
+    value: "до 5000 руб",
+    note: "За друга на годовом курсе",
+    color: "var(--color-brand)",
   },
   {
     icon: "calendar_month",
     label: "Выплаты",
     value: "Раз в месяц",
     note: "Гарантированно",
-    color: "var(--green)",
+    color: "var(--color-success)",
   },
   {
     icon: "headset_mic",
     label: "Поддержка",
     value: "24/7",
     note: "На связи",
-    color: "var(--blue)",
+    color: "var(--color-brand)",
   },
 ];
 ---
 
-<section class="section partner-stats">
+<section class="section partner-section partner-stats">
   <div class="container">
-    <div class="partner-stats__header">
-      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
-        Статистика
-      </div>
-      <h2 class="h2">Факты о программе</h2>
-      <p class="partner-stats__desc">
-        Прозрачность — наш приоритет. Вот почему тысячи партнеров любят работать
-        с нами.
-      </p>
-    </div>
-
-    <div class="partner-stats__grid">
+    <div class="partner-grid-auto partner-stats__grid">
       {
         stats.map((stat) => (
-          <article class="card stat-card">
+          <article class="card partner-card partner-card--interactive stat-card">
             <div
-              class="stat-card__icon"
-              style={`background: ${stat.color}15; color: ${stat.color}`}
+              class="partner-icon-chip stat-card__icon"
+              style={`--stat-color: ${stat.color}`}
             >
               <span class="material-symbols-outlined">{stat.icon}</span>
             </div>
@@ -74,70 +64,39 @@ const stats = [
 />
 
 <style>
-  .partner-stats {
-    background: var(--white);
-    padding: clamp(60px, 8vw, 100px) 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .partner-stats__desc {
-    font-size: var(--text);
-    color: var(--gray);
-    margin: 0 0 var(--space-50);
-    max-width: 60ch;
-  }
-
   .partner-stats__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space-24);
+    align-items: stretch;
   }
 
   .stat-card {
-    padding: var(--space-32);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-24);
-    transition:
-      transform 0.3s var(--easing),
-      box-shadow 0.3s var(--easing),
-      border-color 0.3s var(--easing);
-  }
-
-  .stat-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--blue);
-    box-shadow: var(--shadow-2);
+    min-height: 100%;
   }
 
   .stat-card__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: color-mix(in oklab, var(--stat-color) 10%, white);
+    color: var(--stat-color);
   }
 
   .stat-card__icon .material-symbols-outlined {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .stat-card__label {
     display: block;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--gray);
     margin-bottom: 4px;
+    color: var(--color-text-muted);
+    font-family: var(--overline-font-family);
+    font-size: var(--overline-font-size);
+    font-weight: var(--overline-font-weight);
+    line-height: var(--overline-line-height);
+    letter-spacing: var(--overline-letter-spacing);
+    text-transform: uppercase;
   }
 
   .stat-card__value {
-    font-size: clamp(28px, 3vw, 36px);
-    font-weight: 800;
-    color: var(--black);
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
     margin: 0;
     line-height: 1.1;
   }
@@ -145,21 +104,10 @@ const stats = [
   .stat-card__note {
     display: block;
     margin-top: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--blue);
-  }
-
-  /* Для отображения бейджа (если нет глобального) */
-  .partner-hero__badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: var(--stat-color);
+    font-family: var(--label-font-family);
+    font-size: var(--label-font-size);
+    font-weight: var(--label-font-weight);
+    line-height: var(--label-line-height);
   }
 </style>

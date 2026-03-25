@@ -1,5 +1,6 @@
 ---
 /* src/components/partners/ReferPlacement.astro */
+import H2Zag from "../text/h2zag.astro";
 
 const channels = [
   {
@@ -26,28 +27,26 @@ const channels = [
 ];
 ---
 
-<section class="section partner-placement">
+<section class="section partner-section partner-placement">
   <div class="container">
-    <div class="partner-placement__header">
-      <div class="partner-hero__badge" style="margin-bottom: var(--space-16)">
-        Продвижение
-      </div>
-      <h2 class="h2">Лучшие каналы связи</h2>
-      <p class="partner-placement__desc">
-        Используйте эти проверенные форматы, чтобы помочь большему количеству
-        школьников подготовиться к ЕГЭ бесплатно и качественно.
-      </p>
+    <div class="partner-section__head">
+      <H2Zag
+        title="Лучшие каналы связи"
+        subtitle="Используйте эти проверенные форматы, чтобы помочь большему количеству школьников подготовиться к ЕГЭ бесплатно и качественно."
+      />
     </div>
 
     <div class="partner-placement__grid">
       {
         channels.map((item) => (
-          <article class="channel-card card">
+          <article class="channel-card card partner-card partner-card--interactive">
             <div class="channel-card__top">
-              <div class="channel-card__icon">
+              <div class="partner-icon-chip channel-card__icon">
                 <span class="material-symbols-outlined">{item.icon}</span>
               </div>
-              {item.badge && <span class="badge-mini">{item.badge}</span>}
+              {item.badge && (
+                <span class="partner-pill badge-mini">{item.badge}</span>
+              )}
             </div>
             <div class="channel-card__content">
               <h4 class="channel-card__title">{item.title}</h4>
@@ -58,8 +57,7 @@ const channels = [
       }
     </div>
 
-    <!-- CTA Banner -->
-    <div class="placement-cta">
+    <div class="placement-cta card card--brand-dark">
       <div class="placement-cta__content">
         <h3 class="placement-cta__title">
           <span class="material-symbols-outlined">auto_awesome</span>
@@ -70,26 +68,21 @@ const channels = [
           было проще приглашать друзей.
         </p>
       </div>
-      <a href="#" class="btn btn--white">
+      <a
+        href="https://t.me/valery_chemistry"
+        class="btn btn--ghost placement-cta__btn"
+      >
         <span class="material-symbols-outlined">download_for_offline</span>
-        Скачать материалы
+        Узнать про материалы
       </a>
     </div>
   </div>
 </section>
 
 <style>
-  .partner-placement {
-    padding: 0;
+  .partner-section__head {
+    display: flex;
   }
-
-  .partner-placement__desc {
-    font-size: var(--text);
-    color: var(--gray);
-    margin-bottom: var(--space-50);
-    max-width: 60ch;
-  }
-
   .partner-placement__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -98,35 +91,21 @@ const channels = [
   }
 
   .channel-card {
-    padding: var(--space-32);
     display: flex;
     flex-direction: column;
     gap: var(--space-20);
-    transition:
-      transform 0.3s var(--easing),
-      border-color 0.3s var(--easing);
-  }
-
-  .channel-card:hover {
-    border-color: var(--blue);
-    transform: translateY(-2px);
   }
 
   .channel-card__top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--space-12);
   }
 
   .channel-card__icon {
     width: 56px;
     height: 56px;
-    border-radius: 14px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .channel-card__icon .material-symbols-outlined {
@@ -134,96 +113,63 @@ const channels = [
   }
 
   .badge-mini {
-    padding: 4px 12px;
-    background: rgba(240, 153, 54, 0.1);
-    color: var(--orange);
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    background: var(--accent-50);
+    color: var(--color-accent);
   }
 
   .channel-card__title {
-    font-size: 20px;
-    font-weight: 700;
     margin: 0 0 8px;
-    color: var(--black);
+    color: var(--color-text);
   }
 
   .channel-card__text {
     margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--gray);
-    font-weight: 500;
+    color: var(--color-text-secondary);
   }
 
-  /* CTA Banner */
   .placement-cta {
-    background: linear-gradient(135deg, var(--blue) 0%, #1e40af 100%);
-    border-radius: 24px;
     padding: var(--space-40) var(--space-50);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--white);
-    box-shadow: 0 20px 40px -10px rgba(54, 110, 240, 0.3);
+    gap: var(--space-24);
+    background-color: var(--color-brand);
   }
 
   .placement-cta__title {
-    font-size: 28px;
-    font-weight: 800;
     margin: 0 0 12px;
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--white);
+    color: inherit;
   }
 
   .placement-cta__title .material-symbols-outlined {
     font-size: 32px;
-    color: rgba(255, 255, 255, 0.8);
+    color: color-mix(in srgb, currentColor 70%, transparent);
   }
 
   .placement-cta__text {
-    font-size: 18px;
-    opacity: 0.9;
     max-width: 500px;
     margin: 0;
+    color: color-mix(in srgb, currentColor 84%, transparent);
   }
 
-  .btn--white {
-    background: var(--white);
-    color: var(--blue);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 32px;
-    border-radius: 12px;
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-  }
-
-  .btn--white:hover {
-    transform: translateY(-2px);
-    background: #f8fafc;
+  .placement-cta__btn {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: var(--color-brand);
   }
 
   @media (max-width: 1100px) {
     .placement-cta {
       flex-direction: column;
       text-align: center;
-      gap: var(--space-32);
       padding: var(--space-32);
     }
+
     .placement-cta__title {
       justify-content: center;
-      font-size: 24px;
-    }
-    .placement-cta__text {
-      font-size: 16px;
     }
   }
 
@@ -231,18 +177,5 @@ const channels = [
     .partner-placement__grid {
       grid-template-columns: 1fr;
     }
-  }
-
-  /* Badge helper */
-  .partner-hero__badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(54, 110, 240, 0.1);
-    color: var(--blue);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 </style>

@@ -1,0 +1,124 @@
+---
+import H2Zag from "../text/h2zag.astro";
+
+const trustStats = [
+  {
+    value: "4,9/5",
+    label: "средний рейтинг курсов",
+    note: "на основании отзывов на Stepik",
+    icon: "grade",
+    color: "var(--color-accent)",
+  },
+  {
+    value: "2 000+",
+    label: "учеников на курсах",
+    note: "за несколько потоков подготовки",
+    icon: "groups",
+    color: "var(--color-brand)",
+  },
+  {
+    value: "98%",
+    label: "довольных выпускников",
+    note: "по внутренним опросам после курсов",
+    icon: "favorite",
+    color: "var(--color-success)",
+  },
+  {
+    value: "10 лет",
+    label: "опыта в образовании",
+    note: "Валерий Филипенко — эксперт по химии, преподаватель и основатель проекта.",
+    icon: "task_alt",
+    color: "var(--color-brand)",
+  },
+];
+---
+
+<section class="section partner-section partner-trust">
+  <div class="container">
+    <div class="partner-section__head">
+      <H2Zag
+        title="Почему нам можно доверять?"
+        subtitle="Мы строим партнёрскую программу вокруг сильного продукта. Вашим друзьям не нужно «допродавать» курс — цифры и репутация уже работают за вас."
+      />
+    </div>
+
+    <div class="partner-grid-auto partner-trust__grid">
+      {
+        trustStats.map((item) => (
+          <article class="card partner-card partner-card--interactive trust-card">
+            <div
+              class="partner-icon-chip trust-card__icon"
+              style={`--trust-color: ${item.color}`}
+            >
+              <span class="material-symbols-outlined">{item.icon}</span>
+            </div>
+
+            <div class="trust-card__content">
+              <p class="trust-card__value">{item.value}</p>
+              <h3 class="trust-card__label">{item.label}</h3>
+              <p class="trust-card__note">{item.note}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-trust__grid {
+    align-items: stretch;
+  }
+
+  .trust-card {
+    min-height: 100%;
+    display: grid;
+    gap: var(--space-20);
+    background:
+      radial-gradient(
+        circle at top right,
+        color-mix(in srgb, var(--trust-color) 18%, transparent),
+        transparent 42%
+      ),
+      color-mix(in srgb, var(--color-bg) 8%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-text-inverse) 14%,
+      transparent
+    );
+    box-shadow: none;
+    backdrop-filter: blur(8px);
+  }
+
+  .trust-card__icon {
+    background: color-mix(in srgb, var(--trust-color) 18%, transparent);
+    color: color-mix(in srgb, var(--trust-color) 84%, white);
+  }
+
+  .trust-card__icon .material-symbols-outlined {
+    font-size: 1.75rem;
+  }
+
+  .trust-card__value {
+    margin: 0 0 8px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1;
+    font-weight: 800;
+    color: var(--color-text-inverse);
+    letter-spacing: -0.03em;
+  }
+
+  .trust-card__label {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    color: var(--color-text-inverse);
+  }
+
+  .trust-card__note {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-text-inverse) 80%, transparent);
+    font-size: var(--fs-15);
+    line-height: 1.55;
+  }
+</style>

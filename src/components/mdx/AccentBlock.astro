@@ -1,0 +1,111 @@
+---
+interface Props {
+  tone?: "blue" | "green" | "yellow" | "rose" | "gray";
+  padding?: "sm" | "md" | "lg";
+  border?: boolean;
+  fullBleed?: boolean;
+}
+
+const {
+  tone = "blue",
+  padding = "md",
+  border = true,
+  fullBleed = false,
+} = Astro.props;
+---
+
+<div
+  class="accent-block"
+  data-tone={tone}
+  data-padding={padding}
+  data-border={border ? "on" : "off"}
+  data-full-bleed={fullBleed ? "on" : "off"}
+>
+  <slot />
+</div>
+
+<style>
+  .accent-block {
+    margin: clamp(16px, 2.5vw, 28px) 0;
+    border-radius: 14px;
+    color: var(--black);
+  }
+
+  .accent-block[data-padding="sm"] {
+    padding: clamp(10px, 1.5vw, 14px) clamp(12px, 1.8vw, 18px);
+  }
+
+  .accent-block[data-padding="md"] {
+    padding: clamp(14px, 2vw, 20px) clamp(16px, 2.3vw, 24px);
+  }
+
+  .accent-block[data-padding="lg"] {
+    padding: clamp(18px, 2.5vw, 28px) clamp(18px, 2.8vw, 32px);
+  }
+
+  .accent-block[data-border="on"] {
+    border: 1px solid transparent;
+  }
+
+  .accent-block[data-full-bleed="on"] {
+    width: calc(100% + clamp(16px, 4vw, 36px));
+    margin-left: calc(clamp(16px, 4vw, 36px) * -0.5);
+    margin-right: calc(clamp(16px, 4vw, 36px) * -0.5);
+  }
+
+  @media (max-width: 768px) {
+    .accent-block[data-full-bleed="on"] {
+      width: calc(100% + 16px);
+      margin-left: -8px;
+      margin-right: -8px;
+    }
+  }
+
+  .accent-block[data-tone="blue"] {
+    background: #eef4ff;
+  }
+
+  .accent-block[data-tone="blue"][data-border="on"] {
+    border-color: rgba(54, 110, 240, 0.25);
+  }
+
+  .accent-block[data-tone="green"] {
+    background: #ecfdf5;
+  }
+
+  .accent-block[data-tone="green"][data-border="on"] {
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+
+  .accent-block[data-tone="yellow"] {
+    background: #fffbeb;
+  }
+
+  .accent-block[data-tone="yellow"][data-border="on"] {
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+
+  .accent-block[data-tone="rose"] {
+    background: #fff1f2;
+  }
+
+  .accent-block[data-tone="rose"][data-border="on"] {
+    border-color: rgba(244, 63, 94, 0.25);
+  }
+
+  .accent-block[data-tone="gray"] {
+    background: #f4f4f5;
+  }
+
+  .accent-block[data-tone="gray"][data-border="on"] {
+    border-color: rgba(63, 63, 70, 0.18);
+  }
+
+  .accent-block :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .accent-block :global(> :last-child) {
+    margin-bottom: 0;
+  }
+</style>

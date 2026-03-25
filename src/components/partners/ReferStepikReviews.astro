@@ -1,0 +1,396 @@
+﻿---
+import { REVIEW_IMAGES } from "../../data/reviews";
+
+const reviews = REVIEW_IMAGES.slice(0, 10);
+const SLIDER_ID = "partner-stepik-reviews";
+const SLIDER_PREV = "partner-stepik-reviews-prev";
+const SLIDER_NEXT = "partner-stepik-reviews-next";
+---
+
+<section class="section partner-section partner-stepik-reviews">
+  <div class="container">
+    <div class="partner-stepik-reviews__controls">
+      <button
+        id={SLIDER_PREV}
+        class="partner-stepik-reviews__button"
+        type="button"
+        aria-label="Предыдущий отзыв"></button>
+
+      <button
+        id={SLIDER_NEXT}
+        class="partner-stepik-reviews__button partner-stepik-reviews__button--next"
+        type="button"
+        aria-label="Следующий отзыв"></button>
+    </div>
+    <div class="partner-stepik-reviews__shell card partner-surface">
+      <div class="partner-stepik-reviews__slider" id={SLIDER_ID}>
+        <div class="partner-stepik-reviews__viewport">
+          <div class="partner-stepik-reviews__track">
+            {
+              reviews.map((review) => (
+                <figure class="partner-stepik-reviews__slide">
+                  <img
+                    src={review.src}
+                    alt={review.alt}
+                    loading="lazy"
+                    decoding="async"
+                    width="1200"
+                    height="700"
+                  />
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="partner-stepik-reviews__modal"
+    data-reviews-modal
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-label="Просмотр отзыва"
+  >
+    <button
+      class="partner-stepik-reviews__modal-close"
+      type="button"
+      aria-label="Закрыть"
+      data-reviews-modal-close
+    >
+      &times;
+    </button>
+    <img
+      class="partner-stepik-reviews__modal-image"
+      data-reviews-modal-image
+      src=""
+      alt="Просмотр отзыва"
+    />
+  </div>
+</section>
+
+<style>
+  .partner-stepik-reviews {
+    overflow: clip;
+  }
+
+  .partner-stepik-reviews__shell {
+    position: relative;
+    padding: clamp(16px, 2vw, 24px);
+    background: color-mix(in srgb, var(--color-bg) 7%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-text-inverse) 14%,
+      transparent
+    );
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+
+  .partner-stepik-reviews__controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .partner-stepik-reviews__slider {
+    width: 100%;
+  }
+
+  .partner-stepik-reviews__viewport {
+    width: calc(100% + clamp(72px, 10vw, 180px));
+    margin-left: calc(clamp(72px, 10vw, 180px) * -0.5);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    touch-action: pan-x pan-y;
+    cursor: grab;
+  }
+
+  .partner-stepik-reviews__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .partner-stepik-reviews__track {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    width: max-content;
+    padding-right: clamp(72px, 10vw, 180px);
+  }
+
+  .partner-stepik-reviews__slide {
+    flex: 0 0 clamp(300px, 44vw, 560px);
+    aspect-ratio: 16 / 4.2;
+    max-height: 180px;
+    margin: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
+    box-shadow: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: start;
+  }
+
+  .partner-stepik-reviews__slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    background: color-mix(in srgb, var(--color-bg) 14%, transparent);
+  }
+
+  .partner-stepik-reviews__button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: none;
+    backdrop-filter: blur(8px);
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease,
+      opacity 0.2s ease;
+    flex: 0 0 auto;
+  }
+
+  .partner-stepik-reviews__button:hover:not(.is-disabled) {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--color-bg) 16%, transparent);
+  }
+
+  .partner-stepik-reviews__button.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .partner-stepik-reviews__button::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    display: block;
+    border-top: 2.5px solid var(--color-text-inverse);
+    border-right: 2.5px solid var(--color-text-inverse);
+    transform: rotate(-135deg);
+  }
+
+  .partner-stepik-reviews__button--next::after {
+    transform: rotate(45deg);
+  }
+
+  .partner-stepik-reviews__modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+  }
+
+  .partner-stepik-reviews__modal[aria-hidden="false"] {
+    display: flex;
+  }
+
+  .partner-stepik-reviews__modal-image {
+    display: block;
+    max-width: min(92vw, 1100px);
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    background: var(--white);
+  }
+
+  .partner-stepik-reviews__modal-close {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-bg) 12%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 16%, transparent);
+    color: var(--color-text-inverse);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  @media (max-width: 900px) {
+    .partner-stepik-reviews__viewport {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .partner-stepik-reviews__slide {
+      flex-basis: min(76vw, 520px);
+      max-height: 164px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .partner-stepik-reviews__shell {
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .partner-stepik-reviews__controls {
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .partner-stepik-reviews__button {
+      width: 48px;
+      height: 48px;
+    }
+
+    .partner-stepik-reviews__slide {
+      flex-basis: min(88vw, 420px);
+      max-height: 136px;
+      border-radius: 20px;
+    }
+  }
+</style>
+
+<script>
+  const initPartnerStepikReviews = () => {
+    const section = document.querySelector(".partner-stepik-reviews");
+    if (!section || section.dataset.enhanced === "true") return;
+
+    const root = section.querySelector("#partner-stepik-reviews");
+    const viewport = section.querySelector(".partner-stepik-reviews__viewport");
+    const slides = Array.from(
+      section.querySelectorAll(".partner-stepik-reviews__slide"),
+    );
+    const prevBtn = section.querySelector("#partner-stepik-reviews-prev");
+    const nextBtn = section.querySelector("#partner-stepik-reviews-next");
+    const modal = section.querySelector("[data-reviews-modal]");
+    const modalImage = section.querySelector("[data-reviews-modal-image]");
+    const modalClose = section.querySelector("[data-reviews-modal-close]");
+
+    if (!root || !viewport || !slides.length || !prevBtn || !nextBtn) return;
+
+    section.dataset.enhanced = "true";
+
+    let isPointerDown = false;
+    let hasDragged = false;
+
+    const getGap = () => 20;
+    const getStep = () =>
+      (slides[0]?.getBoundingClientRect().width ?? 0) + getGap();
+
+    const render = () => {
+      const maxScrollLeft = viewport.scrollWidth - viewport.clientWidth;
+      prevBtn.classList.toggle("is-disabled", viewport.scrollLeft <= 4);
+      nextBtn.classList.toggle(
+        "is-disabled",
+        viewport.scrollLeft >= maxScrollLeft - 4,
+      );
+    };
+
+    const shiftByStep = (direction) => {
+      viewport.scrollBy({
+        left: getStep() * direction,
+        behavior: "smooth",
+      });
+    };
+
+    const openModal = (src, alt) => {
+      if (!modal || !modalImage) return;
+      modal.setAttribute("aria-hidden", "false");
+      modalImage.src = src;
+      modalImage.alt = alt || "Просмотр отзыва";
+      document.documentElement.classList.add("is-modal-open");
+      document.body.classList.add("is-modal-open");
+    };
+
+    const closeModal = () => {
+      if (!modal || !modalImage) return;
+      modal.setAttribute("aria-hidden", "true");
+      modalImage.src = "";
+      modalImage.alt = "";
+      document.documentElement.classList.remove("is-modal-open");
+      document.body.classList.remove("is-modal-open");
+    };
+
+    prevBtn.addEventListener("click", () => shiftByStep(-1));
+    nextBtn.addEventListener("click", () => shiftByStep(1));
+
+    viewport.addEventListener("pointerdown", () => {
+      isPointerDown = true;
+      hasDragged = false;
+      viewport.style.cursor = "grabbing";
+    });
+
+    viewport.addEventListener("pointermove", (event) => {
+      if (!isPointerDown) return;
+      if (Math.abs(event.movementX) > 2) hasDragged = true;
+    });
+
+    const finishDrag = () => {
+      if (!isPointerDown) return;
+      isPointerDown = false;
+      viewport.style.cursor = "grab";
+      requestAnimationFrame(() => {
+        hasDragged = false;
+      });
+    };
+
+    viewport.addEventListener("pointerup", finishDrag);
+    viewport.addEventListener("pointercancel", finishDrag);
+    viewport.addEventListener("scroll", render, { passive: true });
+
+    slides.forEach((slide) => {
+      const image = slide.querySelector("img");
+      if (!image) return;
+      slide.addEventListener("click", () => {
+        if (hasDragged) return;
+        openModal(image.src, image.alt);
+      });
+    });
+
+    modalClose?.addEventListener("click", closeModal);
+
+    modal?.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        modal?.getAttribute("aria-hidden") === "false"
+      ) {
+        closeModal();
+      }
+    });
+
+    window.addEventListener("resize", render);
+    render();
+  };
+
+  initPartnerStepikReviews();
+  document.addEventListener("astro:page-load", initPartnerStepikReviews);
+</script>

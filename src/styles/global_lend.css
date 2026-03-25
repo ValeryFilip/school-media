@@ -5,7 +5,7 @@
   --orange: #f09936;
   --black: #111;
   --white: #fff;
-  --bg: #e7eff6;
+  --bg: #f7f7f7;
   --border: #dfdfdf;
   --gray: #888;
   --green: #10b981;
@@ -14,8 +14,8 @@
   --overlay: rgba(0, 0, 0, 0.75);
 
   /* Типографика */
-  --ff: "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial,
-    sans-serif;
+  --ff:
+    "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   --h1: clamp(35px, 6vw, 48px);
   --h2: clamp(26px, 4vw, 42px);
   --h3: clamp(14px, 3.2vw, 20px);
@@ -40,9 +40,7 @@
   --space-32: 32px;
   --space-40: 40px;
   --space-50: 50px;
-  --section-gap: clamp(120px, 6vw, 56px);
-
-  /* Прочее */
+  --section-gap: clamp(32px, 24px + 6vw, 120px); /* Прочее */
   --easing: ease-in-out;
 }
 /* ===== GLOBALS ===== */
@@ -50,14 +48,13 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  
 }
 
 html {
   color-scheme: light;
   font-family: var(--ff);
   font-variant-numeric: lining-nums tabular-nums;
-  background: var(--bg, #f1f5fb);
+  background: var(--bg);
   /* Сглаживание шрифтов: grayscale-антиалиасинг вместо subpixel (часто выглядит ровнее на Retina/HiDPI) */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -109,7 +106,6 @@ a:hover {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  
 }
 .content {
   flex: 1 0 auto;
@@ -206,7 +202,9 @@ h3,
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
-  transition: transform 150ms var(--easing), filter 150ms var(--easing);
+  transition:
+    transform 150ms var(--easing),
+    filter 150ms var(--easing);
 }
 .btn:hover {
   transform: translateY(-1px);
@@ -335,6 +333,14 @@ h3,
   margin-bottom: 0;
 }
 
+/* Цветные маркеры списков в статьях (точки и номера) */
+.article__content ul li::marker,
+.article__content ol li::marker {
+  color: var(--blue);
+  font-weight: 700;
+  font-size: clamp(19px, 1.15vw, 23px);
+}
+
 /* Цитаты */
 .article__content blockquote {
   border-left: 4px solid var(--blue);
@@ -446,18 +452,45 @@ h3,
   z-index: 0;
 }
 
-.blob--blue { background: var(--blue); }
-.blob--orange { background: var(--orange); }
-.blob--green { background: var(--green); }
+.blob--blue {
+  background: var(--blue);
+}
+.blob--orange {
+  background: var(--orange);
+}
+.blob--green {
+  background: var(--green);
+}
 
-.blob--top-left { top: -150px; left: -150px; }
-.blob--top-right { top: -150px; right: -150px; }
-.blob--bottom-left { bottom: -150px; left: -150px; }
-.blob--bottom-right { bottom: -150px; right: -150px; }
+.blob--top-left {
+  top: -150px;
+  left: -150px;
+}
+.blob--top-right {
+  top: -150px;
+  right: -150px;
+}
+.blob--bottom-left {
+  bottom: -150px;
+  left: -150px;
+}
+.blob--bottom-right {
+  bottom: -150px;
+  right: -150px;
+}
 
-.blob--xl { width: 600px; height: 600px; }
-.blob--lg { width: 450px; height: 450px; }
-.blob--md { width: 300px; height: 300px; }
+.blob--xl {
+  width: 600px;
+  height: 600px;
+}
+.blob--lg {
+  width: 450px;
+  height: 450px;
+}
+.blob--md {
+  width: 300px;
+  height: 300px;
+}
 
 .section-blob-wrapper > .container {
   position: relative;

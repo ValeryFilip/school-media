@@ -99,11 +99,13 @@ const uid = `tg-${Math.random().toString(36).slice(2)}`;
 <style>
   .tg-box {
     width: 100%;
-    background: var(--white);
-    color: var(--black);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-24);
-    box-shadow: var(--shadow-1);
+    background: color-mix(in srgb, var(--color-bg) 8%, transparent);
+    color: var(--color-text-inverse);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+    border-radius: var(--radius-xl);
+    box-shadow: none;
+    backdrop-filter: blur(8px);
     padding: var(--space-24);
     box-sizing: border-box;
   }
@@ -119,18 +121,24 @@ const uid = `tg-${Math.random().toString(36).slice(2)}`;
   .tg-input {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--border);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
     border-radius: 12px;
-    background: #f9f9f9;
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
     font-size: 16px;
-    color: var(--black);
+    color: var(--color-text-inverse);
     outline: none;
     box-sizing: border-box;
   }
+
+  .tg-input::placeholder {
+    color: color-mix(in srgb, var(--color-text-inverse) 48%, transparent);
+  }
+
   .tg-input:focus {
-    background: var(--white);
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(54, 110, 240, 0.15);
+    background: color-mix(in srgb, var(--color-bg) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand) 65%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
   }
 
   /* вспомогательный класс только для расположения; визуал идёт из .btn .btn--blue */
@@ -144,5 +152,14 @@ const uid = `tg-${Math.random().toString(36).slice(2)}`;
     text-align: left;
     font-size: clamp(16px, 2.2vw, 18px);
     line-height: 1.5;
+    color: color-mix(in srgb, var(--color-text-inverse) 84%, transparent);
+  }
+
+  .tg-result p {
+    margin: 0 0 var(--space-8);
+  }
+
+  .tg-result p:last-child {
+    margin-bottom: 0;
   }
 </style>

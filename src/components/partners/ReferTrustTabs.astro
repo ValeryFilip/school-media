@@ -1,0 +1,368 @@
+---
+import H2Zag from "../text/h2zag.astro";
+
+const tabs = [
+  {
+    id: "proof",
+    label: "Доверие к продукту",
+    title: "Продукт уже продаёт за вас",
+    text: "Вы рекомендуете не абстрактную школу, а конкретные курсы с высоким рейтингом, понятной программой и большим числом реальных учеников. Это снимает главный барьер для рекомендации: человеку есть на что опереться до покупки.",
+    image: "/images/stepik/science.webp",
+    alt: "Иллюстрация доверия к продукту",
+    points: [
+      "Высокий рейтинг на Stepik",
+      "Понятная структура курсов",
+      "Много реальных отзывов",
+    ],
+  },
+  {
+    id: "platform",
+    label: "Платформа",
+    title: "Stepik усиливает доверие к рекомендации",
+    text: "Когда друг переходит по вашей ссылке, он попадает на знакомую и прозрачную платформу. Там видны отзывы, программа, прогресс и формат обучения. Это повышает конверсию без агрессивных продаж и долгих объяснений.",
+    image: "/images/stepik/planet.webp",
+    alt: "Иллюстрация платформы Stepik",
+    points: [
+      "Прозрачная карточка курса",
+      "Отзывы на одной странице",
+      "Удобная оплата и доступ",
+    ],
+  },
+  {
+    id: "result",
+    label: "Результат",
+    title: "Люди рекомендуют то, что реально помогает",
+    text: "Сильный продукт даёт сильную повторную рекомендацию. Если ваш друг получает пользу и остаётся доволен курсом, дальше уже запускается органика: сарафан, пересылки, обсуждения в чатах и новые переходы по вашей ссылке.",
+    image: "/images/stepik/researcher.webp",
+    alt: "Иллюстрация результатов обучения",
+    points: [
+      "Сарафанное распространение",
+      "Повторные рекомендации",
+      "Длинный жизненный цикл ссылки",
+    ],
+  },
+];
+---
+
+<section class="section partner-section partner-trust-tabs">
+  <div class="container">
+    <div class="partner-section__head">
+      <H2Zag
+        title="Что помогает вам рекомендовать нас легче"
+        subtitle="Собрали ключевые причины, почему партнёрская ссылка конвертит лучше, когда за ней стоит сильный учебный продукт."
+      />
+    </div>
+
+    <div class="partner-trust-tabs__shell card partner-surface">
+      <div
+        class="partner-trust-tabs__nav"
+        role="tablist"
+        aria-label="Преимущества партнерской программы"
+      >
+        {
+          tabs.map((tab, index) => (
+            <button
+              class:list={[
+                "partner-trust-tabs__tab",
+                { "is-active": index === 0 },
+              ]}
+              type="button"
+              role="tab"
+              id={`partner-tab-${tab.id}`}
+              data-tab-trigger={tab.id}
+              aria-controls={`partner-panel-${tab.id}`}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+            >
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="partner-trust-tabs__panels">
+        {
+          tabs.map((tab, index) => (
+            <section
+              class:list={[
+                "partner-trust-tabs__panel",
+                { "is-active": index === 0 },
+              ]}
+              role="tabpanel"
+              id={`partner-panel-${tab.id}`}
+              aria-labelledby={`partner-tab-${tab.id}`}
+              data-tab-panel={tab.id}
+              aria-hidden={index === 0 ? "false" : "true"}
+            >
+              <div class="partner-trust-tabs__media">
+                <div class="partner-trust-tabs__image-wrap">
+                  <img
+                    src={tab.image}
+                    alt={tab.alt}
+                    loading="lazy"
+                    width="560"
+                    height="420"
+                  />
+                </div>
+              </div>
+
+              <div class="partner-trust-tabs__content">
+                <span class="partner-trust-tabs__eyebrow">{tab.label}</span>
+                <h3>{tab.title}</h3>
+                <p>{tab.text}</p>
+
+                <ul class="partner-trust-tabs__points">
+                  {tab.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .partner-trust-tabs__shell {
+    padding: clamp(1.25rem, 2.6vw, 2rem);
+    background: color-mix(in srgb, var(--color-bg) 7%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-text-inverse) 14%,
+      transparent
+    );
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .partner-trust-tabs__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: var(--space-24);
+  }
+
+  .partner-trust-tabs__tab {
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+    background: color-mix(in srgb, var(--color-bg) 8%, transparent);
+    color: color-mix(in srgb, var(--color-text-inverse) 86%, transparent);
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .partner-trust-tabs__tab:hover,
+  .partner-trust-tabs__tab.is-active {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--color-brand) 28%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+    color: var(--color-text-inverse);
+  }
+
+  .partner-trust-tabs__panel {
+    display: none;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  .partner-trust-tabs__panel.is-active {
+    display: grid;
+  }
+
+  .partner-trust-tabs__panels {
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .partner-trust-tabs__image-wrap {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .partner-trust-tabs__image-wrap img {
+    width: 100%;
+    height: 100%;
+    max-height: 360px;
+    object-fit: contain;
+  }
+
+  .partner-trust-tabs__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: color-mix(in srgb, var(--color-brand) 82%, white);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .partner-trust-tabs__content h3 {
+    margin: 0 0 14px;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    line-height: 1.08;
+    color: var(--color-text-inverse);
+  }
+
+  .partner-trust-tabs__content p {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-text-inverse) 82%, transparent);
+    font-size: var(--body-lg-font-size);
+    line-height: 1.65;
+  }
+
+  .partner-trust-tabs__points {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .partner-trust-tabs__points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+    color: var(--color-text-inverse);
+    font-weight: 600;
+  }
+
+  .partner-trust-tabs__points li::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--color-brand);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 900px) {
+    .partner-trust-tabs__panel {
+      grid-template-columns: 1fr;
+    }
+
+    .partner-trust-tabs__image-wrap {
+      min-height: 280px;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.querySelector(".partner-trust-tabs");
+    if (!root) return;
+
+    const triggers = Array.from(root.querySelectorAll("[data-tab-trigger]"));
+    const panels = Array.from(root.querySelectorAll("[data-tab-panel]"));
+    const panelsWrap = root.querySelector(".partner-trust-tabs__panels");
+
+    let currentIndex = 0;
+    let pointerId = null;
+    let startX = 0;
+    let deltaX = 0;
+    let isDragging = false;
+
+    const activate = (id) => {
+      currentIndex = Math.max(
+        0,
+        triggers.findIndex((trigger) => trigger.dataset.tabTrigger === id),
+      );
+
+      triggers.forEach((trigger) => {
+        const isActive = trigger.dataset.tabTrigger === id;
+        trigger.classList.toggle("is-active", isActive);
+        trigger.setAttribute("aria-selected", String(isActive));
+        trigger.setAttribute("tabindex", isActive ? "0" : "-1");
+      });
+
+      panels.forEach((panel) => {
+        const isActive = panel.dataset.tabPanel === id;
+        panel.classList.toggle("is-active", isActive);
+        panel.setAttribute("aria-hidden", isActive ? "false" : "true");
+      });
+    };
+
+    triggers.forEach((trigger, index) => {
+      trigger.addEventListener("click", () =>
+        activate(trigger.dataset.tabTrigger || ""),
+      );
+
+      trigger.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+        event.preventDefault();
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        const nextIndex =
+          (index + direction + triggers.length) % triggers.length;
+        triggers[nextIndex]?.focus();
+        const nextId = triggers[nextIndex]?.dataset.tabTrigger;
+        if (nextId) activate(nextId);
+      });
+    });
+
+    panelsWrap?.addEventListener("pointerdown", (event) => {
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      deltaX = 0;
+      isDragging = true;
+      panelsWrap.setPointerCapture(pointerId);
+      panelsWrap.style.cursor = "grabbing";
+    });
+
+    panelsWrap?.addEventListener("pointermove", (event) => {
+      if (!isDragging || event.pointerId !== pointerId) return;
+      deltaX = event.clientX - startX;
+    });
+
+    const finishSwipe = (event) => {
+      if (!isDragging || event.pointerId !== pointerId) return;
+      isDragging = false;
+      pointerId = null;
+      panelsWrap.style.cursor = "grab";
+
+      if (Math.abs(deltaX) < 48) return;
+
+      const direction = deltaX < 0 ? 1 : -1;
+      const nextIndex =
+        (currentIndex + direction + triggers.length) % triggers.length;
+      const nextId = triggers[nextIndex]?.dataset.tabTrigger;
+      if (!nextId) return;
+
+      triggers[nextIndex]?.focus();
+      activate(nextId);
+    };
+
+    panelsWrap?.addEventListener("pointerup", finishSwipe);
+    panelsWrap?.addEventListener("pointercancel", finishSwipe);
+    panelsWrap?.addEventListener("lostpointercapture", () => {
+      isDragging = false;
+      pointerId = null;
+      if (panelsWrap) panelsWrap.style.cursor = "grab";
+    });
+
+    activate("proof");
+  })();
+</script>
