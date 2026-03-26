@@ -6,6 +6,40 @@ interface Props {
 }
 
 const { youtubeHref, vkHref, rutubeHref } = Astro.props;
+
+const videoSources = [
+  {
+    id: "youtube",
+    label: "YouTube",
+    href: youtubeHref,
+    title: "YouTube video player",
+    width: "560",
+    height: "315",
+    allow:
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+    referrerPolicy: "strict-origin-when-cross-origin",
+  },
+  {
+    id: "vk",
+    label: "VK Video",
+    href: vkHref,
+    title: "VK video player",
+    width: "560",
+    height: "315",
+    allow:
+      "autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;",
+  },
+  {
+    id: "rutube",
+    label: "Rutube",
+    href: rutubeHref,
+    title: "Rutube video player",
+    width: "720",
+    height: "405",
+    allow: "clipboard-write; autoplay",
+    style: "border: none",
+  },
+].filter((source) => source.href);
 ---
 
 <section class="tabs" aria-label="Видео: выбор источника">

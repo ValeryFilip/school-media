@@ -1,0 +1,222 @@
+---
+interface Props {
+  youtubeHref?: string;
+  vkHref?: string;
+  rutubeHref?: string;
+}
+
+const { youtubeHref, vkHref, rutubeHref } = Astro.props;
+
+const videoSources = [
+  {
+    id: "youtube",
+    label: "YouTube",
+    href: youtubeHref,
+    title: "YouTube video player",
+    width: "560",
+    height: "315",
+    allow:
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+    referrerPolicy: "strict-origin-when-cross-origin",
+  },
+  {
+    id: "vk",
+    label: "VK Video",
+    href: vkHref,
+    title: "VK video player",
+    width: "560",
+    height: "315",
+    allow:
+      "autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;",
+  },
+  {
+    id: "rutube",
+    label: "Rutube",
+    href: rutubeHref,
+    title: "Rutube video player",
+    width: "720",
+    height: "405",
+    allow: "clipboard-write; autoplay",
+    style: "border: none",
+  },
+].filter((source) => source.href);
+---
+
+{
+  videoSources.length > 0 && (
+    <section class="tabs" aria-label="Видео: выбор источника">
+      <div class="tab-headers" role="tablist" aria-label="Источник видео">
+        {
+          videoSources.map((source, index) => (
+            <div
+              class={`tab-header ${index === 0 ? "active" : ""}`}
+              role="tab"
+              id={`tab-${source.id}`}
+              aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`panel-${source.id}`}
+              tabindex={index === 0 ? "0" : "-1"}
+              data-tab={source.id}
+            >
+              {source.label}
+            </div>
+          ))
+        }
+      </div>
+      <div class="tab-contents">
+        {
+          videoSources.map((source, index) => (
+            <div
+              class="tab-content"
+              role="tabpanel"
+              id={`panel-${source.id}`}
+              aria-labelledby={`tab-${source.id}`}
+              aria-hidden={index === 0 ? "false" : "true"}
+              data-tab={source.id}
+              hidden={index !== 0}
+            >
+              <iframe
+                width={source.width}
+                height={source.height}
+                src={index === 0 ? source.href : undefined}
+                data-src={index === 0 ? undefined : source.href}
+                title={source.title}
+                allow={source.allow}
+                referrerpolicy={source.referrerPolicy}
+                style={source.style}
+                allowfullscreen
+                loading={index === 0 ? "eager" : "lazy"}></iframe>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  )
+}
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  section {
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  iframe {
+    border-radius: 10px;
+    max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  .tab-headers {
+    display: flex;
+    gap: 10px;
+    padding: 0;
+  }
+  .tab-header {
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background-color: #f9f9f9;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .tab-header.active {
+    background-color: #f9f9f9;
+    color: var(--black);
+    font-weight: bold;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    z-index: 2;
+  }
+  .tab-content {
+    padding: 20px;
+    border: 1px solid var(--border);
+    background-color: #f9f9f9;
+    border-radius: 0 5px 5px 5px;
+    position: relative;
+    top: -1px;
+    z-index: 1;
+  }
+  @media (max-width: 600px) {
+    .tab-headers {
+      flex-direction: column;
+      gap: 0;
+    }
+    .tab-header:nth-child(2) {
+      border-radius: 0;
+    }
+    .tab-header:nth-child(3) {
+      border-radius: 0;
+    }
+    .tab-header {
+      width: 100%;
+      text-align: center;
+    }
+    .tab-content {
+      border-radius: 0 0 5px 5px;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    function loadVisibleIframe(tabContent) {
+      if (!tabContent || tabContent.hidden) return;
+      const iframe = tabContent.querySelector("iframe[data-src]");
+      if (iframe && iframe.dataset.src && !iframe.src) {
+        iframe.src = iframe.dataset.src;
+      }
+    }
+
+    const sections = document.querySelectorAll(".tabs");
+    sections.forEach(function (section) {
+      const tabButtons = section.querySelectorAll(".tab-header");
+      const tabContents = section.querySelectorAll(".tab-content");
+
+      tabContents.forEach(function (panel) {
+        panel.setAttribute("aria-hidden", panel.hidden ? "true" : "false");
+      });
+
+      tabButtons.forEach(function (tabButton) {
+        tabButton.addEventListener("click", function () {
+          var tabButtonType = tabButton.dataset.tab;
+          var tabContent = section.querySelector(
+            ".tab-content[data-tab=\"" + tabButtonType + "\"]",
+          );
+
+          if (!tabContent) return;
+
+          tabContent.hidden = false;
+          tabContent.setAttribute("aria-hidden", "false");
+
+          tabContents.forEach(function (other) {
+            if (other !== tabContent) {
+              other.hidden = true;
+              other.setAttribute("aria-hidden", "true");
+            }
+          });
+
+          tabButton.classList.add("active");
+          tabButton.setAttribute("aria-selected", "true");
+          tabButton.setAttribute("tabindex", "0");
+
+          tabButtons.forEach(function (other) {
+            if (other !== tabButton) {
+              other.classList.remove("active");
+              other.setAttribute("aria-selected", "false");
+              other.setAttribute("tabindex", "-1");
+            }
+          });
+
+          loadVisibleIframe(tabContent);
+        });
+      });
+    });
+  })();
+</script>

@@ -428,6 +428,22 @@ export function buildVideoJsonLd(params: {
   /** URL превью видео. По умолчанию — общее OG-изображение сайта. */
   thumbnailUrl?: string;
 }) {
+  function normalizeUploadDate(value?: string): string {
+    if (!value) return "2024-01-01T00:00:00.000Z";
+
+    // Search Console expects a full ISO 8601 datetime with timezone.
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return `${value}T00:00:00.000Z`;
+    }
+
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+
+    return "2024-01-01T00:00:00.000Z";
+  }
+
   const {
     origin,
     pageUrl,
@@ -436,7 +452,7 @@ export function buildVideoJsonLd(params: {
     contentUrl,
     embedUrl,
     encodingFormat,
-    uploadDate = "2024-01-01",
+    uploadDate,
     thumbnailUrl,
   } = params;
 
@@ -447,7 +463,7 @@ export function buildVideoJsonLd(params: {
     description,
     inLanguage: "ru-RU",
     url: pageUrl,
-    uploadDate,
+    uploadDate: normalizeUploadDate(uploadDate),
     thumbnailUrl: thumbnailUrl ? absUrl(origin, thumbnailUrl) : absUrl(origin, "/images/technical/og-home.png"),
   };
 

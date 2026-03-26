@@ -5,7 +5,11 @@ import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
-import { buildArticleJsonLd, buildVideoJsonLd } from "../../../lib/seoData";
+import {
+  buildArticleJsonLd,
+  buildFAQJsonLd,
+  buildVideoJsonLd,
+} from "../../../lib/seoData";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles", ({ data }) => {
@@ -63,6 +67,32 @@ const recommendations = [...byTag, ...byCategory].slice(0, 4);
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
 const pageUrl = `${siteUrl}/academy/${categorySlug}/${slug}/`;
 
+function stripMdxToText(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[*_~#>-]+/g, " ")
+    .replace(/\{[^}]+\}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractFaqItemsFromMdx(source: string) {
+  const matches = source.matchAll(
+    /<FAQ\s+question=(?:"([^"]+)"|'([^']+)')[^>]*>([\s\S]*?)<\/FAQ>/g,
+  );
+
+  return [...matches]
+    .map((match) => {
+      const question = (match[1] || match[2] || "").trim();
+      const answer = stripMdxToText(match[3] || "");
+      return question && answer ? { q: question, a: answer } : null;
+    })
+    .filter(Boolean) as Array<{ q: string; a: string }>;
+}
+
 const breadcrumbs = [
   {
     name: `${fm.category}`,
@@ -80,9 +110,12 @@ const videoJsonLd =
     name: fm.title,
     description: (fm.description || "").slice(0, 300),
     embedUrl: (fm as any).videoUrl,
-    uploadDate: new Date(fm.date as any).toISOString().slice(0, 10),
+    uploadDate: new Date(fm.date as any).toISOString(),
     thumbnailUrl: fm.image,
   });
+
+const faqItems = extractFaqItemsFromMdx(entry.body || "");
+const faqJsonLd = faqItems.length > 0 ? buildFAQJsonLd(faqItems) : null;
 
 const articleJsonLd = buildArticleJsonLd({
   origin: siteUrl,
@@ -114,6 +147,7 @@ const articleJsonLd = buildArticleJsonLd({
   breadcrumbs={breadcrumbs}
   articleJsonLd={articleJsonLd}
   videoJsonLd={videoJsonLd}
+  faqJsonLd={faqJsonLd}
 >
   <ArticleLayoutNew fm={fm} slug={slug!} headings={headings}>
     <Content />
