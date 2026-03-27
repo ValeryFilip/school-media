@@ -431,22 +431,23 @@ const {
   const coursesTabs = document.querySelectorAll(".courses__left-tab");
   const coursesCards = document.querySelectorAll(".courses__right-card");
 
+  function setActiveCourse(activeTab) {
+    if (!activeTab) return;
+
+    coursesTabs.forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.tab === activeTab);
+    });
+
+    coursesCards.forEach((card) => {
+      const isActive = card.dataset.tab === activeTab;
+      card.hidden = !isActive;
+      card.classList.toggle("active", isActive);
+    });
+  }
+
   coursesTabs.forEach((tabik) => {
     tabik.addEventListener("click", () => {
-      const activeTab = tabik.dataset.tab;
-      coursesTabs.forEach((tab) => {
-        tab.classList.remove("active");
-      });
-      tabik.classList.add("active");
-      coursesCards.forEach((card) => {
-        card.hidden = card.dataset.tab !== activeTab;
-        if (card.dataset.tab === activeTab) {
-          card.classList.remove("active");
-          card.classList.add("active");
-        } else {
-          card.classList.remove("active");
-        }
-      });
+      setActiveCourse(tabik.dataset.tab);
     });
   });
 </script>

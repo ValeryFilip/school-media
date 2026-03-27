@@ -154,6 +154,21 @@ const sameCategoryTop = allArticles
   )
   .sort((a, b) => getTimeSafe(b) - getTimeSafe(a))
   .slice(0, 4);
+
+const articlesByDate = [...allArticles].sort(
+  (a, b) => getTimeSafe(b) - getTimeSafe(a),
+);
+const currentArticleIndex = articlesByDate.findIndex((p) => p.slug === slug);
+const nextArticle =
+  currentArticleIndex > 0 ? articlesByDate[currentArticleIndex - 1] : null;
+const prevArticle =
+  currentArticleIndex >= 0 && currentArticleIndex < articlesByDate.length - 1
+    ? articlesByDate[currentArticleIndex + 1]
+    : null;
+
+function getArticleHref(post: CollectionEntry<"articles">) {
+  return `${base}/${slugify(String(post.data.category || ""))}/${post.slug}`;
+}
 ---
 
 <!-- Прогресс чтения -->
@@ -483,6 +498,38 @@ const sameCategoryTop = allArticles
             </a>
           </div>
         </div>
+        {
+          (prevArticle || nextArticle) && (
+            <nav class="article__footer-nav" aria-label="Навигация по статьям">
+              {prevArticle && (
+                <a
+                  href={getArticleHref(prevArticle)}
+                  class="article__footer-nav-card"
+                >
+                  <span class="article__footer-nav-label">
+                    ← Предыдущая статья
+                  </span>
+                  <span class="article__footer-nav-title">
+                    {prevArticle.data.title}
+                  </span>
+                </a>
+              )}
+              {nextArticle && (
+                <a
+                  href={getArticleHref(nextArticle)}
+                  class="article__footer-nav-card"
+                >
+                  <span class="article__footer-nav-label">
+                    Следующая статья →
+                  </span>
+                  <span class="article__footer-nav-title">
+                    {nextArticle.data.title}
+                  </span>
+                </a>
+              )}
+            </nav>
+          )
+        }
       </div>
     </article>
     <aside class="article__sidebar" aria-label="Дополнительно">
@@ -836,6 +883,66 @@ const sameCategoryTop = allArticles
     border-color: var(--black);
   }
 
+  .article__footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+  }
+
+  .article__footer-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .article__footer-nav-card {
+    padding: clamp(16px, 2vw, 22px);
+    background: #fafafa;
+    text-decoration: none;
+    color: var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-10, 10px);
+    min-width: 0;
+    transition:
+      transform 0.2s var(--easing),
+      background-color 0.2s var(--easing);
+  }
+
+  .article__footer-nav-card:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .article__footer-nav-card:hover {
+    transform: none;
+    background-color: #f2f6ff;
+  }
+
+  .article__footer-nav-label {
+    font-size: clamp(11px, 0.95vw, 12px);
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gray);
+  }
+
+  .article__footer-nav-title {
+    font-size: clamp(15px, 1.3vw, 18px);
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--black);
+    display: block;
+    width: 100%;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* ===== MORE ARTICLES ===== */
   .article__more-header {
     margin: 0 0 var(--space-32) 0;
@@ -893,6 +1000,15 @@ const sameCategoryTop = allArticles
     .article__more-header {
       grid-template-columns: 1fr;
       gap: var(--space-16);
+    }
+
+    .article__footer-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .article__footer-nav-card:first-child {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
     }
   }
 
