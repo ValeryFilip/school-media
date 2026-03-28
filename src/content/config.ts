@@ -11,9 +11,6 @@ const articles = defineCollection({
         tags: z.array(z.string()).default([]),
         category: z.string(),
         image: z.string().optional(),       // квадрат 300x300 в intro
-        author: z.string().optional(),
-        authorRole: z.string().optional(),  // должность/роль автора
-        authorImage: z.string().optional(), // аватар автора
         readingTime: z.number().int().positive().optional(),
         toc: z.boolean().optional(),        // показывать/скрывать содержание статьи (по умолчанию true)
         tocManual: z.array(z.object({       // ручное содержание (опционально, если нужно переопределить автоматическое)

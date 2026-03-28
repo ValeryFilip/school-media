@@ -8,6 +8,7 @@ import ProgressBar from "../components/article/ProgressBar.astro";
 import CopyLinkButton from "../components/article/CopyLinkButton.astro";
 import TgBanner from "../components/article/TgBanner.astro";
 import { slugify } from "../lib/slugify";
+import { ORGANIZATION_DATA } from "../lib/seoData";
 
 import "../styles/global_lend.css";
 
@@ -18,16 +19,7 @@ interface Props {
     tocManual?: { id: string; text: string }[];
     showHeroImage?: boolean;
     videoUrl?: string;
-    authorName?: string;
-    authorRole?: string;
-    authorPhoto?: string;
-    authorImage?: string;
-    heroImage?: string;
-    hero?: string;
-    cover?: string;
-    headerImage?: string;
     imageAlt?: string;
-    heroAlt?: string;
     updated?: string | Date;
   };
   slug: string;
@@ -78,19 +70,9 @@ function resolveSrc(input: unknown): string | null {
   return "/" + s.replace(/^\.?\//, "");
 }
 
-/* === автор === */
-const authorName = fm.authorName || fm.author || "Без имени";
-const authorRole = fm.authorRole || "Эксперт по теме";
-
 /* === HERO === */
-const heroFromFM =
-  resolveSrc((fm as any).heroImage) ||
-  resolveSrc((fm as any).hero) ||
-  resolveSrc((fm as any).cover) ||
-  resolveSrc((fm as any).headerImage) ||
-  resolveSrc((fm as any).image) ||
-  null;
-const heroAlt = fm.heroAlt ?? fm.imageAlt ?? fm.title;
+const articleImage = resolveSrc((fm as any).image) || null;
+const imageAlt = fm.imageAlt ?? fm.title;
 
 /* === TOC === */
 const tocFromFM =
@@ -251,24 +233,21 @@ function getArticleHref(post: CollectionEntry<"articles">) {
           }
           <div class="article__author-card">
             <img
-              src="/images/valerii-filipenko.webp"
-              alt="Валерий Филипенко"
+              src={ORGANIZATION_DATA.defaultAuthor.photo}
+              alt={ORGANIZATION_DATA.defaultAuthor.name}
               class="article__author-photo"
               width="64"
               height="64"
             />
             <div class="article__author-info">
               <a
-                href="https://t.me/valery_chemistry"
+                href={ORGANIZATION_DATA.defaultAuthor.url}
                 target="_blank"
                 rel="noopener"
-                class="article__author-name">Валерий Филипенко</a
+                class="article__author-name">{ORGANIZATION_DATA.defaultAuthor.name}</a
               >
               <div class="article__author-role">
-                Профессиональный репетитор по химии с опытом работы 10 лет.
-                Обучил более 2000 учеников. Автор научных статей и курсов по
-                химии. Специализируется на подготовке к ЕГЭ и ОГЭ, а также на
-                подготовке к олимпиадам.
+                {ORGANIZATION_DATA.defaultAuthor.role}
               </div>
               <div class="article__author-socials">
                 <a
@@ -321,14 +300,14 @@ function getArticleHref(post: CollectionEntry<"articles">) {
           </div>
         </div>
         {
-          fm.showHeroImage !== false && heroFromFM && (
+          fm.showHeroImage !== false && articleImage && (
             <div class="article__header-image-wrapper">
               <figure class="article__header-image">
                 <div id="heroBox" class="hero">
                   <img
                     class="hero__img"
-                    src={heroFromFM}
-                    alt={heroAlt}
+                    src={articleImage}
+                    alt={imageAlt}
                     loading="eager"
                     fetchpriority="high"
                     width={320}

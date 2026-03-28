@@ -3,6 +3,7 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 import { getSlugFileName, slugify } from "../../lib/slugify";
+import { ORGANIZATION_DATA } from "../../lib/seoData";
 
 // 1) Во время сборки собираем все видимые статьи
 const posts = await getCollection("articles", ({ data }) => {
@@ -15,7 +16,7 @@ const indexData = posts.map((p) => ({
   description: p.data.description || "",
   tags: Array.isArray(p.data.tags) ? p.data.tags : [],
   category: p.data.category || "",
-  author: p.data.author || "",
+  author: ORGANIZATION_DATA.defaultAuthor.name,
   date: new Date(p.data.date).toISOString(),
   image: p.data.image || "",
 }));

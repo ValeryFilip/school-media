@@ -5,6 +5,7 @@ import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import config from '../config';
 import { slugify } from '../lib/slugify';
+import { ORGANIZATION_DATA } from '../lib/seoData';
 
 export async function GET(context: { site: URL | undefined }) {
   const posts = await getCollection('articles', ({ data }) => data.visible !== false);
@@ -29,7 +30,7 @@ export async function GET(context: { site: URL | undefined }) {
         link: url,
         pubDate: post.data.date,
         description: descHtml || undefined,
-        author: post.data.author,
+        author: ORGANIZATION_DATA.defaultAuthor.name,
         categories: [post.data.category, ...(post.data.tags ?? [])].filter(Boolean),
         enclosure: post.data.image
           ? { url: `${siteUrl}${post.data.image}`, length: 0, type: 'image/jpeg' }
