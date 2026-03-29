@@ -244,7 +244,8 @@ function getArticleHref(post: CollectionEntry<"articles">) {
                 href={ORGANIZATION_DATA.defaultAuthor.url}
                 target="_blank"
                 rel="noopener"
-                class="article__author-name">{ORGANIZATION_DATA.defaultAuthor.name}</a
+                class="article__author-name"
+                >{ORGANIZATION_DATA.defaultAuthor.name}</a
               >
               <div class="article__author-role">
                 {ORGANIZATION_DATA.defaultAuthor.role}
@@ -314,7 +315,7 @@ function getArticleHref(post: CollectionEntry<"articles">) {
                     height={180}
                   />
                 </div>
-                <figcaption class="caption">
+                <figcaption class="article__header-caption">
                   {(fm as any).imageCaption ?? fm.title}
                 </figcaption>
               </figure>
@@ -704,13 +705,14 @@ function getArticleHref(post: CollectionEntry<"articles">) {
     border-radius: var(--radius-24);
   }
 
-  figcaption {
+  .article__header-caption {
     font-size: clamp(12px, 1vw, 14px);
     font-weight: 400;
     color: var(--gray);
     text-align: center;
     margin-top: var(--space-12);
     font-style: italic;
+    font-variant-numeric: lining-nums tabular-nums;
   }
 
   /* ===== TABLE OF CONTENTS (обтекание) ===== */
