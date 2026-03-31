@@ -13,7 +13,12 @@
       "Bash(node scripts/update-article-dates.mjs --all)",
       "Bash(node -e \"const {readdirSync}=require\\(''fs''\\);const {resolve}=require\\(''path''\\);const dir=resolve\\(process.cwd\\(\\),''src/content/articles''\\);console.log\\(dir\\);console.log\\(readdirSync\\(dir\\).filter\\(f=>f.endsWith\\(''.mdx''\\)\\)\\)\")",
       "Bash(node -e \"const {readFileSync}=require\\(''fs''\\);const c=readFileSync\\(''src/content/articles/stepen-okislenia.mdx'',''utf-8''\\);const m=c.match\\(/^---\\\\n\\([\\\\s\\\\S]*?\\)\\\\n---/\\);console.log\\(m ? ''ok'' : ''no match''\\);console.log\\(JSON.stringify\\(c.slice\\(0,20\\)\\)\\)\")",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(cmd /c \"where claude\")",
+      "WebSearch",
+      "mcp__figma__whoami",
+      "mcp__figma__get_design_context",
+      "mcp__figma__get_variable_defs"
     ]
   }
 }

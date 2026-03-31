@@ -4,12 +4,14 @@ interface DocItem {
   label: string;
   href?: string;
   required?: boolean;
+  fieldName?: string;
 }
 interface Props {
   popupId?: string;
   title?: string;
   submitText?: string;
   action?: string; // GAS endpoint
+  formType?: string;
   docs?: DocItem[];
   /* UTM метки для отслеживания */
   utmSource?: string;
@@ -22,25 +24,29 @@ const {
   popupId = "lead-popup",
   title = "Запись / заявка",
   submitText = "Отправить",
-  action = "https://script.google.com/macros/s/AKfycbwBa6ffRK05gATFowu7yBpdmJ28C4EUEFJdxFrPbA_ZqRNizN1JK_b94Hb8SuJ9KxuE/exec",
+  action = "https://script.google.com/macros/s/AKfycbzTaPkWHfzh1LI3igio8RXqNgX4DcIuWIiDHEMM_5qo5huDfu_TuNv8VcBnlQ0yVi5A/exec",
+  formType = "popup",
   docs = [
     {
       id: "policy",
       label: "Согласен с Политикой конфиденциальности",
       href: "/privacy",
       required: true,
+      fieldName: "consent_privacy",
     },
     {
       id: "offer",
       label: "Согласен с Условиями оферты",
       href: "/agreement",
       required: true,
+      fieldName: "consent_personal_data",
     },
     {
       id: "consent",
       label: "Согласен на обработку персональных данных",
       href: "/marketing-consent",
       required: true,
+      fieldName: "consent_marketing",
     },
   ],
   /* UTM метки */
@@ -75,18 +81,22 @@ const {
     <form
       class="popup__form"
       data-endpoint={action}
-      data-utm-source={utmSource}
-      data-utm-medium={utmMedium}
-      data-utm-campaign={utmCampaign}
-      data-utm-content={utmContent}
-      data-utm-term={utmTerm}
+      data-form
+      data-form-type={formType}
+      data-form-id={popupId}
+      data-success-message="Заявка отправлена!"
+      data-success-redirect="/thank-you"
+      data-success-delay="1500"
+      data-required-any="phone,telegram,email"
+      data-required-all="name,phone"
+      data-recaptcha="true"
       novalidate
     >
       <div class="field">
         <label for={`${popupId}-fio`}>ФИО</label>
         <input
           id={`${popupId}-fio`}
-          name="fullName"
+          name="name"
           type="text"
           placeholder="Иванов Иван Иванович"
           autocomplete="name"
@@ -129,9 +139,10 @@ const {
             <label class="check" for={`${popupId}-${d.id}`}>
               <input
                 id={`${popupId}-${d.id}`}
-                name={`doc_${d.id}`}
+                name={d.fieldName ?? `doc_${d.id}`}
                 type="checkbox"
                 required={d.required}
+                value="true"
               />
               <span>
                 {d.href ? (
@@ -149,8 +160,8 @@ const {
       </fieldset>
 
       <button class="submit" type="submit">{submitText}</button>
-      <div class="status" hidden></div>
-      <pre class="debug" hidden></pre>
+      <div class="status" data-form-status hidden></div>
+      <pre class="debug" data-form-debug hidden></pre>
     </form>
   </div>
 </div>

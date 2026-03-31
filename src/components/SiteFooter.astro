@@ -56,10 +56,9 @@ const { pageUtmSource = "main-page" } = Astro.props;
         type="button"
         class="btn btn--blue footer-cta popup-btn"
         data-popup-id="lead-popup"
-        data-utm-source={pageUtmSource}
-        data-utm-medium="cta"
-        data-utm-campaign="popup-lead"
-        data-utm-content="footer"
+        data-source="footer"
+        data-variant="default"
+        data-campaign={pageUtmSource}
       >
         Начать бесплатно
       </button>

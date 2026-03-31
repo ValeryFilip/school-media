@@ -4,26 +4,26 @@
  *
  * Загружает критичные внешние скрипты проекта:
  * - popup.js - управление модальными окнами
- * - leadcapture.js - обработка форм лидов и UTM меток
+ * - forms.js - единый обработчик обычных форм
  *
  * Все скрипты загружаются асинхронно для оптимизации производительности.
  */
 
 interface Props {
   loadPopup?: boolean;
-  loadLeadCapture?: boolean;
+  loadForms?: boolean;
   popupPath?: string;
-  leadCapturePath?: string;
+  formsPath?: string;
 }
 
 const {
   loadPopup = true,
-  loadLeadCapture = true,
+  loadForms = true,
   popupPath = "/js/popup.js",
-  leadCapturePath = "/js/leadcapture.js",
+  formsPath = "/js/forms.js",
 } = Astro.props;
 ---
 
 {loadPopup && <script src={popupPath} defer />}
 
-{loadLeadCapture && <script src={leadCapturePath} async />}
+{loadForms && <script src={formsPath} defer />}

@@ -1,0 +1,842 @@
+---
+import "../../styles/hostinger-tokens.css";
+---
+
+<section class="homepage-vertical-cards">
+  <div class="homepage-vertical-cards__container">
+    <header class="homepage-vertical-cards__heading">
+      <span class="homepage-vertical-cards__eyebrow">Smarter email</span>
+      <h2 class="homepage-vertical-cards__title">
+        Email your audience with confidence
+      </h2>
+    </header>
+
+    <div class="homepage-vertical-cards__grid">
+      <article
+        class="homepage-vertical-cards__card homepage-vertical-cards__card--business"
+      >
+        <div class="homepage-vertical-cards__card-top">
+          <span class="homepage-vertical-cards__pill">Business</span>
+
+          <h3 class="homepage-vertical-cards__card-title">
+            Build trust with a professional business email
+          </h3>
+
+          <p class="homepage-vertical-cards__card-copy">
+            Polish your brand, protect your inbox, and grow your business with
+            tools that keep you in the driver&apos;s seat.
+          </p>
+
+          <ul
+            class="homepage-vertical-cards__list"
+            aria-label="Business email benefits"
+          >
+            <li>Build trust with a branded business email</li>
+            <li>Seamless email access across all apps and devices</li>
+            <li>Private, protected, and always online</li>
+          </ul>
+
+          <a class="homepage-vertical-cards__link" href="#">
+            Set up business email
+          </a>
+        </div>
+
+        <div
+          class="homepage-vertical-cards__visual homepage-vertical-cards__visual--mail"
+          aria-hidden="true"
+        >
+          <div
+            class="homepage-vertical-cards__glow homepage-vertical-cards__glow--left"
+          >
+          </div>
+
+          <div class="mail-app">
+            <div class="mail-app__sidebar">
+              <div class="mail-app__brand">
+                <span class="mail-app__brand-mark"></span>
+                <span class="mail-app__brand-copy">HOSTINGER Mail</span>
+              </div>
+
+              <div class="mail-app__compose">New message</div>
+
+              <ul class="mail-app__nav">
+                <li>Inbox</li>
+                <li>Starred</li>
+                <li>Drafts</li>
+                <li>Sent</li>
+              </ul>
+            </div>
+
+            <div class="mail-app__content">
+              <div class="mail-app__topbar">
+                <strong>Inbox</strong>
+                <div class="mail-app__filters">
+                  <span>All mail</span>
+                  <span>Unread</span>
+                  <span>Read</span>
+                </div>
+              </div>
+
+              <div class="mail-app__rows">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mail-pill">
+            <span class="mail-pill__icon"></span>
+            <span>you@yourbrand.com</span>
+          </div>
+
+          <div class="mail-actions">
+            <span class="mail-actions__btn">♡</span>
+            <span class="mail-actions__btn">↺</span>
+          </div>
+        </div>
+      </article>
+
+      <article
+        class="homepage-vertical-cards__card homepage-vertical-cards__card--marketing"
+      >
+        <div class="homepage-vertical-cards__card-top">
+          <span class="homepage-vertical-cards__pill">Marketing</span>
+
+          <h3 class="homepage-vertical-cards__card-title">
+            Grow your business with AI-powered email marketing
+          </h3>
+
+          <p class="homepage-vertical-cards__card-copy">
+            With Reach, you can schedule emails, automate sequences to save
+            time, and maintain brand consistency.
+          </p>
+
+          <ul
+            class="homepage-vertical-cards__list"
+            aria-label="Email marketing benefits"
+          >
+            <li>Design and write emails with AI</li>
+            <li>Your logo and colors, auto-applied</li>
+            <li>No coding required</li>
+          </ul>
+
+          <a class="homepage-vertical-cards__link" href="#">
+            Start email marketing with Reach
+          </a>
+        </div>
+
+        <div
+          class="homepage-vertical-cards__visual homepage-vertical-cards__visual--reach"
+          aria-hidden="true"
+        >
+          <div
+            class="homepage-vertical-cards__glow homepage-vertical-cards__glow--right"
+          >
+          </div>
+
+          <div class="reach-stack">
+            <div class="reach-stack__editor">
+              <div class="reach-stack__toolbar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="reach-stack__canvas">
+                <div class="reach-stack__headline"></div>
+                <div class="reach-stack__box"></div>
+                <div class="reach-stack__footer"></div>
+              </div>
+            </div>
+
+            <div class="reach-stack__email-tag">Welcome email</div>
+
+            <div class="reach-stack__chip">✣</div>
+
+            <div class="reach-stack__preview">
+              <div class="reach-stack__photo">
+                <div class="reach-stack__sun"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .homepage-vertical-cards {
+    background: var(--color-grey-98);
+    color: var(--color-grey-10);
+    padding: var(--space-104) 0;
+  }
+
+  .homepage-vertical-cards__container {
+    max-width: var(--layout-container);
+    margin: 0 auto;
+    padding: 0 var(--space-80);
+  }
+
+  .homepage-vertical-cards__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-s);
+    margin: 0 auto var(--space-xl);
+    max-width: 760px;
+    text-align: center;
+  }
+
+  .homepage-vertical-cards__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 var(--space-12);
+    border-radius: var(--radius-pill);
+    background: var(--color-blue-87-0);
+    box-shadow: inset 0 0 0 1px var(--color-blue-87);
+    color: var(--color-blue-57);
+    font-family: var(--font-primary);
+    font-size: var(--fs-12);
+    line-height: var(--lh-18);
+    font-weight: var(--fw-semibold);
+  }
+
+  .homepage-vertical-cards__title {
+    margin: 0;
+    max-width: 540px;
+    font-family: var(--font-primary);
+    font-size: var(--fs-48);
+    line-height: var(--lh-56);
+    font-weight: var(--fw-light);
+    letter-spacing: var(--ls-n024);
+  }
+
+  .homepage-vertical-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s);
+    align-items: stretch;
+  }
+
+  .homepage-vertical-cards__card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 704px;
+    border-radius: 24px;
+    background: var(--color-white);
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 var(--color-grey-88),
+      0 20px 48px rgba(17, 9, 42, 0.06);
+  }
+
+  .homepage-vertical-cards__card-top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding: 48px 48px 32px;
+  }
+
+  .homepage-vertical-cards__pill {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 var(--space-12);
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-96);
+    color: var(--color-grey-36);
+    font-family: var(--font-primary);
+    font-size: var(--fs-12);
+    line-height: var(--lh-18);
+    font-weight: var(--fw-semibold);
+  }
+
+  .homepage-vertical-cards__card-title {
+    margin: 0;
+    max-width: 470px;
+    font-family: var(--font-primary);
+    font-size: var(--fs-36);
+    line-height: var(--lh-44);
+    font-weight: var(--fw-light);
+    letter-spacing: var(--ls-n018);
+  }
+
+  .homepage-vertical-cards__card-copy {
+    margin: 0;
+    max-width: 480px;
+    font-family: var(--font-primary);
+    font-size: var(--fs-16);
+    line-height: var(--lh-24);
+    font-weight: var(--fw-regular);
+    color: var(--color-grey-36);
+  }
+
+  .homepage-vertical-cards__list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .homepage-vertical-cards__list li {
+    position: relative;
+    padding-left: 22px;
+    font-family: var(--font-primary);
+    font-size: var(--fs-16);
+    line-height: var(--lh-24);
+    font-weight: var(--fw-regular);
+    color: var(--color-grey-36);
+  }
+
+  .homepage-vertical-cards__list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--color-blue-70);
+    font-weight: var(--fw-semibold);
+  }
+
+  .homepage-vertical-cards__link {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 4px;
+    color: var(--color-blue-70);
+    text-decoration: none;
+    font-family: var(--font-primary);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    font-weight: var(--fw-semibold);
+  }
+
+  .homepage-vertical-cards__link:hover {
+    text-decoration: underline;
+  }
+
+  .homepage-vertical-cards__visual {
+    position: relative;
+    min-height: 320px;
+    padding: 32px 28px 0;
+    overflow: hidden;
+    display: flex;
+    align-items: end;
+  }
+
+  .homepage-vertical-cards__glow {
+    position: absolute;
+    bottom: -100px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      var(--color-blue-87) 0%,
+      var(--color-blue-70-10) 45%,
+      transparent 72%
+    );
+    filter: blur(20px);
+    opacity: 0.9;
+  }
+
+  .homepage-vertical-cards__glow--left {
+    left: -110px;
+  }
+
+  .homepage-vertical-cards__glow--right {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mail-app {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 122px 1fr;
+    width: min(100%, 530px);
+    min-height: 188px;
+    border: 1px solid var(--color-grey-88);
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(
+      180deg,
+      var(--color-white) 0%,
+      var(--color-grey-98) 100%
+    );
+    box-shadow: 0 24px 54px rgba(17, 9, 42, 0.08);
+  }
+
+  .mail-app__sidebar {
+    border-right: 1px solid var(--color-grey-88);
+    padding: 14px 12px;
+    background: linear-gradient(180deg, var(--color-white) 0%, #fbfbfd 100%);
+  }
+
+  .mail-app__brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: var(--fw-bold);
+    color: var(--color-grey-10);
+  }
+
+  .mail-app__brand-mark {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: linear-gradient(
+      267deg,
+      var(--color-blue-70) 0%,
+      var(--color-blue-57) 100%
+    );
+  }
+
+  .mail-app__compose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    width: 100%;
+    border-radius: var(--radius-s);
+    background: linear-gradient(
+      267deg,
+      var(--color-blue-70) 0%,
+      var(--color-blue-57) 100%
+    );
+    color: var(--color-white);
+    font-size: var(--fs-12);
+    line-height: var(--lh-18);
+    font-weight: var(--fw-medium);
+  }
+
+  .mail-app__nav {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-grey-36);
+    font-size: var(--fs-12);
+    line-height: var(--lh-18);
+  }
+
+  .mail-app__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 14px 14px 18px;
+  }
+
+  .mail-app__topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-grey-10);
+    font-size: var(--fs-12);
+    line-height: var(--lh-18);
+  }
+
+  .mail-app__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .mail-app__filters span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 20px;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-grey-88);
+    background: var(--color-white);
+    color: var(--color-grey-49);
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .mail-app__rows {
+    display: grid;
+    gap: 10px;
+  }
+
+  .mail-app__rows span {
+    display: block;
+    height: 12px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(
+      90deg,
+      var(--color-grey-96) 0%,
+      var(--color-grey-98) 100%
+    );
+  }
+
+  .mail-app__rows span:nth-child(1) {
+    width: 92%;
+  }
+  .mail-app__rows span:nth-child(2) {
+    width: 84%;
+  }
+  .mail-app__rows span:nth-child(3) {
+    width: 88%;
+  }
+  .mail-app__rows span:nth-child(4) {
+    width: 75%;
+  }
+  .mail-app__rows span:nth-child(5) {
+    width: 68%;
+  }
+
+  .mail-pill {
+    position: absolute;
+    right: 88px;
+    top: 6px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(123, 102, 255, 0.25);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 44px rgba(123, 102, 255, 0.12);
+    color: var(--color-grey-10);
+    font-size: var(--fs-14);
+    line-height: var(--lh-20);
+    font-weight: var(--fw-semibold);
+  }
+
+  .mail-pill__icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(
+      267deg,
+      var(--color-blue-70) 0%,
+      var(--color-blue-57) 100%
+    );
+    box-shadow: 0 0 0 3px rgba(123, 102, 255, 0.12);
+  }
+
+  .mail-actions {
+    position: absolute;
+    right: 42px;
+    bottom: 22px;
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+  }
+
+  .mail-actions__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(
+      267deg,
+      var(--color-blue-70) 0%,
+      var(--color-blue-57) 100%
+    );
+    color: var(--color-white);
+    font-size: 18px;
+    line-height: 1;
+    box-shadow: 0 16px 32px rgba(103, 61, 230, 0.2);
+  }
+
+  .reach-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    width: 100%;
+    min-height: 288px;
+  }
+
+  .reach-stack__editor {
+    align-self: end;
+    width: 144px;
+    height: 188px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--color-grey-88);
+    background: linear-gradient(180deg, var(--color-white) 0%, #fbfbfd 100%);
+    box-shadow: 0 24px 48px rgba(17, 9, 42, 0.1);
+    transform: translateX(32px);
+  }
+
+  .reach-stack__toolbar {
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .reach-stack__toolbar span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-grey-88);
+  }
+
+  .reach-stack__canvas {
+    display: grid;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .reach-stack__headline {
+    height: 14px;
+    width: 72%;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-96);
+  }
+
+  .reach-stack__box {
+    height: 54px;
+    border-radius: var(--radius-s);
+    background: linear-gradient(180deg, #f6f2ff 0%, #ffffff 100%);
+    border: 1px solid rgba(123, 102, 255, 0.14);
+  }
+
+  .reach-stack__footer {
+    height: 12px;
+    width: 54%;
+    border-radius: var(--radius-pill);
+    background: var(--color-grey-96);
+  }
+
+  .reach-stack__preview {
+    position: relative;
+    width: 234px;
+    height: 172px;
+    margin-left: -6px;
+    border-radius: 18px 18px 0 0;
+    border: 1px solid rgba(123, 102, 255, 0.18);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(250, 248, 255, 0.98) 100%
+    );
+    box-shadow: 0 26px 54px rgba(17, 9, 42, 0.12);
+    overflow: hidden;
+  }
+
+  .reach-stack__photo {
+    position: absolute;
+    inset: 58px 18px 0;
+    border-radius: 18px 18px 0 0;
+    background:
+      radial-gradient(circle at 28% 48%, #7c3f24 0 17%, transparent 18%),
+      radial-gradient(circle at 58% 44%, #6d2f18 0 18%, transparent 19%),
+      radial-gradient(circle at 24% 60%, #d59a73 0 18%, transparent 19%),
+      radial-gradient(circle at 58% 57%, #d39268 0 19%, transparent 20%),
+      linear-gradient(180deg, #89d5ec 0%, #bce7f4 48%, #d6f0f9 100%);
+  }
+
+  .reach-stack__sun {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 222, 157, 0.9) 0%,
+      rgba(255, 204, 112, 0.6) 48%,
+      transparent 70%
+    );
+  }
+
+  .reach-stack__email-tag {
+    position: absolute;
+    right: 54px;
+    top: 16px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 16px;
+    border-radius: 11px;
+    border: 1px solid rgba(123, 102, 255, 0.9);
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--color-grey-10);
+    font-size: var(--fs-16);
+    line-height: var(--lh-24);
+    font-weight: var(--fw-regular);
+    box-shadow: 0 14px 30px rgba(123, 102, 255, 0.12);
+  }
+
+  .reach-stack__chip {
+    position: absolute;
+    left: 55%;
+    top: 20px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(245, 80, 186, 0.6);
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--color-grey-10);
+    font-size: 20px;
+    box-shadow: 0 14px 30px rgba(245, 80, 186, 0.14);
+  }
+
+  @media (max-width: 1200px) {
+    .homepage-vertical-cards__container {
+      padding: 0 var(--space-s);
+    }
+
+    .homepage-vertical-cards__title {
+      font-size: var(--fs-36);
+      line-height: var(--lh-44);
+      letter-spacing: var(--ls-n018);
+      max-width: 420px;
+    }
+
+    .homepage-vertical-cards__card {
+      min-height: 660px;
+    }
+
+    .homepage-vertical-cards__card-title {
+      font-size: var(--fs-32);
+      line-height: var(--lh-40);
+      letter-spacing: var(--ls-n016);
+    }
+
+    .homepage-vertical-cards__visual {
+      padding-inline: 20px;
+    }
+  }
+
+  @media (max-width: 920px) {
+    .homepage-vertical-cards {
+      padding: var(--space-xl) 0;
+    }
+
+    .homepage-vertical-cards__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .homepage-vertical-cards__card {
+      min-height: auto;
+    }
+
+    .homepage-vertical-cards__card-top {
+      padding: 24px 24px 0;
+    }
+
+    .homepage-vertical-cards__visual {
+      min-height: 280px;
+      padding: 24px 20px 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .homepage-vertical-cards__heading {
+      margin-bottom: var(--space-l);
+    }
+
+    .homepage-vertical-cards__title {
+      font-size: var(--fs-32);
+      line-height: var(--lh-40);
+      letter-spacing: var(--ls-n016);
+      max-width: 340px;
+    }
+
+    .homepage-vertical-cards__card-title {
+      font-size: 28px;
+      line-height: 34px;
+      letter-spacing: -0.14px;
+    }
+
+    .homepage-vertical-cards__card-copy,
+    .homepage-vertical-cards__list li {
+      font-size: var(--fs-14);
+      line-height: var(--lh-20);
+    }
+
+    .mail-app {
+      grid-template-columns: 90px 1fr;
+      min-height: 164px;
+    }
+
+    .mail-app__sidebar {
+      padding: 10px 8px;
+    }
+
+    .mail-app__compose {
+      min-height: 24px;
+      font-size: 10px;
+    }
+
+    .mail-pill {
+      right: 20px;
+      top: 14px;
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: var(--fs-12);
+      line-height: var(--lh-18);
+    }
+
+    .mail-actions {
+      right: 18px;
+      bottom: 16px;
+    }
+
+    .mail-actions__btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .reach-stack {
+      min-height: 250px;
+    }
+
+    .reach-stack__editor {
+      width: 116px;
+      height: 164px;
+      transform: translateX(18px);
+    }
+
+    .reach-stack__preview {
+      width: 188px;
+      height: 152px;
+    }
+
+    .reach-stack__email-tag {
+      right: 8px;
+      top: 14px;
+      min-height: 30px;
+      padding: 0 12px;
+      font-size: var(--fs-14);
+      line-height: var(--lh-20);
+    }
+
+    .reach-stack__chip {
+      left: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+    }
+  }
+</style>

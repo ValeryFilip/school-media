@@ -1,0 +1,426 @@
+---
+// Pixel-perfect from Figma 2fvXqJX8XrBdHRLOJdT65x — nodes 2:2186 + 2:2238
+// Icons valid ~7 days (31.03.2026)
+---
+
+<div class="hfs">
+
+  <!-- ── Block 1: More power / More flexible growth ── -->
+  <section class="hfs__features">
+    <div class="hfs__container">
+      <div class="hfs__cols">
+
+        <div class="hfs__col">
+          <img
+            class="hfs__icon"
+            src="https://www.figma.com/api/mcp/asset/c6322b45-4553-4295-bb2c-29af6d749417"
+            alt=""
+            width="70"
+            height="70"
+          />
+          <h3 class="hfs__col-title">More power &amp; control</h3>
+          <div class="hfs__accordions">
+            <details class="hfs__accordion" open>
+              <summary class="hfs__acc-head">
+                <span class="hfs__acc-label">Automate the busywork</span>
+                <span class="hfs__acc-icon"></span>
+              </summary>
+              <div class="hfs__acc-body">
+                <p>Turn hard work into smart work with n8n hosting. Use no-code, AI workflows to swap time-wasting manual tasks for easy, speedy automation. So you can focus on what really matters.</p>
+                <a href="#">Learn more</a>
+              </div>
+            </details>
+            <details class="hfs__accordion">
+              <summary class="hfs__acc-head">
+                <span class="hfs__acc-label">Performance you can rely on</span>
+                <span class="hfs__acc-icon"></span>
+              </summary>
+              <div class="hfs__acc-body">
+                <p>Reliable infrastructure with 99.9% uptime SLA, global CDN, and auto-scaling resources to keep your site fast under any load.</p>
+                <a href="#">Learn more</a>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="hfs__sep"></div>
+
+        <div class="hfs__col">
+          <img
+            class="hfs__icon"
+            src="https://www.figma.com/api/mcp/asset/84b61316-b0fd-4302-a776-de761c056074"
+            alt=""
+            width="70"
+            height="70"
+          />
+          <h3 class="hfs__col-title">More flexible growth</h3>
+          <div class="hfs__accordions">
+            <details class="hfs__accordion" open>
+              <summary class="hfs__acc-head">
+                <span class="hfs__acc-label">Hosting that grows with you</span>
+                <span class="hfs__acc-icon"></span>
+              </summary>
+              <div class="hfs__acc-body">
+                <p>Cloud hosting offers scalable resources that ensure you never reach a limit. Keep growing with reliable uptime, powerful performance, enhanced security, and flexible pricing.</p>
+                <a href="#">Learn more</a>
+              </div>
+            </details>
+            <details class="hfs__accordion">
+              <summary class="hfs__acc-head">
+                <span class="hfs__acc-label">Hosting for agencies</span>
+                <span class="hfs__acc-icon"></span>
+              </summary>
+              <div class="hfs__acc-body">
+                <p>Manage all your clients' websites from one dashboard. White-label options, reseller plans, and priority support included.</p>
+                <a href="#">Learn more</a>
+              </div>
+            </details>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Block 2: Stats 4M+ 150+ 20+ 10M+ ── -->
+  <section class="hfs__stats">
+    <div class="hfs__container">
+      <div class="hfs__stat-grid">
+
+        <div class="hfs__stat-card">
+          <div class="hfs__stat-inner">
+            <p class="hfs__stat-num">4M+</p>
+            <p class="hfs__stat-lbl">Clients trust Hostinger</p>
+          </div>
+        </div>
+
+        <div class="hfs__stat-card">
+          <div class="hfs__stat-inner">
+            <p class="hfs__stat-num">150+</p>
+            <p class="hfs__stat-lbl">Countries served</p>
+          </div>
+        </div>
+
+        <div class="hfs__stat-card">
+          <div class="hfs__stat-inner">
+            <p class="hfs__stat-num">20+</p>
+            <p class="hfs__stat-lbl">Years of experience</p>
+          </div>
+        </div>
+
+        <div class="hfs__stat-card">
+          <div class="hfs__stat-inner">
+            <p class="hfs__stat-num">10M+</p>
+            <p class="hfs__stat-lbl">Websites created with us</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<style>
+  /* ── Figma tokens
+     bg:        #11092a
+     white:     #fff
+     accent:    #8c85ff
+     card-from: #7b66ff
+     card-to:   #673de6
+     glow:      #bcbdff
+     font:      DM Sans, 300 / 600
+  ─────────────────────────────── */
+
+  .hfs {
+    background: #11092a;
+    font-family: 'DM Sans', sans-serif;
+    color: #fff;
+  }
+
+  /*
+   * Figma: div.h-grid x=160 width=1600 внутри 1920px секции
+   * → контейнер = 1600px, центрируется через margin auto
+   * Секция сама не имеет горизонтальных паддингов —
+   * они «внутри» колонок (px-80) и грида статистики (px-80)
+   */
+  .hfs__container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ── Features ──────────────────────────────────── */
+
+  /* Figma: section height=677, grid y=104, grid height=573 → 104+573=677, pb=0 */
+  .hfs__features {
+    padding: 104px 0 0;
+  }
+
+  .hfs__cols {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    align-items: stretch;
+  }
+
+  /* Exact Figma: pt=42, pb=58, px=80 */
+  .hfs__col {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 42px 80px 58px;
+  }
+
+
+  .hfs__icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .hfs__sep {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    align-self: stretch;
+  }
+
+  /* Figma: 36px / 44px lh / w300 / -0.18px */
+  .hfs__col-title {
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 300;
+    letter-spacing: -0.18px;
+    margin: 0;
+  }
+
+  /* ── Accordions ──────────────────────────────── */
+
+  /* Figma: items container padding-top: 48px, gap: 16px */
+  .hfs__accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 48px;
+  }
+
+  .hfs__accordion {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+  }
+
+  .hfs__accordion > summary          { list-style: none; }
+  .hfs__accordion > summary::-webkit-details-marker { display: none; }
+
+  /* Figma: action row height=32px, icon 24x24 */
+  .hfs__acc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Figma: h5 = 24px / 32px lh / w300 / -0.12px */
+  .hfs__acc-label {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 300;
+    letter-spacing: -0.12px;
+    color: #fff;
+  }
+
+  /* Иконка + / − через CSS псевдоэлементы, 24×24px как в Figma */
+  .hfs__acc-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  .hfs__acc-icon::before,
+  .hfs__acc-icon::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 1px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  .hfs__acc-icon::before {
+    width: 14px;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hfs__acc-icon::after {
+    width: 2px;
+    height: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hfs__accordion[open] .hfs__acc-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  /* Figma: body gap=18px (desc→link), pb=40px */
+  .hfs__acc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 40px;
+    animation: hfs-open 0.2s ease;
+  }
+
+  @keyframes hfs-open {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Figma: 16px / 24px lh / w300 / opacity 0.75 */
+  .hfs__acc-body p {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+
+  /* Figma: 14px / 20px lh / w600 / #8c85ff */
+  .hfs__acc-body a {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: #8c85ff;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .hfs__acc-body a:hover { text-decoration: underline; }
+
+  /* ── Stats ────────────────────────────────────── */
+
+  /*
+   * position: relative + overflow: visible — нужно для ::after глоу
+   * Figma: section py=104px
+   */
+  /* Figma: section height=434 = pt:104 + cards:226 + pb:104 */
+  .hfs__stats {
+    position: relative;
+    padding: 104px 0;
+    overflow: visible;
+  }
+
+  /*
+   * Figma ::after — rounded-rect y=434 (=section height), height=680px
+   * Большой радиальный глоу под карточками, выходит за пределы секции
+   */
+  .hfs__stats::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 680px;
+    background: radial-gradient(
+      ellipse 90% 55% at 50% 0%,
+      rgba(139, 111, 255, 0.65) 0%,
+      rgba(103,  61, 230, 0.35) 30%,
+      rgba( 60,  20, 160, 0.12) 55%,
+      rgba( 17,   9,  42, 0)    75%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /*
+   * Figma: cards start x=80 within 1600px grid → padding: 0 80px
+   * 4 cards × 354px + 3 gaps × 8px = 1416+24 = 1440px = 1600-160 ✓
+   * gap=8px, h=226px; z-index поверх ::after
+   */
+  .hfs__stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    height: 226px;
+    padding: 0 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /*
+   * Outer: padding 1px (p-px), NO overflow:hidden — иначе ::before обрезается.
+   * Нет фона: прозрачный gap в 1px показывает ::before градиент
+   */
+  .hfs__stat-card {
+    position: relative;
+    border-radius: 16px;
+    padding: 1px;
+    backdrop-filter: blur(3px);
+  }
+
+  /*
+   * Figma ::before: left=-1px top=-1px width=354 height=226 (= размер карточки, сдвиг -1px)
+   * Многослойный градиент:
+   *   180deg (сверху): #11092a → прозрачный  — верхний край "тает"
+   *   270deg (справа): #bcbdff → прозрачный  — правый край светится голубым
+   *   0deg   (снизу):  #11092a → прозрачный  — нижний край "тает"
+   * Виден через 1px зазор между outer и inner
+   */
+  .hfs__stat-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, #11092a 0%, rgba(17, 9, 42, 0) 70.71%),
+      linear-gradient(270deg, #bcbdff 0%, rgba(188, 189, 255, 0) 70.71%),
+      linear-gradient(0deg,   #11092a 0%, rgba(17, 9, 42, 0) 70.71%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /*
+   * Figma inner: x=1 y=1 width=352 height=224 — inset 1px со всех сторон
+   * z-index: 1 — поверх ::before
+   */
+  .hfs__stat-inner {
+    position: relative;
+    z-index: 1;
+    border-radius: 15px;
+    background: linear-gradient(267deg, #7b66ff 0%, #673de6 100%);
+    padding: 32px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  /* Figma: 80px / 88px lh / w300 / -0.4px */
+  .hfs__stat-num {
+    font-size: 80px;
+    line-height: 88px;
+    font-weight: 300;
+    letter-spacing: -0.4px;
+    margin: 0;
+  }
+
+  /* Figma: 16px / 24px lh / w300 */
+  .hfs__stat-lbl {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;
+    margin: 0;
+    color: #fff;
+  }
+</style>

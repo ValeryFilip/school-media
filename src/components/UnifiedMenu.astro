@@ -276,10 +276,9 @@ if (context === "media") {
           type="button"
           class="menu__cta-button popup-btn"
           data-popup-id="lead-popup"
-          data-utm-source={pageUtmSource}
-          data-utm-medium="cta"
-          data-utm-campaign="popup-lead"
-          data-utm-content="menu-desktop"
+          data-source="menu"
+          data-variant="desktop"
+          data-campaign={pageUtmSource}
         >
           {ctaText}
         </button>
@@ -533,10 +532,9 @@ if (context === "media") {
         type="button"
         class="mnav__cta-button popup-btn"
         data-popup-id="lead-popup"
-        data-utm-source={pageUtmSource}
-        data-utm-medium="cta"
-        data-utm-campaign="popup-lead"
-        data-utm-content="menu-mobile"
+        data-source="menu"
+        data-variant="mobile"
+        data-campaign={pageUtmSource}
       >
         {ctaText}
       </button>

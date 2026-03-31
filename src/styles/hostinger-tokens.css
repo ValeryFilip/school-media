@@ -1,0 +1,496 @@
+/* ================================================================
+   DESIGN TOKENS — Hostinger Landing Page
+   Source: Figma file 2fvXqJX8XrBdHRLOJdT65x
+   Extracted: 31.03.2026
+   Все значения строго из figma get_variable_defs + metadata
+   ================================================================ */
+
+/* ────────────────────────────────────────────────────────────────
+   CSS CUSTOM PROPERTIES
+   ──────────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* ── COLORS: Blues (primary brand palette) ──────────────────── */
+
+  --color-blue-10:        #11092a;     /* Haiti — основной тёмный фон */
+  --color-blue-10-0:      #11092a00;   /* Haiti transparent */
+  --color-blue-57:        #673de6;     /* Royal Blue — акцент */
+  --color-blue-57-80:     #673de6cc;   /* Royal Blue 80% */
+  --color-blue-57-10:     #673de61a;   /* Royal Blue 10% */
+  --color-blue-70:        #7b66ff;     /* основной фиолетовый */
+  --color-blue-70-10:     #7b66ff1a;   /* фиолетовый 10% */
+  --color-blue-73:        #8578fa;
+  --color-blue-76:        #8c85ff;     /* Malibu — ссылки/акцент */
+  --color-blue-80:        #a19bff;
+  --color-blue-87:        #bcbdff;     /* Fog-glow, светлые границы */
+  --color-blue-87-0:      #bcbdff00;   /* прозрачный */
+  --color-blue-88:        #dcdce6;
+
+  /* ── COLORS: Greys ───────────────────────────────────────────── */
+
+  --color-grey-6:         #101011;
+  --color-grey-9:         #161718;     /* Woodsmoke */
+  --color-grey-10:        #18181a;     /* Cod Gray */
+  --color-grey-12:        #1d1e20;     /* Shark */
+  --color-grey-14:        #222225;
+  --color-grey-36:        #58585e;     /* Scarpa Flow */
+  --color-grey-49:        #797980;     /* Jumbo */
+  --color-grey-63:        #9d9ea4;     /* Santas Gray */
+  --color-grey-88:        #dedee2;     /* Mischka */
+  --color-grey-93:        #d9dbff;     /* Fog */
+  --color-grey-96:        #f5f5f6;     /* Athens Gray */
+  --color-grey-98:        #f8f9fa;
+
+  /* ── COLORS: White / Black ───────────────────────────────────── */
+
+  --color-white:          #ffffff;
+  --color-white-10:       #ffffff1a;   /* White 10% */
+  --color-black:          #000000;
+  --color-black-0:        #00000000;   /* transparent */
+  --color-black-10:       #0000001a;   /* Black 10% */
+
+  /* ── COLORS: Violet ──────────────────────────────────────────── */
+
+  --color-violet-39:      #471ea7;     /* Daisy Bush */
+
+  /* ── COLORS: Yellow ──────────────────────────────────────────── */
+
+  --color-yellow-50:      #ccff00;     /* Electric Lime */
+
+  /* ── COLORS: Green ───────────────────────────────────────────── */
+
+  --color-green-24:       #007a49;     /* Fun Green */
+  --color-green-31:       #009e5b;     /* Green Haze */
+  --color-green-31-10:    #009e5b1a;   /* Green Haze 10% */
+  --color-green-36:       #00b67a;     /* Jade — Trustpilot */
+
+  /* ── TYPOGRAPHY: Families ────────────────────────────────────── */
+
+  --font-primary:   'DM Sans', sans-serif;    /* font family/Font 1 */
+  --font-secondary: 'Inter', sans-serif;      /* font family/Font 2 */
+
+  /* ── TYPOGRAPHY: Weights ─────────────────────────────────────── */
+
+  --fw-light:    300;   /* font weight/300 */
+  --fw-regular:  400;   /* font weight/400 */
+  --fw-medium:   500;   /* (Inter Medium) */
+  --fw-semibold: 600;   /* font weight/600 */
+  --fw-bold:     700;   /* font weight/700 */
+
+  /* ── TYPOGRAPHY: Font sizes ──────────────────────────────────── */
+
+  --fs-11:  11px;   /* font size/11 */
+  --fs-12:  12px;   /* font size/12 */
+  --fs-14:  14px;   /* font size/14 */
+  --fs-16:  16px;   /* font size/16 / item spacing/s */
+  --fs-18:  18px;   /* font size/18 */
+  --fs-20:  20px;   /* font size/20 */
+  --fs-24:  24px;   /* font size/24 */
+  --fs-32:  32px;   /* font size/32 */
+  --fs-36:  36px;   /* font size/36 */
+  --fs-48:  48px;   /* font size/48 */
+  --fs-56:  56px;   /* font size/56 */
+  --fs-80:  80px;   /* item spacing/80 — stat numbers */
+
+  /* ── TYPOGRAPHY: Line heights ────────────────────────────────── */
+
+  --lh-18:  18px;   /* line height/18 */
+  --lh-20:  20px;   /* line height/20 */
+  --lh-24:  24px;   /* line height/24 */
+  --lh-26:  26px;   /* line height/26 */
+  --lh-28:  28px;   /* line height/28 */
+  --lh-32:  32px;   /* line height/32 */
+  --lh-40:  40px;   /* line height/40 */
+  --lh-44:  44px;   /* line height/44 */
+  --lh-56:  56px;   /* height/56 — title-1 single line */
+  --lh-64:  64px;   /* line height/64 */
+  --lh-88:  88px;   /* line height/88 — stat numbers */
+
+  /* ── TYPOGRAPHY: Letter spacings ─────────────────────────────── */
+
+  --ls-n009: -0.09px;   /* letter spacing/-0_09  — 18px headings */
+  --ls-n01:  -0.1px;    /* letter spacing/-0_1   */
+  --ls-n012: -0.12px;   /* letter spacing/-0_12  — 24px headings */
+  --ls-n016: -0.16px;   /* letter spacing/-0_16  — 32px headings */
+  --ls-n018: -0.18px;   /* letter spacing/-0_18  — 36px headings */
+  --ls-n024: -0.24px;   /* letter spacing/-0_24  — 48px headings */
+  --ls-n028: -0.28px;   /* letter spacing/-0_28  — 56px headings */
+  --ls-n04:  -0.4px;    /* letter spacing/-0_4   — 80px stat nums */
+
+  /* ── SPACING ─────────────────────────────────────────────────── */
+
+  --space-xxs:  4px;    /* item spacing/xxs */
+  --space-xs:   8px;    /* item spacing/xs  */
+  --space-s:    16px;   /* item spacing/s   */
+  --space-12:   12px;   /* item spacing/12  */
+  --space-l:    48px;   /* item spacing/l   */
+  --space-xl:   64px;   /* item spacing/xl  */
+  --space-80:   80px;   /* item spacing/80  — grid inner padding */
+  --space-104:  104px;  /* section top/bottom padding */
+  --space-160:  160px;  /* section side padding (1920px layout) */
+
+  /* ── LAYOUT ──────────────────────────────────────────────────── */
+
+  --layout-full:      1920px;   /* width/1920 — полный макет */
+  --layout-container: 1600px;   /* width/1600 — div.h-grid */
+  --layout-inner:     1440px;   /* width/1440 — карточки внутри грида */
+
+  /* ── BORDERS ─────────────────────────────────────────────────── */
+
+  --stroke-1:  1px;     /* stroke weight/1 */
+  --stroke-2:  2px;     /* stroke weight/2 */
+
+  /* ── OPACITY ─────────────────────────────────────────────────── */
+
+  --opacity-75:  0.75;  /* opacity/75 — muted text */
+  --opacity-100: 1;     /* opacity/100 */
+
+  /* ── BORDER RADIUS ───────────────────────────────────────────── */
+  /* Из компонентов в метадата */
+
+  --radius-xs:  4px;
+  --radius-s:   8px;
+  --radius-m:   12px;
+  --radius-l:   16px;   /* карточки outstanding */
+  --radius-pill: 100px; /* бейджи, пилюли */
+}
+
+/* ================================================================
+   TYPOGRAPHY SCALE
+   h-t-* классы — точные значения из Figma metadata + переменных
+   ================================================================ */
+
+/* title-0 — h1/h2: 56px/64px, Light, -0.28px
+   Используется: hero h1, секция reviews h2
+   Размер фрейма: 64px на строку (2 строки = 128px) */
+.h-t-title-0 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-56);
+  line-height: var(--lh-64);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n028);
+}
+
+/* title-special — h2: 56px/88px, Light, -0.28px
+   Используется: "Human-led, AI-powered", "Not sure which plan"
+   Размер фрейма: 176px (2 строки × 88px) */
+.h-t-title-special {
+  font-family: var(--font-primary);
+  font-size: var(--fs-56);
+  line-height: var(--lh-88);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n028);
+}
+
+/* title-1 — h3: 48px/56px, Light, -0.24px
+   Используется: product cards, overlapping cards big section
+   Размер фрейма: 56px (одна строка) */
+.h-t-title-1 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-48);
+  line-height: var(--lh-56);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n024);
+}
+
+/* title-2 — h3: 36px/44px, Light, -0.18px
+   Используется: overlapping cards small section (фичи/рост)
+   Размер фрейма: 44px (одна строка) */
+.h-t-title-2 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-36);
+  line-height: var(--lh-44);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n018);
+}
+
+/* title-3 — h2: 32px/40px, Light, -0.16px
+   Используется: product cards (h2.h-t-title-3)
+   Размер фрейма: 40px (одна строка) */
+.h-t-title-3 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-32);
+  line-height: var(--lh-40);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n016);
+}
+
+/* heading-1-regular — h5: 24px/32px, Light, -0.12px
+   Используется: аккордеоны, подзаголовки
+   Размер фрейма: 32px (одна строка) */
+.h-t-heading-1-regular {
+  font-family: var(--font-primary);
+  font-size: var(--fs-24);
+  line-height: var(--lh-32);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n012);
+}
+
+/* heading-3 / heading-3-regular — p: 18px/26px, Light, -0.09px
+   Используется: имена авторов отзывов, MOST POPULAR бейдж
+   Размер фрейма: 26px (одна строка) */
+.h-t-heading-3,
+.h-t-heading-3-regular {
+  font-family: var(--font-primary);
+  font-size: var(--fs-18);
+  line-height: var(--lh-26);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n009);
+}
+
+/* body-1 — p/span: 16px/24px, Regular 400, 0
+   Используется: основной текст, описания карточек
+   Размер фрейма: 24px (одна строка) */
+.h-t-body-1 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-16);
+  line-height: var(--lh-24);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+}
+
+/* body-1-bold — span: 16px/24px, SemiBold 600, 0
+   Используется: "Free domain", цена, выделения
+   Размер фрейма: 24px (одна строка) */
+.h-t-body-1-bold {
+  font-family: var(--font-primary);
+  font-size: var(--fs-16);
+  line-height: var(--lh-24);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+}
+
+/* body-2 — span/div: 14px/20px, Regular 400, 0
+   Используется: вторичный текст, подписи
+   Размер фрейма: 20px (одна строка) */
+.h-t-body-2 {
+  font-family: var(--font-primary);
+  font-size: var(--fs-14);
+  line-height: var(--lh-20);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+}
+
+/* body-2-bold — div/time: 14px/20px, Bold 700, 0
+   Используется: даты, бейджи, "MOST POPULAR"
+   Размер фрейма: 20px (одна строка) */
+.h-t-body-2-bold {
+  font-family: var(--font-primary);
+  font-size: var(--fs-14);
+  line-height: var(--lh-20);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0;
+}
+
+/* stat numbers — 80px/88px, Light, -0.4px
+   Используется: 4M+, 150+, 20+, 10M+ */
+.h-t-stat {
+  font-family: var(--font-primary);
+  font-size: var(--fs-80);
+  line-height: var(--lh-88);
+  font-weight: var(--fw-light);
+  letter-spacing: var(--ls-n04);
+}
+
+/* ================================================================
+   LAYOUT
+   ================================================================ */
+
+/* div.h-grid — основной контейнер 1600px */
+.h-grid {
+  max-width: var(--layout-container);
+  margin-inline: auto;
+}
+
+/* Контейнер карточек — 1440px (h-grid + px-80) */
+.h-grid--inner {
+  max-width: var(--layout-container);
+  margin-inline: auto;
+  padding-inline: var(--space-80);
+}
+
+/* Базовая секция — py-104 */
+.h-section {
+  padding-block: var(--space-104);
+}
+
+/* Секция на тёмном фоне */
+.h-section--dark {
+  background: var(--color-blue-10);
+  color: var(--color-white);
+}
+
+/* Секция на светлом фоне */
+.h-section--light {
+  background: var(--color-grey-98);
+  color: var(--color-grey-10);
+}
+
+/* ================================================================
+   GRADIENTS
+   ================================================================ */
+
+/* Основной градиент кнопок и карточек */
+.h-gradient-primary {
+  background: linear-gradient(267deg,
+    var(--color-blue-70)  0%,
+    var(--color-blue-57) 100%
+  );
+}
+
+/* Glow-бордер карточек (::before на карточке outstanding)
+   Накладывается через position:absolute top:-1px left:-1px */
+.h-card-glow-border {
+  background:
+    linear-gradient(180deg, var(--color-blue-10)   0%, var(--color-blue-10-0)  70.71%),
+    linear-gradient(270deg, var(--color-blue-87)   0%, var(--color-blue-87-0)  70.71%),
+    linear-gradient(0deg,   var(--color-blue-10)   0%, var(--color-blue-10-0)  70.71%);
+}
+
+/* Радиальный глоу — под секцией outstanding-cards (::after)
+   height: 680px, top: 100% секции */
+.h-section-glow::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 680px;
+  background: radial-gradient(
+    ellipse 90% 55% at 50% 0%,
+    rgba(139, 111, 255, 0.65) 0%,
+    rgba(103,  61, 230, 0.35) 30%,
+    rgba( 60,  20, 160, 0.12) 55%,
+    rgba( 17,   9,  42,    0) 75%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ================================================================
+   COMMON COMPONENTS
+   ================================================================ */
+
+/* ── Hyperlink (a.h-hyperlink) ─────────────────────────────────
+   14px/20px SemiBold, цвет --color-blue-76 (#8c85ff) */
+.h-hyperlink {
+  font-family: var(--font-primary);
+  font-size: var(--fs-14);
+  line-height: var(--lh-20);
+  font-weight: var(--fw-semibold);
+  color: var(--color-blue-76);
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.h-hyperlink:hover {
+  text-decoration: underline;
+}
+
+/* ── Button (a.h-button-v2 / button.h-button-v2) ───────────────
+   height: 48px, padding: 12px 48px
+   text: 16px/24px SemiBold white
+   Размер из metadata: h=48, span x=48 y=12 h=24 */
+.h-button-v2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 12px 48px;
+  border-radius: var(--radius-s);
+  background: linear-gradient(267deg, var(--color-blue-70) 0%, var(--color-blue-57) 100%);
+  font-family: var(--font-primary);
+  font-size: var(--fs-16);
+  line-height: var(--lh-24);
+  font-weight: var(--fw-semibold);
+  color: var(--color-white);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.h-button-v2:hover {
+  background: linear-gradient(267deg, var(--color-blue-73) 0%, var(--color-violet-39) 100%);
+}
+
+/* ── Section heading (div.h-section-heading) ───────────────────
+   Структура: badge + title (h2) + description
+   h-grid внутри секции py-104, сам h-section-heading h=212 */
+.h-section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-s);
+}
+
+/* ── Product badge (div.h-product-badge) ───────────────────────
+   height: 28px, inline pill
+   Из metadata: h=28 */
+.h-product-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xxs);
+  height: 28px;
+  padding-inline: var(--space-xs);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-primary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-18);
+  font-weight: var(--fw-semibold);
+}
+
+/* ── Separator line (div.homepage-overlapping-cards__card-separator)
+   1px вертикальный разделитель между колонками, opacity 0.2 */
+.h-col-separator {
+  width: var(--stroke-1);
+  background: rgba(255, 255, 255, 0.2);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+/* ── Muted text (opacity/75) ──────────────────────────────────── */
+.h-text-muted {
+  opacity: var(--opacity-75);
+}
+
+/* ── Outstanding card (4M+, 150+ и т.д.) ─────────────────────── */
+.h-outstanding-card {
+  position: relative;
+  border-radius: var(--radius-l);
+  padding: 1px;
+  backdrop-filter: blur(3px);
+}
+
+.h-outstanding-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-l);
+  background:
+    linear-gradient(180deg, var(--color-blue-10)   0%, var(--color-blue-10-0)  70.71%),
+    linear-gradient(270deg, var(--color-blue-87)   0%, var(--color-blue-87-0)  70.71%),
+    linear-gradient(0deg,   var(--color-blue-10)   0%, var(--color-blue-10-0)  70.71%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.h-outstanding-card__inner {
+  position: relative;
+  z-index: 1;
+  border-radius: 15px; /* radius-l - 1px */
+  background: linear-gradient(267deg, var(--color-blue-70) 0%, var(--color-blue-57) 100%);
+  padding: 32px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}

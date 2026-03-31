@@ -1,0 +1,18 @@
+Project files
+e:\school-media\.mcp.json
+e:\school-media\.gitignore
+e:\school-media\.claude\settings.local.json
+
+Codex user files
+C:\Users\Валерий\.codex\config.toml
+C:\Users\Валерий\.codex\.tmp\plugins\README.md
+C:\Users\Валерий\.codex\.tmp\plugins\.agents\plugins\marketplace.json
+C:\Users\Валерий\.codex\.tmp\plugins\plugins\figma\.codex-plugin\plugin.json
+C:\Users\Валерий\.codex\.tmp\plugins\plugins\figma\.app.json
+C:\Users\Валерий\.codex\.tmp\plugins\plugins\figma\README.md
+
+Useful Codex commands
+codex mcp list
+codex mcp get pencil
+codex mcp add --help
+codex mcp login --help
