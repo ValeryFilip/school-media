@@ -72,7 +72,7 @@ const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : ""
 // Ссылка (статьи: /academy/КАТЕГОРИЯ/СЛАГ)
 let href = manualHref;
 if (!href && post) {
-  href = `${basePath}/${slugify(post.data.category)}/${post.slug}`;
+  href = `${basePath}/${slugify(post.data.category)}/${post.slug}/`;
 }
 
 // Цвет категории (только текст, без обводки)

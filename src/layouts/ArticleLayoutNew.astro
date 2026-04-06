@@ -35,8 +35,8 @@ const base = inAcademy ? "/academy" : "";
 
 /* === абсолютные URL (статьи: /academy/КАТЕГОРИЯ/СЛАГ) === */
 const categorySlug = slugify(String(fm.category || ""));
-const articleUrl = `${origin}${base}/${categorySlug}/${slug}`;
-const articlePath = `${base}/${categorySlug}/${slug}`;
+const articleUrl = `${origin}${base}/${categorySlug}/${slug}/`;
+const articlePath = `${base}/${categorySlug}/${slug}/`;
 
 /* === утилиты === */
 function toDate(value: unknown): Date | null {
@@ -149,7 +149,7 @@ const prevArticle =
     : null;
 
 function getArticleHref(post: CollectionEntry<"articles">) {
-  return `${base}/${slugify(String(post.data.category || ""))}/${post.slug}`;
+  return `${base}/${slugify(String(post.data.category || ""))}/${post.slug}/`;
 }
 ---
 
@@ -216,7 +216,7 @@ function getArticleHref(post: CollectionEntry<"articles">) {
           <div class="article__meta-category">
             <CatBadge
               name={fm.category}
-              href={`${base}/${categorySlug}`}
+              href={`${base}/${categorySlug}/`}
               variant="soft"
               size="sm"
             />
@@ -418,7 +418,7 @@ function getArticleHref(post: CollectionEntry<"articles">) {
             <div class="article__tags-block-title">Теги:</div>
             <div class="article__tags-block-tags">
               {fm.tags.map((tag) => (
-                <a href={`${base}/tags/${slugify(String(tag))}`}>#{tag}</a>
+                <a href={`${base}/tags/${slugify(String(tag))}/`}>#{tag}</a>
               ))}
             </div>
           </div>

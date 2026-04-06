@@ -101,7 +101,8 @@ const {
     overflow: hidden;
     background: linear-gradient(180deg, var(--bg-top), var(--bg));
     font-family: var(--ff);
-    margin-bottom: -120px !important;
+    margin-bottom: -110px !important;
+    z-index: 0;
   }
 
   /* Background: soft glow + rings like on screenshot */
@@ -263,11 +264,21 @@ const {
     transform: translateY(1px);
     user-select: none;
   }
-
+  @media (max-width: 1000px) {
+    .bubble:nth-child(n + 5) {
+      display: none;
+    }
+    .hero {
+      margin-bottom: -80px !important;
+    }
+  }
   /* Минимум media: только чтобы убрать пузыри на очень узких экранах, если начнут мешать */
   @media (max-width: 420px) {
     .bubble:nth-child(n + 5) {
       display: none;
+    }
+    .hero {
+      margin-bottom: -30px !important;
     }
   }
 

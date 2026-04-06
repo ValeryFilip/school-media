@@ -64,7 +64,7 @@ const timeLabel = typeof readingTime === "number" ? `${readingTime} мин` : ""
 // --- ссылка (статьи: /academy/КАТЕГОРИЯ/СЛАГ) ---
 let href = manualHref;
 if (!href && post) {
-  href = `${basePath}/${slugify(post.data.category)}/${post.slug}`;
+  href = `${basePath}/${slugify(post.data.category)}/${post.slug}/`;
 }
 
 // --- цвет категории ---
@@ -203,7 +203,7 @@ const categoryColor = category
             <div class="card__body-tags">
               <div class="card__body-tags-label">Категория:</div>
               <a
-                href={`${basePath}/${slugify(category)}`}
+                href={`${basePath}/${slugify(category)}/`}
                 class="card__body-tag"
                 style={`color: ${categoryColor};`}
                 onclick="event.stopPropagation();"

@@ -117,7 +117,7 @@ if (faqItems.length > 0) {
 
 // Данные Featured для карточки
 const featuredHref = featuredPost
-  ? `/academy/${slugify(featuredPost.data.category ?? "")}/${featuredPost.slug}`
+  ? `/academy/${slugify(featuredPost.data.category ?? "")}/${featuredPost.slug}/`
   : undefined;
 const featuredDate = featuredPost?.data.date
   ? new Date(featuredPost.data.date).toLocaleDateString("ru-RU", {
@@ -152,7 +152,7 @@ const featuredDate = featuredPost?.data.date
         context="media"
         logoSrc="/images/technical/egehim(academy).webp"
         logoAlt="ЕГЭХИМ — академия"
-        ctaHref="/allcourses"
+        ctaHref="/allcourses/"
         pageUtmSource="academy"
       />
     </div>
@@ -227,7 +227,7 @@ const featuredDate = featuredPost?.data.date
               <ul class="btags__list">
                 {popularTags.map((tag) => (
                   <li>
-                    <a href={`/academy/tags/${slugify(tag)}`} class="btag">
+                    <a href={`/academy/tags/${slugify(tag)}/`} class="btag">
                       {tag}
                     </a>
                   </li>

@@ -36,16 +36,16 @@ if (context === "media") {
     ];
     mediaCategories = categories.map((category) => ({
       label: category,
-      href: `/academy/${slugify(category)}`,
+      href: `/academy/${slugify(category)}/`,
     }));
   } catch (error) {
     console.warn("Could not load categories:", error);
     mediaCategories = [
       {
         label: "Задания из ЕГЭ по химии",
-        href: "/academy/zadaniya-iz-ege-po-himii",
+        href: "/academy/zadaniya-iz-ege-po-himii/",
       },
-      { label: "Школьникам", href: "/academy/shkolnikam" },
+      { label: "Школьникам", href: "/academy/shkolnikam/" },
     ];
   }
 }
@@ -76,7 +76,7 @@ if (context === "media") {
           {
             context === "media" && (
               <li class="menu__item">
-                <a href="/academy/articles" class="menu__link">
+                <a href="/academy/articles/" class="menu__link">
                   Все статьи
                 </a>
               </li>
@@ -128,12 +128,12 @@ if (context === "media") {
                     </div>
                     <div class="menu__sublist-right">
                       <li class="menu__subitem">
-                        <a href="/allcourses" class="menu__sublink">
+                        <a href="/allcourses/" class="menu__sublink">
                           Самостоятельные курсы
                         </a>
                       </li>
                       <li class="menu__subitem">
-                        <a href="/obschaya" class="menu__sublink">
+                        <a href="/obschaya/" class="menu__sublink">
                           <span class="menu__sublink-title">
                             Курс по общей химии
                           </span>
@@ -141,7 +141,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="menu__subitem">
-                        <a href="/organika" class="menu__sublink">
+                        <a href="/organika/" class="menu__sublink">
                           <span class="menu__sublink-title">
                             Курс по органической химии
                           </span>
@@ -151,7 +151,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="menu__subitem">
-                        <a href="/neorganika" class="menu__sublink">
+                        <a href="/neorganika/" class="menu__sublink">
                           <span class="menu__sublink-title">
                             Курс по неорганической химии
                           </span>
@@ -161,7 +161,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="menu__subitem">
-                        <a href="/ovr" class="menu__sublink">
+                        <a href="/ovr/" class="menu__sublink">
                           <span class="menu__sublink-title">Курс по ОВР</span>
                           <span class="menu__sublink-sub">
                             Окислительно-восстановительные реакции
@@ -211,7 +211,7 @@ if (context === "media") {
 
           <li class="menu__item menu__item-courses">
             <a
-              href={context === "landing" ? "/academy" : "/allcourses"}
+              href={context === "landing" ? "/academy/" : "/allcourses/"}
               class="menu__link"
             >
               {context === "landing" ? "Академия" : "Курсы"}
@@ -325,7 +325,7 @@ if (context === "media") {
         {
           context === "media" && (
             <li class="mnav__item">
-              <a href="/academy/articles">Все статьи</a>
+              <a href="/academy/articles/">Все статьи</a>
             </li>
           )
         }
@@ -376,7 +376,7 @@ if (context === "media") {
                     <h4 class="mnav__subtitle">Самостоятельные курсы</h4>
                     <ul class="mnav__sublist">
                       <li class="mnav__subitem">
-                        <a href="/obschaya" class="mnav__sublink">
+                        <a href="/obschaya/" class="mnav__sublink">
                           <span class="mnav__sublink-title">
                             Курс по общей химии
                           </span>
@@ -384,7 +384,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="mnav__subitem">
-                        <a href="/organika" class="mnav__sublink">
+                        <a href="/organika/" class="mnav__sublink">
                           <span class="mnav__sublink-title">
                             Курс по органической химии
                           </span>
@@ -394,7 +394,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="mnav__subitem">
-                        <a href="/neorganika" class="mnav__sublink">
+                        <a href="/neorganika/" class="mnav__sublink">
                           <span class="mnav__sublink-title">
                             Курс по неорганической химии
                           </span>
@@ -404,7 +404,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="mnav__subitem">
-                        <a href="/ovr" class="mnav__sublink">
+                        <a href="/ovr/" class="mnav__sublink">
                           <span class="mnav__sublink-title">Курс по ОВР</span>
                           <span class="mnav__sublink-sub">
                             Окислительно-восстановительные реакции
@@ -427,7 +427,7 @@ if (context === "media") {
                         </a>
                       </li>
                       <li class="mnav__subitem">
-                        <a href="/allcourses" class="mnav__sublink">
+                        <a href="/allcourses/" class="mnav__sublink">
                           <span class="mnav__sublink-title">
                             Авторские варианты ОГЭ
                           </span>
@@ -447,7 +447,7 @@ if (context === "media") {
         {
           context === "media" && (
             <li class="mnav__item mnav__item-courses">
-              <a href="/allcourses">Курсы</a>
+              <a href="/allcourses/">Курсы</a>
             </li>
           )
         }
@@ -472,7 +472,7 @@ if (context === "media") {
         }
 
         <li class="mnav__item">
-          <a href={context === "landing" ? "/academy" : "/allcourses"}
+          <a href={context === "landing" ? "/academy/" : "/allcourses/"}
             >{context === "landing" ? "Академия" : "Курсы"}</a
           >
         </li>
