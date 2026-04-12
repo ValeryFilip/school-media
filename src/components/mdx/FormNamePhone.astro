@@ -1,0 +1,49 @@
+---
+import MdxLeadFormBase from "./MdxLeadFormBase.astro";
+
+interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  submitText?: string;
+  theme?: "blue" | "light";
+}
+
+const {
+  id = "mdx-form-name-phone",
+  title = "Оставьте имя и телефон, и я свяжусь с вами",
+  subtitle = "Хороший вариант, если хотите быстро обсудить формат занятий, подготовку и стоимость.",
+  submitText = "Перезвоните мне",
+  theme = "blue",
+} = Astro.props as Props;
+---
+
+<MdxLeadFormBase
+  id={id}
+  title={title}
+  subtitle={subtitle}
+  submitText={submitText}
+  formType="mdx-name-phone"
+  theme={theme}
+  fields={[
+    {
+      name: "name",
+      label: "Имя",
+      type: "text",
+      placeholder: "Как к вам обращаться",
+      autocomplete: "name",
+      required: true,
+    },
+    {
+      name: "phone",
+      label: "Телефон",
+      type: "tel",
+      placeholder: "+7 999 123-45-67",
+      autocomplete: "tel",
+      inputmode: "tel",
+      required: true,
+    },
+  ]}
+  requiredAny={["phone"]}
+  requiredAll={["name", "phone"]}
+/>

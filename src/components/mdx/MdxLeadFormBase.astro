@@ -1,0 +1,462 @@
+---
+interface Field {
+  name: string;
+  label: string;
+  type?: "text" | "tel" | "email" | "textarea";
+  placeholder?: string;
+  autocomplete?: string;
+  required?: boolean;
+  inputmode?: string;
+  pattern?: string;
+  title?: string;
+  rows?: number;
+}
+
+interface Consent {
+  html: string;
+  required?: boolean;
+  fieldName?: string;
+}
+
+interface Props {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  mode?: "form" | "button";
+  imageSrc?: string;
+  imageAlt?: string;
+  imageSide?: "left" | "right";
+  imageFit?: "cover" | "contain";
+  fields?: Field[];
+  buttonText?: string;
+  submitText?: string;
+  action?: string;
+  formType?: string;
+  successMessage?: string;
+  successRedirect?: string;
+  successDelay?: number;
+  requiredAny?: string[];
+  requiredAll?: string[];
+  consents?: Consent[];
+  popupId?: string;
+  popupSource?: string;
+  popupVariant?: string;
+  popupCampaign?: string;
+  theme?: "blue" | "light";
+}
+
+const defaultConsents: Consent[] = [
+  {
+    html: 'Соглашаюсь с <a href="/agreement/" target="_blank" rel="noopener">условиями обработки персональных данных</a>, <a href="/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a> и <a href="/marketing-consent/" target="_blank" rel="noopener">условиями рекламной рассылки</a>',
+    required: true,
+    fieldName: "consent_all",
+  },
+];
+
+const {
+  id = `mdx-lead-${Math.random().toString(36).slice(2, 8)}`,
+  title,
+  subtitle,
+  mode = "form",
+  imageSrc,
+  imageAlt = "",
+  imageSide = "right",
+  imageFit = "cover",
+  fields = [],
+  buttonText = "Записаться",
+  submitText = "Отправить заявку",
+  action = "https://script.google.com/macros/s/AKfycbzTaPkWHfzh1LI3igio8RXqNgX4DcIuWIiDHEMM_5qo5huDfu_TuNv8VcBnlQ0yVi5A/exec",
+  formType = "mdx-inline",
+  successMessage = "Заявка отправлена!",
+  successRedirect = "/thank-you",
+  successDelay = 1500,
+  requiredAny = fields
+    .filter((field) => ["phone", "telegram", "email"].includes(field.name))
+    .map((field) => field.name),
+  requiredAll = fields.filter((field) => field.required).map((field) => field.name),
+  consents = defaultConsents,
+  popupId = "lead-popup",
+  popupSource = "mdx-banner",
+  popupVariant = "inline",
+  popupCampaign = "mdx-banner",
+  theme = "blue",
+} = Astro.props as Props;
+
+const hasImage = Boolean(imageSrc);
+const sectionClass = [
+  "mdx-lead",
+  `mdx-lead--${theme}`,
+  hasImage ? "mdx-lead--with-image" : "mdx-lead--no-image",
+  hasImage && imageSide === "left" ? "mdx-lead--image-left" : "",
+].filter(Boolean).join(" ");
+---
+
+<section class={sectionClass}>
+  {hasImage && (
+    <div class="mdx-lead__media">
+      <img src={imageSrc} alt={imageAlt} loading="lazy" decoding="async" />
+    </div>
+  )}
+
+  <div class="mdx-lead__body">
+    <div class="mdx-lead__copy">
+      <h3 class="mdx-lead__title">{title}</h3>
+      {subtitle && <p class="mdx-lead__subtitle">{subtitle}</p>}
+    </div>
+
+    {mode === "form" ? (
+      <form
+        class="mdx-lead__form"
+        data-endpoint={action}
+        data-form
+        data-form-type={formType}
+        data-form-id={id}
+        data-success-message={successMessage}
+        data-success-redirect={successRedirect}
+        data-success-delay={String(successDelay)}
+        data-required-any={requiredAny.join(",")}
+        data-required-all={requiredAll.join(",")}
+        data-recaptcha="true"
+        novalidate
+      >
+        <div class={`mdx-lead__fields ${fields.length <= 2 ? "mdx-lead__fields--compact" : ""}`}>
+          {fields.map((field) => (
+            <label class={`mdx-lead__field ${field.type === "textarea" ? "mdx-lead__field--full" : ""}`}>
+              <span class="mdx-lead__label">{field.label}</span>
+              {field.type === "textarea" ? (
+                <textarea
+                  class="mdx-lead__input mdx-lead__textarea"
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  rows={field.rows ?? 4}
+                  required={field.required ?? false}
+                />
+              ) : (
+                <input
+                  class="mdx-lead__input"
+                  type={field.type ?? "text"}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  autocomplete={field.autocomplete}
+                  required={field.required ?? false}
+                  inputmode={field.inputmode}
+                  pattern={field.pattern}
+                  title={field.title}
+                />
+              )}
+            </label>
+          ))}
+        </div>
+
+        <div class="mdx-lead__consents">
+          {consents.map((consent, index) => (
+            <label class="mdx-lead__consent" for={`${id}-consent-${index}`}>
+              <input
+                id={`${id}-consent-${index}`}
+                class="mdx-lead__checkbox"
+                type="checkbox"
+                name={consent.fieldName}
+                value="true"
+                required={consent.required ?? false}
+              />
+              <span set:html={consent.html} />
+            </label>
+          ))}
+        </div>
+
+        <div class="mdx-lead__actions">
+          <button class="mdx-lead__submit" type="submit">{submitText}</button>
+          <div class="mdx-lead__status" data-form-status hidden></div>
+          <pre class="mdx-lead__debug" data-form-debug hidden></pre>
+        </div>
+      </form>
+    ) : (
+      <div class="mdx-lead__actions mdx-lead__actions--button-only">
+        <button
+          type="button"
+          class="mdx-lead__submit popup-btn"
+          data-popup-id={popupId}
+          data-source={popupSource}
+          data-variant={popupVariant}
+          data-campaign={popupCampaign}
+        >
+          {buttonText}
+        </button>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .mdx-lead {
+    --mdx-lead-bg: linear-gradient(135deg, #0f5ee0 0%, #2b7cff 55%, #8fc2ff 100%);
+    --mdx-lead-card: rgba(255, 255, 255, 0.14);
+    --mdx-lead-border: rgba(255, 255, 255, 0.22);
+    --mdx-lead-text: #fff;
+    --mdx-lead-muted: rgba(255, 255, 255, 0.86);
+    --mdx-lead-input-bg: rgba(255, 255, 255, 0.96);
+    --mdx-lead-input-text: #10233f;
+    --mdx-lead-button-bg: #ffffff;
+    --mdx-lead-button-text: #114ec9;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    margin: 28px 0;
+    padding: 26px;
+    border-radius: 28px;
+    background: var(--mdx-lead-bg);
+    color: var(--mdx-lead-text);
+    box-shadow: 0 24px 50px rgba(15, 58, 140, 0.16);
+    overflow: hidden;
+  }
+
+  .mdx-lead--light {
+    --mdx-lead-bg: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+    --mdx-lead-card: #ffffff;
+    --mdx-lead-border: rgba(16, 35, 63, 0.08);
+    --mdx-lead-text: #10233f;
+    --mdx-lead-muted: #4d6281;
+    --mdx-lead-input-bg: #ffffff;
+    --mdx-lead-input-text: #10233f;
+    --mdx-lead-button-bg: #1263eb;
+    --mdx-lead-button-text: #ffffff;
+    box-shadow: 0 18px 40px rgba(16, 35, 63, 0.08);
+  }
+
+  .mdx-lead--no-image {
+    grid-template-columns: 1fr;
+  }
+
+  .mdx-lead--image-left .mdx-lead__media {
+    order: -1;
+  }
+
+  .mdx-lead__media {
+    min-height: 100%;
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--mdx-lead-card);
+    border: 1px solid var(--mdx-lead-border);
+    backdrop-filter: blur(10px);
+  }
+
+  .mdx-lead__media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: var(--mdx-image-fit, cover);
+  }
+
+  .mdx-lead__body {
+    display: grid;
+    gap: 18px;
+    align-content: center;
+  }
+
+  .mdx-lead__copy {
+    display: grid;
+    gap: 10px;
+  }
+
+  .mdx-lead__title {
+    margin: 0;
+    font-size: clamp(24px, 3.1vw, 34px);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--mdx-lead-text);
+  }
+
+  .mdx-lead__subtitle {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--mdx-lead-muted);
+    max-width: 60ch;
+  }
+
+  .mdx-lead__form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .mdx-lead__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .mdx-lead__field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .mdx-lead__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .mdx-lead__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mdx-lead-muted);
+  }
+
+  .mdx-lead__input {
+    min-height: 52px;
+    padding: 14px 16px;
+    border: 1px solid rgba(16, 35, 63, 0.12);
+    border-radius: 16px;
+    background: var(--mdx-lead-input-bg);
+    color: var(--mdx-lead-input-text);
+    font-size: 16px;
+    line-height: 1.3;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    box-sizing: border-box;
+  }
+
+  .mdx-lead__input:focus {
+    outline: none;
+    border-color: #5d99ff;
+    box-shadow: 0 0 0 4px rgba(93, 153, 255, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .mdx-lead__input::placeholder {
+    color: #7a8da9;
+  }
+
+  .mdx-lead__textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  .mdx-lead__consents {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--mdx-lead-card);
+    border: 1px solid var(--mdx-lead-border);
+    backdrop-filter: blur(10px);
+  }
+
+  .mdx-lead__consent {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    align-items: start;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--mdx-lead-muted);
+  }
+
+  .mdx-lead__checkbox {
+    margin: 2px 0 0;
+  }
+
+  .mdx-lead__consent :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .mdx-lead__actions {
+    display: grid;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .mdx-lead__actions--button-only {
+    justify-content: start;
+  }
+
+  .mdx-lead__submit {
+    appearance: none;
+    border: 0;
+    border-radius: 16px;
+    min-height: 54px;
+    padding: 0 22px;
+    background: var(--mdx-lead-button-bg);
+    color: var(--mdx-lead-button-text);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    box-shadow: 0 10px 24px rgba(9, 38, 102, 0.14);
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .mdx-lead__submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px rgba(9, 38, 102, 0.18);
+  }
+
+  .mdx-lead__submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .mdx-lead__status {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mdx-lead__status.ok {
+    color: #dcffe8;
+  }
+
+  .mdx-lead--light .mdx-lead__status.ok {
+    color: #0e8d48;
+  }
+
+  .mdx-lead__status.err {
+    color: #ffe0e0;
+  }
+
+  .mdx-lead--light .mdx-lead__status.err {
+    color: #c92a2a;
+  }
+
+  .mdx-lead__debug {
+    margin: 0;
+    max-width: 100%;
+    overflow: auto;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(7, 17, 34, 0.88);
+    color: #f6f8fb;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 900px) {
+    .mdx-lead,
+    .mdx-lead--with-image {
+      grid-template-columns: 1fr;
+    }
+
+    .mdx-lead__media {
+      min-height: 240px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mdx-lead {
+      padding: 20px;
+      margin: 22px 0;
+      border-radius: 22px;
+      gap: 18px;
+    }
+
+    .mdx-lead__fields {
+      grid-template-columns: 1fr;
+    }
+
+    .mdx-lead__submit {
+      width: 100%;
+    }
+  }
+</style>

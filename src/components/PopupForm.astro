@@ -1,8 +1,7 @@
 ---
 interface DocItem {
   id: string;
-  label: string;
-  href?: string;
+  html: string;
   required?: boolean;
   fieldName?: string;
 }
@@ -28,25 +27,11 @@ const {
   formType = "popup",
   docs = [
     {
-      id: "policy",
-      label: "Согласен с Политикой конфиденциальности",
-      href: "/privacy/",
-      required: true,
-      fieldName: "consent_privacy",
-    },
-    {
-      id: "offer",
-      label: "Согласен с Условиями оферты",
-      href: "/agreement/",
-      required: true,
-      fieldName: "consent_personal_data",
-    },
-    {
       id: "consent",
-      label: "Согласен на обработку персональных данных",
-      href: "/marketing-consent/",
+      html:
+        'Соглашаюсь с <a href="/agreement/" target="_blank" rel="noopener">условиями обработки персональных данных</a>, <a href="/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a> и <a href="/marketing-consent/" target="_blank" rel="noopener">условиями рекламной рассылки</a>',
       required: true,
-      fieldName: "consent_marketing",
+      fieldName: "consent_all",
     },
   ],
   /* UTM метки */
@@ -87,7 +72,7 @@ const {
       data-success-message="Заявка отправлена!"
       data-success-redirect="/thank-you"
       data-success-delay="1500"
-      data-required-any="phone,telegram,email"
+      data-required-any="phone,telegram"
       data-required-all="name,phone"
       data-recaptcha="true"
       novalidate
@@ -144,16 +129,7 @@ const {
                 required={d.required}
                 value="true"
               />
-              <span>
-                {d.href ? (
-                  <a href={d.href} target="_blank" rel="noopener">
-                    {d.label}
-                  </a>
-                ) : (
-                  d.label
-                )}
-                {d.required && <em class="req"> *</em>}
-              </span>
+              <span set:html={d.html} />
             </label>
           ))
         }

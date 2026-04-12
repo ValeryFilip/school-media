@@ -1,0 +1,40 @@
+---
+import MdxLeadFormBase from "./MdxLeadFormBase.astro";
+
+interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  buttonText?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  popupId?: string;
+  theme?: "blue" | "light";
+}
+
+const {
+  id = "mdx-banner-image-button",
+  title = "Если хотите, можно просто записаться на пробное занятие",
+  subtitle = "Без длинных анкет: нажмите кнопку, откроется форма записи, и дальше уже спокойно обсудим детали.",
+  buttonText = "Записаться",
+  imageSrc = "/images/articles/kak-vibrat-repetitora.webp",
+  imageAlt = "Иллюстрация к баннеру записи",
+  popupId = "lead-popup",
+  theme = "light",
+} = Astro.props as Props;
+---
+
+<MdxLeadFormBase
+  id={id}
+  title={title}
+  subtitle={subtitle}
+  mode="button"
+  buttonText={buttonText}
+  imageSrc={imageSrc}
+  imageAlt={imageAlt}
+  popupId={popupId}
+  popupSource="mdx-banner"
+  popupVariant="button-card"
+  popupCampaign={id}
+  theme={theme}
+/>

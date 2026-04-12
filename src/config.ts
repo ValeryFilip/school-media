@@ -98,7 +98,7 @@ export const categoryDescriptions: Record<string, CategorySEO> = {
       maxPoints: 13,
       pointsDesc: 'первичных баллов можно заработать только на неорганике. Это ~23% от максимума в 56 баллов',
       tasks: [
-        { number: '5', title: 'Классификация неорганических веществ', points: 1, desc: 'Классы соединений, амфотерность, оксиды разных типов — <a href="/academy/neorganicheskaya-himiya/klassifikatsia-neorganicheskih-veschestv">читать разбор</a>' },
+        { number: '5', title: 'Классификация неорганических веществ', points: 1, desc: 'Классы соединений, амфотерность, оксиды разных типов — <a href="/academy/neorganicheskaya-himiya/klassifikatsia-neorganicheskih-veschestv/">читать разбор</a>' },
         { number: '6', title: 'Свойства металлов и их соединений', points: 2, desc: 'Реакции с кислотами, водой, кислородом; ряд активности' },
         { number: '7', title: 'Свойства неметаллов и их соединений', points: 2, desc: 'Галогены, сера, азот, фосфор, кремний и их соединения' },
         { number: '8', title: 'Взаимодействие неорганических веществ', points: 2, desc: 'Выбор реагентов и продуктов реакций, условия протекания' },

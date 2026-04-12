@@ -1,0 +1,76 @@
+---
+import MdxLeadFormBase from "./MdxLeadFormBase.astro";
+
+interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  submitText?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  fieldName?: string;
+  fieldLabel?: string;
+  fieldPlaceholder?: string;
+  fieldType?: "text" | "tel" | "email";
+  theme?: "blue" | "light";
+}
+
+const {
+  id = "mdx-form-image-single",
+  title = "Оставьте один контакт, и я сам вам напишу",
+  subtitle = "Минимум трения: одна форма, быстрый ответ и понятный следующий шаг.",
+  submitText = "Отправить контакт",
+  imageSrc = "/images/articles/kak-vibrat-repetitora.webp",
+  imageAlt = "Иллюстрация к форме связи",
+  fieldName = "phone",
+  fieldLabel = "Телефон",
+  fieldPlaceholder = "+7 999 123-45-67",
+  fieldType = "tel",
+  theme = "blue",
+} = Astro.props as Props;
+
+const contactField =
+  fieldName === "email"
+    ? {
+        name: "email",
+        label: fieldLabel,
+        type: "email" as const,
+        placeholder: fieldPlaceholder,
+        autocomplete: "email",
+        required: true,
+      }
+    : fieldName === "telegram"
+      ? {
+          name: "telegram",
+          label: fieldLabel,
+          type: "text" as const,
+          placeholder: fieldPlaceholder,
+          autocomplete: "off",
+          required: true,
+          pattern: "^@?[A-Za-z0-9_]{5,32}$",
+          title: "Укажите Telegram username: буквы, цифры, подчёркивание, 5–32 символа",
+        }
+      : {
+          name: "phone",
+          label: fieldLabel,
+          type: fieldType,
+          placeholder: fieldPlaceholder,
+          autocomplete: "tel",
+          inputmode: "tel",
+          required: true,
+        };
+---
+
+<MdxLeadFormBase
+  id={id}
+  title={title}
+  subtitle={subtitle}
+  submitText={submitText}
+  formType="mdx-image-single-field"
+  imageSrc={imageSrc}
+  imageAlt={imageAlt}
+  theme={theme}
+  fields={[contactField]}
+  requiredAny={[contactField.name]}
+  requiredAll={[contactField.name]}
+/>

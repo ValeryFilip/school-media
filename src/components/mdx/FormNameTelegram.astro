@@ -1,0 +1,50 @@
+---
+import MdxLeadFormBase from "./MdxLeadFormBase.astro";
+
+interface Props {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  submitText?: string;
+  theme?: "blue" | "light";
+}
+
+const {
+  id = "mdx-form-name-telegram",
+  title = "Оставьте имя и Telegram, и я напишу вам сам",
+  subtitle = "Подходит для быстрого контакта, когда удобнее обсудить всё в переписке без звонка.",
+  submitText = "Написать мне в Telegram",
+  theme = "blue",
+} = Astro.props as Props;
+---
+
+<MdxLeadFormBase
+  id={id}
+  title={title}
+  subtitle={subtitle}
+  submitText={submitText}
+  formType="mdx-name-telegram"
+  theme={theme}
+  fields={[
+    {
+      name: "name",
+      label: "Имя",
+      type: "text",
+      placeholder: "Как к вам обращаться",
+      autocomplete: "name",
+      required: true,
+    },
+    {
+      name: "telegram",
+      label: "Telegram",
+      type: "text",
+      placeholder: "@username",
+      autocomplete: "off",
+      required: true,
+      pattern: "^@?[A-Za-z0-9_]{5,32}$",
+      title: "Укажите Telegram username: буквы, цифры, подчёркивание, 5–32 символа",
+    },
+  ]}
+  requiredAny={["telegram"]}
+  requiredAll={["name", "telegram"]}
+/>
