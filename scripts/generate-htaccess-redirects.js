@@ -49,9 +49,17 @@ function buildRedirectBlock(articleRedirects) {
     'RewriteCond %{REQUEST_FILENAME} !-f',
     'RewriteCond %{REQUEST_URI} !\\.[A-Za-z0-9]{1,8}$',
     'RewriteCond %{REQUEST_URI} !/$',
+    'RewriteCond %{HTTPS} !=on',
+    'RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]',
+    'RewriteRule ^ https://egehim.ru%{REQUEST_URI}/ [R=301,L]',
+    '',
+    'RewriteCond %{REQUEST_FILENAME} !-f',
+    'RewriteCond %{REQUEST_URI} !\\.[A-Za-z0-9]{1,8}$',
+    'RewriteCond %{REQUEST_URI} !/$',
     'RewriteRule ^ https://egehim.ru%{REQUEST_URI}/ [R=301,L]',
     '',
     'RewriteCond %{HTTPS} !=on',
+    'RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]',
     'RewriteRule ^ https://egehim.ru%{REQUEST_URI} [R=301,L]',
     '',
     '# Редиректы 301: /media/ → /academy/ (generate-htaccess-redirects.js)',
@@ -93,7 +101,7 @@ async function main() {
   }
 
   const marker = '# Редиректы 301: /media/ → /academy/';
-  const canonicalMarker = '# Canonical redirects: https + trailing slash for page-like URLs';
+  const canonicalMarker = '# Canonical redirects: trailing slash for page-like URLs (scheme handled by hosting)';
   if (existing.includes(canonicalMarker)) {
     existing = existing.split(canonicalMarker)[0].replace(/\n\n+$/, '\n').trimEnd();
   } else if (existing.includes(marker)) {
