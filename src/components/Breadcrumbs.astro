@@ -1,5 +1,6 @@
 ---
 import config from "../config.ts";
+import { ensurePathTrailingSlash } from "../lib/seoData";
 
 interface Crumb {
   name: string;
@@ -59,7 +60,7 @@ function normalizeHref(h?: string): string | undefined {
   if (inAcademy && path !== "/" && !path.startsWith("/academy/")) {
     path = "/academy" + path;
   }
-  return `${siteOrigin}${path}`;
+  return `${siteOrigin}${ensurePathTrailingSlash(path)}`;
 }
 
 /* ===== Рендер ===== */

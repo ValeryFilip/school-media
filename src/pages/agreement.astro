@@ -3,7 +3,7 @@
 
 import MainLayout from "../layouts/MainLayout.astro";
 import config from "../config.ts";
-import { buildWebPageJsonLd, getSiteName } from "../lib/seoData";
+import { buildWebPageJsonLd, getSiteName, pageUrlFromPath } from "../lib/seoData";
 
 const title = "Согласие на обработку персональных данных";
 const description =
@@ -13,7 +13,7 @@ const breadcrumbs = [{ name: title }];
 
 // Генерация JSON-LD (origin — из Astro.site)
 const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageUrl = `${origin}${Astro.url.pathname}`;
+const pageUrl = pageUrlFromPath(origin, Astro.url.pathname);
 const siteName = getSiteName(undefined, config.siteName);
 const siteUrl = origin;
 const webPageJsonLd = buildWebPageJsonLd({

@@ -44,13 +44,13 @@ const {
 } = Astro.props as Props;
 
 import config from "../config.ts";
-import { absUrl, getSiteName } from "../lib/seoData";
+import { absUrl, getSiteName, pageUrlFromPath } from "../lib/seoData";
 
 /** Базовый origin: в dev -> http://localhost:4321, в проде -> реальный домен */
 const origin = Astro.url.origin;
 
 /** Каноникал: явный url -> abs(); иначе текущий путь без query/hash */
-const canonical = url ? absUrl(origin, url) : `${origin}${Astro.url.pathname}`;
+const canonical = url ? absUrl(origin, url) : pageUrlFromPath(origin, Astro.url.pathname);
 
 /** OG image — абсолютный */
 const ogImage = absUrl(origin, image);

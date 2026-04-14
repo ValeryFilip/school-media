@@ -6,6 +6,7 @@ import {
   buildProductJsonLd,
   buildVideoJsonLd,
   buildFAQJsonLd,
+  pageUrlFromPath,
 } from "../lib/seoData";
 import { PRODUCT_REVIEWS } from "../data/reviews";
 
@@ -567,7 +568,7 @@ const megaSectionProps = {
 
 // Генерация JSON-LD
 const origin = Astro.url.origin;
-const pageUrl = `${origin}${Astro.url.pathname}`;
+const pageUrl = pageUrlFromPath(origin, Astro.url.pathname);
 
 // Course JSON-LD
 const courseJsonLd = buildCourseJsonLd({

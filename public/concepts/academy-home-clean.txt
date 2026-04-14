@@ -1,0 +1,2181 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Academy Home Clean</title>
+    <style>
+      :root {
+        --text: #121212;
+        --muted: rgba(18, 18, 18, 0.78);
+        --line: rgba(18, 18, 18, 0.14);
+        --surface: rgba(255, 255, 255, 0.12);
+        --surface-strong: rgba(255, 255, 255, 0.18);
+        --button: #ffffff;
+        --button-text: #111111;
+        --section-gap: 100px;
+        --type-xs: 12px;
+        --type-sm: 14px;
+        --type-sm-plus: 15px;
+        --type-md: 16px;
+        --type-lg: 18px;
+        --type-h3: clamp(18px, 2vw, 24px);
+        --type-h2: clamp(30px, 3.4vw, 38px);
+        --type-h1: clamp(36px, 4vw, 48px);
+        --type-display: clamp(38px, 5vw, 58px);
+        --type-stat: clamp(32px, 5vw, 44px);
+        --leading-tight: 1.08;
+        --leading-title: 1.12;
+        --leading-body: 1.6;
+        --leading-relaxed: 1.65;
+        --fw-medium: 500;
+        --fw-bold: 700;
+        --fw-display: 800;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: Inter, Arial, sans-serif;
+        color: var(--text);
+        background: #0d1522;
+      }
+
+      .page {
+        position: relative;
+        min-height: 100vh;
+        background: #0d1522;
+      }
+
+      .intro-stage {
+        position: relative;
+      }
+
+      /* .page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(7, 11, 18, 0.24) 0%,
+            rgba(7, 11, 18, 0.38) 100%
+          ),
+          radial-gradient(
+            circle at center,
+            rgba(8, 13, 22, 0.04) 0%,
+            rgba(8, 13, 22, 0.34) 100%
+          );
+        z-index: 1;
+      } */
+
+      .hero-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.96;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .site-header {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+      }
+
+      .site-header__inner {
+        width: min(1180px, calc(100% - 40px));
+        min-height: 76px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        font-size: var(--type-lg);
+        font-weight: var(--fw-bold);
+        letter-spacing: -0.02em;
+        color: #000000;
+        text-decoration: none;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+
+      .nav a,
+      .account-link {
+        color: rgba(0, 0, 0, 0.9);
+        text-decoration: none;
+        font-size: var(--type-sm);
+        font-weight: var(--fw-medium);
+      }
+
+      .hero {
+        position: relative;
+        z-index: 2;
+
+        display: grid;
+        place-items: center;
+        padding: 16px 0 0;
+        margin-bottom: var(--section-gap);
+      }
+
+      .hero__content {
+        width: min(920px, 100%);
+        text-align: center;
+      }
+
+      .hero__title {
+        margin: 0;
+        font-size: var(--type-display);
+        line-height: var(--leading-tight);
+        letter-spacing: -0.04em;
+        font-weight: var(--fw-display);
+      }
+
+      .hero__text {
+        margin: 20px auto 0;
+        max-width: 760px;
+        font-size: var(--type-lg);
+        line-height: var(--leading-body);
+        color: var(--muted);
+      }
+
+      .hero__search {
+        width: min(760px, 100%);
+        margin: 34px auto 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+      }
+
+      .hero__search input {
+        width: 100%;
+        height: 62px;
+        padding: 0 22px;
+        border: 1px solid rgba(18, 18, 18, 0.14);
+        border-radius: 20px;
+        background: var(--surface);
+        backdrop-filter: blur(10px);
+        color: #000000;
+        font-size: var(--type-md);
+        outline: none;
+      }
+
+      .hero__search input::placeholder {
+        color: rgba(30, 30, 30, 0.52);
+      }
+
+      .hero__search button {
+        height: 62px;
+        padding: 0 28px;
+        border: 0;
+        border-radius: 20px;
+        background: var(--button);
+        color: var(--button-text);
+        font-size: var(--type-md);
+        font-weight: var(--fw-bold);
+        cursor: pointer;
+      }
+
+      .hero__note {
+        margin: 16px 0 0;
+        font-size: var(--type-sm);
+        line-height: var(--leading-body);
+        color: rgba(18, 18, 18, 0.72);
+      }
+
+      .categories-section {
+        margin-bottom: var(--section-gap);
+      }
+
+      .categories-section__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .categories-rail {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
+        padding: 18px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 0;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .category-card {
+        min-height: 120px;
+        padding: 16px 12px 14px;
+        border-radius: 22px;
+        background: #dbe2ec;
+        border: 0;
+        text-align: center;
+      }
+
+      .category-icon {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 14px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.22);
+        color: #111111;
+      }
+
+      .category-icon svg {
+        width: 28px;
+        height: 28px;
+        display: block;
+      }
+
+      .category-title {
+        margin: 0;
+        font-size: var(--type-sm);
+        line-height: 1.35;
+        font-weight: var(--fw-medium);
+        color: rgba(18, 18, 18, 0.92);
+      }
+
+      .fresh-article {
+        position: relative;
+        z-index: 2;
+        margin-bottom: var(--section-gap);
+      }
+
+      .fresh-article__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .fresh-article__title {
+        margin: 0 0 18px;
+        font-size: var(--type-h2);
+        line-height: var(--leading-title);
+        font-weight: var(--fw-bold);
+        color: #111111;
+        text-align: center;
+      }
+
+      .fresh-article__card {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 420px);
+        gap: 24px;
+        align-items: stretch;
+        padding: 24px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 0;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .fresh-article__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 22px;
+      }
+
+      .fresh-article__meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: var(--type-sm);
+        color: rgba(18, 18, 18, 0.72);
+      }
+
+      .fresh-article__headline {
+        margin: 0 0 14px;
+        font-size: var(--type-h3);
+        line-height: var(--leading-tight);
+        font-weight: var(--fw-display);
+        color: #111111;
+      }
+
+      .fresh-article__text {
+        margin: 0;
+        max-width: 60ch;
+        font-size: var(--type-md);
+        line-height: var(--leading-relaxed);
+        color: rgba(18, 18, 18, 0.78);
+      }
+
+      .fresh-article__link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        min-height: 50px;
+        padding: 0 20px;
+        border-radius: 16px;
+        background: #ffffff;
+        color: #111111;
+        text-decoration: none;
+        font-size: var(--type-sm-plus);
+        font-weight: var(--fw-bold);
+      }
+
+      .fresh-article__image {
+        min-height: 320px;
+        border-radius: 22px;
+        overflow: hidden;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.08)
+          ),
+          url("../images/articles/stepen.webp") center/cover no-repeat;
+      }
+
+      .tips-section {
+        position: relative;
+        z-index: 2;
+        margin-bottom: var(--section-gap);
+      }
+
+      .deep-section {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 0;
+        padding-top: var(--section-gap);
+        border-radius: 32px 32px 32px 32px;
+        background-color: #0d1117;
+        background-image:
+          linear-gradient(rgba(232, 240, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(232, 240, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            ellipse 55% 80% at 5% 15%,
+            rgba(54, 110, 240, 0.56) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 50% 70% at 95% 85%,
+            rgba(42, 165, 161, 0.42) 0%,
+            transparent 65%
+          ),
+          radial-gradient(
+            ellipse 42% 60% at 52% 40%,
+            rgba(192, 91, 102, 0.4) 0%,
+            transparent 72%
+          );
+        background-size:
+          36px 36px,
+          36px 36px,
+          auto,
+          auto,
+          auto;
+        background-position:
+          0 0,
+          0 0,
+          center,
+          center,
+          center;
+        overflow: hidden;
+      }
+
+      .tips-section__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .tips-section__title {
+        margin: 0 0 24px;
+        text-align: center;
+        font-size: var(--type-h2);
+        line-height: var(--leading-title);
+        font-weight: var(--fw-bold);
+        color: #f5f8ff;
+      }
+
+      .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .tips-card {
+        position: relative;
+        z-index: 0;
+        min-height: 250px;
+        padding: 24px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 0;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(4, 9, 18, 0.18);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .tips-card--wide {
+        grid-column: span 3;
+      }
+
+      .tips-card--small {
+        grid-column: span 2;
+      }
+
+      .tips-card__eyebrow {
+        margin: 0;
+        font-size: var(--type-sm);
+        line-height: 1.4;
+        color: rgba(230, 238, 255, 0.58);
+      }
+
+      .tips-card__title {
+        margin: 0 0 10px;
+        font-size: var(--type-h3);
+        line-height: var(--leading-tight);
+        font-weight: var(--fw-display);
+        color: #f5f8ff;
+      }
+
+      .tips-card__text {
+        margin: 0;
+        font-size: var(--type-sm-plus);
+        line-height: var(--leading-relaxed);
+        color: rgba(230, 238, 255, 0.78);
+      }
+
+      .tips-card__footer {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        min-height: 42px;
+        padding: 0 14px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: var(--type-sm);
+        color: #f5f8ff;
+      }
+
+      .deep-banner {
+        position: relative;
+        z-index: 2;
+        margin-bottom: var(--section-gap);
+      }
+
+      .deep-banner__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .deep-banner__card {
+        position: relative;
+        z-index: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+        gap: 36px;
+        align-items: center;
+        padding: 0 48px;
+        border-radius: 36px;
+        background: #dbe2ec;
+        border: 0;
+        box-shadow: 0 24px 56px rgba(4, 9, 18, 0.18);
+      }
+
+      .deep-banner__content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .deep-banner__icon {
+        width: fit-content;
+        height: auto;
+        padding: 10px 12px 5px;
+        border-radius: 30px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 24px;
+        background: linear-gradient(180deg, #ffe77a 0%, #ffd12a 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.75),
+          0 18px 34px rgba(255, 209, 42, 0.26);
+      }
+
+      .deep-banner__icon img {
+        width: auto;
+        height: auto;
+        max-width: 104px;
+        max-height: 104px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .deep-banner__title {
+        margin: 0 0 18px;
+        font-size: var(--type-h2);
+        line-height: var(--leading-title);
+        font-weight: var(--fw-display);
+        color: #2a2f36;
+      }
+
+      .deep-banner__text {
+        margin: 0 0 24px;
+        font-size: var(--type-md);
+        line-height: var(--leading-body);
+        color: rgba(42, 47, 54, 0.84);
+      }
+
+      .deep-banner__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .deep-banner__cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        padding: 0 22px;
+        border-radius: 18px;
+        background: #111111;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: var(--type-sm-plus);
+        font-weight: var(--fw-bold);
+        box-shadow: 0 14px 28px rgba(17, 17, 17, 0.18);
+      }
+
+      .deep-banner__secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        padding: 0 22px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #2a2f36;
+        text-decoration: none;
+        font-size: var(--type-sm-plus);
+        font-weight: var(--fw-bold);
+      }
+
+      .deep-banner__media {
+        position: relative;
+        min-height: 520px;
+        isolation: isolate;
+      }
+
+      .deep-banner__media::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 92px;
+        width: 380px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 214, 51, 0.96) 0%,
+          rgba(255, 214, 51, 0.62) 42%,
+          transparent 76%
+        );
+        filter: blur(24px);
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      .deep-banner__media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("../images/mainpage/adfree.png") center right/contain
+          no-repeat;
+        z-index: 1;
+      }
+
+      .popular-section {
+        position: relative;
+        z-index: 2;
+        margin-bottom: var(--section-gap);
+        background: transparent;
+      }
+
+      .popular-section__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .popular-section__title {
+        margin: 0 0 26px;
+        text-align: center;
+        font-size: var(--type-h2);
+        line-height: var(--leading-title);
+        font-weight: var(--fw-bold);
+        color: #f3f7ff;
+      }
+
+      .popular-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .popular-card {
+        min-height: 250px;
+        padding: 16px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 0;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(4, 9, 18, 0.18);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+      }
+
+      .popular-card--small {
+        grid-column: span 2;
+      }
+
+      .popular-card--large {
+        grid-column: span 3;
+        min-height: 290px;
+      }
+
+      .popular-card__image {
+        margin-bottom: 16px;
+        border-radius: 18px;
+        aspect-ratio: 16 / 10;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        overflow: hidden;
+      }
+
+      .popular-card__body {
+        padding: 0 8px 8px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .popular-card__meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 10px;
+        font-size: var(--type-xs);
+        line-height: 1.4;
+        color: rgba(230, 238, 255, 0.62);
+      }
+
+      .popular-card__meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .popular-card__meta-item svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
+
+      .popular-card__category {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-top: 14px;
+        font-size: var(--type-xs);
+        line-height: 1.4;
+        color: var(--popular-category, #366ef0);
+      }
+
+      .popular-card__title {
+        margin: 0 0 10px;
+        font-size: var(--type-h3);
+        line-height: 1.25;
+        font-weight: var(--fw-bold);
+        color: #f3f7ff;
+      }
+
+      .popular-card__text {
+        margin: 0;
+        font-size: var(--type-sm-plus);
+        line-height: var(--leading-body);
+        color: rgba(230, 238, 255, 0.78);
+      }
+
+      .popular-card__link {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-top: 14px;
+        min-height: 0;
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        border: 0;
+        font-size: var(--type-xs);
+        color: var(--popular-category, #366ef0);
+      }
+
+      .author-platform {
+        position: relative;
+        z-index: 2;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 100px 20px 0;
+        background: transparent;
+      }
+
+      .author-platform__inner {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+      }
+
+      .author-platform__title {
+        margin: 0 0 16px;
+        text-align: center;
+        font-size: var(--type-h2);
+        line-height: var(--leading-title);
+        font-weight: var(--fw-display);
+        color: #111111;
+        text-wrap: balance;
+      }
+
+      .author-platform__shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .author-platform__left {
+        min-width: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .author-platform__facts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .author-platform__fact {
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 0;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 14px 32px rgba(17, 24, 39, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .author-platform__fact::before {
+        content: none;
+        position: absolute;
+        inset: -15% auto auto -10%;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 214, 51, 0.72) 0%,
+          transparent 72%
+        );
+        pointer-events: none;
+      }
+
+      .author-platform__fact::after {
+        content: none;
+        position: absolute;
+        inset: auto -12% -18% auto;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(100, 149, 255, 0.18) 0%,
+          transparent 74%
+        );
+        pointer-events: none;
+      }
+
+      .author-platform__fact-number {
+        position: relative;
+        z-index: 1;
+        font-size: var(--type-stat);
+        font-weight: 700;
+        line-height: 1.1;
+        color: #111111;
+        letter-spacing: -0.02em;
+      }
+
+      .author-platform__fact-accent {
+        position: relative;
+        z-index: 1;
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: #ffd12a;
+      }
+
+      .author-platform__fact-text {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: var(--type-sm-plus);
+        line-height: var(--leading-body);
+        color: rgba(18, 18, 18, 0.82);
+      }
+
+      .author-platform__photo-wrap {
+        margin: 0;
+        display: flex;
+        align-self: stretch;
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.98);
+
+        box-shadow: 0 14px 32px rgba(17, 24, 39, 0.08);
+        min-height: 100%;
+      }
+
+      .author-platform__photo-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .author-platform__more {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        display: inline-flex;
+        align-items: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 14px;
+        background: #1d4eff;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: var(--type-sm);
+        font-weight: var(--fw-bold);
+      }
+
+      .ad-social {
+        position: relative;
+        z-index: 2;
+        padding: var(--section-gap) 20px 0;
+      }
+
+      .ad-social__inner {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+      }
+
+      .ad-social__card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 0.7fr;
+        align-items: center;
+        gap: 36px;
+        padding: 0 48px;
+        color: #2a2f36;
+        border-radius: 36px;
+        border: 0;
+        background: #dbe2ec;
+        box-shadow: 0 24px 56px rgba(4, 9, 18, 0.18);
+        overflow: hidden;
+      }
+
+      .ad-social__text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ad-social__icon {
+        width: fit-content;
+        padding: 10px 12px 5px;
+        border-radius: 30px;
+        display: grid;
+        place-items: center;
+        margin-top: 24px;
+        background: linear-gradient(180deg, #ffe77a 0%, #ffd12a 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.75),
+          0 18px 34px rgba(255, 209, 42, 0.26);
+      }
+
+      .ad-social__icon img {
+        width: auto;
+        height: auto;
+        max-width: 104px;
+        max-height: 104px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .ad-social__title {
+        margin: 0;
+        font-size: var(--type-h2);
+        line-height: 1.25;
+        color: #111111;
+      }
+
+      .ad-social__scene-wrap {
+        overflow: hidden;
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+        justify-self: end;
+        aspect-ratio: 572 / 477;
+      }
+
+      .ad-social__scene {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .ad-social__scene::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 92px;
+        width: 380px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 214, 51, 0.96) 0%,
+          rgba(255, 214, 51, 0.62) 42%,
+          transparent 76%
+        );
+        filter: blur(24px);
+        transform: translateX(-50%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .ad-social__tile {
+        position: absolute;
+        border: 0;
+        padding: 0;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-style: preserve-3d;
+        box-shadow:
+          0 22px 34px rgba(17, 31, 80, 0.22),
+          0 10px 18px rgba(17, 31, 80, 0.12),
+          inset 0 2px 0 rgba(255, 255, 255, 0.3),
+          inset 0 -10px 18px rgba(0, 0, 0, 0.1);
+        isolation: isolate;
+      }
+
+      .ad-social__tile::before {
+        content: "";
+        position: absolute;
+        inset: 8% 10% auto 10%;
+        height: 34%;
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.52) 0%,
+          rgba(255, 255, 255, 0.2) 42%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        filter: blur(2px);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .ad-social__tile::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+          radial-gradient(
+            circle at 28% 22%,
+            rgba(255, 255, 255, 0.28),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 65% 78%,
+            rgba(0, 0, 0, 0.08),
+            transparent 30%
+          );
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .ad-social__tile-icon-wrap {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.06));
+        width: 100%;
+        height: 100%;
+      }
+
+      .ad-social__tile-icon {
+        width: 55%;
+        height: 55%;
+        object-fit: contain;
+        display: block;
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+      }
+
+      .ad-social__tile--0 {
+        left: 12.24%;
+        top: 25.16%;
+        width: 34.27%;
+        height: 32.29%;
+        border-radius: 19%;
+        background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+        transform: rotate(8deg);
+        z-index: 1;
+      }
+
+      .ad-social__tile--1 {
+        left: 62.94%;
+        top: 28.51%;
+        width: 26.22%;
+        height: 31.45%;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+        z-index: 3;
+      }
+
+      .ad-social__tile--2 {
+        left: 36.71%;
+        top: 32.29%;
+        width: 36.36%;
+        height: 43.61%;
+        border-radius: 20%;
+        background: linear-gradient(145deg, #f5f5f5 0%, #e0e0e0 100%);
+        transform: rotate(14deg);
+        z-index: 2;
+      }
+
+      .ad-social__tile--float {
+        animation: ad-social-float 4.2s ease-in-out infinite;
+        will-change: transform;
+      }
+
+      .ad-social__tile--float-slow {
+        animation: ad-social-float 5.6s ease-in-out infinite;
+        will-change: transform;
+      }
+
+      .ad-social__tile--float-fast {
+        animation: ad-social-float 3.6s ease-in-out infinite;
+        will-change: transform;
+      }
+
+      .ad-social__tile--0.ad-social__tile--float {
+        --ad-social-r: 8deg;
+      }
+
+      .ad-social__tile--1.ad-social__tile--float-slow {
+        --ad-social-r: 0deg;
+      }
+
+      .ad-social__tile--2.ad-social__tile--float-fast {
+        --ad-social-r: 14deg;
+      }
+
+      @keyframes ad-social-float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(var(--ad-social-r, 0deg));
+        }
+
+        50% {
+          transform: translateY(-10px) rotate(var(--ad-social-r, 0deg));
+        }
+      }
+
+      .ad-social__bubble {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .ad-social__bubble-text {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--white);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .ad-social__bubble--smile {
+        width: 15.73%;
+        height: 18.87%;
+        font-size: min(14vw, 54px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.12));
+        z-index: 4;
+        animation: ad-social-bob 4.5s ease-in-out infinite;
+      }
+
+      .ad-social__bubble--smile-1 {
+        left: 52.45%;
+        top: 5.87%;
+      }
+
+      .ad-social__bubble--fire {
+        filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.15));
+        z-index: 4;
+        animation: ad-social-bob 3.5s ease-in-out infinite;
+      }
+
+      .ad-social__bubble--fire-1 {
+        left: 18%;
+        top: 12%;
+        font-size: min(9vw, 42px);
+        animation-delay: 0.3s;
+      }
+
+      .ad-social__bubble--heart {
+        color: #ff5161;
+        text-shadow: 0 8px 14px rgba(0, 0, 0, 0.12);
+        z-index: 4;
+      }
+
+      .ad-social__bubble--heart-left {
+        left: 20.28%;
+        top: 70.02%;
+        font-size: min(9vw, 44px);
+        transform: rotate(-16deg);
+        animation: ad-social-pulse-left 2.8s ease-in-out infinite;
+      }
+
+      .ad-social__bubble--heart-right {
+        left: 79.37%;
+        top: 72.75%;
+        font-size: min(7.5vw, 36px);
+        transform: rotate(10deg);
+        animation: ad-social-pulse-right 2.8s ease-in-out infinite 0.5s;
+      }
+
+      @keyframes ad-social-bob {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-8px) rotate(2deg);
+        }
+      }
+
+      @keyframes ad-social-pulse-left {
+        0%,
+        100% {
+          transform: scale(1) rotate(-16deg);
+        }
+
+        50% {
+          transform: scale(1.08) rotate(-16deg);
+        }
+      }
+
+      @keyframes ad-social-pulse-right {
+        0%,
+        100% {
+          transform: scale(1) rotate(10deg);
+        }
+
+        50% {
+          transform: scale(1.08) rotate(10deg);
+        }
+      }
+
+      .site-footer {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        margin: 50px 0 0;
+        border-radius: 28px 28px 0 0;
+        background: #05070b;
+      }
+
+      .site-footer__inner {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 28px 0 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .site-footer__brand {
+        margin: 0;
+        font-size: var(--type-lg);
+        font-weight: var(--fw-bold);
+        color: #ffffff;
+      }
+
+      .site-footer__nav {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+      }
+
+      .site-footer__nav a,
+      .site-footer__copy {
+        color: rgba(255, 255, 255, 0.72);
+        text-decoration: none;
+        font-size: var(--type-sm);
+        line-height: 1.5;
+      }
+
+      @media (max-width: 900px) {
+        .site-header__inner {
+          width: min(100%, calc(100% - 28px));
+        }
+
+        .nav {
+          gap: 18px;
+        }
+
+        .categories-rail {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .fresh-article__card {
+          grid-template-columns: 1fr;
+        }
+
+        .tips-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .tips-card--wide,
+        .tips-card--small {
+          grid-column: span 1;
+        }
+
+        .deep-banner__card {
+          grid-template-columns: 1fr;
+        }
+
+        .popular-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .popular-card--small,
+        .popular-card--large {
+          grid-column: span 1;
+        }
+
+        .author-platform__shell {
+          grid-template-columns: 1fr;
+        }
+
+        .ad-social__card {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          padding: 32px 24px;
+        }
+
+        .ad-social__text {
+          align-items: flex-start;
+          text-align: left;
+          max-width: 760px;
+          margin-inline: auto;
+        }
+
+        .ad-social__scene-wrap {
+          margin-inline: auto;
+          max-width: 380px;
+        }
+
+        .site-footer__inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .site-header__inner {
+          min-height: 68px;
+          flex-wrap: wrap;
+          justify-content: center;
+          padding: 12px 0;
+        }
+
+        .nav {
+          width: 100%;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 14px 18px;
+        }
+
+        .account-link {
+          display: none;
+        }
+
+        .hero {
+          min-height: calc(100vh - 108px);
+          padding-top: 40px;
+        }
+
+        .hero__search {
+          grid-template-columns: 1fr;
+        }
+
+        .hero__search button,
+        .hero__search input {
+          width: 100%;
+        }
+
+        .categories-section {
+          margin-bottom: var(--section-gap);
+        }
+
+        .fresh-article {
+          margin-bottom: var(--section-gap);
+        }
+
+        .tips-section {
+          margin-bottom: var(--section-gap);
+        }
+
+        .deep-banner {
+          margin-bottom: var(--section-gap);
+        }
+
+        .popular-section {
+          margin-bottom: var(--section-gap);
+        }
+
+        .author-platform {
+          margin-top: 0;
+          margin-bottom: 0;
+          padding-top: 100px;
+        }
+
+        .fresh-article__title {
+          font-size: var(--type-h3);
+        }
+
+        .tips-section__title {
+          font-size: var(--type-h3);
+        }
+
+        .fresh-article__card {
+          gap: 18px;
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .fresh-article__image {
+          min-height: 220px;
+        }
+
+        .tips-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tips-card {
+          min-height: 220px;
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .deep-banner__card {
+          gap: 18px;
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .deep-banner__media {
+          min-height: 220px;
+        }
+
+        .popular-section__title {
+          font-size: var(--type-h3);
+        }
+
+        .author-platform__title {
+          font-size: var(--type-h3);
+        }
+
+        .popular-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .popular-card {
+          min-height: 220px;
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .author-platform__facts {
+          grid-template-columns: 1fr;
+        }
+
+        .ad-social__text {
+          max-width: 100%;
+        }
+
+        .categories-rail {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+          padding: 14px;
+          border-radius: 22px;
+        }
+
+        .category-card {
+          min-height: 108px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <section class="intro-stage">
+        <video class="hero-video" autoplay muted loop playsinline>
+          <source src="../videoplayback.mp4" type="video/mp4" />
+        </video>
+
+        <header class="site-header">
+          <div class="site-header__inner">
+            <a class="brand" href="/">Академия</a>
+
+            <nav class="nav" aria-label="Основная навигация">
+              <a href="#">Статьи</a>
+              <a href="#">Категории</a>
+              <a href="#">Подборки</a>
+              <a href="#">О проекте</a>
+            </nav>
+
+            <a class="account-link" href="#">Личный кабинет</a>
+          </div>
+        </header>
+
+        <main class="hero">
+          <section class="hero__content">
+            <h1 class="hero__title">
+              Академия по химии для подготовки и понимания тем
+            </h1>
+            <p class="hero__text">
+              Ищи статьи, объяснения и материалы по ЕГЭ, школьной программе и
+              отдельным разделам химии в одном месте.
+            </p>
+
+            <form class="hero__search" action="#" method="get">
+              <input
+                type="text"
+                placeholder="Поиск по темам, статьям и разделам"
+              />
+              <button type="submit">Найти</button>
+            </form>
+
+            <p class="hero__note">
+              Например: гидролиз, органическая химия, демоверсия ЕГЭ 2026
+            </p>
+          </section>
+        </main>
+
+        <section class="categories-section" aria-label="Категории материалов">
+          <div class="categories-section__inner">
+            <div class="categories-rail">
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5.74 12.59 12 9.17l6.26 3.42L12 16Zm-7 1.69V20l7 4 7-4v-2.31l-7 4-7-4Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">Школьная база</p>
+              </article>
+
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 17.93V20h-2v-.07A8 8 0 0 1 4.07 13H4v-2h.07A8 8 0 0 1 11 4.07V4h2v.07A8 8 0 0 1 19.93 11H20v2h-.07A8 8 0 0 1 13 19.93ZM12 8a4 4 0 1 0 4 4 4 4 0 0 0-4-4Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">ЕГЭ химия</p>
+              </article>
+
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M9 21h6v-1H9v1Zm3-19C8.14 2 5 5.14 5 9a7 7 0 0 0 2.87 5.65c.7.53 1.13 1.35 1.13 2.22V18h6v-1.13c0-.87.43-1.69 1.13-2.22A7 7 0 0 0 19 9c0-3.86-3.14-7-7-7Zm2.92 11.04A4.98 4.98 0 0 0 13 17h-2a4.98 4.98 0 0 0-1.92-3.96A5 5 0 1 1 17 9a4.96 4.96 0 0 1-2.08 4.04Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">Органика</p>
+              </article>
+
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M3 13h8V3H3Zm2-8h4v6H5Zm8 16h8v-8h-8Zm2-6h4v4h-4ZM3 21h8v-6H3Zm2-4h4v2H5Zm8-4h8v-2h-8Zm0-8v2h8V5Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">Неорганика</p>
+              </article>
+
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2Zm0 10H6.17L5 14.17V5h14v8Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">Разборы задач</p>
+              </article>
+
+              <article class="category-card">
+                <div class="category-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 7V3L1 9l11 6v-4c6.08 0 10.33 1.94 13 6-1-5-4-10-13-10Z"
+                    />
+                  </svg>
+                </div>
+                <p class="category-title">Все статьи</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="fresh-article" aria-labelledby="fresh-article-title">
+          <div class="fresh-article__inner">
+            <h2 class="fresh-article__title" id="fresh-article-title">
+              Самая свежая статья
+            </h2>
+
+            <article class="fresh-article__card">
+              <div class="fresh-article__content">
+                <div class="fresh-article__meta">
+                  Новый материал · 12 апреля 2026
+                </div>
+
+                <div>
+                  <h3 class="fresh-article__headline">
+                    Степень окисления: как быстро определять в любых формулах
+                  </h3>
+                  <p class="fresh-article__text">
+                    Короткий разбор с понятным алгоритмом, примерами и типичными
+                    ошибками, которые часто встречаются в школьных задачах и
+                    заданиях ЕГЭ.
+                  </p>
+                </div>
+
+                <a class="fresh-article__link" href="#">Читать статью</a>
+              </div>
+
+              <div class="fresh-article__image" aria-hidden="true"></div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="deep-section">
+        <section class="tips-section" aria-labelledby="tips-section-title">
+          <div class="tips-section__inner">
+            <h2 class="tips-section__title" id="tips-section-title">
+              С чего начать изучение?
+            </h2>
+
+            <div class="tips-grid">
+              <article class="tips-card tips-card--wide">
+                <div>
+                  <p class="tips-card__eyebrow">Шаг 1</p>
+                  <h3 class="tips-card__title">Разберись со школьной базой</h3>
+                  <p class="tips-card__text">
+                    Сначала закрепи основные понятия: строение атома, степень
+                    окисления, типы связей и базовые классы веществ.
+                  </p>
+                </div>
+                <div class="tips-card__footer">База и терминология</div>
+              </article>
+
+              <article class="tips-card tips-card--wide">
+                <div>
+                  <p class="tips-card__eyebrow">Шаг 2</p>
+                  <h3 class="tips-card__title">Выбери маршрут по разделам</h3>
+                  <p class="tips-card__text">
+                    Делай темы блоками: общая химия, неорганика, органика и
+                    расчётные задания, чтобы видеть прогресс по разделам.
+                  </p>
+                </div>
+                <div class="tips-card__footer">План по темам</div>
+              </article>
+
+              <article class="tips-card tips-card--small">
+                <div>
+                  <p class="tips-card__eyebrow">Шаг 3</p>
+                  <h3 class="tips-card__title">Читай короткие разборы</h3>
+                  <p class="tips-card__text">
+                    Начинай с компактных статей, где одна тема объясняется без
+                    лишней теории и перегруза.
+                  </p>
+                </div>
+                <div class="tips-card__footer">Быстрый вход</div>
+              </article>
+
+              <article class="tips-card tips-card--small">
+                <div>
+                  <p class="tips-card__eyebrow">Шаг 4</p>
+                  <h3 class="tips-card__title">Сразу решай примеры</h3>
+                  <p class="tips-card__text">
+                    После каждой темы закрепляй материал заданиями, чтобы
+                    правило сразу переходило в навык.
+                  </p>
+                </div>
+                <div class="tips-card__footer">Практика после теории</div>
+              </article>
+
+              <article class="tips-card tips-card--small">
+                <div>
+                  <p class="tips-card__eyebrow">Шаг 5</p>
+                  <h3 class="tips-card__title">Возвращайся к слабым местам</h3>
+                  <p class="tips-card__text">
+                    Отмечай темы, где чаще всего ошибаешься, и собирай личный
+                    список для повторения.
+                  </p>
+                </div>
+                <div class="tips-card__footer">Точки роста</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="deep-banner" aria-labelledby="deep-banner-title">
+          <div class="deep-banner__inner">
+            <article class="deep-banner__card">
+              <div class="deep-banner__content">
+                <div class="deep-banner__icon" aria-hidden="true">
+                  <img src="../images/technical/egehim(kursi).webp" alt="" />
+                </div>
+
+                <div class="deep-banner__copy">
+                  <h2 class="deep-banner__title" id="deep-banner-title">
+                    Забирай 2 бесплатных курса по подготовке к ЕГЭ по химии
+                  </h2>
+                  <p class="deep-banner__text">
+                    Короткие уроки, удобный маршрут по темам и задания для
+                    старта без перегруза. Подойдёт, если хочешь быстро
+                    включиться в подготовку.
+                  </p>
+                  <div class="deep-banner__actions">
+                    <a class="deep-banner__cta" href="#">Перейти к курсам</a>
+                    <a class="deep-banner__secondary" href="#"
+                      >Посмотреть программу</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="deep-banner__media" aria-hidden="true"></div>
+            </article>
+          </div>
+        </section>
+
+        <section
+          class="popular-section"
+          aria-labelledby="popular-section-title"
+        >
+          <div class="popular-section__inner">
+            <h2 class="popular-section__title" id="popular-section-title">
+              Популярные материалы
+            </h2>
+
+            <div class="popular-grid">
+              <article class="popular-card popular-card--small">
+                <div
+                  class="popular-card__image"
+                  style="
+                    background-image: url(&quot;../images/articles/hydroliz.webp&quot;);
+                  "
+                  aria-hidden="true"
+                ></div>
+                <div class="popular-card__body">
+                  <div class="popular-card__meta">
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15H5V10h14v9Z"
+                        /></svg
+                      >12.04.2026</span
+                    >
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M12 1a11 11 0 1 0 11 11A11.01 11.01 0 0 0 12 1Zm1 11.59 3.71 3.7-1.42 1.42L11 13V6h2Z"
+                        /></svg
+                      >7 минут</span
+                    >
+                  </div>
+                  <h3 class="popular-card__title">
+                    Гидролиз солей простыми словами
+                  </h3>
+                  <p class="popular-card__text">
+                    Разбираем, какие соли гидролизуются по катиону, аниону или
+                    по двум ионам, и как это быстро определять в заданиях.
+                  </p>
+                  <div
+                    class="popular-card__category"
+                    style="--popular-category: #1d4eff"
+                  >
+                    Общая химия
+                  </div>
+                </div>
+              </article>
+
+              <article class="popular-card popular-card--small">
+                <div
+                  class="popular-card__image"
+                  style="
+                    background-image: url(&quot;../images/articles/videos/nazvaniya.jpeg&quot;);
+                  "
+                  aria-hidden="true"
+                ></div>
+                <div class="popular-card__body">
+                  <div class="popular-card__meta">
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15H5V10h14v9Z"
+                        /></svg
+                      >10.04.2026</span
+                    >
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M12 1a11 11 0 1 0 11 11A11.01 11.01 0 0 0 12 1Zm1 11.59 3.71 3.7-1.42 1.42L11 13V6h2Z"
+                        /></svg
+                      >8 минут</span
+                    >
+                  </div>
+                  <h3 class="popular-card__title">
+                    Названия веществ без зубрёжки
+                  </h3>
+                  <p class="popular-card__text">
+                    Показываем, как читать формулы, быстро определять тип
+                    соединения и не путаться в названиях оксидов, кислот,
+                    оснований и солей.
+                  </p>
+                  <div
+                    class="popular-card__category"
+                    style="--popular-category: #33a6ff"
+                  >
+                    Номенклатура
+                  </div>
+                </div>
+              </article>
+
+              <article class="popular-card popular-card--small">
+                <div
+                  class="popular-card__image"
+                  style="
+                    background-image: url(&quot;../images/articles/stepen-okislenia.webp&quot;);
+                  "
+                  aria-hidden="true"
+                ></div>
+                <div class="popular-card__body">
+                  <div class="popular-card__meta">
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15H5V10h14v9Z"
+                        /></svg
+                      >08.04.2026</span
+                    >
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M12 1a11 11 0 1 0 11 11A11.01 11.01 0 0 0 12 1Zm1 11.59 3.71 3.7-1.42 1.42L11 13V6h2Z"
+                        /></svg
+                      >6 минут</span
+                    >
+                  </div>
+                  <h3 class="popular-card__title">
+                    Степень окисления без ошибок
+                  </h3>
+                  <p class="popular-card__text">
+                    Собрали понятный алгоритм, который помогает находить степень
+                    окисления даже в сложных формулах и ионах.
+                  </p>
+                  <div
+                    class="popular-card__category"
+                    style="--popular-category: #c05b66"
+                  >
+                    ЕГЭ химия
+                  </div>
+                </div>
+              </article>
+
+              <article class="popular-card popular-card--large">
+                <div
+                  class="popular-card__image"
+                  style="
+                    background-image: url(&quot;../images/articles/organicheskaya-himiya.webp&quot;);
+                  "
+                  aria-hidden="true"
+                ></div>
+                <div class="popular-card__body">
+                  <div class="popular-card__meta">
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15H5V10h14v9Z"
+                        /></svg
+                      >05.04.2026</span
+                    >
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M12 1a11 11 0 1 0 11 11A11.01 11.01 0 0 0 12 1Zm1 11.59 3.71 3.7-1.42 1.42L11 13V6h2Z"
+                        /></svg
+                      >11 минут</span
+                    >
+                  </div>
+                  <h3 class="popular-card__title">
+                    Как не бояться органической химии
+                  </h3>
+                  <p class="popular-card__text">
+                    Объясняем, с каких классов органики начать, как связать
+                    свойства, строение и типовые реакции в единую понятную
+                    систему.
+                  </p>
+                  <div
+                    class="popular-card__category"
+                    style="--popular-category: #ff8c42"
+                  >
+                    Органика
+                  </div>
+                </div>
+              </article>
+
+              <article class="popular-card popular-card--large">
+                <div
+                  class="popular-card__image"
+                  style="
+                    background-image: url(&quot;../images/technical/egehim(academy).webp&quot;);
+                  "
+                  aria-hidden="true"
+                ></div>
+                <div class="popular-card__body">
+                  <div class="popular-card__meta">
+                    <span class="popular-card__meta-item"
+                      ><svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 15H5V10h14v9Z"
+                        /></svg
+                      >Обновляется каждую неделю</span
+                    >
+                  </div>
+                  <h3 class="popular-card__title">
+                    Все статьи по химии в одном месте
+                  </h3>
+                  <p class="popular-card__text">
+                    Если нужен полный каталог материалов, переходи в раздел со
+                    всеми статьями: школьная база, ЕГЭ, органика, неорганика и
+                    разборы задач.
+                  </p>
+                  <div
+                    class="popular-card__category"
+                    style="--popular-category: #1d4eff"
+                  >
+                    Все статьи
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="author-platform" aria-labelledby="author-platform-title">
+        <div class="author-platform__inner">
+          <h2 class="author-platform__title" id="author-platform-title">
+            Автор курса — Филипенко Валерий
+          </h2>
+
+          <div class="author-platform__shell">
+            <div class="author-platform__left">
+              <ul class="author-platform__facts">
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">9 лет</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    Преподаю химию с 2016 года
+                  </p>
+                </li>
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">100</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    баллов — мой результат на ЕГЭ по химии
+                  </p>
+                </li>
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">2000+</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    учеников подготовил к ЕГЭ по химии за всё время
+                  </p>
+                </li>
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">80+</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    баллов у каждого второго на курсе и 95% сдают ОГЭ на 5
+                  </p>
+                </li>
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">7</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    авторских курсов для подготовки к ЕГЭ по химии на Stepik
+                  </p>
+                </li>
+                <li class="author-platform__fact">
+                  <span class="author-platform__fact-number">2</span>
+                  <span
+                    class="author-platform__fact-accent"
+                    aria-hidden="true"
+                  ></span>
+                  <p class="author-platform__fact-text">
+                    человека сдали ЕГЭ на 100 баллов за 2025 год
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <figure class="author-platform__photo-wrap">
+              <img
+                src="../images/valerii-filipenko.webp"
+                alt="Валерий Филипенко — профессиональный химик, репетитор и эксперт ЕГЭ"
+              />
+              <a
+                class="author-platform__more"
+                href="https://t.me/+KznfEhtzkeNlZjIy"
+                target="_blank"
+                rel="noopener"
+                >Подробнее об авторе →</a
+              >
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="ad-social" aria-labelledby="ad-social-title">
+        <div class="ad-social__inner">
+          <div class="ad-social__card">
+            <header class="ad-social__text">
+              <h2 id="ad-social-title" class="ad-social__title">
+                Подписывайся на наши соцсети и будь в курсе всего нового в мире
+                ЕГЭ
+              </h2>
+              <div class="ad-social__icon" aria-hidden="true">
+                <img src="../images/technical/egehim(kursi).webp" alt="" />
+              </div>
+            </header>
+
+            <div class="ad-social__scene-wrap">
+              <div class="ad-social__scene">
+                <div
+                  class="ad-social__bubble ad-social__bubble--smile ad-social__bubble--smile-1"
+                  aria-hidden="true"
+                >
+                  <span class="ad-social__bubble-text">тапни иконку</span>
+                </div>
+                <div
+                  class="ad-social__bubble ad-social__bubble--heart ad-social__bubble--heart-left"
+                  aria-hidden="true"
+                >
+                  &#10084;
+                </div>
+                <div
+                  class="ad-social__bubble ad-social__bubble--heart ad-social__bubble--heart-right"
+                  aria-hidden="true"
+                >
+                  &#10084;
+                </div>
+                <div
+                  class="ad-social__bubble ad-social__bubble--fire ad-social__bubble--fire-1"
+                  aria-hidden="true"
+                >
+                  &#128293;
+                </div>
+
+                <a
+                  href="https://www.youtube.com/@chemistry_exam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                  class="ad-social__tile ad-social__tile--0 ad-social__tile--float"
+                >
+                  <span class="ad-social__tile-icon-wrap">
+                    <img
+                      src="../images/technical/youtube.png"
+                      width="36"
+                      height="36"
+                      alt=""
+                      class="ad-social__tile-icon"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
+                </a>
+
+                <a
+                  href="https://t.me/+KznfEhtzkeNlZjIy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Telegram"
+                  class="ad-social__tile ad-social__tile--1 ad-social__tile--float-slow"
+                >
+                  <span class="ad-social__tile-icon-wrap">
+                    <img
+                      src="../images/technical/telegram.png"
+                      width="36"
+                      height="36"
+                      alt=""
+                      class="ad-social__tile-icon"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
+                </a>
+
+                <a
+                  href="https://vk.com/chemistry_exam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="ВКонтакте"
+                  class="ad-social__tile ad-social__tile--2 ad-social__tile--float-fast"
+                >
+                  <span class="ad-social__tile-icon-wrap">
+                    <img
+                      src="../images/technical/vk.png"
+                      width="36"
+                      height="36"
+                      alt=""
+                      class="ad-social__tile-icon"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="site-footer__inner">
+          <p class="site-footer__brand">Академия</p>
+
+          <nav class="site-footer__nav" aria-label="Навигация в подвале">
+            <a href="#">Статьи</a>
+            <a href="#">Категории</a>
+            <a href="#">Курсы</a>
+            <a href="#">Подборки</a>
+            <a href="#">ЕГЭ 2026</a>
+            <a href="#">ОГЭ</a>
+            <a href="#">Органика</a>
+            <a href="#">Неорганика</a>
+            <a href="#">Общая химия</a>
+            <a href="#">Разборы задач</a>
+            <a href="#">О проекте</a>
+            <a href="#">Автор</a>
+            <a href="#">Контакты</a>
+          </nav>
+
+          <div class="site-footer__copy">© 2026 Академия по химии</div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

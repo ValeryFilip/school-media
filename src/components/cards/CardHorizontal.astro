@@ -222,7 +222,7 @@ const categoryColor = category ? getCategoryHex(category) : "#366ef0"; /* --blue
                 type="button"
                 class="card__body-tag"
                 style={`color: ${categoryColor};`}
-                onclick={`event.stopPropagation(); window.location.href='${basePath}/${slugify(tag)}';`}
+                onclick={`event.stopPropagation(); window.location.href='${basePath}/${slugify(tag)}/';`}
               >
                 {tag}
               </button>

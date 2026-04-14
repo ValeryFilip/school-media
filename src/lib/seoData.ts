@@ -43,6 +43,43 @@ export function absUrl(origin: string, path?: string | null): string | undefined
   return `${origin}${path.startsWith("/") ? path : "/" + path}`;
 }
 
+export function ensurePathTrailingSlash(path?: string | null): string {
+  if (!path) return "/";
+  if (/^(https?:)?\/\//i.test(path)) {
+    try {
+      const parsed = new URL(path);
+      parsed.hash = "";
+      if (shouldKeepTrailingSlash(parsed.pathname)) {
+        parsed.pathname = addTrailingSlash(parsed.pathname);
+      }
+      return parsed.toString();
+    } catch {
+      return path;
+    }
+  }
+
+  const [pathnameWithQuery, hash = ""] = String(path).split("#", 2);
+  const [pathnameOnly, query = ""] = pathnameWithQuery.split("?", 2);
+  const normalizedPath = shouldKeepTrailingSlash(pathnameOnly)
+    ? addTrailingSlash(pathnameOnly)
+    : pathnameOnly || "/";
+  return `${normalizedPath}${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`;
+}
+
+export function pageUrlFromPath(origin: string, pathname: string): string {
+  return `${origin}${ensurePathTrailingSlash(pathname)}`;
+}
+
+function shouldKeepTrailingSlash(pathname: string): boolean {
+  if (!pathname || pathname === "/") return false;
+  return !/\.[a-z0-9]+$/i.test(pathname);
+}
+
+function addTrailingSlash(pathname: string): string {
+  if (!pathname || pathname === "/") return "/";
+  return pathname.endsWith("/") ? pathname : `${pathname}/`;
+}
+
 /**
  * Получает название сайта с единым fallback
  * Заменяет дублирующуюся логику из разных файлов
