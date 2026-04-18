@@ -1,0 +1,955 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import ReviewCard from "../components/reviews/ReviewCard.astro";
+import StepikCourse from "../components/reviews/StepikCourse.astro";
+import LeadCapture from "../components/mainpage/LeadCapture.astro";
+import MessengerContactsLite from "../components/mdx/MessengerContactsLite.astro";
+import { TUTORING_REVIEWS, STEPIK_COURSES } from "../data/reviews-page";
+
+const featured =
+  TUTORING_REVIEWS.find((r) => r.featured) ?? TUTORING_REVIEWS[0];
+const rest = TUTORING_REVIEWS.filter((r) => r.id !== featured.id).sort(
+  (a, b) => {
+    const aHasScore = a.after != null ? 1 : 0;
+    const bHasScore = b.after != null ? 1 : 0;
+    if (bHasScore !== aHasScore) return bHasScore - aHasScore;
+
+    const aHasScreens = a.hasScreens ? 1 : 0;
+    const bHasScreens = b.hasScreens ? 1 : 0;
+    if (bHasScreens !== aHasScreens) return bHasScreens - aHasScreens;
+
+    const aAfter = a.after ?? -1;
+    const bAfter = b.after ?? -1;
+    if (bAfter !== aAfter) return bAfter - aAfter;
+
+    const aDelta =
+      a.before != null && a.after != null ? a.after - a.before : -1;
+    const bDelta =
+      b.before != null && b.after != null ? b.after - b.before : -1;
+    if (bDelta !== aDelta) return bDelta - aDelta;
+
+    return a.id - b.id;
+  },
+);
+
+const reviewsWithScreens = TUTORING_REVIEWS.filter((r) => r.hasScreens);
+const reviewsWithScores = TUTORING_REVIEWS.filter(
+  (r) => r.before != null && r.after != null,
+);
+const screensModalData = reviewsWithScreens.map((r) => ({
+  id: r.id,
+  name: r.name,
+  screens: r.screens ?? 1,
+  images: r.screenImages ?? [],
+}));
+const totalStepikReviews = STEPIK_COURSES.reduce(
+  (sum, course) => sum + course.reviewsCount,
+  0,
+);
+const averageScoreGrowth = Math.round(
+  reviewsWithScores.reduce(
+    (sum, review) => sum + (review.after! - review.before!),
+    0,
+  ) / reviewsWithScores.length,
+);
+const stepikAverageRating = (
+  STEPIK_COURSES.reduce(
+    (sum, course) => sum + course.rating * course.reviewsCount,
+    0,
+  ) / totalStepikReviews
+).toFixed(1);
+const totalReviewCount = TUTORING_REVIEWS.length + totalStepikReviews;
+const pageUrl = Astro.url.href;
+
+const seo = {
+  title:
+    "Отзывы о подготовке к ЕГЭ и ОГЭ по химии — репетитор и курсы Stepik | ЕГЭХИМ",
+  description:
+    "Реальные отзывы учеников о репетиторстве, минигруппах и курсах Stepik по химии. Баллы до и после, скриншоты результатов и отзывы о подготовке к ЕГЭ и ОГЭ.",
+};
+
+const breadcrumbs = [
+  { name: "Главная", href: "/" },
+  { name: "Отзывы по химии" },
+];
+const reviewSchema = TUTORING_REVIEWS.map((review, index) => ({
+  "@type": "ListItem",
+  position: index + 1,
+  item: {
+    "@type": "Review",
+    author: {
+      "@type": "Person",
+      name: review.name,
+    },
+    reviewBody: review.text,
+    url: review.socialUrl || pageUrl,
+    itemReviewed: {
+      "@type": "Service",
+      name: "Подготовка к ЕГЭ и ОГЭ по химии",
+    },
+  },
+}));
+const stepikCourseSchema = {
+  "@type": "Course",
+  "@id": `${pageUrl}#stepik-courses`,
+  name: "Курсы Stepik по химии ЕГЭХИМ",
+  provider: {
+    "@type": "Person",
+    name: "Валерий Филипенко",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: stepikAverageRating,
+    reviewCount: totalStepikReviews,
+    bestRating: 5,
+    worstRating: 1,
+  },
+};
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${pageUrl}#webpage`,
+      url: pageUrl,
+      name: seo.title,
+      description: seo.description,
+      inLanguage: "ru-RU",
+      mainEntity: {
+        "@id": `${pageUrl}#reviews`,
+      },
+      about: [
+        { "@type": "Thing", name: "ЕГЭ по химии" },
+        { "@type": "Thing", name: "ОГЭ по химии" },
+        { "@type": "Thing", name: "Отзывы о репетиторе по химии" },
+        { "@type": "Thing", name: "Отзывы о курсах Stepik по химии" },
+      ],
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${Astro.url.origin}${featured.photo ?? "/images/mainpage/reviews/maks-photo.webp"}`,
+      },
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${pageUrl}#reviews`,
+      name: "Отзывы учеников о подготовке к ЕГЭ и ОГЭ по химии",
+      numberOfItems: TUTORING_REVIEWS.length,
+      itemListElement: reviewSchema,
+    },
+    stepikCourseSchema,
+  ],
+};
+---
+
+<MainLayout
+  title={seo.title}
+  description={seo.description}
+  image={featured.photo ?? "/images/mainpage/reviews/maks-photo.webp"}
+  imageAlt="Отзывы учеников о подготовке к ЕГЭ и ОГЭ по химии"
+  breadcrumbs={breadcrumbs}
+  webPageJsonLd={webPageJsonLd}
+>
+  <div class="rv-scope">
+    <!-- Hero -->
+    <section class="rv-hero-wrap" aria-labelledby="rv-hero-title">
+      <div class="container rv-hero">
+        <p class="rv-hero__kicker">
+          отзывы по химии · ЕГЭ, ОГЭ, Stepik · 2019—2026
+        </p>
+        <h1 class="rv-hero__title" id="rv-hero-title">
+          Отзывы о подготовке к <em>ЕГЭ и ОГЭ по химии</em>
+        </h1>
+        <p class="rv-hero__lede">
+          Реальные отзывы о репетиторстве, минигруппах и курсах Stepik по химии:
+          с баллами до и после, скриншотами результатов и ссылками на соцсети.
+        </p>
+        <div class="rv-hero__stats">
+          <div class="rv-hero__stat">
+            <strong>{stepikAverageRating}</strong>
+            <span>средний рейтинг курсов Stepik</span>
+          </div>
+          <div class="rv-hero__stat">
+            <strong>+{averageScoreGrowth}</strong>
+            <span>средний прирост по отзывам с баллами</span>
+          </div>
+          <div class="rv-hero__stat">
+            <strong>{totalReviewCount}</strong>
+            <span>отзывов на странице и в курсах Stepik</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fixed corner blobs (stay on scroll) -->
+    <div class="rv-blob rv-blob--tl" aria-hidden="true"></div>
+    <div class="rv-blob rv-blob--tr" aria-hidden="true"></div>
+    <div class="rv-blob rv-blob--bl" aria-hidden="true"></div>
+    <div class="rv-blob rv-blob--br" aria-hidden="true"></div>
+
+    <!-- Body with grid background -->
+    <div class="rv-body-bg">
+      <!-- Section 1 — Tutoring reviews -->
+      <section class="container rv-section" aria-labelledby="rv-s1-title">
+        <div class="rv-section__head">
+          <div>
+            <h2 class="rv-section__title" id="rv-s1-title">
+              Репетиторство <em>&amp;</em> минигруппы
+            </h2>
+            <p class="rv-section__sub">
+              Индивидуальные занятия и мини-группы до 4 человек. Подготовка к
+              ЕГЭ, ОГЭ и поступлению в медицинские вузы.
+            </p>
+          </div>
+          <div class="rv-section__meta">
+            <strong>{TUTORING_REVIEWS.length}</strong>
+            <span>отзывов</span>
+          </div>
+        </div>
+
+        <!-- Featured card -->
+        <div class="rv-featured-wrap">
+          <div class="rv-featured-badge" aria-label="История года">
+            история года
+          </div>
+          <ReviewCard review={featured} featured />
+        </div>
+
+        <!-- Masonry grid -->
+        <ul class="rv-masonry" aria-label="Отзывы учеников">
+          {
+            rest.map((r, i) => (
+              <li class="rv-masonry__item">
+                <ReviewCard
+                  review={r}
+                  colorIndex={((i % 4) + 1) as 1 | 2 | 3 | 4}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- CTA signup -->
+      <LeadCapture
+        id="reviews-lead"
+        title="Ищете проффессонального репетитора по химии ЕГЭ или ОГЭ?"
+        subtitle="Обратитесь к нам! Поможем с выбором формата занятий, составим план подготовки и подберём лучшего репетитора для достижения высоких баллов."
+        utmSource="reviews"
+      />
+
+      <!-- Section 2 — Stepik courses -->
+      <section class="container rv-section" aria-labelledby="rv-s2-title">
+        <div class="rv-section__head">
+          <div>
+            <h2 class="rv-section__title" id="rv-s2-title">
+              Самостоятельные курсы <em>на Stepik</em>
+            </h2>
+            <p class="rv-section__sub">
+              Онлайн-курсы в своём темпе. Все отзывы собраны со страниц курсов
+              прямо на платформе.
+            </p>
+          </div>
+          <div class="rv-section__meta">
+            <strong>{STEPIK_COURSES.length}</strong>
+            <span>курсов</span>
+          </div>
+        </div>
+
+        <div class="rv-courses">
+          {STEPIK_COURSES.map((c) => <StepikCourse course={c} />)}
+        </div>
+      </section>
+
+      <!-- Screens modal (dialog) -->
+      <dialog
+        class="rv-modal"
+        id="screens-modal"
+        aria-modal="true"
+        aria-label="Скриншоты"
+      >
+        <div class="rv-modal__box">
+          <div class="rv-modal__head">
+            <div class="rv-modal__title">
+              Скриншоты · <span id="modal-name"></span>
+              <span class="rv-modal__counter" id="modal-counter"></span>
+            </div>
+            <button
+              class="rv-modal__close"
+              id="modal-close"
+              aria-label="Закрыть">✕</button
+            >
+          </div>
+          <div class="rv-modal__stage">
+            <button
+              class="rv-modal__nav"
+              id="modal-prev"
+              aria-label="Предыдущий">‹</button
+            >
+            <div class="rv-modal__img">
+              <img id="modal-image" src="" alt="" />
+              <div class="rv-modal__img-label">
+                <strong id="modal-img-title"></strong>
+              </div>
+            </div>
+            <button class="rv-modal__nav" id="modal-next" aria-label="Следующий"
+              >›</button
+            >
+          </div>
+        </div>
+      </dialog>
+
+      <!-- Мессенджеры -->
+      <div class="container">
+        <MessengerContactsLite
+          title="Заинтресованы в высоких баллах по химии?"
+          subtitle="Ответим на вопросы и поможем выбрать подходящий формат занятий и курс!"
+        />
+      </div>
+    </div><!-- /.rv-body-bg -->
+  </div><!-- /.rv-scope -->
+</MainLayout>
+
+<script is:inline define:vars={{ screensModalData }}>
+  const modal = document.getElementById("screens-modal");
+  const modalName = document.getElementById("modal-name");
+  const modalCounter = document.getElementById("modal-counter");
+  const modalClose = document.getElementById("modal-close");
+  const modalPrev = document.getElementById("modal-prev");
+  const modalNext = document.getElementById("modal-next");
+  const modalImgTitle = document.getElementById("modal-img-title");
+  const modalImage = document.getElementById("modal-image");
+
+  let currentIdx = 0;
+  let currentScreens = 1;
+  let currentImages = [];
+
+  function updateModal() {
+    if (modalCounter)
+      modalCounter.textContent = `${currentIdx + 1} / ${currentScreens}`;
+    if (modalImgTitle)
+      modalImgTitle.textContent = `Скрин ${currentIdx + 1} — поступление / переписка`;
+    if (modalImage) {
+      modalImage.src = currentImages[currentIdx] ?? "";
+      modalImage.alt = `${modalName?.textContent ?? "Отзыв"} — скрин ${currentIdx + 1}`;
+    }
+  }
+
+  function openModal(reviewId) {
+    const review = screensModalData.find((r) => r.id === reviewId);
+    if (!review || !modal) return;
+    currentIdx = 0;
+    currentScreens = review.screens;
+    currentImages = review.images ?? [];
+    if (modalName) modalName.textContent = review.name;
+    updateModal();
+    modal.showModal();
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.close();
+    document.body.style.overflow = "";
+  }
+
+  // Open triggers
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-open-modal]");
+    if (!btn) return;
+    const id = Number(btn.dataset.reviewId);
+    if (id) openModal(id);
+  });
+
+  modalClose?.addEventListener("click", closeModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  modal?.addEventListener("cancel", closeModal);
+
+  modalPrev?.addEventListener("click", () => {
+    currentIdx = (currentIdx - 1 + currentScreens) % currentScreens;
+    updateModal();
+  });
+
+  modalNext?.addEventListener("click", () => {
+    currentIdx = (currentIdx + 1) % currentScreens;
+    updateModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!modal?.open) return;
+    if (e.key === "ArrowLeft") {
+      currentIdx = (currentIdx - 1 + currentScreens) % currentScreens;
+      updateModal();
+    }
+    if (e.key === "ArrowRight") {
+      currentIdx = (currentIdx + 1) % currentScreens;
+      updateModal();
+    }
+  });
+</script>
+
+<style is:global>
+  /* ============================================================
+     Токены new-global.css, изолированные внутри .rv-scope.
+     Не затрагивают другие страницы сайта.
+     ============================================================ */
+  .rv-scope {
+    /* Neutral */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+
+    /* Brand scale */
+    --brand-500: #366ef0;
+    --brand-50: color-mix(in oklab, var(--brand-500) 6%, white);
+    --brand-100: color-mix(in oklab, var(--brand-500) 14%, white);
+    --brand-200: color-mix(in oklab, var(--brand-500) 28%, white);
+    --brand-300: color-mix(in oklab, var(--brand-500) 45%, white);
+    --brand-400: color-mix(in oklab, var(--brand-500) 65%, white);
+    --brand-600: color-mix(in oklab, var(--brand-500) 90%, black);
+    --brand-700: color-mix(in oklab, var(--brand-500) 78%, black);
+
+    /* Accent scale */
+    --accent-500: #f09936;
+    --accent-50: color-mix(in oklab, var(--accent-500) 6%, white);
+    --accent-100: color-mix(in oklab, var(--accent-500) 14%, white);
+    --accent-200: color-mix(in oklab, var(--accent-500) 28%, white);
+    --accent-400: color-mix(in oklab, var(--accent-500) 65%, white);
+    --accent-600: color-mix(in oklab, var(--accent-500) 90%, black);
+    --accent-700: color-mix(in oklab, var(--accent-500) 78%, black);
+
+    /* Success scale */
+    --success-500: #10b981;
+    --success-50: color-mix(in oklab, var(--success-500) 6%, white);
+    --success-200: color-mix(in oklab, var(--success-500) 28%, white);
+
+    /* Semantic colors */
+    --color-brand: var(--brand-500);
+    --color-accent: var(--accent-500);
+    --color-success: var(--success-500);
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-elevated: #ffffff;
+    --color-text: var(--gray-900);
+    --color-text-secondary: var(--gray-600);
+    --color-text-muted: var(--gray-500);
+    --color-text-inverse: #ffffff;
+    --color-border: var(--gray-200);
+    --color-border-strong: var(--gray-300);
+    --color-brand-hover: var(--brand-600);
+    --color-accent-hover: var(--accent-600);
+    --color-overlay: color-mix(in srgb, var(--gray-900) 75%, transparent);
+    --color-focus-ring: color-mix(in srgb, var(--brand-500) 35%, transparent);
+
+    /* Gradients */
+    --gradient-brand-subtle: linear-gradient(
+      180deg,
+      var(--brand-50) 0%,
+      var(--gray-50) 100%
+    );
+    --gradient-brand-accent: linear-gradient(
+      120deg,
+      var(--brand-100) 0%,
+      var(--gray-50) 40%,
+      var(--accent-100) 100%
+    );
+
+    /* Typography */
+    --ff-sans: "Raleway", system-ui, -apple-system, sans-serif;
+    --ff-heading: var(--ff-sans);
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    --fs-11: 0.6875rem;
+    --fs-12: 0.75rem;
+    --fs-13: 0.8125rem;
+    --fs-14: 0.875rem;
+    --fs-15: 0.9375rem;
+    --fs-16: 1rem;
+    --fs-18: 1.125rem;
+    --fs-20: 1.25rem;
+    --fs-24: 1.5rem;
+    --fs-28: 1.75rem;
+    --fs-32: 2rem;
+    --fs-h1: clamp(2rem, 5vw, 3rem);
+    --fs-h2: clamp(1.625rem, 3.8vw, 2.5rem);
+    --fs-h3: clamp(1.25rem, 2.6vw, 1.75rem);
+    --fs-h4: clamp(1.125rem, 2vw, 1.375rem);
+
+    --lh-tight: 1.12;
+    --lh-snug: 1.22;
+    --lh-base: 1.6;
+    --lh-ui: 1.2;
+    --lh-caption: 1.45;
+
+    --ls-tight: -0.02em;
+    --ls-normal: 0;
+    --ls-wide: 0.02em;
+
+    /* Radii */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.5rem;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-1: 0 1px 10px 2px
+      color-mix(in srgb, var(--gray-900) 4%, transparent);
+    --shadow-2: 0 8px 22px color-mix(in srgb, var(--gray-900) 12%, transparent);
+    --shadow-3: 0 18px 50px color-mix(in srgb, var(--gray-900) 16%, transparent);
+    --shadow-inset: inset 0 1px 2px
+      color-mix(in srgb, var(--gray-900) 8%, transparent);
+
+    /* Spacing (дополняет lend.css) */
+    --space-4: 0.25rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-20: 1.25rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+    --space-40: 2.5rem;
+    --space-48: 3rem;
+    --space-64: 4rem;
+
+    /* Motion */
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dur-1: 150ms;
+    --dur-2: 220ms;
+
+    /* Inputs */
+    --color-bg-invert: var(--gray-900);
+  }
+</style>
+
+<style>
+  /* ===== Fixed blobs ===== */
+  .rv-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .rv-blob--tl {
+    width: 480px;
+    height: 380px;
+    top: -80px;
+    left: -100px;
+    background: radial-gradient(
+      ellipse,
+      rgba(54, 110, 240, 0.45) 0%,
+      transparent 70%
+    );
+  }
+  .rv-blob--tr {
+    width: 420px;
+    height: 340px;
+    top: -60px;
+    right: -100px;
+    background: radial-gradient(
+      ellipse,
+      rgba(100, 149, 255, 0.38) 0%,
+      transparent 70%
+    );
+  }
+  .rv-blob--bl {
+    width: 460px;
+    height: 360px;
+    bottom: -100px;
+    left: -80px;
+    background: radial-gradient(
+      ellipse,
+      rgba(130, 100, 255, 0.35) 0%,
+      transparent 70%
+    );
+  }
+  .rv-blob--br {
+    width: 440px;
+    height: 360px;
+    bottom: -80px;
+    right: -80px;
+    background: radial-gradient(
+      ellipse,
+      rgba(54, 110, 240, 0.4) 0%,
+      transparent 70%
+    );
+  }
+
+  /* ===== Grid background (reviews body only) ===== */
+  .rv-body-bg {
+    position: relative;
+    background-image:
+      linear-gradient(rgba(54, 110, 240, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54, 110, 240, 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* ===== Hero ===== */
+  .rv-hero-wrap {
+    background: var(--gradient-brand-subtle);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .rv-hero {
+    padding-top: var(--space-48);
+    padding-bottom: var(--space-64);
+  }
+
+  .rv-hero__kicker {
+    font-size: var(--fs-12);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-16);
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+  }
+  .rv-hero__kicker::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--color-text-muted);
+    flex: 0 0 auto;
+  }
+
+  .rv-hero__title {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-tight);
+    margin-bottom: var(--space-24);
+    color: var(--color-text);
+  }
+  .rv-hero__title em {
+    font-style: italic;
+    color: var(--color-brand);
+  }
+
+  .rv-hero__lede {
+    font-size: var(--fs-18);
+    color: var(--color-text-secondary);
+    max-width: 60ch;
+    margin-bottom: var(--space-32);
+    line-height: var(--lh-base);
+  }
+
+  .rv-hero__stats {
+    display: flex;
+    gap: var(--space-48);
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .rv-hero__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rv-hero__stat strong {
+    font-size: clamp(var(--fs-32), 4vw, 42px);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    color: var(--color-text);
+  }
+  .rv-hero__stat span {
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===== Section ===== */
+  .rv-section {
+    padding-top: var(--space-64);
+    padding-bottom: var(--space-64);
+  }
+
+  .rv-section__head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-32);
+    align-items: flex-start;
+    padding-bottom: var(--space-32);
+    margin-bottom: var(--space-48);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .rv-section__title {
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-tight);
+    margin-bottom: var(--space-16);
+    max-width: 22ch;
+  }
+  .rv-section__title em {
+    font-style: italic;
+    color: var(--color-brand);
+  }
+  .rv-section__sub {
+    color: var(--color-text-secondary);
+    max-width: 52ch;
+    margin: 0;
+    font-size: var(--fs-16);
+    line-height: var(--lh-base);
+  }
+  .rv-section__meta {
+    text-align: right;
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-end;
+  }
+  .rv-section__meta strong {
+    font-size: clamp(var(--fs-24), 3vw, 36px);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    color: var(--color-text);
+  }
+  .rv-section__meta span {
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===== Featured card ===== */
+  .rv-featured-wrap {
+    position: relative;
+    margin-bottom: var(--space-48);
+  }
+  .rv-featured-badge {
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    z-index: 2;
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .rv-featured-badge::before {
+    content: "★";
+    color: var(--color-accent);
+  }
+
+  /* ===== Masonry 2 columns ===== */
+  .rv-masonry {
+    columns: 2;
+    column-gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .rv-masonry > * {
+    break-inside: avoid;
+    padding-top: 18px;
+    margin-bottom: var(--space-24);
+    display: block;
+    width: 100%;
+  }
+
+  /* ===== Stepik courses list ===== */
+  .rv-courses {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-48);
+  }
+
+  /* ===== Screens modal ===== */
+  .rv-modal {
+    border: none;
+    border-radius: var(--radius-xl);
+    padding: 0;
+    background: transparent;
+    max-width: min(960px, 96vw);
+    width: 100%;
+    box-shadow: var(--shadow-3);
+  }
+  .rv-modal::backdrop {
+    background: var(--color-overlay);
+    backdrop-filter: blur(6px);
+  }
+
+  .rv-modal__box {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+  }
+
+  .rv-modal__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-12);
+  }
+  .rv-modal__title {
+    font-size: var(--fs-20);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+  }
+  .rv-modal__counter {
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+    margin-left: var(--space-12);
+    font-weight: var(--fw-medium);
+  }
+  .rv-modal__close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    border: 1px solid var(--color-border);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: var(--fs-16);
+    transition:
+      background var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease);
+    flex: 0 0 auto;
+  }
+  .rv-modal__close:hover {
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    border-color: var(--color-text);
+  }
+
+  .rv-modal__stage {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-16);
+    align-items: center;
+  }
+  .rv-modal__nav {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    border: none;
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-24);
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease);
+    flex: 0 0 auto;
+  }
+  .rv-modal__nav:hover {
+    background: var(--color-brand);
+  }
+
+  .rv-modal__img {
+    background: var(--gray-100);
+    border-radius: var(--radius-lg);
+    display: block;
+    position: relative;
+    overflow: auto;
+    max-height: min(75vh, 960px);
+  }
+  .rv-modal__img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: var(--gray-100);
+  }
+  .rv-modal__img-label {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    z-index: 1;
+    text-align: center;
+    font-size: var(--fs-12);
+    color: var(--color-text-secondary);
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: var(--radius-pill);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-1);
+  }
+  .rv-modal__img-label strong {
+    font-size: var(--fs-18);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px) {
+    .rv-hero__stats {
+      gap: var(--space-24);
+    }
+    .rv-section__head {
+      grid-template-columns: 1fr;
+      gap: var(--space-12);
+    }
+    .rv-section__meta {
+      text-align: left;
+      align-items: flex-start;
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .rv-hero {
+      padding-top: var(--space-32);
+      padding-bottom: var(--space-40);
+    }
+    .rv-hero__title {
+      font-size: var(--fs-h2);
+    }
+    .rv-hero__lede {
+      font-size: var(--fs-16);
+    }
+    .rv-hero__stats {
+      gap: var(--space-16);
+    }
+    .rv-section {
+      padding-top: var(--space-40);
+      padding-bottom: var(--space-40);
+    }
+    .rv-section__title {
+      font-size: var(--fs-h2);
+    }
+    .rv-masonry {
+      columns: 1;
+    }
+    .rv-modal__box {
+      padding: var(--space-24) var(--space-16);
+    }
+    .rv-modal__stage {
+      gap: var(--space-8);
+    }
+    .rv-modal__nav {
+      width: 36px;
+      height: 36px;
+      font-size: var(--fs-20);
+    }
+  }
+</style>

@@ -1,0 +1,374 @@
+---
+import type { StepikCourseData } from "../../data/reviews-page";
+
+interface Props {
+  course: StepikCourseData;
+}
+
+const { course } = Astro.props;
+
+const fullStars = Math.floor(course.rating);
+const hasHalf = course.rating - fullStars >= 0.5;
+const getReviewHref = (link: string) =>
+  link !== "#" ? link : (course.reviewsUrl ?? course.url);
+
+const accessLabel =
+  course.access === "free"
+    ? "бесплатный"
+    : course.access === "paid"
+      ? "платный"
+      : null;
+---
+
+<section class="sk-course">
+  <div class="sk-course__chips">
+    {accessLabel && (
+      <div class:list={["sk-course__access", `sk-course__access--${course.access}`]}>
+        {accessLabel}
+      </div>
+    )}
+    <div class="sk-course__badge">
+      <span class="sk-course__badge-dot" aria-hidden="true"></span>
+      stepik · курс
+    </div>
+  </div>
+
+  <div class="sk-course__head">
+    <div>
+      <h3 class="sk-course__title">{course.title}</h3>
+      <div class="sk-course__rating" aria-label={`Рейтинг ${course.rating} из 5`}>
+        <span class="sk-stars" aria-hidden="true">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              class:list={[
+                "sk-star",
+                i < fullStars
+                  ? "sk-star--full"
+                  : i === fullStars && hasHalf
+                    ? "sk-star--half"
+                    : "sk-star--empty",
+              ]}>★</span
+            >
+          ))}
+        </span>
+        <span class="sk-course__rating-num">{course.rating.toFixed(1)}</span>
+        <span class="sk-course__count">· {course.reviewsCount} отзывов</span>
+      </div>
+    </div>
+    <a class="sk-course__link" href={course.url} target="_blank" rel="noopener noreferrer">
+      Страница курса →
+    </a>
+  </div>
+
+  <div class="sk-course__reviews">
+    {course.reviews.map((rv, index) => (
+      <div class="sk-mini-review" data-expanded="false">
+        <div class="sk-mini-review__head">
+          <span class="sk-mini-review__nick">{rv.nick}</span>
+          <span class="sk-mini-stars" aria-label={`${rv.stars} звезд`}>
+            {Array.from({ length: rv.stars }).map(() => (
+              <span class="sk-star sk-star--full" aria-hidden="true">★</span>
+            ))}
+          </span>
+          <a
+            class="sk-mini-review__link"
+            href={getReviewHref(rv.link)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Открыть отзыв ${rv.nick}`}
+          >
+            отзыв →
+          </a>
+        </div>
+        <p class="sk-mini-review__text" id={`${course.id}-review-${index}`} data-review-text>
+          {rv.text}
+        </p>
+        <button
+          class="sk-mini-review__toggle"
+          type="button"
+          hidden
+          aria-expanded="false"
+          aria-controls={`${course.id}-review-${index}`}
+          data-review-toggle
+        >
+          читать далее
+        </button>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script is:inline>
+  if (!window.__stepikReviewClampInit) {
+    window.__stepikReviewClampInit = true;
+
+    const syncReviewCard = (card) => {
+      const text = card.querySelector("[data-review-text]");
+      const toggle = card.querySelector("[data-review-toggle]");
+      if (!text || !toggle) return;
+
+      const expanded = card.dataset.expanded === "true";
+      const overflowing = text.scrollHeight - text.clientHeight > 1;
+      toggle.hidden = expanded ? false : !overflowing;
+      toggle.textContent = expanded ? "свернуть" : "читать далее";
+      toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+    };
+
+    const setupReviewCards = () => {
+      document.querySelectorAll(".sk-mini-review").forEach((card) => {
+        const toggle = card.querySelector("[data-review-toggle]");
+        if (!toggle || toggle.dataset.bound === "true") {
+          syncReviewCard(card);
+          return;
+        }
+
+        toggle.dataset.bound = "true";
+        toggle.addEventListener("click", () => {
+          card.dataset.expanded =
+            card.dataset.expanded === "true" ? "false" : "true";
+          requestAnimationFrame(() => syncReviewCard(card));
+        });
+
+        requestAnimationFrame(() => syncReviewCard(card));
+      });
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", setupReviewCards, {
+        once: true,
+      });
+    } else {
+      setupReviewCards();
+    }
+
+    window.addEventListener(
+      "resize",
+      () => {
+        document
+          .querySelectorAll(".sk-mini-review")
+          .forEach((card) => syncReviewCard(card));
+      },
+      { passive: true },
+    );
+  }
+</script>
+
+<style>
+  .sk-course {
+    background: var(--color-surface);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: var(--space-48);
+    position: relative;
+  }
+
+  .sk-course__chips {
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sk-course__access {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+  }
+  .sk-course__access--free {
+    background: var(--success-100, #d1fae5);
+    color: var(--success-700, #065f46);
+  }
+  .sk-course__access--paid {
+    background: var(--accent-100, #fef3c7);
+    color: var(--accent-700, #92400e);
+  }
+
+  .sk-course__badge {
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sk-course__badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    flex: 0 0 auto;
+  }
+
+  .sk-course__head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-32);
+    align-items: center;
+    padding-bottom: var(--space-24);
+    margin-bottom: var(--space-24);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sk-course__title {
+    font-size: var(--fs-28);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-tight);
+    margin: 0 0 var(--space-12);
+    max-width: 24ch;
+  }
+
+  .sk-course__rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .sk-stars,
+  .sk-mini-stars {
+    display: inline-flex;
+    gap: 1px;
+    color: var(--color-accent);
+    font-size: var(--fs-16);
+  }
+  .sk-star--empty {
+    color: var(--color-border-strong);
+  }
+  .sk-star--half {
+    opacity: 0.5;
+  }
+  .sk-course__rating-num {
+    font-size: var(--fs-20);
+    font-weight: var(--fw-bold);
+  }
+  .sk-course__count {
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+  }
+
+  .sk-course__link {
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    padding: var(--space-12) var(--space-20);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    white-space: nowrap;
+    transition:
+      background var(--dur-1) var(--ease),
+      transform var(--dur-1) var(--ease);
+  }
+  .sk-course__link:hover {
+    background: var(--color-brand);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .sk-course__reviews {
+    columns: 2;
+    column-gap: var(--space-16);
+  }
+
+  .sk-mini-review {
+    padding: var(--space-24);
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    break-inside: avoid;
+    margin-bottom: var(--space-16);
+  }
+  .sk-mini-review__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    flex-wrap: wrap;
+  }
+  .sk-mini-review__nick {
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+  .sk-mini-stars {
+    font-size: var(--fs-13);
+  }
+  .sk-mini-review__link {
+    font-size: var(--fs-11);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px dashed currentColor;
+    transition: color var(--dur-1) var(--ease);
+  }
+  .sk-mini-review__link:hover {
+    color: var(--color-brand);
+    text-decoration: none;
+  }
+  .sk-mini-review__text {
+    margin: 0;
+    font-size: var(--fs-14);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+  }
+  .sk-mini-review[data-expanded="true"] .sk-mini-review__text {
+    display: block;
+    overflow: visible;
+  }
+  .sk-mini-review__toggle {
+    border: none;
+    background: none;
+    padding: 0;
+    color: var(--color-brand);
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+  .sk-mini-review__toggle:hover {
+    color: var(--color-brand-hover);
+  }
+
+  @media (max-width: 760px) {
+    .sk-course {
+      padding: var(--space-32) var(--space-24);
+    }
+    .sk-course__head {
+      grid-template-columns: 1fr;
+      gap: var(--space-16);
+    }
+    .sk-course__link {
+      align-self: flex-start;
+    }
+    .sk-course__reviews {
+      columns: 1;
+    }
+    .sk-course__title {
+      font-size: var(--fs-24);
+    }
+  }
+</style>

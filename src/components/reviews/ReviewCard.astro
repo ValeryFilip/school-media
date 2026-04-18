@@ -1,0 +1,482 @@
+---
+import type { TutoringReview } from "../../data/reviews-page";
+
+interface Props {
+  review: TutoringReview;
+  colorIndex?: 1 | 2 | 3 | 4;
+  featured?: boolean;
+}
+
+const { review: r, colorIndex = 1, featured = false } = Astro.props;
+
+const bgMap = {
+  1: "var(--color-surface)",
+  2: "var(--brand-50)",
+  3: "var(--accent-50)",
+  4: "var(--success-50)",
+} as const;
+
+const bg = featured ? "var(--gradient-brand-accent)" : bgMap[colorIndex];
+
+const initials = (r.name || "??")
+  .split(" ")
+  .map((s) => s.trim()[0])
+  .filter(Boolean)
+  .slice(0, 2)
+  .join("");
+
+const hasDelta = r.before != null && r.after != null;
+const delta = hasDelta ? r.after! - r.before! : 0;
+const examLabel = r.exam === "ОГЭ" ? "балла" : "баллов";
+const displayTag = r.tag;
+const displayExam = r.exam;
+
+const socialIconMap: Record<string, string> = {
+  tg: "/images/technical/telegram.webp",
+  vk: "/images/technical/vk.webp",
+};
+const socialIcon = socialIconMap[r.social] ?? null;
+const socialLabel =
+  r.social === "tg" ? "Telegram" : r.social === "vk" ? "ВКонтакте" : r.social;
+const screensCount = Math.min(r.screens || 1, 3);
+const screensLabel =
+  r.screens === 1
+    ? "Скриншот поступления"
+    : `${r.screens} скриншота — поступление и переписка`;
+---
+
+<article
+  class:list={["rv-card", { "rv-card--featured": featured }]}
+  style={`background: ${bg};`}
+  data-review-id={r.hasScreens ? r.id : undefined}
+  data-review-name={r.hasScreens ? r.name : undefined}
+  data-screens-count={r.hasScreens ? r.screens || 1 : undefined}
+>
+  <div class="rv-card__head">
+    <div class="rv-avatar" aria-hidden="true">
+      {
+        r.photo ? (
+          <img src={r.photo} alt="" loading="lazy" width="48" height="48" />
+        ) : (
+          initials
+        )
+      }
+    </div>
+    {
+      !featured && (displayTag || displayExam) && (
+        <div class="rv-card__chips">
+          {displayTag && (
+            <span
+              class:list={[
+                "rv-tag",
+                displayTag === "Репетиторство" ? "rv-tag--tutor" : "rv-tag--mini",
+              ]}
+            >
+              {displayTag === "Репетиторство" ? "индивид" : "минигруппа"}
+            </span>
+          )}
+          {displayExam && <span class="rv-tag rv-tag--exam">{displayExam}</span>}
+        </div>
+      )
+    }
+    <div class="rv-card__who">
+      <div class="rv-card__name">{r.name}</div>
+      {
+        r.socialUrl ? (
+          <a
+            class="rv-card__social"
+            href={r.socialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Написать в ${socialLabel}`}
+          >
+            {socialIcon && (
+              <img
+                class="rv-social-icon"
+                src={socialIcon}
+                alt=""
+                width="14"
+                height="14"
+                aria-hidden="true"
+              />
+            )}
+            написать
+          </a>
+        ) : (
+          <span class="rv-card__social rv-card__social--inactive">
+            {socialIcon && (
+              <img
+                class="rv-social-icon"
+                src={socialIcon}
+                alt=""
+                width="14"
+                height="14"
+                aria-hidden="true"
+              />
+            )}
+            {socialLabel}
+          </span>
+        )
+      }
+    </div>
+  </div>
+
+  <blockquote class="rv-card__quote">{r.text}</blockquote>
+
+  {
+    hasDelta && (
+      <div class="rv-score">
+        <div class="rv-score__cell rv-score__cell--dim">
+          <div class="rv-score__lbl">было</div>
+          <div class="rv-score__num">{r.before}</div>
+        </div>
+        <div class="rv-score__arrow" aria-hidden="true">
+          →
+        </div>
+        <div class="rv-score__cell rv-score__cell--hi">
+          <div class="rv-score__lbl">стало</div>
+          <div class="rv-score__num">{r.after}</div>
+        </div>
+        <div class="rv-score__exam">
+          {r.exam} · прирост +{delta} {examLabel}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    r.hasScreens && (
+      <button
+        class="rv-screens"
+        type="button"
+        data-open-modal
+        data-review-id={r.id}
+        aria-label={`Открыть скриншоты — ${r.name}`}
+      >
+        <div class="rv-screens__thumbs" aria-hidden="true">
+          {Array.from({ length: screensCount }).map(() => (
+            <div class="rv-screen-thumb" />
+          ))}
+        </div>
+        <span class="rv-screens__label">{screensLabel}</span>
+        <span class="rv-screens__arrow" aria-hidden="true">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 8h10M9 4l4 4-4 4"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+    )
+  }
+</article>
+
+<style>
+  .rv-card {
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    border: 1px solid var(--color-border);
+    position: relative;
+    overflow: visible;
+    transition:
+      transform var(--dur-2) var(--ease),
+      box-shadow var(--dur-2) var(--ease);
+  }
+  .rv-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+  .rv-card--featured {
+    padding: var(--space-48);
+    border: none;
+  }
+
+  .rv-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+  }
+
+  .rv-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-18);
+    font-weight: var(--fw-semibold);
+    flex: 0 0 auto;
+    outline: 1px solid var(--color-border);
+    box-shadow: inset 0 0 0 2px var(--color-elevated);
+    overflow: hidden;
+  }
+  .rv-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .rv-card__who {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rv-card__name {
+    font-size: var(--fs-18);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+  }
+  .rv-card__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--fs-12);
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+  a.rv-card__social:hover {
+    color: var(--color-brand);
+    text-decoration: none;
+  }
+  .rv-card__social--inactive {
+    cursor: default;
+  }
+  .rv-social-icon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    flex: 0 0 auto;
+    opacity: 0.75;
+  }
+  a.rv-card__social:hover .rv-social-icon {
+    opacity: 1;
+  }
+
+  .rv-tag {
+    font-size: var(--fs-11);
+    font-weight: var(--fw-semibold);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    line-height: 1;
+    box-shadow: var(--shadow-1);
+  }
+  .rv-card__chips {
+    display: inline-flex;
+    gap: 6px;
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    z-index: 2;
+  }
+  .rv-tag--tutor {
+    background: var(--brand-100, #dbeafe);
+    color: var(--brand-700, #1d4ed8);
+  }
+  .rv-tag--mini {
+    background: var(--accent-100, #fef3c7);
+    color: var(--accent-700, #92400e);
+  }
+  .rv-tag--exam {
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+  }
+  .rv-card--featured .rv-card__chips {
+    left: 156px;
+  }
+  .rv-card__quote {
+    font-size: var(--fs-18);
+    line-height: 1.5;
+    font-weight: var(--fw-medium);
+    margin: 0;
+    color: var(--color-text);
+    text-wrap: pretty;
+  }
+  .rv-card__quote::before {
+    content: '"';
+    font-size: 48px;
+    line-height: 1;
+    color: var(--color-brand);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: var(--fw-bold);
+  }
+  .rv-card--featured .rv-card__quote {
+    font-size: var(--fs-24);
+    line-height: 1.4;
+    max-width: none;
+  }
+
+  /* Score delta */
+  .rv-score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-12);
+    align-items: center;
+    margin-top: var(--space-24);
+    padding: var(--space-16);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+  .rv-score__cell {
+    text-align: center;
+  }
+  .rv-score__lbl {
+    font-size: var(--fs-11);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .rv-score__num {
+    font-size: var(--fs-32);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+  }
+  .rv-score__cell--dim .rv-score__num {
+    color: var(--color-text-muted);
+  }
+  .rv-score__cell--hi .rv-score__num {
+    color: var(--color-brand);
+    font-size: calc(var(--fs-32) + 10px);
+  }
+  .rv-score__arrow {
+    color: var(--color-brand);
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-14);
+  }
+  .rv-score__exam {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: var(--fs-11);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--color-border);
+  }
+
+  /* Screens row */
+  .rv-screens {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    margin-top: var(--space-24);
+    padding: var(--space-12);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font: inherit;
+    transition: border-color var(--dur-2) var(--ease);
+  }
+  .rv-screens:hover {
+    border-color: var(--color-brand);
+  }
+  .rv-screens__thumbs {
+    display: flex;
+  }
+  .rv-screen-thumb {
+    width: 36px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--gray-100);
+    border: 2px solid var(--color-surface);
+    margin-left: -10px;
+    background-image: linear-gradient(
+      135deg,
+      transparent 40%,
+      rgba(0, 0, 0, 0.04) 40% 45%,
+      transparent 45% 55%,
+      rgba(0, 0, 0, 0.04) 55% 60%,
+      transparent 60%
+    );
+    flex: 0 0 auto;
+  }
+  .rv-screen-thumb:first-child {
+    margin-left: 0;
+  }
+  .rv-screens__label {
+    font-size: var(--fs-14);
+    color: var(--color-text-secondary);
+    flex: 1;
+  }
+  .rv-screens__arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-16);
+    flex: 0 0 auto;
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 600px) {
+    .rv-card {
+      padding: var(--space-20);
+    }
+    .rv-card--featured {
+      padding: var(--space-24);
+    }
+    .rv-card__chips {
+      left: 16px;
+    }
+    .rv-card--featured .rv-card__chips {
+      left: 132px;
+    }
+    .rv-card__quote {
+      font-size: var(--fs-16);
+    }
+    .rv-card--featured .rv-card__quote {
+      font-size: var(--fs-18);
+    }
+    .rv-score {
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-8);
+      padding: var(--space-12);
+    }
+    .rv-score__num {
+      font-size: var(--fs-24);
+    }
+    .rv-screens {
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      padding: var(--space-8);
+    }
+    .rv-screens__label {
+      font-size: var(--fs-12);
+      min-width: 0;
+      word-break: break-word;
+    }
+    .rv-screen-thumb {
+      width: 28px;
+      height: 36px;
+    }
+  }
+</style>
