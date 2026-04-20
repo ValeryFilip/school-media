@@ -76,17 +76,14 @@ const reviewSchema = TUTORING_REVIEWS.map((review, index) => ({
   "@type": "ListItem",
   position: index + 1,
   item: {
-    "@type": "Review",
+    "@type": "CreativeWork",
+    name: `Отзыв ученика: ${review.name}`,
     author: {
       "@type": "Person",
       name: review.name,
     },
-    reviewBody: review.text,
+    text: review.text,
     url: review.socialUrl || pageUrl,
-    itemReviewed: {
-      "@type": "Service",
-      name: "Подготовка к ЕГЭ и ОГЭ по химии",
-    },
   },
 }));
 const stepikCourseSchema = {

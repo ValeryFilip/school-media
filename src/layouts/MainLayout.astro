@@ -53,6 +53,7 @@ interface Props {
   productJsonLd?: any;
   faqJsonLd?: any;
   webPageJsonLd?: any;
+  showFooter?: boolean;
 }
 const {
   title,
@@ -83,6 +84,7 @@ const {
   productJsonLd,
   faqJsonLd,
   webPageJsonLd,
+  showFooter = true,
 } = Astro.props as Props;
 
 const inAcademy = Astro.url.pathname.startsWith("/academy");
@@ -211,7 +213,7 @@ const breadcrumbsJsonLd =
       <slot />
     </main>
 
-    <SiteFooter pageUtmSource={pageUtmSource} />
+    {showFooter && <SiteFooter pageUtmSource={pageUtmSource} />}
 
     <PopupForm popupId="lead-popup" />
 
