@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero Concept</title>
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero__shell">
+        <div class="hero__grid">
+          <article class="hero-card hero-card--main">
+            <div class="hero-card__inner">
+              <div class="hero-card__eyebrow">
+                <span class="hero-pill hero-pill--accent">ЕГЭХИМ</span>
+                <span class="hero-pill">подготовка к ЕГЭ и ОГЭ</span>
+                <span class="hero-pill">10 лет опыта</span>
+              </div>
+
+              <div class="hero-card__copy">
+                <p class="hero-card__label">Онлайн-школа химии Валерия Филипенко</p>
+                <h1>
+                  Понятная химия,
+                  <span>сильная база</span>
+                  и подготовка к экзамену без хаоса
+                </h1>
+                <p class="hero-card__lead">
+                  Помогаем школьникам закрыть пробелы, выстроить систему и выйти
+                  на уверенный результат через живые объяснения, много практики и
+                  маршрут подготовки без перегруза.
+                </p>
+
+                <div class="hero-card__actions">
+                  <a class="hero-button hero-button--primary" href="/allcourses/">
+                    Выбрать курс
+                  </a>
+                  <a class="hero-button hero-button--ghost" href="/academy/">
+                    Открыть академию
+                  </a>
+                </div>
+              </div>
+
+              <div class="hero-card__stats">
+                <div class="hero-stat">
+                  <strong>2000+</strong>
+                  <span>учеников прошли наши курсы</span>
+                </div>
+                <div class="hero-stat">
+                  <strong>80+</strong>
+                  <span>баллов берут ученики при системной подготовке</span>
+                </div>
+                <div class="hero-stat">
+                  <strong>5★</strong>
+                  <span>оценки и отзывы о курсах на Stepik</span>
+                </div>
+              </div>
+
+              <div class="hero-card__notes">
+                <div class="hero-note hero-note--top">
+                  <span class="hero-note__kicker">Формат</span>
+                  <strong>Мини-группы, самостоятельные курсы, база с нуля</strong>
+                </div>
+                <div class="hero-note hero-note--bottom">
+                  <span class="hero-note__kicker">Подход</span>
+                  <strong>Не зубрёжка, а понимание тем и уверенная практика</strong>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="hero-card hero-card--bottom-left">
+            <div class="hero-strip">
+              <div class="hero-strip__intro">
+                <p class="hero-strip__label">Что получает ученик</p>
+                <h2>Всё, чтобы спокойно собрать результат по химии</h2>
+              </div>
+
+              <div class="hero-strip__items">
+                <div class="hero-feature">
+                  <strong>Структура</strong>
+                  <span>Пошаговый план без скачков между темами и задачами.</span>
+                </div>
+                <div class="hero-feature">
+                  <strong>Практика</strong>
+                  <span>Разборы, цепочки, тесты и отработка заданий ЕГЭ.</span>
+                </div>
+                <div class="hero-feature">
+                  <strong>Поддержка</strong>
+                  <span>Обратная связь, ответы на вопросы и контроль прогресса.</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <aside class="hero-card hero-card--last">
+            <div class="hero-score">
+              <p class="hero-score__label">Цель</p>
+              <div class="hero-score__value">80+</div>
+              <p class="hero-score__text">
+                выйти на уверенный балл и перестать теряться в сложных темах
+              </p>
+              <a class="hero-score__link" href="/refer/">Отзывы и результаты</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light;
+    --hero-bg: #f4f7fb;
+    --hero-card: #ffffff;
+    --hero-text: #10233f;
+    --hero-muted: #5f6f86;
+    --hero-line: rgba(16, 35, 63, 0.1);
+    --hero-blue: #1a73ff;
+    --hero-blue-deep: #0d57cf;
+    --hero-cyan: #74d5ff;
+    --hero-green: #dff5e8;
+    --hero-shadow: 0 28px 80px rgba(16, 35, 63, 0.12);
+    --hero-radius: 28px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(116, 213, 255, 0.4), transparent 28%),
+      linear-gradient(180deg, #eef4fb 0%, #f8fbff 100%);
+    color: var(--hero-text);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .hero {
+    padding: 56px 20px;
+  }
+
+  .hero__shell {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(110px, auto));
+    gap: 20px;
+  }
+
+  .hero-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--hero-radius);
+    background: var(--hero-card);
+    box-shadow: var(--hero-shadow);
+  }
+
+  .hero-card--main {
+    grid-column: 1 / 7;
+    grid-row: 1 / 4;
+    min-height: 560px;
+    background:
+      radial-gradient(circle at 82% 20%, rgba(116, 213, 255, 0.35), transparent 19%),
+      radial-gradient(circle at 70% 80%, rgba(26, 115, 255, 0.12), transparent 24%),
+      linear-gradient(135deg, #ffffff 0%, #f6faff 100%);
+  }
+
+  .hero-card--main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, transparent 0 56%, rgba(26, 115, 255, 0.05) 56% 100%);
+    pointer-events: none;
+  }
+
+  .hero-card__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
+    gap: 28px;
+    height: 100%;
+    padding: 32px;
+  }
+
+  .hero-card__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    grid-column: 1 / -1;
+    align-self: start;
+  }
+
+  .hero-pill {
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--hero-line);
+    background: rgba(255, 255, 255, 0.78);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-pill--accent {
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--hero-blue), var(--hero-cyan));
+    color: #ffffff;
+  }
+
+  .hero-card__copy {
+    align-self: center;
+    max-width: 640px;
+  }
+
+  .hero-card__label,
+  .hero-strip__label,
+  .hero-score__label,
+  .hero-note__kicker {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero-card__label,
+  .hero-strip__label {
+    color: var(--hero-blue);
+  }
+
+  .hero-card h1 {
+    margin: 0;
+    max-width: 11ch;
+    font-size: clamp(42px, 5vw, 74px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-card h1 span {
+    display: inline-block;
+    color: var(--hero-blue);
+  }
+
+  .hero-card__lead {
+    margin: 24px 0 0;
+    max-width: 58ch;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--hero-muted);
+  }
+
+  .hero-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .hero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 22px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .hero-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .hero-button--primary {
+    background: linear-gradient(135deg, var(--hero-blue), var(--hero-blue-deep));
+    color: #ffffff;
+    box-shadow: 0 16px 36px rgba(26, 115, 255, 0.28);
+  }
+
+  .hero-button--ghost {
+    border: 1px solid var(--hero-line);
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--hero-text);
+  }
+
+  .hero-card__stats {
+    display: grid;
+    gap: 14px;
+    align-self: end;
+  }
+
+  .hero-stat {
+    padding: 18px 20px;
+    border: 1px solid var(--hero-line);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.84);
+    backdrop-filter: blur(12px);
+  }
+
+  .hero-stat strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-stat span {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--hero-muted);
+  }
+
+  .hero-card__notes {
+    pointer-events: none;
+  }
+
+  .hero-note {
+    position: absolute;
+    max-width: 260px;
+    padding: 18px 20px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(11, 29, 56, 0.92);
+    color: #ffffff;
+    box-shadow: 0 20px 44px rgba(16, 35, 63, 0.18);
+  }
+
+  .hero-note strong {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .hero-note__kicker {
+    color: var(--hero-cyan);
+  }
+
+  .hero-note--top {
+    top: 132px;
+    right: 34px;
+  }
+
+  .hero-note--bottom {
+    right: 214px;
+    bottom: 34px;
+  }
+
+  .hero-card--bottom-left {
+    grid-column: 1 / 6;
+    grid-row: 4;
+    margin-top: -20px;
+    background:
+      linear-gradient(135deg, rgba(223, 245, 232, 0.86), rgba(255, 255, 255, 0.98));
+  }
+
+  .hero-strip {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.95fr) minmax(0, 2fr);
+    gap: 24px;
+    align-items: center;
+    min-height: 148px;
+    padding: 28px 30px;
+  }
+
+  .hero-strip__intro h2 {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-strip__items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .hero-feature {
+    min-height: 92px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(16, 35, 63, 0.08);
+  }
+
+  .hero-feature strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+
+  .hero-feature span {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--hero-muted);
+  }
+
+  .hero-card--last {
+    grid-column: 6;
+    grid-row: 4;
+    background:
+      radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 38%),
+      linear-gradient(180deg, #1991ff 0%, #0d5fd6 100%);
+    color: #ffffff;
+  }
+
+  .hero-score {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding: 24px 22px;
+  }
+
+  .hero-score__label {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .hero-score__value {
+    font-size: clamp(42px, 4vw, 64px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-score__text {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .hero-score__link {
+    margin-top: 18px;
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 1080px) {
+    .hero-card__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-card__copy {
+      max-width: none;
+    }
+
+    .hero-card h1 {
+      max-width: none;
+    }
+
+    .hero-card__stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-self: start;
+    }
+
+    .hero-card__notes {
+      display: none;
+    }
+
+    .hero-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .hero {
+      padding: 28px 14px;
+    }
+
+    .hero__grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .hero-card--main,
+    .hero-card--bottom-left,
+    .hero-card--last {
+      grid-column: auto;
+      grid-row: auto;
+      margin-top: 0;
+    }
+
+    .hero-card--main {
+      min-height: auto;
+    }
+
+    .hero-card__inner {
+      padding: 24px;
+    }
+
+    .hero-card__stats,
+    .hero-strip__items {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
