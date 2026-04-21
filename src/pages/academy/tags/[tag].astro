@@ -4,8 +4,9 @@ import MainLayout from "../../../layouts/MainLayout.astro";
 import config from "../../../config.ts";
 import { getCollection } from "astro:content";
 import CardNew from "../../../components/cards/cardNew.astro";
-import CardHorizontal from "../../../components/cards/CardHorizontal.astro";
 import Pagination from "../../../components/Pagination.astro";
+import UnifiedMenu from "../../../components/UnifiedMenu.astro";
+import LeadCapture from "../../../components/mainpage/LeadCapture.astro";
 import { slugify } from "../../../lib/slugify";
 
 export async function getStaticPaths() {
@@ -57,21 +58,25 @@ const posts = all
     (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime(),
   );
 
-// Левая колонка - основные статьи
-const leftCards = posts;
+// Все теги сайта (топ по количеству)
+const allTagCounts = all
+  .flatMap((p) => (Array.isArray(p.data.tags) ? p.data.tags : []))
+  .reduce<Record<string, number>>((acc, t) => {
+    acc[t] = (acc[t] || 0) + 1;
+    return acc;
+  }, {});
+const allTags = Object.entries(allTagCounts)
+  .sort((a, b) => b[1] - a[1])
+  .map(([tag]) => tag);
 
-// Правая колонка - случайные 5 статей
-const shuffled = [...posts].sort(() => Math.random() - 0.5);
-const rightCards = shuffled.slice(0, 5);
-
-// Пагинация для левой колонки
-const PER_PAGE = 6;
+// Пагинация
+const PER_PAGE = 8;
 const currentPage = Math.max(
   1,
   Number(Astro.url.searchParams.get("page") || "1"),
 );
-const totalPages = Math.max(1, Math.ceil(leftCards.length / PER_PAGE));
-const pagedLeftCards = leftCards.slice(
+const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+const pagedCards = posts.slice(
   (currentPage - 1) * PER_PAGE,
   currentPage * PER_PAGE,
 );
@@ -83,12 +88,9 @@ function humanizeTag(t: string): string {
 }
 const pageTitle = humanizeTag(originalTag);
 const seoTitle = `Все статьи по тегу «${pageTitle}» — Академия ЕГЭХИМ`;
-const pageDesc = `Подборка статей по тегу «${pageTitle}»: разборы, полезные материалы и практические советы по теме.`;
+const pageDesc = `Подборка статей по теме «${pageTitle}»: разборы, полезные материалы и практические советы.`;
 const pageUrl = `${siteUrl}/academy/tags/${encodeURIComponent(slug)}/`;
-
 const breadcrumbs = [{ name: pageTitle, href: pageUrl }];
-
-// Для отображения количества статей
 const totalArticles = posts.length;
 ---
 
@@ -105,108 +107,439 @@ const totalArticles = posts.length;
     ? `${pageUrl}?page=${currentPage + 1}`
     : undefined}
   breadcrumbs={breadcrumbs}
+  showBreadcrumbs={false}
+  showNav={false}
 >
-  <main class="main container" aria-labelledby="tag-title">
-    <section class="header" role="region" aria-labelledby="tag-title">
-      <div class="header__wrapper">
-        <h1 id="tag-title" class="header__title" data-count={totalArticles}>
-          {pageTitle}
-        </h1>
-        <p class="header__description">{pageDesc}</p>
-      </div>
-    </section>
+  <div class="dark-wrap">
 
-    <section class="main-cards">
-      <div class="left-block__grid" id="grid-initial">
-        {
-          pagedLeftCards.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))
-        }
+    <!-- HERO -->
+    <section class="tag-hero" aria-labelledby="tag-title">
+      <div class="tag-hero__menu">
+        <UnifiedMenu
+          context="media"
+          logoSrc="/images/technical/egehim(academy).webp"
+          logoAlt="ЕГЭХИМ — академия"
+          ctaHref="/allcourses/"
+          pageUtmSource="academy"
+        />
       </div>
 
-      <div class="popular" role="region" aria-labelledby="tag-popular-title">
-        <h2 id="tag-popular-title" class="popular__title">Популярное</h2>
-        <div class="popular__cards">
-          {
-            rightCards.map((post) => (
-              <CardHorizontal post={post} basePath="/academy" />
-            ))
-          }
+      <nav class="hero-breadcrumbs container" aria-label="Breadcrumb">
+        <ol class="hero-breadcrumbs__list">
+          <li class="hero-breadcrumbs__item">
+            <a href="/academy/" class="hero-breadcrumbs__link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="Главная" class="hero-breadcrumbs__home-icon">
+                <path fill="currentColor" d="M12 3l9 8h-3v9h-4v-6H10v6H6v-9H3z" />
+              </svg>
+            </a>
+          </li>
+          <li class="hero-breadcrumbs__item">
+            <a href="/academy/" class="hero-breadcrumbs__link">Академия</a>
+          </li>
+          <li class="hero-breadcrumbs__item hero-breadcrumbs__item--current" aria-current="page">
+            #{pageTitle}
+          </li>
+        </ol>
+      </nav>
+
+      <div class="tag-hero__bento container">
+        <!-- ЛЕВАЯ КОЛОНКА: название тега -->
+        <div class="bento-tile bento-tile--main">
+          <span class="bento-badge">Тег · {totalArticles} материалов</span>
+          <h1 id="tag-title" class="bento-title">#{pageTitle}</h1>
+          <p class="bento-desc">{pageDesc}</p>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: все теги -->
+        <div class="bento-tile bento-tile--tags">
+          <span class="bento-tile__label">Все теги академии</span>
+          <ul class="btags__list">
+            {allTags.map((tag) => (
+              <li>
+                <a
+                  href={`/academy/tags/${slugify(tag)}/`}
+                  class:list={["btag", slugify(tag) === slug && "btag--active"]}
+                >
+                  {tag}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
 
-    {/* Шаблоны карточек для клиентской пагинации */}
-    {
-      leftCards.map((post) => (
-        <template id={`tmpl-${post.slug}`}>
-          <div class="ad-media__card">
-            <CardNew post={post} basePath="/academy" />
-          </div>
-        </template>
-      ))
-    }
+    <!-- СТАТЬИ -->
+    <section class="main-cards" role="region" aria-labelledby="articles-heading">
+      <div class="main-cards__inner container">
+        <h2 id="articles-heading" class="main-cards__heading">
+          Статьи по теме <span>«{pageTitle}»</span>
+        </h2>
+        <div class="cards-grid" id="grid-initial">
+          {pagedCards.map((post) => (
+            <div class="ad-media__card">
+              <CardNew post={post} basePath="/academy" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pathname={Astro.url.pathname}
+        perPage={PER_PAGE}
+      />
+    </section>
 
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      pathname={Astro.url.pathname}
-      perPage={PER_PAGE}
+  </div>
+
+  <div class="lead-wrap">
+    <LeadCapture
+      imageSrc="/images/girl-lead1.webp"
+      imageAlt="Ученица на уроке"
+      title="Начни подготовку с пробного бесплатного занятия"
+      subtitle="Ответим на вопросы, расскажем про форматы и цены"
+      showSteps={true}
+      stepsText={["Познакомим с онлайн-школой", "Расскажем, как проходят занятия", "Запишем на бесплатный урок"]}
+      formAction="https://script.google.com/macros/s/AKfycbzTaPkWHfzh1LI3igio8RXqNgX4DcIuWIiDHEMM_5qo5huDfu_TuNv8VcBnlQ0yVi5A/exec"
+      utmSource="academy"
+      utmMedium="tag-page"
+      utmCampaign={slug}
     />
-  </main>
+  </div>
+
+  {posts.map((post) => (
+    <template id={`tmpl-${post.slug}`}>
+      <div class="ad-media__card">
+        <CardNew post={post} basePath="/academy" />
+      </div>
+    </template>
+  ))}
 </MainLayout>
 
 <style>
-  .header__wrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    margin-bottom: 60px;
+  /* ============================================================
+     ФОН СТРАНИЦЫ
+  ============================================================ */
+  :global(body.academy-page) {
+    background-color: #eef2ff;
+    background-image:
+      linear-gradient(rgba(54, 110, 240, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54, 110, 240, 0.05) 1px, transparent 1px),
+      radial-gradient(ellipse 60% 40% at 15% 72%, rgba(54, 110, 240, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 88% 85%, rgba(130, 100, 255, 0.08) 0%, transparent 65%),
+      linear-gradient(165deg, #eef2ff 0%, #f7faff 40%, #ffffff 65%, #f0f5ff 85%, #edf4ff 100%);
+    background-size: 44px 44px, 44px 44px, 100% 100%, 100% 100%, 100% 100%;
   }
-  .header__wrapper p {
+
+  :global(body.academy-page .page-stack) {
+    row-gap: 0;
+  }
+
+  .lead-wrap {
+    padding-block: 48px 56px;
+  }
+
+  /* ============================================================
+     ТЁМНАЯ ОБЁРТКА
+  ============================================================ */
+  .dark-wrap {
+    border-radius: 24px;
+    overflow: clip;
+    background-color: #0d1117;
+    background-image:
+      radial-gradient(circle, rgba(246, 253, 255, 0.08) 1px, transparent 1px),
+      radial-gradient(ellipse 55% 50% at 5% 5%,  rgba(54, 110, 240, 0.28) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 95% 95%, rgba(100, 149, 255, 0.18) 0%, transparent 65%);
+    background-size: 30px 30px, 100% 100%, 100% 100%;
+  }
+
+  /* ============================================================
+     HERO
+  ============================================================ */
+  .tag-hero {
+    position: relative;
+    padding-bottom: 48px;
+  }
+
+  .tag-hero__menu {
+    position: relative;
+    z-index: 10;
+  }
+
+  .tag-hero__menu :global(header) {
+    margin-bottom: 20px;
+  }
+
+  .tag-hero__menu :global(.menu__wrapper) {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .tag-hero__menu :global(.menu__link),
+  .tag-hero__menu :global(.menu__summary),
+  .tag-hero__menu :global(.call-to-us) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .tag-hero__menu :global(.menu__list > li:hover) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .tag-hero__menu :global(.menu__social-img) {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .tag-hero__menu :global(.burger) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+
+  .tag-hero__menu :global(.menu__logo-img),
+  .tag-hero__menu :global(.mnav__logo-img) {
+    filter: brightness(0) invert(1);
+  }
+
+  /* Breadcrumbs */
+  .hero-breadcrumbs {
+    position: relative;
+    z-index: 2;
+    padding-top: 0;
+    padding-bottom: 18px;
+  }
+
+  .hero-breadcrumbs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .hero-breadcrumbs__item::after {
+    content: "›";
+    margin-left: 6px;
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .hero-breadcrumbs__item:last-child::after { content: ""; }
+
+  .hero-breadcrumbs__item--current {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .hero-breadcrumbs__link {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .hero-breadcrumbs__link:hover {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .hero-breadcrumbs__home-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Bento grid */
+  .tag-hero__bento {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* Плитки */
+  .bento-tile {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    isolation: isolate;
+  }
+
+  .bento-tile--main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 260px;
+  }
+
+  .bento-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid rgba(54, 110, 240, 0.5);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7ba8ff;
+    margin-bottom: 20px;
+    width: fit-content;
+    background: rgba(54, 110, 240, 0.12);
+  }
+
+  .bento-title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+  }
+
+  .bento-desc {
+    font-size: clamp(13px, 1.2vw, 15px);
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
     margin: 0;
   }
-  .header__title::after {
-    content: attr(data-count);
-    margin-left: 8px;
-    color: var(--gray);
+
+  /* Плитка с тегами */
+  .bento-tile--tags {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .bento-tile__label {
+    font-size: 11px;
     font-weight: 700;
-    font-size: 32px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
   }
+
+  .btags__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btag {
+    display: inline-block;
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+
+  .btag:hover {
+    background: var(--blue, #366ef0);
+    border-color: var(--blue, #366ef0);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btag--active {
+    background: var(--blue, #366ef0);
+    border-color: var(--blue, #366ef0);
+    color: #fff;
+  }
+
+  /* ============================================================
+     СТАТЬИ
+  ============================================================ */
   .main-cards {
-    display: grid;
-    grid-template-columns: 1fr 0.3fr;
-    gap: 30px;
-    align-items: start;
+    padding-block: 56px;
+    position: relative;
   }
-  .left-block__grid {
+
+  .main-cards__heading {
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 28px;
+  }
+
+  .main-cards__heading span {
+    color: #7ba8ff;
+  }
+
+  .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
+
   .ad-media__card {
     display: flex;
     align-items: flex-start;
   }
-  .popular__title {
-    font-size: 32px;
+
+  /* Пагинация */
+  :global(.main-cards .pager__link) {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    min-width: unset;
+    padding: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
     font-weight: 700;
-    line-height: 1.2;
-    margin: 0;
-    margin-bottom: 20px;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   }
 
-  .popular__cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
+  :global(.main-cards .pager__link:hover) {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
   }
 
-  @media (max-width: 1100px) {
-    .main-cards {
+  :global(.main-cards .pager__link.is-active) {
+    background: var(--blue, #366ef0);
+    border-color: var(--blue, #366ef0);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(54, 110, 240, 0.4);
+  }
+
+  /* ============================================================
+     АДАПТИВ
+  ============================================================ */
+  @media (max-width: 700px) {
+    .tag-hero__bento {
       grid-template-columns: 1fr;
+    }
+
+    .bento-tile--main {
+      min-height: unset;
     }
   }
 </style>
