@@ -84,7 +84,7 @@ export const STEPIK_COURSES: StepikCourseData[] = [
     title: 'Химия ЕГЭ 2026. Общая химия с нуля до 80+',
     rating: 5,
     reviewsCount: 14,
-    url: '/obschaya',
+    url: '/obschaya/',
     reviewsUrl: 'https://stepik.org/course/117953/reviews',
     access: 'paid',
     reviews: [
@@ -109,7 +109,7 @@ export const STEPIK_COURSES: StepikCourseData[] = [
     title: 'Химия ЕГЭ 2026. Органическая химия с нуля до 80+',
     rating: 5,
     reviewsCount: 8,
-    url: '/organika',
+    url: '/organika/',
     reviewsUrl: 'https://stepik.org/course/196367/reviews',
     access: 'paid',
     reviews: [
@@ -146,7 +146,7 @@ export const STEPIK_COURSES: StepikCourseData[] = [
     title: 'Химия ЕГЭ 2026. Вся неорганическая химия с нуля до 80+',
     rating: 4.9,
     reviewsCount: 15,
-    url: '/neorganika',
+    url: '/neorganika/',
     reviewsUrl: 'https://stepik.org/course/134777/reviews',
     access: 'paid',
     reviews: [
