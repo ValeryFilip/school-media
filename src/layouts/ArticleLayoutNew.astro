@@ -961,6 +961,10 @@ function getArticleHref(post: CollectionEntry<"articles">) {
 
   /* Планшеты */
   @media (max-width: 1100px) {
+    .article__section {
+      padding-inline: 0;
+    }
+
     .article__wrapper {
       grid-template-columns: 1fr;
     }
@@ -1001,6 +1005,10 @@ function getArticleHref(post: CollectionEntry<"articles">) {
 
   /* Мобилки */
   @media (max-width: 600px) {
+    .article__section {
+      padding-inline: 0;
+    }
+
     .article__wrapper {
       grid-template-columns: 1fr;
     }
