@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Все курсы — ЕГЭХИМ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Raleway", system-ui, sans-serif; background: #f8f9fb; color: #111827; }
+
+    /* ===================== TOKENS ===================== */
+    :root {
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb;
+      --gray-300:#d1d5db; --gray-400:#9ca3af; --gray-500:#6b7280;
+      --gray-600:#4b5563; --gray-700:#374151; --gray-800:#1f2937; --gray-900:#111827;
+      --brand:   #366ef0;  --brand-50:#eff4fe;  --brand-100:#dce8fd;
+      --brand-200:#bad1fb; --brand-600:#2b5bc4; --brand-700:#1e419a;
+      --accent:  #f09936;  --accent-50:#fff7ed; --accent-100:#ffedd5; --accent-600:#c47a25;
+      --green:   #10b981;  --green-50:#ecfdf5;  --green-200:#a7f3d0;
+      --purple:  #8b5cf6;  --purple-50:#f5f3ff; --purple-200:#ddd6fe;
+      --surface: #ffffff;  --border: #e5e7eb;
+      --r-sm:.5rem; --r-md:.75rem; --r-lg:1.25rem; --r-xl:1.5rem; --r-pill:999px;
+      --sh1:0 1px 10px 2px rgba(17,24,39,.04);
+      --sh2:0 8px 22px rgba(17,24,39,.12);
+      --sh3:0 18px 50px rgba(17,24,39,.16);
+      --ease:cubic-bezier(.2,.8,.2,1); --t1:150ms; --t2:220ms;
+    }
+
+    .container { max-width:1160px; margin-inline:auto; padding-inline:clamp(16px,4vw,40px); }
+
+    /* ===================== BANDS ===================== */
+    .band-dark {
+      background-color:#0d1117;
+      background-image:
+        radial-gradient(circle,rgba(246,253,255,.07) 1px,transparent 1px),
+        radial-gradient(ellipse 60% 50% at 5% 8%,  rgba(54,110,240,.30) 0%,transparent 70%),
+        radial-gradient(ellipse 50% 40% at 95% 92%,rgba(100,149,255,.18) 0%,transparent 65%);
+      background-size:30px 30px,100% 100%,100% 100%;
+      position:relative;
+    }
+    .band-dark--warm {
+      background-image:
+        radial-gradient(circle,rgba(246,253,255,.06) 1px,transparent 1px),
+        radial-gradient(ellipse 55% 45% at 92% 10%,rgba(240,153,54,.22) 0%,transparent 65%),
+        radial-gradient(ellipse 50% 40% at 8% 90%, rgba(54,110,240,.28) 0%,transparent 70%);
+      background-size:30px 30px,100% 100%,100% 100%;
+    }
+    .band-dark--green {
+      background-image:
+        radial-gradient(circle,rgba(246,253,255,.06) 1px,transparent 1px),
+        radial-gradient(ellipse 55% 45% at 5% 10%, rgba(16,185,129,.22) 0%,transparent 65%),
+        radial-gradient(ellipse 50% 40% at 92% 90%,rgba(54,110,240,.20) 0%,transparent 70%);
+      background-size:30px 30px,100% 100%,100% 100%;
+    }
+    .band-light {
+      background:#fff;
+      background-image:
+        linear-gradient(rgba(54,110,240,.055) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(54,110,240,.055) 1px,transparent 1px);
+      background-size:44px 44px;
+      position:relative;
+    }
+    .band-light--warm {
+      background:#fafafa;
+      background-image:
+        linear-gradient(rgba(54,110,240,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(54,110,240,.04) 1px,transparent 1px),
+        radial-gradient(ellipse 50% 40% at 95% 5%,  rgba(240,153,54,.07) 0%,transparent 70%),
+        radial-gradient(ellipse 45% 35% at 5% 95%, rgba(139,92,246,.06) 0%,transparent 70%);
+      background-size:44px 44px,44px 44px,100% 100%,100% 100%;
+      position:relative;
+    }
+
+    /* dark-band text helpers */
+    .band-dark .sec__label    { color:#7ba8ff; }
+    .band-dark .sec__label .dot { background:#7ba8ff; }
+    .band-dark .sec__title    { color:#fff; }
+    .band-dark .sec__title em { color:#7ba8ff; }
+    .band-dark .sec__sub      { color:rgba(255,255,255,.55); }
+    .band-dark .sec__head     { border-bottom-color:rgba(255,255,255,.10); }
+    .band-dark .sec__meta strong { color:#fff; }
+    .band-dark .sec__meta span   { color:rgba(255,255,255,.4); }
+    .band-dark .sec__desc-box  { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1); }
+    .band-dark .sec__desc-box p { color:rgba(255,255,255,.65); }
+    .band-dark .fact-item      { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); }
+    .band-dark .fact-item__val { color:#fff; }
+    .band-dark .fact-item__lbl { color:rgba(255,255,255,.45); }
+
+    /* ===================== HERO ===================== */
+    .hero-wrap { border-bottom:1px solid rgba(255,255,255,.08); }
+    .hero { padding:48px 0 64px; }
+    .hero__kicker {
+      font-size:.75rem; text-transform:uppercase; letter-spacing:.12em;
+      color:rgba(255,255,255,.4); margin-bottom:1rem;
+      display:flex; align-items:center; gap:.75rem;
+    }
+    .hero__kicker::before { content:""; width:32px; height:1px; background:rgba(255,255,255,.25); flex:0 0 auto; }
+    .hero__title { font-size:clamp(2rem,5vw,3rem); font-weight:700; line-height:1.1; letter-spacing:-.02em; color:#fff; margin-bottom:1.5rem; }
+    .hero__title em { font-style:italic; color:#7ba8ff; }
+    .hero__lede  { font-size:1.125rem; color:rgba(255,255,255,.6); max-width:62ch; margin-bottom:2.5rem; line-height:1.6; }
+    .hero__stats {
+      display:flex; gap:3rem; flex-wrap:wrap; align-items:flex-end;
+      padding-bottom:2.5rem; margin-bottom:2.5rem;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .hero__stat { display:flex; flex-direction:column; gap:4px; }
+    .hero__stat strong { font-size:clamp(2rem,4vw,2.625rem); font-weight:700; line-height:1; color:#fff; }
+    .hero__stat span   { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); }
+    /* Quick nav */
+    .quicknav { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .qlink {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 18px; background:rgba(255,255,255,.07);
+      border:1.5px solid rgba(255,255,255,.14); border-radius:999px;
+      font-size:.8125rem; font-weight:600; color:rgba(255,255,255,.65);
+      text-decoration:none; backdrop-filter:blur(4px);
+      transition:border-color var(--t1) var(--ease), color var(--t1) var(--ease), background var(--t1) var(--ease);
+    }
+    .qlink:hover { border-color:var(--brand); color:#fff; background:rgba(54,110,240,.25); }
+    .qlink--accent { border-color:rgba(240,153,54,.4); color:#f5c26a; background:rgba(240,153,54,.10); }
+    .qlink--accent:hover { background:rgba(240,153,54,.2); border-color:var(--accent); color:#fff; }
+    .qbadge { background:rgba(54,110,240,.3); color:#7ba8ff; border-radius:999px; font-size:.6875rem; font-weight:700; padding:1px 7px; }
+
+    /* ===================== PROOF STRIP ===================== */
+    .proof { border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08); padding:2rem 0; }
+    .proof__inner { display:flex; justify-content:space-between; gap:2rem; flex-wrap:wrap; }
+    .proof__item  { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+    .proof__num   { font-size:clamp(1.75rem,4vw,2.75rem); font-weight:800; line-height:1; color:#fff; }
+    .proof__num span { color:#7ba8ff; }
+    .proof__lbl   { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.35); max-width:140px; }
+
+    /* ===================== SECTION HEADER ===================== */
+    .sec { padding:64px 0; }
+    .sec__head {
+      display:grid; grid-template-columns:1fr auto;
+      gap:2rem; align-items:flex-start;
+      padding-bottom:2rem; margin-bottom:2rem;
+      border-bottom:1px solid var(--border);
+    }
+    .sec__label { display:inline-flex; align-items:center; gap:6px; font-size:.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--brand); margin-bottom:.75rem; }
+    .sec__label .dot { width:6px; height:6px; border-radius:50%; background:var(--brand); flex:0 0 auto; }
+    .sec__title { font-size:clamp(1.625rem,3.8vw,2.5rem); font-weight:700; line-height:1.1; letter-spacing:-.02em; margin-bottom:1rem; max-width:24ch; }
+    .sec__title em { font-style:italic; color:var(--brand); }
+    .sec__sub   { color:var(--gray-600); max-width:56ch; font-size:1rem; line-height:1.6; }
+    .sec__meta  { text-align:right; padding-top:14px; display:flex; flex-direction:column; gap:2px; align-items:flex-end; }
+    .sec__meta strong { font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; line-height:1; color:var(--gray-900); }
+    .sec__meta span   { font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--gray-500); }
+
+    /* Format description box */
+    .sec__desc-row { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem; align-items:start; }
+    .sec__desc-box {
+      background:var(--gray-50); border:1px solid var(--border);
+      border-radius:var(--r-lg); padding:1.5rem 1.75rem;
+    }
+    .sec__desc-box p { font-size:.9375rem; color:var(--gray-600); line-height:1.65; }
+    .facts-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem; }
+    .fact-item {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--r-md); padding:1rem 1.25rem;
+      display:flex; flex-direction:column; gap:4px;
+      box-shadow:var(--sh1);
+    }
+    .fact-item__val { font-size:1.25rem; font-weight:700; line-height:1; color:var(--gray-900); }
+    .fact-item__lbl { font-size:.75rem; color:var(--gray-500); line-height:1.4; }
+
+    /* ===================== COURSE CARD (новый формат) ===================== */
+    .ccard {
+      background:var(--surface); border:1.5px solid var(--border); border-radius:16px;
+      overflow:hidden; display:flex; flex-direction:column;
+      box-shadow:var(--sh1); text-decoration:none; color:inherit;
+      transition:border-color var(--t2) var(--ease), box-shadow var(--t2) var(--ease), transform var(--t2) var(--ease);
+    }
+    .ccard:hover { border-color:var(--brand); box-shadow:var(--sh2); transform:translateY(-3px); }
+
+    /* Image area */
+    .ccard__img {
+      position:relative; overflow:hidden;
+      aspect-ratio:16/9;
+      background:var(--gray-100);
+      flex:0 0 auto;
+    }
+    .ccard__img-inner {
+      width:100%; height:100%; object-fit:cover;
+      display:flex; align-items:center; justify-content:center;
+    }
+    /* placeholder gradient backgrounds */
+    .ccard__img--blue   { background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#3b82f6 100%); }
+    .ccard__img--orange { background:linear-gradient(135deg,#92400e 0%,#d97706 50%,#f59e0b 100%); }
+    .ccard__img--purple { background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 50%,#a78bfa 100%); }
+    .ccard__img--green  { background:linear-gradient(135deg,#064e3b 0%,#059669 50%,#34d399 100%); }
+    .ccard__img--teal   { background:linear-gradient(135deg,#134e4a 0%,#0d9488 50%,#2dd4bf 100%); }
+    .ccard__img--rose   { background:linear-gradient(135deg,#881337 0%,#e11d48 50%,#fb7185 100%); }
+    .ccard__img--indigo { background:linear-gradient(135deg,#312e81 0%,#4f46e5 50%,#818cf8 100%); }
+    .ccard__img-emoji {
+      font-size:clamp(48px,6vw,72px); user-select:none;
+      filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));
+    }
+    /* badge overlay */
+    .ccard__badge {
+      position:absolute; top:12px; left:12px;
+      background:rgba(255,255,255,.92); backdrop-filter:blur(6px);
+      border-radius:6px; padding:4px 10px;
+      font-size:.75rem; font-weight:700; color:var(--gray-900);
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .ccard__badge--dark {
+      background:rgba(0,0,0,.55); color:#fff; border-color:rgba(255,255,255,.15);
+    }
+
+    /* Card body */
+    .ccard__body { padding:20px 22px 22px; display:flex; flex-direction:column; gap:14px; flex:1; }
+    .ccard__cat  { font-size:.75rem; color:var(--gray-500); line-height:1.4; }
+    .ccard__title {
+      font-size:clamp(1rem,1.6vw,1.125rem); font-weight:900;
+      text-transform:uppercase; line-height:1.18; letter-spacing:-.01em;
+      color:var(--gray-900);
+    }
+    /* Tags row */
+    .ccard__tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .tag {
+      display:inline-flex; align-items:center;
+      padding:3px 10px; border-radius:5px;
+      font-size:.75rem; font-weight:700; letter-spacing:.04em;
+    }
+    .tag--blue   { background:#1d4ed8; color:#fff; }
+    .tag--orange { background:var(--accent); color:#fff; }
+    .tag--green  { background:var(--green); color:#fff; }
+    .tag--purple { background:var(--purple); color:#fff; }
+    .tag--gray   { background:var(--gray-200); color:var(--gray-700); }
+    .tag--dark   { background:var(--gray-800); color:#fff; }
+    /* Meta row */
+    .ccard__meta { display:flex; flex-direction:column; gap:6px; }
+    .meta-row { display:flex; flex-wrap:wrap; gap:14px; }
+    .meta-item { display:flex; align-items:center; gap:5px; font-size:.8125rem; color:var(--gray-600); }
+    .meta-item svg { width:14px; height:14px; opacity:.55; flex:0 0 auto; }
+    /* Price */
+    .ccard__price { display:flex; align-items:baseline; gap:.5rem; flex-wrap:wrap; margin-top:auto; padding-top:4px; }
+    .price-from { font-size:.75rem; color:var(--gray-500); font-weight:600; }
+    .price-val  { font-size:1.5rem; font-weight:800; line-height:1; color:var(--gray-900); }
+    .price-unit { font-size:.8125rem; color:var(--gray-500); font-weight:500; }
+    .price-old  { font-size:.875rem; color:var(--gray-400); text-decoration:line-through; }
+    /* Actions */
+    .ccard__actions { display:flex; gap:.625rem; }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:6px;
+      padding:11px 20px; border-radius:999px; font-family:inherit;
+      font-size:.8125rem; font-weight:700; cursor:pointer; text-decoration:none;
+      transition:background var(--t1) var(--ease), transform var(--t1) var(--ease), border-color var(--t1) var(--ease);
+      border:2px solid transparent; white-space:nowrap;
+    }
+    .btn--primary { background:var(--accent); color:#fff; border-color:var(--accent); flex:1; }
+    .btn--primary:hover { background:var(--accent-600); border-color:var(--accent-600); transform:translateY(-1px); }
+    .btn--outline { background:transparent; color:var(--gray-700); border-color:var(--gray-300); flex:1; }
+    .btn--outline:hover { border-color:var(--gray-500); color:var(--gray-900); }
+    .btn--brand   { background:var(--brand); color:#fff; border-color:var(--brand); }
+    .btn--brand:hover { background:var(--brand-600); border-color:var(--brand-600); transform:translateY(-1px); }
+    .btn--full { width:100%; }
+
+    /* Cards grid */
+    .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; }
+    .cards-grid--2 { grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); }
+
+    /* ===================== BUNDLE CARD ===================== */
+    .bundle {
+      background:var(--surface); border:1.5px solid var(--border); border-radius:16px;
+      overflow:hidden; display:flex; flex-direction:column;
+      box-shadow:var(--sh1);
+      transition:border-color var(--t2) var(--ease), box-shadow var(--t2) var(--ease), transform var(--t2) var(--ease);
+    }
+    .bundle:hover { border-color:var(--brand); box-shadow:var(--sh2); transform:translateY(-3px); }
+    .bundle--featured { border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-100),var(--sh2); }
+    .bundle__header {
+      padding:28px; color:#fff; position:relative; overflow:hidden;
+      background:linear-gradient(135deg,var(--brand) 0%,#5b8ef5 100%);
+    }
+    .bundle--warm .bundle__header { background:linear-gradient(135deg,var(--accent) 0%,#f5c26a 100%); }
+    .bundle__header::after { content:""; position:absolute; inset:0; background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.15) 0%,transparent 60%); pointer-events:none; }
+    .bundle__hot  { position:absolute; top:14px; right:14px; background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.3); border-radius:999px; font-size:.6875rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; color:#fff; z-index:1; }
+    .bundle__eye  { font-size:.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; opacity:.7; margin-bottom:10px; position:relative; z-index:1; }
+    .bundle__name { font-size:clamp(1.25rem,2.5vw,1.75rem); font-weight:800; line-height:1.2; margin-bottom:12px; position:relative; z-index:1; }
+    .bundle__chips { display:flex; flex-wrap:wrap; gap:6px; position:relative; z-index:1; }
+    .bundle__chip  { padding:4px 10px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.28); border-radius:999px; font-size:.75rem; font-weight:600; color:#fff; }
+    .bundle__body  { padding:24px; display:flex; flex-direction:column; gap:16px; flex:1; }
+    .bundle__save  { display:flex; align-items:center; gap:.75rem; padding:10px 14px; background:var(--green-50); border:1px solid var(--green-200); border-radius:10px; }
+    .bundle__save-txt { font-size:.8125rem; font-weight:600; color:#065f46; }
+    .bundle__feats { list-style:none; display:flex; flex-direction:column; gap:8px; flex:1; }
+    .bundle__feats li { display:flex; align-items:flex-start; gap:8px; font-size:.875rem; color:var(--gray-600); line-height:1.5; }
+    .bundle__feats li::before { content:"✓"; font-size:.75rem; font-weight:700; color:var(--green); flex:0 0 auto; margin-top:2px; }
+    .bundle__price { display:flex; align-items:baseline; gap:.75rem; flex-wrap:wrap; margin-top:auto; }
+    .bundle__price-cur  { font-size:clamp(1.75rem,3vw,2rem); font-weight:700; line-height:1; }
+    .bundle__price-old  { font-size:1rem; color:var(--gray-400); text-decoration:line-through; }
+    .bundle__price-save { font-size:.8125rem; font-weight:700; padding:3px 10px; background:#fee2e2; color:#b91c1c; border-radius:999px; }
+
+    /* ===================== INDIVIDUAL CARD (big) ===================== */
+    .indiv-card {
+      display:grid; grid-template-columns:1fr 1fr;
+      background:var(--surface); border:1.5px solid var(--border); border-radius:16px;
+      overflow:hidden; box-shadow:var(--sh2);
+    }
+    .indiv-card__visual {
+      background:linear-gradient(160deg,#0f1f5c 0%,#1e3a8a 40%,#2563eb 100%);
+      position:relative; overflow:hidden; min-height:380px;
+      display:flex; flex-direction:column; justify-content:flex-end; padding:32px;
+    }
+    .indiv-card__visual::before {
+      content:"";position:absolute;inset:0;
+      background:
+        radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px),
+        radial-gradient(ellipse 60% 50% at 90% 10%,rgba(100,149,255,.35) 0%,transparent 60%);
+      background-size:28px 28px,100% 100%;
+    }
+    .indiv-card__emoji { font-size:80px; margin-bottom:24px; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(0,0,0,.3)); }
+    .indiv-card__visual-title { font-size:clamp(1.5rem,2.5vw,2rem); font-weight:900; text-transform:uppercase; color:#fff; line-height:1.1; letter-spacing:-.02em; position:relative; z-index:1; }
+    .indiv-card__visual-sub   { font-size:.9375rem; color:rgba(255,255,255,.65); margin-top:8px; line-height:1.5; position:relative; z-index:1; }
+    .indiv-card__body { padding:40px 36px; display:flex; flex-direction:column; gap:28px; }
+    .indiv-card__feats { display:flex; flex-direction:column; gap:12px; }
+    .indiv-feat { display:flex; align-items:flex-start; gap:12px; }
+    .indiv-feat__icon { width:36px; height:36px; border-radius:10px; background:var(--brand-50); display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+    .indiv-feat__text strong { display:block; font-size:.9375rem; font-weight:700; color:var(--gray-900); margin-bottom:2px; }
+    .indiv-feat__text span   { font-size:.8125rem; color:var(--gray-500); line-height:1.45; }
+    .indiv-card__exams { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .indiv-card__price { display:flex; align-items:baseline; gap:.75rem; flex-wrap:wrap; }
+    .indiv-card__price .price-from { font-size:.875rem; }
+    .indiv-card__price .price-val  { font-size:2rem; }
+    .indiv-card__cta { display:flex; gap:.75rem; }
+
+    /* ===================== CTA BLOCK ===================== */
+    .cta-wrap { padding:64px 0; }
+    .cta-box  {
+      background:var(--gray-900); border-radius:var(--r-xl);
+      padding:clamp(32px,5vw,56px); display:grid; grid-template-columns:1fr auto;
+      gap:2rem; align-items:center; position:relative; overflow:hidden;
+    }
+    .cta-box::before {
+      content:""; position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 50% 80% at 10% 110%,rgba(54,110,240,.35) 0%,transparent 60%),
+        radial-gradient(circle,rgba(255,255,255,.055) 1px,transparent 1px);
+      background-size:100% 100%,30px 30px; pointer-events:none;
+    }
+    .cta-text { position:relative; z-index:1; }
+    .cta-text__lbl   { font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.5); margin-bottom:10px; }
+    .cta-text__title { font-size:clamp(1.25rem,3vw,1.75rem); font-weight:700; color:#fff; line-height:1.22; margin-bottom:10px; }
+    .cta-text__sub   { font-size:.9375rem; color:rgba(255,255,255,.6); line-height:1.6; }
+    .cta-actions { display:flex; flex-direction:column; gap:.75rem; align-items:flex-end; position:relative; z-index:1; flex:0 0 auto; }
+    .btn--white       { background:#fff; color:var(--gray-900); border-color:#fff; }
+    .btn--white:hover { background:var(--gray-100); }
+    .btn--ghost       { background:transparent; color:rgba(255,255,255,.7); border-color:rgba(255,255,255,.2); }
+    .btn--ghost:hover { background:rgba(255,255,255,.08); color:#fff; border-color:rgba(255,255,255,.4); }
+
+    /* ===================== RESPONSIVE ===================== */
+    .anchor { scroll-margin-top:80px; }
+    @media(max-width:900px){
+      .hero__stats,.proof__inner { gap:1.5rem; }
+      .sec__head { grid-template-columns:1fr; gap:.75rem; }
+      .sec__meta { text-align:left; align-items:flex-start; padding-top:0; }
+      .sec__desc-row { grid-template-columns:1fr; }
+      .cta-box { grid-template-columns:1fr; }
+      .cta-actions { align-items:flex-start; }
+      .indiv-card { grid-template-columns:1fr; }
+      .indiv-card__visual { min-height:260px; }
+    }
+    @media(max-width:600px){
+      .hero { padding:32px 0 40px; }
+      .hero__title { font-size:clamp(1.625rem,7vw,2.5rem); }
+      .hero__stats { gap:1rem; }
+      .cards-grid,.cards-grid--2 { grid-template-columns:1fr; }
+      .ccard__actions { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+<div style="position:relative;overflow-x:clip;">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO  (тёмная полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-dark">
+    <div class="hero-wrap">
+      <div class="container hero">
+        <p class="hero__kicker">все форматы · ЕГЭ, ОГЭ, Stepik · 2019–2026</p>
+        <h1 class="hero__title">Курсы и занятия<br>по <em>химии</em></h1>
+        <p class="hero__lede">Минигруппы, индивидуальные занятия и&nbsp;самостоятельные курсы на&nbsp;Stepik. Выберите формат под свою цель.</p>
+        <div class="hero__stats">
+          <div class="hero__stat"><strong>4 800+</strong><span>учеников на Stepik</span></div>
+          <div class="hero__stat"><strong>4.9</strong><span>рейтинг курсов</span></div>
+          <div class="hero__stat"><strong>+42</strong><span>средний прирост баллов</span></div>
+          <div class="hero__stat"><strong>7 лет</strong><span>подготовка к ЕГЭ и ОГЭ</span></div>
+        </div>
+        <nav class="quicknav" aria-label="Разделы">
+          <a href="#groups"   class="qlink">👥 Минигруппы <span class="qbadge">3</span></a>
+          <a href="#stepik"   class="qlink">🟢 Курсы Stepik <span class="qbadge">7</span></a>
+          <a href="#bundle"   class="qlink qlink--accent">🎁 Пакеты</a>
+          <a href="#indiv"    class="qlink">👤 Индивидуально</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Proof strip -->
+    <div class="proof">
+      <div class="container">
+        <div class="proof__inner">
+          <div class="proof__item"><div class="proof__num">4 <span>→ 99</span></div><div class="proof__lbl">лучший кейс прироста баллов ЕГЭ</div></div>
+          <div class="proof__item"><div class="proof__num">38</div><div class="proof__lbl">отзывов с баллами до и после</div></div>
+          <div class="proof__item"><div class="proof__num"><span>+42</span></div><div class="proof__lbl">средний прирост баллов</div></div>
+          <div class="proof__item"><div class="proof__num">200+</div><div class="proof__lbl">отзывов от учеников</div></div>
+          <div class="proof__item"><div class="proof__num">100</div><div class="proof__lbl">максимум ЕГЭ у ученика</div></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /band-dark hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       1. ГОДОВЫЕ КУРСЫ В МИНИГРУППАХ  (светлая полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-light">
+    <div id="groups" class="sec anchor container">
+
+      <div class="sec__head">
+        <div>
+          <div class="sec__label"><span class="dot"></span>Живые занятия онлайн</div>
+          <h2 class="sec__title">Годовые курсы<br>в <em>минигруппах</em></h2>
+          <p class="sec__sub">Занятия в Zoom, программа на весь учебный год. Не просто видео — живой разбор, общение и преподаватель рядом.</p>
+        </div>
+        <div class="sec__meta"><strong>3</strong><span>курса</span></div>
+      </div>
+
+      <!-- Описание формата -->
+      <div class="sec__desc-row">
+        <div class="sec__desc-box">
+          <p>Небольшие группы до 4 человек позволяют работать в персональном темпе и получать внимание преподавателя на каждом занятии. Программа строится от базы до сложных заданий второй части ЕГЭ. В конце каждого месяца — авторский пробник с разбором ошибок.</p>
+        </div>
+        <div class="facts-grid">
+          <div class="fact-item"><div class="fact-item__val">до 4</div><div class="fact-item__lbl">учеников в группе</div></div>
+          <div class="fact-item"><div class="fact-item__val">2 / нед</div><div class="fact-item__lbl">занятия в неделю</div></div>
+          <div class="fact-item"><div class="fact-item__val">1 / мес</div><div class="fact-item__lbl">авторский пробник</div></div>
+          <div class="fact-item"><div class="fact-item__val">∞</div><div class="fact-item__lbl">поддержка в чате</div></div>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- ЕГЭ -->
+        <div class="ccard">
+          <div class="ccard__img ccard__img--blue">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">⚗️</span></div>
+            <span class="ccard__badge">Минигруппа</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Курс подготовки к ЕГЭ по химии</div>
+            <div class="ccard__title">Химия ЕГЭ 2026 | Годовой курс</div>
+            <div class="ccard__tags">
+              <span class="tag tag--dark">11 класс</span>
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--orange">Химия</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+                  Набор открыт
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1.5"/></svg>
+                  9 месяцев
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1.5"/><path d="M5 4V2.5M11 4V2.5"/></svg>
+                  2 занятия в неделю
+                </div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>
+                  Пробники + разбор ошибок
+                </div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-from">от</span>
+              <span class="price-val">1 200 ₽</span>
+              <span class="price-unit">/ занятие</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="https://t.me/egehim" class="btn btn--primary">Записаться</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ОГЭ -->
+        <div class="ccard">
+          <div class="ccard__img ccard__img--purple">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🧪</span></div>
+            <span class="ccard__badge">Минигруппа</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Курс подготовки к ОГЭ по химии</div>
+            <div class="ccard__title">Химия ОГЭ 2026 | Годовой курс</div>
+            <div class="ccard__tags">
+              <span class="tag tag--dark">9 класс</span>
+              <span class="tag tag--purple">ОГЭ</span>
+              <span class="tag tag--orange">Химия</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+                  Набор открыт
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1.5"/></svg>
+                  9 месяцев
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1.5"/><path d="M5 4V2.5M11 4V2.5"/></svg>
+                  2 занятия в неделю
+                </div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>
+                  Вся программа 8–9 класса
+                </div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-from">от</span>
+              <span class="price-val">1 200 ₽</span>
+              <span class="price-unit">/ занятие</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="https://t.me/egehim" class="btn btn--primary">Записаться</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10 класс -->
+        <div class="ccard">
+          <div class="ccard__img ccard__img--teal">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🔬</span></div>
+            <span class="ccard__badge">Минигруппа</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Школьная программа + база ЕГЭ</div>
+            <div class="ccard__title">Химия 10 класса | Годовой курс</div>
+            <div class="ccard__tags">
+              <span class="tag tag--dark">10 класс</span>
+              <span class="tag tag--green">Школа</span>
+              <span class="tag tag--orange">Химия</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+                  Набор: уточняйте
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1.5"/></svg>
+                  9 месяцев
+                </div>
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1.5"/><path d="M5 4V2.5M11 4V2.5"/></svg>
+                  2 занятия в неделю
+                </div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>
+                  Органика + задачи + база ЕГЭ
+                </div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-from">от</span>
+              <span class="price-val">1 200 ₽</span>
+              <span class="price-unit">/ занятие</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="https://t.me/egehim" class="btn btn--primary">Записаться</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /band-light groups -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       2. КУРСЫ НА STEPIK  (тёмная / зелёная полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-dark band-dark--green">
+    <div id="stepik" class="sec anchor container">
+
+      <div class="sec__head">
+        <div>
+          <div class="sec__label"><span class="dot" style="background:#34d399"></span><span style="color:#34d399">Платформа Stepik</span></div>
+          <h2 class="sec__title">Курсы<br><em>на Stepik</em></h2>
+          <p class="sec__sub">Самостоятельное обучение без привязки к расписанию. Купил — занимайся когда удобно, с любого устройства, вечный доступ.</p>
+        </div>
+        <div class="sec__meta"><strong>7</strong><span>курсов</span></div>
+      </div>
+
+      <div class="sec__desc-row">
+        <div class="sec__desc-box">
+          <p>Курсы на Stepik — это структурированные видеоуроки, тренажёры с автопроверкой и постоянный доступ к материалам. Идеально для самостоятельной подготовки или в дополнение к занятиям с преподавателем.</p>
+        </div>
+        <div class="facts-grid">
+          <div class="fact-item"><div class="fact-item__val">4 800+</div><div class="fact-item__lbl">учеников на платформе</div></div>
+          <div class="fact-item"><div class="fact-item__val">4.9 ★</div><div class="fact-item__lbl">средний рейтинг курсов</div></div>
+          <div class="fact-item"><div class="fact-item__val">3 000+</div><div class="fact-item__lbl">заданий с автопроверкой</div></div>
+          <div class="fact-item"><div class="fact-item__val">∞</div><div class="fact-item__lbl">вечный доступ к материалам</div></div>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--blue">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">⚗️</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Неорганическая химия с нуля до 80+</div>
+            <div class="ccard__tags">
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--gray">Задания 5–9, 29–31</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.9 · 350 отзывов</div>
+                <div class="meta-item">🎓 1 400 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 28 часов видео</div>
+                <div class="meta-item">📝 1 000+ заданий</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">5 790 ₽</span>
+              <span class="price-old">7 300 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="/neorganika/" class="btn btn--primary">Купить курс</a>
+              <a href="/neorganika/" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--orange">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🧪</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Органическая химия с нуля до 80+</div>
+            <div class="ccard__tags">
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--orange">50% экзамена</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.9 · 280 отзывов</div>
+                <div class="meta-item">🎓 1 100 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 32 часа видео</div>
+                <div class="meta-item">📝 1 000+ заданий</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">5 790 ₽</span>
+              <span class="price-old">7 300 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="/organika/" class="btn btn--primary">Купить курс</a>
+              <a href="/organika/" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--green">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🔬</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Общая химия для ЕГЭ</div>
+            <div class="ccard__tags">
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--green">Быстрые баллы</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.8 · 190 отзывов</div>
+                <div class="meta-item">🎓 820 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 18 часов видео</div>
+                <div class="meta-item">📝 600+ заданий</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">3 990 ₽</span>
+              <span class="price-old">4 900 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="/obschaya/" class="btn btn--primary">Купить курс</a>
+              <a href="/obschaya/" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--rose">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🧮</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Задача №34 ЕГЭ по химии</div>
+            <div class="ccard__tags">
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--gray">4 балла</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.9 · 120 отзывов</div>
+                <div class="meta-item">🎓 560 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 8 часов видео</div>
+                <div class="meta-item">📝 200+ задач</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">1 990 ₽</span>
+              <span class="price-old">2 500 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="#" class="btn btn--primary">Купить курс</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--purple">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">📖</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Химия ОГЭ с нуля до 5</div>
+            <div class="ccard__tags">
+              <span class="tag tag--purple">ОГЭ</span>
+              <span class="tag tag--gray">9 класс</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.9 · 95 отзывов</div>
+                <div class="meta-item">🎓 480 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 20 часов видео</div>
+                <div class="meta-item">📝 800+ заданий</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">2 990 ₽</span>
+              <span class="price-old">3 900 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="#" class="btn btn--primary">Купить курс</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--teal">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">📐</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Самостоятельный курс · Stepik</div>
+            <div class="ccard__title">Химия 10 класса: органика + задачи</div>
+            <div class="ccard__tags">
+              <span class="tag tag--dark">10 класс</span>
+              <span class="tag tag--green">Школа</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.8 · 70 отзывов</div>
+                <div class="meta-item">🎓 310 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📹 16 часов видео</div>
+                <div class="meta-item">📝 500+ заданий</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val">2 490 ₽</span>
+              <span class="price-old">3 200 ₽</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="#" class="btn btn--primary">Купить курс</a>
+              <a href="#" class="btn btn--outline">О курсе</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ccard">
+          <div class="ccard__img ccard__img--indigo">
+            <div class="ccard__img-inner"><span class="ccard__img-emoji">🎯</span></div>
+            <span class="ccard__badge ccard__badge--dark">Stepik · Бесплатно</span>
+          </div>
+          <div class="ccard__body">
+            <div class="ccard__cat">Бесплатный тренажёр · Stepik</div>
+            <div class="ccard__title">Тренажёр ЕГЭ: первая часть</div>
+            <div class="ccard__tags">
+              <span class="tag tag--green">Бесплатно</span>
+              <span class="tag tag--blue">ЕГЭ</span>
+            </div>
+            <div class="ccard__meta">
+              <div class="meta-row">
+                <div class="meta-item">⭐ 4.8 · 80 отзывов</div>
+                <div class="meta-item">🎓 340 учеников</div>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">📝 500+ заданий</div>
+                <div class="meta-item">✅ Автопроверка</div>
+              </div>
+            </div>
+            <div class="ccard__price">
+              <span class="price-val" style="color:var(--green)">0 ₽</span>
+              <span class="price-unit">бесплатно</span>
+            </div>
+            <div class="ccard__actions">
+              <a href="#" class="btn btn--brand btn--full">Начать бесплатно</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /band-dark stepik -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       3. ПАКЕТЫ КУРСОВ  (тёплая тёмная полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-dark band-dark--warm">
+    <div id="bundle" class="sec anchor container">
+
+      <div class="sec__head">
+        <div>
+          <div class="sec__label"><span class="dot" style="background:var(--accent)"></span><span style="color:var(--accent)">Пакеты курсов</span></div>
+          <h2 class="sec__title">Купить сразу всё<br>и <em>сэкономить</em></h2>
+          <p class="sec__sub">Объединяем несколько курсов со скидкой до 44%. Лучший выбор для системной подготовки к ЕГЭ.</p>
+        </div>
+        <div class="sec__meta"><strong>2</strong><span>пакета</span></div>
+      </div>
+
+      <div class="sec__desc-row">
+        <div class="sec__desc-box">
+          <p>Пакеты дают доступ сразу к нескольким курсам по единой цене. Все материалы в одном месте, единый чат поддержки, вечный доступ. Экономия по сравнению с покупкой по отдельности — от 2 000 до 4 000 ₽.</p>
+        </div>
+        <div class="facts-grid">
+          <div class="fact-item"><div class="fact-item__val">до −44%</div><div class="fact-item__lbl">экономия vs покупка по отдельности</div></div>
+          <div class="fact-item"><div class="fact-item__val">3 000+</div><div class="fact-item__lbl">заданий с автопроверкой в пакете</div></div>
+          <div class="fact-item"><div class="fact-item__val">∞</div><div class="fact-item__lbl">вечный доступ ко всем курсам</div></div>
+          <div class="fact-item"><div class="fact-item__val">1 чат</div><div class="fact-item__lbl">поддержка по всем курсам сразу</div></div>
+        </div>
+      </div>
+
+      <div class="cards-grid cards-grid--2">
+
+        <div class="bundle bundle--featured">
+          <div class="bundle__header">
+            <span class="bundle__hot">⭐ Хит</span>
+            <div class="bundle__eye">Пакет · ЕГЭ</div>
+            <div class="bundle__name">Весь ЕГЭ по химии</div>
+            <div class="bundle__chips">
+              <span class="bundle__chip">Неорганика</span>
+              <span class="bundle__chip">Органика</span>
+              <span class="bundle__chip">Общая химия</span>
+            </div>
+          </div>
+          <div class="bundle__body">
+            <div class="bundle__save">
+              <span>💰</span>
+              <span class="bundle__save-txt">Экономия 4 380 ₽ по сравнению с покупкой по отдельности</span>
+            </div>
+            <ul class="bundle__feats">
+              <li>Полное покрытие ЕГЭ — задания 1–33</li>
+              <li>3 000+ заданий с автопроверкой</li>
+              <li>Единый чат поддержки по всем курсам</li>
+              <li>Карточки и игровые механики</li>
+              <li>Обновлено под ЕГЭ-2026</li>
+            </ul>
+            <div class="bundle__price">
+              <div class="bundle__price-cur">11 190 ₽</div>
+              <div class="bundle__price-old">15 570 ₽</div>
+              <div class="bundle__price-save">−43%</div>
+            </div>
+            <a href="#" class="btn btn--primary btn--full" style="margin-top:8px">Купить пакет →</a>
+          </div>
+        </div>
+
+        <div class="bundle bundle--warm">
+          <div class="bundle__header" style="background:linear-gradient(135deg,var(--accent) 0%,#f5c26a 100%)">
+            <div class="bundle__eye">Пакет · ЕГЭ</div>
+            <div class="bundle__name">Неорганика + Органика</div>
+            <div class="bundle__chips">
+              <span class="bundle__chip">Неорганика</span>
+              <span class="bundle__chip">Органика</span>
+            </div>
+          </div>
+          <div class="bundle__body">
+            <div class="bundle__save" style="background:var(--accent-50);border-color:#fde68a">
+              <span>💰</span>
+              <span class="bundle__save-txt" style="color:var(--accent-600)">Экономия 2 390 ₽ по сравнению с покупкой по отдельности</span>
+            </div>
+            <ul class="bundle__feats">
+              <li>Два самых объёмных раздела ЕГЭ</li>
+              <li>2 000+ заданий с автопроверкой</li>
+              <li>60+ часов видеоматериалов</li>
+              <li>Вечный доступ</li>
+            </ul>
+            <div class="bundle__price">
+              <div class="bundle__price-cur">9 190 ₽</div>
+              <div class="bundle__price-old">11 580 ₽</div>
+              <div class="bundle__price-save">−21%</div>
+            </div>
+            <a href="#" class="btn btn--full" style="margin-top:8px;background:var(--accent);color:#fff;border:2px solid var(--accent);border-radius:999px;padding:11px 20px;font-family:inherit;font-size:.8125rem;font-weight:700;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">Купить пакет →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /band-dark warm bundles -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       4. ИНДИВИДУАЛЬНЫЕ ЗАНЯТИЯ  (светлая полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-light--warm">
+    <div id="indiv" class="sec anchor container">
+
+      <div class="sec__head">
+        <div>
+          <div class="sec__label"><span class="dot"></span>Занятия с преподавателем</div>
+          <h2 class="sec__title">Индивидуально<br>и <em>в минигруппах</em></h2>
+          <p class="sec__sub">Персональная работа с Валерием Филипенко онлайн. Максимальное внимание к каждому ученику, результаты от 80 баллов ЕГЭ.</p>
+        </div>
+        <div class="sec__meta"><strong>7+</strong><span>лет опыта</span></div>
+      </div>
+
+      <!-- Большая карточка -->
+      <div class="indiv-card">
+        <div class="indiv-card__visual">
+          <div class="indiv-card__emoji">👨‍🏫</div>
+          <div class="indiv-card__visual-title">Индивидуальные занятия с Валерием</div>
+          <div class="indiv-card__visual-sub">ЕГЭ · ОГЭ · 10 класс · Поступление в мед</div>
+        </div>
+        <div class="indiv-card__body">
+          <div>
+            <div class="sec__label" style="margin-bottom:.5rem"><span class="dot"></span>Что входит</div>
+            <div class="indiv-card__feats">
+              <div class="indiv-feat">
+                <div class="indiv-feat__icon">📋</div>
+                <div class="indiv-feat__text">
+                  <strong>Персональный план подготовки</strong>
+                  <span>Составляем программу под ваш уровень и цель — не тратим время на то, что вы уже знаете</span>
+                </div>
+              </div>
+              <div class="indiv-feat">
+                <div class="indiv-feat__icon">📝</div>
+                <div class="indiv-feat__text">
+                  <strong>Авторские пробники каждый месяц</strong>
+                  <span>Пробники в формате реального ЕГЭ/ОГЭ. После — детальный разбор каждой ошибки</span>
+                </div>
+              </div>
+              <div class="indiv-feat">
+                <div class="indiv-feat__icon">💬</div>
+                <div class="indiv-feat__text">
+                  <strong>Поддержка в любое время</strong>
+                  <span>Задать вопрос можно в чате — отвечаю быстро, даже вечером перед экзаменом</span>
+                </div>
+              </div>
+              <div class="indiv-feat">
+                <div class="indiv-feat__icon">📊</div>
+                <div class="indiv-feat__text">
+                  <strong>Отчёт об успеваемости</strong>
+                  <span>Родители получают информацию о прогрессе и темпах подготовки раз в месяц</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec__label" style="margin-bottom:.5rem"><span class="dot"></span>Для каких экзаменов</div>
+            <div class="indiv-card__exams">
+              <span class="tag tag--blue">ЕГЭ</span>
+              <span class="tag tag--purple">ОГЭ</span>
+              <span class="tag tag--dark">10 класс</span>
+              <span class="tag tag--green">8–9 класс</span>
+              <span class="tag tag--orange">Поступление в мед</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="indiv-card__price">
+              <span class="price-from">от</span>
+              <span class="price-val">2 000 ₽</span>
+              <span class="price-unit">/ занятие · 60 мин</span>
+            </div>
+            <div style="font-size:.8125rem;color:var(--gray-500);margin-top:6px;">Минигруппы (до 4 чел.) — от 1 200 ₽ / занятие</div>
+          </div>
+
+          <div class="indiv-card__cta">
+            <a href="https://t.me/egehim" class="btn btn--primary" style="flex:1">Записаться в Telegram</a>
+            <a href="/otzyvy-na-kursi/" class="btn btn--outline" style="flex:1">Читать отзывы</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /band-light--warm indiv -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ИТОГОВЫЙ CTA  (тёмная полоса)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="band-dark">
+    <div class="cta-wrap container">
+      <div class="cta-box">
+        <div class="cta-text">
+          <div class="cta-text__lbl">Остались вопросы?</div>
+          <div class="cta-text__title">Поможем выбрать формат<br>и составить план подготовки</div>
+          <div class="cta-text__sub">Ответим на вопросы, расскажем про форматы и цены, запишем на бесплатный пробный урок.</div>
+        </div>
+        <div class="cta-actions">
+          <a href="https://t.me/egehim" class="btn btn--white">💬 Написать в Telegram</a>
+          <a href="/otzyvy-na-kursi/" class="btn btn--ghost">Читать отзывы →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
