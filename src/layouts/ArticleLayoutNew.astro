@@ -229,7 +229,7 @@ function getArticleHref(post: CollectionEntry<"articles">) {
         </div>
         {
           fm.toc !== false && nestedTocItems && nestedTocItems.length > 0 && (
-            <details class="article__toc" open>
+            <details class="article__toc" id="article-toc" open>
               <summary class="article__toc-summary">
                 <h3 class="article__toc-title">Содержание статьи</h3>
                 <svg
@@ -328,6 +328,12 @@ function getArticleHref(post: CollectionEntry<"articles">) {
               .replace(/[а-яё]/g, (ch) => map[ch] ?? ch)
               .replace(/[^a-z0-9]+/g, "-")
               .replace(/^-+|-+$/g, "");
+          }
+
+          // Закрываем TOC по умолчанию на мобиле
+          if (window.innerWidth <= 600) {
+            const toc = document.getElementById("article-toc");
+            if (toc) toc.removeAttribute("open");
           }
 
           // Добавляем id к заголовкам
