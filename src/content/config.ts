@@ -17,7 +17,6 @@ const articles = defineCollection({
             id: z.string().optional(),
             text: z.string(),
         })).optional(),
-        showHeroImage: z.boolean().optional(), // показывать/скрывать главную картинку статьи (по умолчанию true)
         videoUrl: z.string().optional(),       // URL видео для VideoObject JSON-LD (YouTube, VK, Rutube)
         visible: z.boolean().default(true),    // видимость статьи (true - опубликована, false - черновик)
     }),

@@ -17,9 +17,7 @@ interface Props {
   fm: CollectionEntry<"articles">["data"] & {
     toc?: boolean;
     tocManual?: { id: string; text: string }[];
-    showHeroImage?: boolean;
     videoUrl?: string;
-    imageAlt?: string;
     updated?: string | Date;
   };
   slug: string;
@@ -60,19 +58,6 @@ function formatDate(d: Date | null) {
     day: "numeric",
   });
 }
-
-function resolveSrc(input: unknown): string | null {
-  if (!input) return null;
-  const s = String(input).trim();
-  if (!s) return null;
-  if (/^https?:\/\//i.test(s)) return s;
-  if (s.startsWith("/")) return s;
-  return "/" + s.replace(/^\.?\//, "");
-}
-
-/* === HERO === */
-const articleImage = resolveSrc((fm as any).image) || null;
-const imageAlt = fm.imageAlt ?? fm.title;
 
 /* === TOC === */
 const tocFromFM =
@@ -221,6 +206,16 @@ function getArticleHref(post: CollectionEntry<"articles">) {
               size="sm"
             />
           </div>
+          <div class="article__meta-author">
+            <img
+              src={ORGANIZATION_DATA.defaultAuthor.photo}
+              alt={ORGANIZATION_DATA.defaultAuthor.name}
+              class="article__meta-author-photo"
+              width="20"
+              height="20"
+            />
+            <span>{ORGANIZATION_DATA.defaultAuthor.name}</span>
+          </div>
         </div>
 
         <h1 id="article-title" class="article__header-title">{fm.title}</h1>
@@ -231,112 +226,46 @@ function getArticleHref(post: CollectionEntry<"articles">) {
               <p class="article__header-description">{fm.description}</p>
             )
           }
-          <div class="article__author-card">
-            <img
-              src={ORGANIZATION_DATA.defaultAuthor.photo}
-              alt={ORGANIZATION_DATA.defaultAuthor.name}
-              class="article__author-photo"
-              width="64"
-              height="64"
-            />
-            <div class="article__author-info">
-              <a
-                href={ORGANIZATION_DATA.defaultAuthor.url}
-                target="_blank"
-                rel="noopener"
-                class="article__author-name"
-                >{ORGANIZATION_DATA.defaultAuthor.name}</a
-              >
-              <div class="article__author-role">
-                {ORGANIZATION_DATA.defaultAuthor.role}
-              </div>
-              <div class="article__author-socials">
-                <a
-                  href="https://t.me/+KznfEhtzkeNlZjIy"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="Telegram"
-                  class="article__author-social-link"
-                >
-                  <img
-                    src="/images/technical/telegram.webp"
-                    alt=""
-                    aria-hidden="true"
-                    width="20"
-                    height="20"
-                  />
-                </a>
-                <a
-                  href="https://vk.com/chemistry_exam"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="ВКонтакте"
-                  class="article__author-social-link"
-                >
-                  <img
-                    src="/images/technical/vk.webp"
-                    alt=""
-                    aria-hidden="true"
-                    width="20"
-                    height="20"
-                  />
-                </a>
-                <a
-                  href="https://www.youtube.com/@chemistry_exam"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="YouTube"
-                  class="article__author-social-link"
-                >
-                  <img
-                    src="/images/technical/youtube.webp"
-                    alt=""
-                    aria-hidden="true"
-                    width="20"
-                    height="20"
-                  />
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
         {
-          fm.showHeroImage !== false && articleImage && (
-            <div class="article__header-image-wrapper">
-              <figure class="article__header-image">
-                <div id="heroBox" class="hero">
-                  <img
-                    class="hero__img"
-                    src={articleImage}
-                    alt={imageAlt}
-                    loading="eager"
-                    fetchpriority="high"
-                    width={320}
-                    height={180}
-                  />
-                </div>
-                <figcaption class="article__header-caption">
-                  {(fm as any).imageCaption ?? fm.title}
-                </figcaption>
-              </figure>
-            </div>
-          )
-        }
-        {
           fm.toc !== false && nestedTocItems && nestedTocItems.length > 0 && (
-            <nav class="article__inside-content" aria-label="Содержание статьи">
-              <h3 id="article-toc-title" class="article__content-title">
-                Содержание статьи
-              </h3>
-              <ul class="article__content-list">
+            <details class="article__toc" open>
+              <summary class="article__toc-summary">
+                <h3 class="article__toc-title">Содержание статьи</h3>
+                <svg
+                  class="article__toc-chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 7.5L10 12.5L15 7.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </summary>
+              <ul class="article__toc-list">
                 {nestedTocItems.map((item) => (
-                  <li>
-                    <a href={`${currentPath}#${item.id}`}>{item.text}</a>
+                  <li class="article__toc-item">
+                    <a
+                      href={`${currentPath}#${item.id}`}
+                      class="article__toc-link"
+                    >
+                      {item.text}
+                    </a>
                     {item.children && item.children.length > 0 && (
-                      <ul class="article__content-sublist">
+                      <ul class="article__toc-sublist">
                         {item.children.map((child: any) => (
-                          <li>
-                            <a href={`${currentPath}#${child.id}`}>
+                          <li class="article__toc-subitem">
+                            <a
+                              href={`${currentPath}#${child.id}`}
+                              class="article__toc-link article__toc-link--sub"
+                            >
                               {child.text}
                             </a>
                           </li>
@@ -346,7 +275,7 @@ function getArticleHref(post: CollectionEntry<"articles">) {
                   </li>
                 ))}
               </ul>
-            </nav>
+            </details>
           )
         }
       </header>
@@ -424,6 +353,75 @@ function getArticleHref(post: CollectionEntry<"articles">) {
           </div>
         )
       }
+      <div class="article__divider"></div>
+      <div class="article__author-card">
+        <img
+          src={ORGANIZATION_DATA.defaultAuthor.photo}
+          alt={ORGANIZATION_DATA.defaultAuthor.name}
+          class="article__author-photo"
+          width="64"
+          height="64"
+        />
+        <div class="article__author-info">
+          <a
+            href={ORGANIZATION_DATA.defaultAuthor.url}
+            target="_blank"
+            rel="noopener"
+            class="article__author-name"
+            >{ORGANIZATION_DATA.defaultAuthor.name}</a
+          >
+          <div class="article__author-role">
+            {ORGANIZATION_DATA.defaultAuthor.role}
+          </div>
+          <div class="article__author-socials">
+            <a
+              href="https://t.me/+KznfEhtzkeNlZjIy"
+              target="_blank"
+              rel="noopener"
+              aria-label="Telegram"
+              class="article__author-social-link"
+            >
+              <img
+                src="/images/technical/telegram.webp"
+                alt=""
+                aria-hidden="true"
+                width="20"
+                height="20"
+              />
+            </a>
+            <a
+              href="https://vk.com/chemistry_exam"
+              target="_blank"
+              rel="noopener"
+              aria-label="ВКонтакте"
+              class="article__author-social-link"
+            >
+              <img
+                src="/images/technical/vk.webp"
+                alt=""
+                aria-hidden="true"
+                width="20"
+                height="20"
+              />
+            </a>
+            <a
+              href="https://www.youtube.com/@chemistry_exam"
+              target="_blank"
+              rel="noopener"
+              aria-label="YouTube"
+              class="article__author-social-link"
+            >
+              <img
+                src="/images/technical/youtube.webp"
+                alt=""
+                aria-hidden="true"
+                width="20"
+                height="20"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
       <div class="article__divider"></div>
       <div class="article__footer">
         <div
@@ -586,6 +584,14 @@ function getArticleHref(post: CollectionEntry<"articles">) {
     font-size: clamp(13px, 1vw, 14px);
   }
 
+  .article__meta-author-photo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+
   .article__meta-date--updated {
     color: var(--blue, #366ef0);
   }
@@ -598,7 +604,6 @@ function getArticleHref(post: CollectionEntry<"articles">) {
     color: var(--black);
   }
 
-  /* ===== DESC + AUTHOR 2-COLUMN ===== */
   .article__header-desc-author {
     display: grid;
     grid-template-columns: 1fr;
@@ -683,70 +688,77 @@ function getArticleHref(post: CollectionEntry<"articles">) {
     object-fit: contain;
   }
 
-  .article__header-image {
-    margin: 0 0 clamp(32px, 5vw, 50px) 0;
-    padding: 0;
+  /* ===== TABLE OF CONTENTS ===== */
+  .article__toc {
+    background-color: #e3fdff;
+    border-radius: var(--radius-24);
+    margin: 0 0 var(--space-24) 0;
+    overflow: hidden;
   }
 
-  /* Article Hero Styles */
-  .hero {
-    min-height: 200px;
+  .article__toc-summary {
     display: flex;
     align-items: center;
-    justify-content: center;
-  }
-
-  .hero__img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 16/9;
-    border-radius: var(--radius-24);
-  }
-
-  .article__header-caption {
-    font-size: clamp(12px, 1vw, 14px);
-    font-weight: 400;
-    color: var(--gray);
-    text-align: center;
-    margin-top: var(--space-12);
-    font-style: italic;
-    font-variant-numeric: lining-nums tabular-nums;
-  }
-
-  /* ===== TABLE OF CONTENTS (обтекание) ===== */
-  .article__inside-content {
-    float: left;
-    max-width: 50%;
-    min-width: 0; /* важно для корректного сжатия */
-    margin: 0 var(--space-24) var(--space-20) 0;
-    background-color: #e3fdff;
+    justify-content: space-between;
     padding: var(--space-20);
-    border-radius: var(--radius-24);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    gap: var(--space-12);
   }
 
-  .article__content-title {
+  .article__toc-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .article__toc-summary::marker {
+    content: "";
+  }
+
+  .article__toc-title {
     font-size: clamp(18px, 2vw, 24px);
     font-weight: 700;
-    margin: 0 0 var(--space-16) 0;
+    margin: 0;
     color: var(--black);
   }
 
-  .article__content-list {
+  .article__toc-chevron {
+    flex-shrink: 0;
+    color: var(--gray);
+    transition: transform 0.25s var(--easing);
+  }
+
+  details.article__toc[open] .article__toc-chevron {
+    transform: rotate(180deg);
+  }
+
+  .article__toc-list {
     list-style: none;
-    padding: 0;
+    padding: 0 var(--space-20) var(--space-20);
     margin: 0;
+    columns: 2;
+    column-gap: var(--space-32);
     color: #505050;
     font-size: clamp(14px, 1vw, 16px);
     font-weight: 500;
   }
 
-  .article__content-list li {
-    margin-bottom: var(--space-16);
+  .article__toc-item {
+    margin-bottom: var(--space-12);
+    break-inside: avoid;
+    padding-left: var(--space-16);
+    position: relative;
   }
 
-  .article__content-list a {
+  .article__toc-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--blue, #366ef0);
+    line-height: 1.5;
+  }
+
+  .article__toc-link {
     color: inherit;
     text-decoration: none;
     display: block;
@@ -755,26 +767,23 @@ function getArticleHref(post: CollectionEntry<"articles">) {
     transition: color 0.2s var(--easing);
   }
 
-  .article__content-list a:hover {
+  .article__toc-link:hover {
     color: var(--blue);
   }
 
-  /* Вложенный список для h3 */
-  .article__content-sublist {
+  .article__toc-sublist {
     list-style: none;
     padding: 0;
-    margin: var(--space-8) 0 0 var(--space-20);
+    margin: var(--space-6) 0 0 var(--space-16);
   }
 
-  .article__content-sublist li {
-    margin-bottom: var(--space-8);
+  .article__toc-subitem {
+    margin-bottom: var(--space-6);
   }
 
-  /* Очистка float после контента */
-  .article__content::after {
-    content: "";
-    display: table;
-    clear: both;
+  .article__toc-link--sub {
+    font-size: clamp(13px, 0.9vw, 14px);
+    color: var(--gray);
   }
 
   /* ===== TAGS BLOCK ===== */
@@ -976,12 +985,6 @@ function getArticleHref(post: CollectionEntry<"articles">) {
       gap: var(--space-20);
     }
 
-    .article__inside-content {
-      float: none;
-      max-width: 100%;
-      margin: 0 0 var(--space-20) 0;
-    }
-
     .article__more-header {
       grid-template-columns: 1fr;
       gap: var(--space-16);
@@ -1017,11 +1020,8 @@ function getArticleHref(post: CollectionEntry<"articles">) {
       grid-template-columns: 1fr;
     }
 
-    .article__inside-content {
-      float: none;
-      max-width: 100%;
-      margin: 0 0 var(--space-20) 0;
-      padding: var(--space-16);
+    .article__toc-list {
+      columns: 1;
     }
 
     .article__more-header {
