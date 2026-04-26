@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Что входит в курс</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       ============================================================ */
+    :root {
+      /* ---- EXISTING (light theme, from pricing block) ---- */
+      --color-page:            #F3F1F8;
+      --color-surface:         #FFFFFF;
+      --color-text:            #1A1B2E;
+      --color-text-muted:      #6E7185;
+
+      --color-primary:         #7A5CF0;
+      --color-primary-hover:   #6A49E8;
+      --color-primary-soft:    #EDE7FD;
+      --color-primary-tint:    #F2EEFE;
+
+      --color-lime:            #D8E998;
+      --color-lime-soft:       #E8F1C8;
+      --color-lime-icon:       #7FA533;
+      --color-mint:            #DDE9B4;
+      --color-mint-ink:        #6F8A2B;
+      --color-butter-soft:     #FFF1D3;
+      --color-butter-ink:      #D99A1D;
+      --color-sand:            #FFC36B;
+
+      /* ---- NEW (dark theme) ---- */
+      --color-dark-page:         #141124;
+      --color-dark-surface:      #221D36;
+      --color-dark-surface-soft: #2B2541;   /* blob за иллюстрациями */
+      --color-dark-text:         #ECE9F5;
+      --color-dark-text-muted:   #9A96B2;
+      --color-dark-border:       rgba(255, 255, 255, 0.04);
+
+      /* ---- Shared ---- */
+      --radius-sm:   12px;
+      --radius-md:   18px;
+      --radius-lg:   22px;
+      --radius-xl:   28px;
+      --radius-pill: 999px;
+
+      --space-1:  4px;
+      --space-2:  8px;
+      --space-3:  12px;
+      --space-4:  16px;
+      --space-5:  20px;
+      --space-6:  24px;
+      --space-7:  32px;
+      --space-8:  40px;
+      --space-9:  48px;
+      --space-10: 64px;
+
+      --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --ease: cubic-bezier(.2, .7, .3, 1);
+    }
+
+    /* ============================================================
+       RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    h1, h2, h3, h4, p, ul, ol, figure { margin: 0; padding: 0; }
+    ol, ul { list-style: none; }
+    button { font: inherit; border: 0; background: transparent; cursor: pointer; color: inherit; }
+    svg { display: block; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-dark-page);
+      color: var(--color-dark-text);
+      font-weight: 500;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============================================================
+       SECTION — одинаковая ширина с pricing-блоком
+       ============================================================ */
+    .features {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    /* ---- Header ---- */
+    .features__header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-8);
+      align-items: center;
+      margin-bottom: var(--space-9);
+    }
+
+    .features__intro {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      max-width: 560px;
+    }
+
+    .features__eyebrow {
+      align-self: flex-start;
+      background: var(--color-lime);
+      color: var(--color-text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+    }
+
+    .features__title {
+      font-size: clamp(40px, 4.4vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--color-dark-text);
+    }
+
+    .features__subtitle {
+      color: var(--color-dark-text-muted);
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.55;
+      max-width: 460px;
+    }
+
+    .features__hero {
+      width: 320px;
+      height: 200px;
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      background: radial-gradient(ellipse at center, var(--color-dark-surface-soft) 0%, transparent 70%);
+      border-radius: var(--radius-pill);
+    }
+    .features__hero svg { width: 110px; height: 110px; }
+
+    /* ============================================================
+       FEATURE CARDS — stacked, 50/50, зеркальные
+       ============================================================ */
+    .features__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+      counter-reset: feat;
+    }
+
+    .feature-card {
+      position: relative;
+      background: var(--color-dark-surface);
+      border-radius: var(--radius-xl);
+      padding: 40px 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+      align-items: center;
+      counter-increment: feat;
+      min-height: 260px;
+    }
+
+    /* Зеркальный порядок у чётных карточек — без дубля CSS-правил */
+    .feature-card:nth-child(even) .feature-card__content { order: 2; }
+    .feature-card:nth-child(even) .feature-card__img     { order: 1; }
+
+    .feature-card__content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      max-width: 440px;
+    }
+
+    .feature-card__heading {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+    }
+
+    /* Номер из CSS-счётчика — перенумеруется автоматически */
+    .feature-card__num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .feature-card__num::before { content: counter(feat); }
+
+    .feature-card__title {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--color-dark-text);
+    }
+
+    .feature-card__desc {
+      color: var(--color-dark-text-muted);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.55;
+    }
+
+    /* Illustration slot */
+    .feature-card__img {
+      width: 100%;
+      max-width: 460px;
+      height: 220px;
+      justify-self: center;
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      background: radial-gradient(ellipse at center, var(--color-dark-surface-soft) 0%, transparent 70%);
+      border-radius: var(--radius-pill);
+    }
+    .feature-card__img svg { width: 96px; height: 96px; }
+
+    /* ============================================================
+       GIFT CARD
+       ============================================================ */
+    .gift-card {
+      background: var(--color-dark-surface);
+      border-radius: var(--radius-xl);
+      padding: 36px 56px 36px 40px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: center;
+    }
+
+    .gift-card__img {
+      width: 100%;
+      height: 180px;
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      background: radial-gradient(ellipse at center, var(--color-dark-surface-soft) 0%, transparent 70%);
+      border-radius: var(--radius-pill);
+    }
+    .gift-card__img svg { width: 120px; height: 120px; }
+
+    .gift-card__body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      min-width: 0;
+      max-width: 640px;
+    }
+
+    .gift-card__title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .gift-card__desc {
+      color: var(--color-dark-text-muted);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.55;
+      margin-bottom: var(--space-3);
+    }
+
+    .gift-card__cta {
+      align-self: flex-start;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px 28px 16px 22px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 180ms var(--ease), transform 180ms var(--ease);
+    }
+    .gift-card__cta:hover  { background: var(--color-primary-hover); }
+    .gift-card__cta:active { transform: translateY(1px); }
+    .gift-card__cta svg    { width: 20px; height: 20px; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 900px) {
+      .features { padding: 64px 24px; }
+
+      .features__header { grid-template-columns: 1fr; }
+      .features__hero   { justify-self: start; }
+
+      .feature-card {
+        grid-template-columns: 1fr;
+        padding: 32px;
+        min-height: 0;
+        gap: var(--space-6);
+      }
+      .feature-card:nth-child(even) .feature-card__content { order: initial; }
+      .feature-card:nth-child(even) .feature-card__img     { order: initial; }
+
+      .gift-card {
+        grid-template-columns: 1fr;
+        padding: 32px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .features { padding: 48px 16px; }
+      .feature-card { padding: 24px; }
+      .feature-card__img { height: 180px; }
+      .gift-card { padding: 24px; }
+      .gift-card__title { font-size: 26px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="features" aria-labelledby="features-title">
+
+    <!-- ============== HEADER ============== -->
+    <header class="features__header">
+      <div class="features__intro">
+        <span class="features__eyebrow">что входит в курс</span>
+        <h2 class="features__title" id="features-title">Что входит в&nbsp;курс</h2>
+        <p class="features__subtitle">
+          Курс даёт всё, что нужно для системной подготовки к&nbsp;ЕГЭ по&nbsp;химии в&nbsp;течение года.
+        </p>
+      </div>
+
+      <figure class="features__hero" aria-hidden="true">
+        <!-- DEFAULT ICON -->
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+          <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+        </svg>
+      </figure>
+    </header>
+
+    <!-- ============== FEATURE LIST ============== -->
+    <ol class="features__list">
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Живые занятия<br>в&nbsp;мини-группе</h3>
+          </header>
+          <p class="feature-card__desc">
+            8 занятий в&nbsp;месяц, до&nbsp;6–8 человек, можно задавать вопросы и&nbsp;разбирать сложные темы.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Домашние задания<br>и&nbsp;разбор ошибок</h3>
+          </header>
+          <p class="feature-card__desc">
+            Практика после каждой темы, проверка и&nbsp;понятная обратная связь.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Пробники и&nbsp;зачёты</h3>
+          </header>
+          <p class="feature-card__desc">
+            Регулярная проверка прогресса, формат ЕГЭ и&nbsp;работа над слабыми местами.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Конспекты, материалы<br>и&nbsp;записи</h3>
+          </header>
+          <p class="feature-card__desc">
+            Всё хранится в&nbsp;личном кабинете и&nbsp;помогает повторять темы в&nbsp;удобное время.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Поддержка преподавателя<br>и&nbsp;куратора</h3>
+          </header>
+          <p class="feature-card__desc">
+            Можно задать вопрос, получить помощь и&nbsp;не&nbsp;остаться одному с&nbsp;трудностями.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+      <li class="feature-card">
+        <div class="feature-card__content">
+          <header class="feature-card__heading">
+            <span class="feature-card__num" aria-hidden="true"></span>
+            <h3 class="feature-card__title">Контроль прогресса<br>и&nbsp;связь с&nbsp;родителями</h3>
+          </header>
+          <p class="feature-card__desc">
+            Видно динамику, проблемы и&nbsp;результаты обучения.
+          </p>
+        </div>
+        <figure class="feature-card__img" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.5" cy="15" r="1" fill="currentColor"/>
+            <circle cx="13.5" cy="17" r="0.8" fill="currentColor"/>
+          </svg>
+        </figure>
+      </li>
+
+    </ol>
+
+    <!-- ============== GIFT CARD ============== -->
+    <aside class="gift-card" aria-label="Бонус при записи">
+
+      <figure class="gift-card__img" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="2" y="7" width="20" height="5" rx="1" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 21V7M12 7s-1.5-4-4-4a2 2 0 0 0 0 4h4Zm0 0s1.5-4 4-4a2 2 0 0 1 0 4h-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </figure>
+
+      <div class="gift-card__body">
+        <h3 class="gift-card__title">Подарок при записи</h3>
+        <p class="gift-card__desc">
+          2 бесплатных курса для старта&nbsp;+ полезные материалы по&nbsp;подготовке к&nbsp;ЕГЭ
+        </p>
+        <button type="button" class="gift-card__cta">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="2" y="7" width="20" height="5" rx="1" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 21V7M12 7s-1.5-4-4-4a2 2 0 0 0 0 4h4Zm0 0s1.5-4 4-4a2 2 0 0 1 0 4h-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          Получить бонус
+        </button>
+      </div>
+
+    </aside>
+
+  </section>
+
+</body>
+</html>

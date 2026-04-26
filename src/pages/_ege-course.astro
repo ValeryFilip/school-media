@@ -1,0 +1,81 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import EgeCourseParents from "../components/ege-course/EgeCourseParents.astro";
+import EgeCourseTeacher from "../components/ege-course/EgeCourseTeacher.astro";
+import EgeCourseFeatures from "../components/ege-course/EgeCourseFeatures.astro";
+import EgeCourseResults from "../components/ege-course/EgeCourseResults.astro";
+import EgeCoursePricing from "../components/ege-course/EgeCoursePricing.astro";
+---
+
+<MainLayout
+  title="Годовой курс ЕГЭ по химии в минигруппе"
+  description="Подготовка к ЕГЭ по химии: годовой курс в минигруппе с живыми занятиями, домашними заданиями и поддержкой до самого экзамена."
+  showBreadcrumbs={false}
+>
+  <EgeCoursePricing />
+  <EgeCourseParents />
+  <EgeCourseTeacher />
+  <section class="ege-course-dark">
+    <div class="ege-course-dark__inner">
+      <EgeCourseFeatures />
+      <EgeCourseResults />
+    </div>
+  </section>
+</MainLayout>
+
+<style>
+  .ege-course-dark {
+    --ege-dark-page: #141124;
+    --ege-dark-surface: #221d36;
+    --ege-dark-surface-soft: #2b2541;
+    --ege-dark-text: #ece9f5;
+    --ege-dark-muted: #9a96b2;
+    --ege-dark-primary: #7a5cf0;
+    --ege-dark-primary-hover: #6a49e8;
+    --ege-dark-lime: #d8e998;
+
+    background: #f3f1f8;
+    padding: 0 40px 80px;
+  }
+
+  .ege-course-dark__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 36px;
+    background: var(--ege-dark-page);
+    border-radius: 36px;
+    box-shadow:
+      inset 0 0 0 1px rgba(160, 150, 210, 0.2),
+      0 18px 42px rgba(18, 15, 36, 0.18);
+  }
+
+  .ege-course-dark__inner :global(.results) {
+    margin-top: 52px;
+  }
+
+  @media (max-width: 900px) {
+    .ege-course-dark {
+      padding: 0 24px 64px;
+    }
+
+    .ege-course-dark__inner {
+      padding: 24px;
+      border-radius: 30px;
+    }
+
+    .ege-course-dark__inner :global(.results) {
+      margin-top: 36px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ege-course-dark {
+      padding: 0 16px 48px;
+    }
+
+    .ege-course-dark__inner {
+      padding: 18px;
+      border-radius: 24px;
+    }
+  }
+</style>

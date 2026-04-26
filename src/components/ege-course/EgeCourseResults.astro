@@ -1,0 +1,898 @@
+---
+import { TUTORING_REVIEWS } from "../../data/reviews-page";
+
+type ResultCard = {
+  id: number;
+  name: string;
+  social: "tg" | "vk";
+  socialUrl?: string;
+  before: number;
+  after: number;
+  text: string;
+  photo?: string;
+  note: string;
+  accent: "violet" | "lime";
+  icon: "flask" | "molecule" | "smile" | "star" | "arrow";
+};
+
+const results: ResultCard[] = [
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 31)!,
+    before: 24,
+    after: 90,
+    note: "90+ баллов",
+    accent: "lime",
+    icon: "arrow",
+  },
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 38)!,
+    before: 14,
+    after: 100,
+    note: "100 баллов",
+    accent: "violet",
+    icon: "smile",
+  },
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 11)!,
+    before: 8,
+    after: 75,
+    note: "Подготовка с 9 класса",
+    accent: "violet",
+    icon: "star",
+  },
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 10)!,
+    before: 12,
+    after: 80,
+    note: "80+ баллов",
+    accent: "lime",
+    icon: "arrow",
+  },
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 9)!,
+    before: 20,
+    after: 74,
+    note: "Полюбила органику",
+    accent: "violet",
+    icon: "molecule",
+  },
+  {
+    ...TUTORING_REVIEWS.find((item) => item.id === 8)!,
+    before: 28,
+    after: 75,
+    note: "2 года подготовки",
+    accent: "lime",
+    icon: "flask",
+  },
+].map((item) => ({
+  id: item.id,
+  name: item.name,
+  social: item.social,
+  socialUrl: item.socialUrl,
+  before: item.before,
+  after: item.after,
+  text: item.text,
+  photo: item.photo,
+  note: item.note,
+  accent: item.accent,
+  icon: item.icon,
+}));
+
+const summary = [
+  { value: "1000+", label: "учеников", icon: "users", accent: "violet" },
+  { value: "82,6", label: "средний балл", icon: "chart", accent: "lime" },
+  { value: "до 8", label: "в минигруппе", icon: "users", accent: "violet" },
+];
+
+const sliderId = `ege-results-${Math.random().toString(36).slice(2, 8)}`;
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part.trim()[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+function getSocialLabel(kind: "tg" | "vk", url?: string) {
+  if (!url) return kind === "tg" ? "telegram" : "vk";
+  try {
+    const parsed = new URL(url);
+    if (kind === "tg") {
+      return parsed.pathname.replace(/^\//, "") || "telegram";
+    }
+    return `${parsed.hostname}${parsed.pathname}`.replace(/\/$/, "");
+  } catch {
+    return kind === "tg" ? "telegram" : "vk";
+  }
+}
+---
+
+<section class="results" aria-labelledby="results-title">
+  <header class="results__header">
+    <div class="results__intro">
+      <span class="results__eyebrow">результаты учеников</span>
+      <h2 class="results__title" id="results-title">Отзывы и кейсы учеников</h2>
+      <p class="results__subtitle">
+        Реальные результаты и впечатления учеников после обучения в мини-группах.
+        Истории успеха, которые вдохновляют.
+      </p>
+    </div>
+
+    <div class="results__hero" aria-hidden="true">
+      <div class="results__sticker">
+        <span class="results__tape"></span>
+        <p>Реальные отзывы<br />реальные результаты!</p>
+      </div>
+
+      <div class="results__flask">
+        <svg viewBox="0 0 110 150" fill="none">
+          <path d="M42 10h26M47 10v34L17 116a20 20 0 0 0 17.1 30h41.8A20 20 0 0 0 93 116L63 44V10" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M28 93c7.8 4.8 16.8 7.2 27 7.2s19.2-2.4 27-7.2v28H28V93Z" fill="url(#results-flask-fill)" />
+          <path d="M34 85c6 3.8 13 5.7 21 5.7s15-1.9 21-5.7" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+          <circle cx="38" cy="104" r="4" fill="currentColor" opacity=".22" />
+          <circle cx="76" cy="112" r="5" fill="currentColor" opacity=".2" />
+          <defs>
+            <linearGradient id="results-flask-fill" x1="55" x2="55" y1="93" y2="121">
+              <stop stop-color="#8D6AF5" />
+              <stop offset="1" stop-color="#5E38E4" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="results__carousel" id={sliderId} tabindex="0" aria-roledescription="carousel" aria-label="Отзывы и кейсы учеников">
+    <div class="results__controls">
+      <button class="results__nav results__nav--prev" type="button" aria-label="Предыдущие отзывы">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M19 12H5m0 0 6-6m-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+
+      <div class="results__dots" aria-label="Навигация по слайдам"></div>
+
+      <button class="results__nav results__nav--next" type="button" aria-label="Следующие отзывы">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="results__viewport">
+      <ol class="results__track">
+        {
+          results.map((item) => (
+            <li class="result-card">
+              <div class="result-card__head">
+                <div class:list={["result-card__avatar", { "result-card__avatar--image": !!item.photo }]}>
+                  {item.photo ? (
+                    <img src={item.photo} alt="" width="120" height="120" loading="lazy" />
+                  ) : (
+                    getInitials(item.name)
+                  )}
+                </div>
+
+                <div class="result-card__person">
+                  <h3 class="result-card__name">{item.name}</h3>
+                  <a class="result-card__social" href={item.socialUrl} target="_blank" rel="noopener noreferrer">
+                    <span class:list={["result-card__social-icon", `result-card__social-icon--${item.social}`]}>
+                      {item.social === "vk" ? (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M4 7.7c.1 5.6 2.9 8.9 8 8.9h.3v-3.4c1.9.2 3.3 1.5 3.9 3.4H19c-.8-2.8-2.8-4.4-4-5 1.2-.7 2.9-2.4 3.3-5H16c-.6 2.1-2.1 3.8-3.7 4V7.7h-2.3v4.8c-1.6-.4-3.7-2.2-3.8-4.8H4Z" />
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M21.9 4.6 18.6 20c-.2 1.1-.8 1.3-1.6.8l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2l-11.4 7.2-4.9-1.5c-1.1-.3-1.1-1 .2-1.5L20.3 3c.9-.3 1.7.2 1.6 1.6Z" />
+                        </svg>
+                      )}
+                    </span>
+                    {getSocialLabel(item.social, item.socialUrl)}
+                  </a>
+                </div>
+              </div>
+
+              <div class:list={["result-card__score", `result-card__score--${item.accent}`]}>
+                <span>{item.before}</span>
+                <span class="result-card__score-arrow">→</span>
+                <span>{item.after}</span>
+              </div>
+
+              <blockquote class="result-card__quote">
+                {item.text}
+              </blockquote>
+
+              <div class="result-card__footer">
+                <span class:list={["result-card__badge", `result-card__badge--${item.accent}`]}>
+                  <span class="result-card__badge-icon" aria-hidden="true">
+                    {item.icon === "flask" && (
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M9 3h6M10 3v5.5L5.5 17a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    )}
+                    {item.icon === "molecule" && (
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 6 12 9m0 0 5-3m-5 3v6m-5 3 5-3m0 0 5 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="7" cy="6" r="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="17" cy="6" r="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="7" cy="18" r="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="17" cy="18" r="2" stroke="currentColor" stroke-width="2" />
+                      </svg>
+                    )}
+                    {item.icon === "smile" && (
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+                        <path d="M8.5 14.5c1 1.3 2.1 2 3.5 2s2.5-.7 3.5-2M9 10h.01M15 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      </svg>
+                    )}
+                    {item.icon === "star" && (
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                      </svg>
+                    )}
+                    {item.icon === "arrow" && (
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 18c5 0 8-2 11-7m0 0V6m0 5h-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  {item.note}
+                </span>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+
+  <aside class="results__summary" aria-label="Ключевые показатели мини-групп">
+    {
+      summary.map((item) => (
+        <div class="results__metric">
+          <span class:list={["results__metric-icon", `results__metric-icon--${item.accent}`]} aria-hidden="true">
+            {item.icon === "users" ? (
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="2" />
+                <circle cx="16.5" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2" />
+                <path d="M4.5 19c0-2.8 2.4-5 5.5-5s5.5 2.2 5.5 5M13.5 18.5c.2-1.9 1.8-3.5 4.2-3.5 1 0 2 .3 2.8.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 18h16M6.5 15 11 10.5l3 3 5-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            )}
+          </span>
+          <div class="results__metric-body">
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+          </div>
+        </div>
+      ))
+    }
+  </aside>
+</section>
+
+<style>
+  .results {
+    color: var(--ege-dark-text, #ece9f5);
+  }
+
+  .results__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 36px;
+    align-items: start;
+    margin-bottom: 26px;
+  }
+
+  .results__intro {
+    max-width: 720px;
+  }
+
+  .results__eyebrow {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--ege-dark-lime, #d8e998);
+    color: #1a1b2e;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .results__title {
+    margin: 24px 0 0;
+    font-size: clamp(38px, 5vw, 68px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+  }
+
+  .results__subtitle {
+    margin: 22px 0 0;
+    max-width: 700px;
+    color: var(--ege-dark-muted, #9a96b2);
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.55;
+  }
+
+  .results__hero {
+    position: relative;
+    width: 420px;
+    min-height: 240px;
+  }
+
+  .results__sticker {
+    position: absolute;
+    right: 88px;
+    top: 14px;
+    width: 250px;
+    padding: 22px 20px 26px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fff2c8 0%, #ffefb5 100%);
+    color: #22253a;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+    transform: rotate(-6deg);
+  }
+
+  .results__sticker p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .results__tape {
+    position: absolute;
+    right: 24px;
+    top: -14px;
+    width: 70px;
+    height: 20px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, rgba(122, 92, 240, 0.96) 0%, rgba(154, 114, 250, 0.92) 100%);
+    transform: rotate(18deg);
+  }
+
+  .results__flask {
+    position: absolute;
+    right: 10px;
+    top: 22px;
+    width: 132px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .results__flask::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border-radius: 50%;
+    background: rgba(122, 92, 240, 0.12);
+    filter: blur(4px);
+  }
+
+  .results__flask svg {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .results__controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .results__dots {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .results__dot {
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition:
+      transform 180ms ease,
+      background 180ms ease;
+  }
+
+  .results__dot[aria-current="true"] {
+    background: #9f7dff;
+    transform: scale(1.05);
+  }
+
+  .results__nav {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition:
+      background 180ms ease,
+      transform 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .results__nav:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .results__nav:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .results__nav:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .results__nav--next {
+    background: linear-gradient(180deg, #8d6af5 0%, #6c46eb 100%);
+    border-color: transparent;
+  }
+
+  .results__nav svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+  }
+
+  .results__viewport {
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .results__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .results__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 44px) / 3);
+    gap: 22px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .result-card {
+    min-width: 0;
+    min-height: 460px;
+    padding: 28px 28px 24px;
+    border-radius: 30px;
+    background: var(--ege-dark-surface, #221d36);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-card__head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .result-card__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(180deg, #a387ff 0%, #8f6ef8 100%);
+    color: #fff;
+    font-size: 34px;
+    font-weight: 800;
+    overflow: hidden;
+  }
+
+  .result-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .result-card__person {
+    min-width: 0;
+  }
+
+  .result-card__name {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+
+  .result-card__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    color: var(--ege-dark-muted, #9a96b2);
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .result-card__social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+
+  .result-card__social-icon--vk {
+    background: rgba(143, 110, 248, 0.18);
+    color: #a98cff;
+  }
+
+  .result-card__social-icon--tg {
+    background: rgba(216, 233, 152, 0.16);
+    color: #d8e998;
+  }
+
+  .result-card__social-icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .result-card__score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 86px;
+    padding: 0 34px;
+    border-radius: 24px;
+    margin-bottom: 22px;
+    font-size: clamp(40px, 3.6vw, 60px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+  }
+
+  .result-card__score--violet {
+    background: linear-gradient(90deg, #8a67f3 0%, #c4b0ff 100%);
+    color: #fff;
+  }
+
+  .result-card__score--lime {
+    background: linear-gradient(90deg, #c7dd72 0%, #dceb93 100%);
+    color: #1a1b2e;
+  }
+
+  .result-card__score-arrow {
+    font-weight: 600;
+    opacity: 0.92;
+  }
+
+  .result-card__quote {
+    margin: 0;
+    flex: 1;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 18px;
+    line-height: 1.65;
+  }
+
+  .result-card__quote::before {
+    content: "“";
+    display: block;
+    margin-bottom: 8px;
+    color: #cfdf7c;
+    font-size: 56px;
+    line-height: 0.6;
+    font-weight: 700;
+  }
+
+  .result-card__footer {
+    margin-top: 24px;
+  }
+
+  .result-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 58px;
+    padding: 0 18px;
+    border-radius: 18px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .result-card__badge--violet {
+    background: rgba(205, 184, 255, 0.9);
+    color: #2a2341;
+  }
+
+  .result-card__badge--lime {
+    background: rgba(216, 233, 152, 0.96);
+    color: #2a2e20;
+  }
+
+  .result-card__badge-icon {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+  }
+
+  .result-card__badge-icon svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .results__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 30px;
+    padding: 22px 28px;
+    border-radius: 28px;
+    background: var(--ege-dark-surface, #221d36);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .results__metric {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 24px;
+  }
+
+  .results__metric + .results__metric {
+    border-left: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .results__metric-icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+
+  .results__metric-icon--violet {
+    background: linear-gradient(180deg, #8d6af5 0%, #6d46eb 100%);
+    color: #fff;
+  }
+
+  .results__metric-icon--lime {
+    background: rgba(216, 233, 152, 0.94);
+    color: #22253a;
+  }
+
+  .results__metric-icon svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+  }
+
+  .results__metric-body strong {
+    display: block;
+    font-size: clamp(32px, 2.8vw, 38px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .results__metric-body span {
+    display: block;
+    margin-top: 6px;
+    color: var(--ege-dark-muted, #9a96b2);
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 1100px) {
+    .results__header {
+      grid-template-columns: 1fr;
+    }
+
+    .results__hero {
+      width: 100%;
+      min-height: 180px;
+    }
+
+    .results__track {
+      grid-auto-columns: calc((100% - 22px) / 2);
+    }
+
+    .results__summary {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .results__metric + .results__metric {
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      padding-top: 26px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .results__controls {
+      justify-content: center;
+    }
+
+    .results__track {
+      grid-auto-columns: 100%;
+    }
+
+    .result-card {
+      min-height: 0;
+      padding: 22px 20px 20px;
+    }
+
+    .result-card__head {
+      gap: 14px;
+    }
+
+    .result-card__avatar {
+      width: 86px;
+      height: 86px;
+      font-size: 24px;
+    }
+
+    .result-card__name {
+      font-size: 20px;
+    }
+
+    .result-card__social {
+      font-size: 15px;
+    }
+
+    .result-card__score {
+      min-height: 72px;
+      width: 100%;
+      padding: 0 22px;
+      font-size: 30px;
+    }
+
+    .result-card__quote {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<script define:vars={{ sliderId }}>
+  (() => {
+    const root = document.getElementById(sliderId);
+    if (!root) return;
+
+    const viewport = root.querySelector(".results__viewport");
+    const track = root.querySelector(".results__track");
+    const prev = root.querySelector(".results__nav--prev");
+    const next = root.querySelector(".results__nav--next");
+    const dotsHost = root.querySelector(".results__dots");
+    const slides = Array.from(root.querySelectorAll(".result-card"));
+
+    if (!viewport || !track || !prev || !next || !dotsHost || slides.length === 0) return;
+
+    let pageCount = 1;
+    let currentPage = 0;
+    let dots = [];
+
+    const getGap = () => parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "0");
+
+    const getStep = () => {
+      const first = track.children[0];
+      if (!(first instanceof HTMLElement)) return viewport.clientWidth;
+      return first.getBoundingClientRect().width + getGap();
+    };
+
+    const getSlidesPerPage = () => {
+      const step = getStep();
+      return Math.max(1, Math.round((viewport.clientWidth + getGap()) / step));
+    };
+
+    const getPageSpan = () => getStep() * getSlidesPerPage();
+
+    const updateButtons = () => {
+      prev.disabled = currentPage <= 0;
+      next.disabled = currentPage >= pageCount - 1;
+      dots.forEach((dot, index) => {
+        if (index === currentPage) {
+          dot.setAttribute("aria-current", "true");
+        } else {
+          dot.removeAttribute("aria-current");
+        }
+      });
+    };
+
+    const scrollToPage = (page) => {
+      const safePage = Math.max(0, Math.min(page, pageCount - 1));
+      const left = safePage * getPageSpan();
+      viewport.scrollTo({ left, behavior: "smooth" });
+    };
+
+    const jumpToPage = (page) => {
+      const safePage = Math.max(0, Math.min(page, pageCount - 1));
+      viewport.scrollLeft = safePage * getPageSpan();
+      currentPage = safePage;
+      updateButtons();
+    };
+
+    const rebuildDots = () => {
+      const previousPage = currentPage;
+      const perPage = getSlidesPerPage();
+      pageCount = Math.max(1, Math.ceil(slides.length / perPage));
+      dotsHost.innerHTML = "";
+      dots = Array.from({ length: pageCount }, (_, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "results__dot";
+        dot.setAttribute("aria-label", `Перейти к слайду ${index + 1}`);
+        dot.addEventListener("click", () => scrollToPage(index));
+        dotsHost.appendChild(dot);
+        return dot;
+      });
+      currentPage = Math.min(previousPage, pageCount - 1);
+      updateButtons();
+    };
+
+    const syncPage = () => {
+      const pageSpan = getPageSpan();
+      currentPage = Math.max(0, Math.min(pageCount - 1, Math.round(viewport.scrollLeft / pageSpan)));
+      updateButtons();
+    };
+
+    prev.addEventListener("click", () => scrollToPage(currentPage - 1));
+    next.addEventListener("click", () => scrollToPage(currentPage + 1));
+
+    viewport.addEventListener("scroll", () => {
+      window.requestAnimationFrame(syncPage);
+    }, { passive: true });
+
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        scrollToPage(currentPage - 1);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        scrollToPage(currentPage + 1);
+      }
+    });
+
+    const resizeObserver = new ResizeObserver(() => {
+      rebuildDots();
+      jumpToPage(currentPage);
+    });
+
+    resizeObserver.observe(viewport);
+    rebuildDots();
+    syncPage();
+  })();
+</script>
