@@ -35,7 +35,7 @@ const benefits = [
 <section class="pricing" aria-labelledby="pricing-title">
 
   <header class="pricing__header">
-    <span class="pricing__eyebrow">Стоимость</span>
+    <span class="pricing__eyebrow ege-course-chip ege-course-chip--lime">Стоимость</span>
     <h2 class="pricing__title" id="pricing-title">
       Тариф, с которым готовимся к&nbsp;ЕГЭ весь год
     </h2>
@@ -65,10 +65,10 @@ const benefits = [
     </figure>
 
     <div class="plan__body">
-      <hgroup class="plan__heading">
+      <div class="plan__heading">
         <h3 class="plan__title" id="plan-main-title">Годовой курс в&nbsp;минигруппе</h3>
-        <p class="plan__tag">Основной тариф</p>
-      </hgroup>
+        <span class="plan__tag ege-course-chip ege-course-chip--primary">Основной тариф</span>
+      </div>
 
       <div class="plan__pricing">
         <div class="plan__price">
@@ -177,41 +177,17 @@ const benefits = [
 
 <style>
   .pricing {
-    /* ---- tokens (light theme) ---- */
-    --nd-page:           #F3F1F8;
-    --nd-surface:        #FFFFFF;
-    --nd-text:           #1A1B2E;
-    --nd-text-muted:     #6E7185;
-
-    --nd-primary:        #7A5CF0;
-    --nd-primary-hover:  #6A49E8;
-    --nd-primary-soft:   #EDE7FD;
-    --nd-primary-tint:   #F2EEFE;
-
-    --nd-lime:           #D8E998;
-    --nd-lime-soft:      #E8F1C8;
-    --nd-lime-icon:      #7FA533;
-    --nd-mint:           #DDE9B4;
-    --nd-mint-ink:       #6F8A2B;
-    --nd-butter-soft:    #FFF1D3;
-    --nd-butter-ink:     #D99A1D;
-    --nd-sand:           #FFC36B;
-
-    --nd-r-sm:   12px;
-    --nd-r-md:   18px;
-    --nd-r-lg:   22px;
-    --nd-r-xl:   28px;
-    --nd-r-pill: 999px;
-
-    --nd-ease: cubic-bezier(.2, .7, .3, 1);
-
     /* ---- layout ---- */
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 80px 40px;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--nd-page);
-    color: var(--nd-text);
+    width: 100vw;
+    max-width: none;
+    margin-inline: calc(50% - 50vw);
+    padding: var(--ege-section-pad-y) var(--ege-section-pad-x);
+    font-family: var(--ege-font-family);
+    background:
+      var(--ege-dark-page)
+      url("/concepts/_new-design/images/ChatGPT Image 27 апр. 2026 г., 17_02_50.png")
+      center / cover no-repeat;
+    color: var(--ege-text);
     font-weight: 500;
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
@@ -228,30 +204,19 @@ const benefits = [
     margin-bottom: 40px;
   }
 
-  .pricing__eyebrow {
-    display: inline-block;
-    background: var(--nd-lime);
-    color: var(--nd-text);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 10px 24px;
-    border-radius: var(--nd-r-pill);
-  }
-
   .pricing__title {
-    font-size: clamp(32px, 4.4vw, 56px);
+    color: var(--ege-dark-text);
+    font-size: var(--ege-h2);
     font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    line-height: var(--ege-lh-title);
+    letter-spacing: var(--ege-track-title);
     max-width: 1080px;
     margin: 0;
   }
 
   .pricing__subtitle {
-    color: var(--nd-text-muted);
-    font-size: 18px;
+    color: var(--ege-dark-muted);
+    font-size: var(--ege-lead);
     font-weight: 500;
     line-height: 1.55;
     max-width: 640px;
@@ -261,8 +226,8 @@ const benefits = [
   /* ---- Primary plan ---- */
   .plan {
     position: relative;
-    background: var(--nd-surface);
-    border-radius: var(--nd-r-xl);
+    background: var(--ege-surface);
+    border-radius: var(--ege-radius-xl);
     padding: 40px 48px;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -278,19 +243,19 @@ const benefits = [
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: var(--nd-butter-soft);
+    background: var(--ege-butter-soft);
     padding: 10px 16px 10px 12px;
-    border-radius: var(--nd-r-sm);
-    font-size: 13px;
+    border-radius: var(--ege-radius-sm);
+    font-size: var(--ege-caption);
     font-weight: 600;
     line-height: 1.25;
-    color: var(--nd-text);
+    color: var(--ege-text);
   }
 
   .plan__gift-icon {
     width: 22px;
     height: 22px;
-    color: var(--nd-sand);
+    color: var(--ege-sand);
     flex-shrink: 0;
     display: block;
   }
@@ -298,8 +263,8 @@ const benefits = [
   .plan__icon-box {
     width: 140px;
     height: 140px;
-    border-radius: var(--nd-r-lg);
-    background: var(--nd-primary-tint);
+    border-radius: var(--ege-radius-lg);
+    background: var(--ege-primary-tint);
     display: grid;
     place-items: center;
     margin: 0;
@@ -308,7 +273,7 @@ const benefits = [
   .plan__icon-box svg {
     width: 64px;
     height: 64px;
-    color: var(--nd-primary);
+    color: var(--ege-primary);
     display: block;
   }
 
@@ -327,17 +292,10 @@ const benefits = [
   }
 
   .plan__title {
-    font-size: 32px;
+    font-size: var(--ege-h3);
     font-weight: 800;
     line-height: 1.15;
     letter-spacing: -0.01em;
-    margin: 0;
-  }
-
-  .plan__tag {
-    color: var(--nd-primary);
-    font-size: 18px;
-    font-weight: 600;
     margin: 0;
   }
 
@@ -356,29 +314,29 @@ const benefits = [
   }
 
   .plan__price-prefix {
-    font-size: 20px;
+    font-size: var(--ege-card-title);
     font-weight: 500;
-    color: var(--nd-text-muted);
+    color: var(--ege-muted);
   }
 
   .plan__price-value {
-    font-size: 52px;
+    font-size: var(--ege-price);
     font-weight: 800;
-    color: var(--nd-primary);
+    color: var(--ege-primary);
     letter-spacing: -0.015em;
     line-height: 1;
     white-space: nowrap;
   }
 
   .plan__price-suffix {
-    font-size: 22px;
+    font-size: var(--ege-card-title);
     font-weight: 500;
-    color: var(--nd-text-muted);
+    color: var(--ege-muted);
   }
 
   .plan__price-full {
-    font-size: 17px;
-    color: var(--nd-text-muted);
+    font-size: var(--ege-button);
+    color: var(--ege-muted);
     font-weight: 500;
     margin: 0;
   }
@@ -388,24 +346,24 @@ const benefits = [
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: var(--nd-lime-soft);
+    background: var(--ege-lime-soft);
     padding: 10px 18px 10px 14px;
-    border-radius: var(--nd-r-pill);
-    font-size: 15px;
+    border-radius: var(--ege-radius-pill);
+    font-size: var(--ege-body-sm);
     font-weight: 600;
   }
 
   .plan__installment svg {
     width: 18px;
     height: 18px;
-    color: var(--nd-lime-icon);
+    color: var(--ege-lime-icon);
     display: block;
   }
 
   .plan__cta {
-    background: var(--nd-primary);
-    color: #fff;
-    font-size: 17px;
+    background: var(--ege-primary);
+    color: var(--ege-inverse);
+    font-size: var(--ege-button);
     font-weight: 600;
     padding: 20px 28px;
     border-radius: 14px;
@@ -416,10 +374,10 @@ const benefits = [
     border: none;
     cursor: pointer;
     font-family: inherit;
-    transition: background 180ms var(--nd-ease), transform 180ms var(--nd-ease);
+    transition: background 180ms var(--ege-ease), transform 180ms var(--ege-ease);
   }
 
-  .plan__cta:hover  { background: var(--nd-primary-hover); }
+  .plan__cta:hover  { background: var(--ege-primary-hover); }
   .plan__cta:active { transform: translateY(1px); }
 
   .plan__cta-arrow {
@@ -432,17 +390,17 @@ const benefits = [
     display: flex;
     align-items: center;
     gap: 12px;
-    background: var(--nd-primary-soft);
+    background: var(--ege-primary-soft);
     padding: 16px 20px;
     border-radius: 14px;
-    font-size: 15px;
+    font-size: var(--ege-body-sm);
     font-weight: 500;
   }
 
   .plan__trial svg {
     width: 20px;
     height: 20px;
-    color: var(--nd-primary);
+    color: var(--ege-primary);
     display: block;
   }
 
@@ -460,16 +418,16 @@ const benefits = [
     display: flex;
     align-items: center;
     gap: 14px;
-    font-size: 17px;
+    font-size: var(--ege-button);
     font-weight: 500;
-    color: var(--nd-text);
+    color: var(--ege-text);
   }
 
   .feature__check {
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: var(--nd-primary-soft);
+    background: var(--ege-primary-soft);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -478,7 +436,7 @@ const benefits = [
   .feature__check svg {
     width: 12px;
     height: 12px;
-    color: var(--nd-primary);
+    color: var(--ege-primary);
     display: block;
   }
 
@@ -491,8 +449,8 @@ const benefits = [
   }
 
   .plan-alt {
-    background: var(--nd-surface);
-    border-radius: var(--nd-r-xl);
+    background: var(--ege-surface);
+    border-radius: var(--ege-radius-xl);
     padding: 24px 28px;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -503,7 +461,7 @@ const benefits = [
   .plan-alt__icon {
     width: 72px;
     height: 72px;
-    border-radius: var(--nd-r-md);
+    border-radius: var(--ege-radius-md);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -516,8 +474,8 @@ const benefits = [
     display: block;
   }
 
-  .plan-alt__icon--violet { background: var(--nd-primary-tint); color: var(--nd-primary); }
-  .plan-alt__icon--mint   { background: var(--nd-mint);         color: var(--nd-mint-ink); }
+  .plan-alt__icon--violet { background: var(--ege-primary-tint); color: var(--ege-primary); }
+  .plan-alt__icon--mint   { background: var(--ege-mint);         color: var(--ege-mint-ink); }
 
   .plan-alt__body {
     display: flex;
@@ -527,7 +485,7 @@ const benefits = [
   }
 
   .plan-alt__title {
-    font-size: 19px;
+    font-size: var(--ege-card-title);
     font-weight: 700;
     letter-spacing: -0.005em;
     margin: 0;
@@ -541,23 +499,23 @@ const benefits = [
   }
 
   .plan-alt__text {
-    color: var(--nd-text-muted);
-    font-size: 15px;
+    color: var(--ege-muted);
+    font-size: var(--ege-body-sm);
     font-weight: 500;
     line-height: 1.4;
     margin: 0;
   }
 
   .plan-alt__link {
-    color: var(--nd-primary);
+    color: var(--ege-primary);
     font-weight: 600;
-    font-size: 15px;
+    font-size: var(--ege-body-sm);
     display: inline-flex;
     align-items: center;
     gap: 8px;
     white-space: nowrap;
     text-decoration: none;
-    transition: gap 180ms var(--nd-ease);
+    transition: gap 180ms var(--ege-ease);
   }
 
   .plan-alt__link:hover { gap: 12px; }
@@ -570,8 +528,8 @@ const benefits = [
 
   /* ---- Benefits ---- */
   .benefits {
-    background: var(--nd-surface);
-    border-radius: var(--nd-r-xl);
+    background: var(--ege-surface);
+    border-radius: var(--ege-radius-xl);
     padding: 28px 36px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -590,7 +548,7 @@ const benefits = [
   .benefit__icon {
     width: 54px;
     height: 54px;
-    border-radius: var(--nd-r-sm);
+    border-radius: var(--ege-radius-sm);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -602,9 +560,9 @@ const benefits = [
     display: block;
   }
 
-  .benefit__icon--lime   { background: var(--nd-lime-soft);   color: var(--nd-lime-icon); }
-  .benefit__icon--violet { background: var(--nd-primary-soft); color: var(--nd-primary); }
-  .benefit__icon--butter { background: var(--nd-butter-soft);  color: var(--nd-butter-ink); }
+  .benefit__icon--lime   { background: var(--ege-lime-soft);   color: var(--ege-lime-icon); }
+  .benefit__icon--violet { background: var(--ege-primary-soft); color: var(--ege-primary); }
+  .benefit__icon--butter { background: var(--ege-butter-soft);  color: var(--ege-butter-ink); }
 
   .benefit__body {
     display: flex;
@@ -614,17 +572,17 @@ const benefits = [
   }
 
   .benefit__title {
-    font-size: 15px;
+    font-size: var(--ege-body-sm);
     font-weight: 700;
     letter-spacing: -0.005em;
     margin: 0;
   }
 
   .benefit__text {
-    font-size: 13px;
+    font-size: var(--ege-caption);
     font-weight: 500;
     line-height: 1.45;
-    color: var(--nd-text-muted);
+    color: var(--ege-muted);
     margin: 0;
   }
 
@@ -641,7 +599,7 @@ const benefits = [
   }
 
   @media (max-width: 720px) {
-    .pricing { padding: 48px 16px; }
+    .pricing { padding: var(--ege-section-pad-y) var(--ege-section-pad-x); }
     .plan {
       grid-template-columns: 1fr;
       padding: 28px;

@@ -1,0 +1,335 @@
+/*
+  Tokens and shared rules for the /ege-course landing only.
+  Keep this file imported from src/pages/ege-course.astro, not from MainLayout.
+*/
+
+.ege-course-page {
+  --ege-font-family:
+    "Raleway", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --ege-page: #ffffff;
+  --ege-surface: #ffffff;
+  --ege-surface-glass: rgba(255, 255, 255, 0.46);
+  --ege-text: #1a1b2e;
+  --ege-text-soft: #22253a;
+  --ege-muted: #6e7185;
+  --ege-inverse: #ffffff;
+
+  --ege-primary: #7a5cf0;
+  --ege-primary-hover: #6a49e8;
+  --ege-primary-deep: #5d35dd;
+  --ege-primary-soft: #ddd1ff;
+  --ege-primary-tint: #ebe4ff;
+  --ege-primary-mark: #9f7dff;
+  --ege-primary-rgb: 122, 92, 240;
+  --ege-primary-hover-rgb: 106, 73, 232;
+  --ege-primary-mark-rgb: 159, 125, 255;
+
+  --ege-lime: #d8e998;
+  --ege-lime-soft: #ddea95;
+  --ege-lime-soft-2: #e4efad;
+  --ege-lime-icon: #7fa533;
+  --ege-lime-icon-2: #9dba38;
+  --ege-lime-strong: #cfdf7c;
+
+  --ege-mint: #cddf8f;
+  --ege-mint-ink: #5f781d;
+  --ege-butter-soft: #ffe3a3;
+  --ege-butter-soft-2: #ffedc2;
+  --ege-butter-ink: #d99a1d;
+  --ege-butter-icon: #ffbf00;
+  --ege-sand: #ffc36b;
+  --ege-paper-gradient: linear-gradient(180deg, #fff2c8 0%, #ffefb5 100%);
+  --ege-note-gradient: linear-gradient(180deg, #fff2cb 0%, #fff6dc 100%);
+  --ege-stat-butter-gradient: linear-gradient(180deg, #fff8e9 0%, #fff4dd 100%);
+
+  --ege-dark-page: #141124;
+  --ege-dark-surface: #221d36;
+  --ege-dark-surface-soft: #2b2541;
+  --ege-dark-text: #ece9f5;
+  --ege-dark-muted: #9a96b2;
+  --ege-dark-primary: var(--ege-primary);
+  --ege-dark-primary-hover: var(--ege-primary-hover);
+  --ege-dark-lime: var(--ege-lime);
+
+  --ege-radius-xs: 10px;
+  --ege-radius-sm: 12px;
+  --ege-radius-md: 18px;
+  --ege-radius-lg: 22px;
+  --ege-radius-xl: 28px;
+  --ege-radius-card: 28px;
+  --ege-radius-section: 36px;
+  --ege-radius-pill: 999px;
+
+  --ege-section-max: 1200px;
+  --ege-section-wide: 1600px;
+  --ege-section-pad-x: 40px;
+  --ege-section-pad-y: 80px;
+  --ege-section-gap: 40px;
+
+  --ege-h1: clamp(44px, 5.6vw, 72px);
+  --ege-h2: clamp(36px, 4.8vw, 64px);
+  --ege-h3: clamp(18px, 1.6vw, 24px);
+  --ege-card-title: 18px;
+  --ege-card-title-lg: clamp(24px, 2.8vw, 38px);
+  --ege-price: clamp(42px, 4vw, 52px);
+  --ege-score: clamp(38px, 3.6vw, 56px);
+  --ege-number: 35px;
+  --ege-quote-mark: 56px;
+  --ege-lead: clamp(18px, 2vw, 22px);
+  --ege-body: 16px;
+  --ege-body-sm: 15px;
+  --ege-caption: 13px;
+  --ege-button: 17px;
+  --ege-chip-height: 36px;
+  --ege-chip-pad-x: 20px;
+  --ege-chip-gap: 10px;
+  --ege-chip-font: var(--ege-caption);
+
+  --ege-lh-title: 1.04;
+  --ege-lh-heading: 1.15;
+  --ege-lh-body: 1.55;
+  --ege-lh-card: 1.45;
+  --ege-track-title: -0.03em;
+  --ege-track-tight: -0.02em;
+  --ege-track-normal: 0;
+
+  --ege-shadow-card:
+    0 12px 30px rgba(var(--ege-primary-rgb), 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --ege-shadow-section:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 18px 42px rgba(var(--ege-primary-rgb), 0.06);
+  --ege-shadow-dark:
+    inset 0 0 0 1px rgba(var(--ege-primary-mark-rgb), 0.2),
+    0 18px 42px rgba(18, 15, 36, 0.18);
+  --ege-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  /*
+    Compatibility aliases while ege-course components are migrated.
+    New component styles should prefer --ege-* directly.
+  */
+  --nd-page: var(--ege-page);
+  --nd-surface: var(--ege-surface);
+  --nd-text: var(--ege-text);
+  --nd-text-muted: var(--ege-muted);
+  --nd-primary: var(--ege-primary);
+  --nd-primary-hover: var(--ege-primary-hover);
+  --nd-primary-soft: var(--ege-primary-soft);
+  --nd-primary-tint: var(--ege-primary-tint);
+  --nd-lime: var(--ege-lime);
+  --nd-lime-soft: var(--ege-lime-soft);
+  --nd-lime-icon: var(--ege-lime-icon);
+  --nd-mint: var(--ege-mint);
+  --nd-mint-ink: var(--ege-mint-ink);
+  --nd-butter-soft: var(--ege-butter-soft);
+  --nd-butter-ink: var(--ege-butter-ink);
+  --nd-sand: var(--ege-sand);
+  --nd-r-sm: var(--ege-radius-sm);
+  --nd-r-md: var(--ege-radius-md);
+  --nd-r-lg: var(--ege-radius-lg);
+  --nd-r-xl: var(--ege-radius-xl);
+  --nd-r-pill: var(--ege-radius-pill);
+  --nd-ease: var(--ege-ease);
+
+  background: var(--ege-page);
+  color: var(--ege-text);
+  font-family: var(--ege-font-family);
+  font-weight: 500;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+
+.ege-course-page *,
+.ege-course-page *::before,
+.ege-course-page *::after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  font-synthesis: inherit;
+  font-kerning: inherit;
+  font-optical-sizing: inherit;
+  text-rendering: inherit;
+}
+
+.ege-course-page button,
+.ege-course-page input,
+.ege-course-page select,
+.ege-course-page textarea {
+  font: inherit;
+}
+
+.ege-course-page :where(h1, h2, h3, p, figure, blockquote) {
+  margin: 0;
+}
+
+.ege-course-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ege-chip-gap);
+  min-height: var(--ege-chip-height);
+  padding: 0 var(--ege-chip-pad-x);
+  border-radius: var(--ege-radius-pill);
+  background: var(--ege-lime);
+  color: var(--ege-text);
+  font-size: var(--ege-chip-font);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: var(--ege-track-normal);
+  text-transform: none;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ege-course-chip--lime {
+  background: var(--ege-lime);
+  color: var(--ege-text);
+}
+
+.ege-course-chip--primary {
+  background: var(--ege-primary-soft);
+  color: var(--ege-primary-deep);
+}
+
+.ege-course-chip--butter {
+  background: var(--ege-butter-soft);
+  color: var(--ege-butter-ink);
+}
+
+.ege-course-chip--dark {
+  background: var(--ege-dark-lime);
+  color: var(--ege-text);
+}
+
+.ege-course-chip--icon {
+  min-height: 44px;
+  padding-inline: 16px;
+  font-size: var(--ege-body);
+}
+
+.ege-course-section {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  padding: var(--ege-section-gap) var(--ege-section-pad-x) 0;
+  background: var(--ege-page);
+  color: var(--ege-text);
+  font-family: var(--ege-font-family);
+}
+
+.ege-course-panel {
+  max-width: var(--ege-section-max);
+  margin: 0 auto;
+  border-radius: var(--ege-radius-section);
+  overflow: hidden;
+  box-shadow: var(--ege-shadow-section);
+}
+
+.ege-course-panel--wide {
+  max-width: var(--ege-section-wide);
+}
+
+.ege-course-panel--surface {
+  background: var(--ege-surface);
+  border: 1px solid var(--ege-primary-soft);
+}
+
+.ege-course-panel--tint {
+  background: var(--ege-primary-tint);
+}
+
+.ege-course-panel--pastel-primary {
+  background: var(--ege-primary-tint);
+}
+
+.ege-course-panel--pastel-lime {
+  background: var(--ege-lime-soft-2);
+}
+
+.ege-course-panel--pastel-butter {
+  background: var(--ege-butter-soft-2);
+}
+
+.ege-course-panel--pastel-mint {
+  background: var(--ege-mint);
+}
+
+.ege-course-section-title {
+  font-size: var(--ege-h2);
+  line-height: var(--ege-lh-title);
+  letter-spacing: var(--ege-track-title);
+  font-weight: 800;
+}
+
+.ege-course-section-title span {
+  color: var(--ege-primary);
+}
+
+.ege-course-section-lead {
+  color: var(--ege-muted);
+  font-size: var(--ege-lead);
+  line-height: var(--ege-lh-body);
+  font-weight: 500;
+}
+
+.ege-course-card {
+  border-radius: var(--ege-radius-lg);
+  background: var(--ege-surface);
+  box-shadow: var(--ege-shadow-card);
+}
+
+.ege-course-card--tint {
+  background: var(--ege-primary-tint);
+}
+
+.ege-course-card--lime {
+  background: var(--ege-lime-soft-2);
+}
+
+.ege-course-card--butter {
+  background: var(--ege-butter-soft-2);
+}
+
+.ege-course-icon-chip {
+  width: 82px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--ege-radius-pill);
+  background: var(--ege-primary-soft);
+  color: var(--ege-primary);
+}
+
+.ege-course-icon-chip--lime {
+  background: var(--ege-lime-soft);
+  color: var(--ege-lime-icon);
+}
+
+.ege-course-icon-chip--butter {
+  background: var(--ege-butter-soft);
+  color: var(--ege-butter-icon);
+}
+
+@media (max-width: 900px) {
+  .ege-course-page {
+    --ege-section-pad-x: 24px;
+    --ege-section-pad-y: 64px;
+    --ege-h1: clamp(40px, 8vw, 58px);
+    --ege-h2: clamp(32px, 7vw, 52px);
+  }
+}
+
+@media (max-width: 640px) {
+  .ege-course-page {
+    --ege-section-pad-x: 16px;
+    --ege-section-pad-y: 48px;
+    --ege-h1: 40px;
+    --ege-h2: 36px;
+    --ege-lead: 16px;
+  }
+}

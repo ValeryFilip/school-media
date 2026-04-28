@@ -1,0 +1,585 @@
+---
+const bullets = [
+  "Понятная система подготовки на весь учебный год",
+  "Минигруппы до 6-8 человек",
+  "Контроль прогресса и поддержка до экзамена",
+];
+
+const navItems = [
+  { label: "О курсе", href: "#course-preparation-title" },
+  { label: "Программа", href: "#course-program-title" },
+  { label: "Формат", href: "#course-minigroup-title" },
+  { label: "Отзывы", href: "#results-title" },
+  { label: "FAQ", href: "#course-faq-title" },
+];
+---
+
+<section class="course-hero" aria-labelledby="course-hero-title">
+  <div class="course-hero__shell">
+    <header class="course-hero__menu">
+      <a class="course-hero__brand" href="/" aria-label="ЕГЭХИМ">
+        <img
+          src="/images/technical/egehim(kursi).webp"
+          alt="ЕГЭХИМ — курсы"
+          width="132"
+          height="52"
+          decoding="async"
+        />
+      </a>
+
+      <nav class="course-hero__nav" aria-label="Навигация по лендингу курса">
+        {
+          navItems.map((item) => (
+            <a href={item.href}>{item.label}</a>
+          ))
+        }
+      </nav>
+
+      <a class="course-hero__menu-button" href="#pricing-title">
+        Записаться
+      </a>
+    </header>
+
+    <div class="course-hero__grid">
+      <div class="course-hero__content">
+        <h1 class="course-hero__title" id="course-hero-title">
+          Годовой курс<br />
+          по химии<br />
+          <span>в минигруппах</span>
+        </h1>
+        <p class="course-hero__lead">
+          С нуля до 80+ баллов и поступления на бюджет в ведущие вузы
+        </p>
+
+        <ul class="course-hero__bullets">
+          {
+            bullets.map((item) => (
+              <li>
+                <span aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="m5 10 3.2 3.2L15 6.8"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="course-hero__actions">
+          <a
+            class="course-hero__button course-hero__button--primary"
+            href="#pricing-title"
+          >
+            Записаться на пробный урок
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14m0 0-6-6m6 6-6 6"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </a>
+          <a
+            class="course-hero__button course-hero__button--ghost"
+            href="#features-title"
+          >
+            Посмотреть программу
+          </a>
+        </div>
+
+        <p class="course-hero__note">
+          <span aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M10 1.8 3.5 4.2v5.1c0 4.1 2.7 7.8 6.5 8.9 3.8-1.1 6.5-4.8 6.5-8.9V4.2L10 1.8Zm3.2 6.6-3.9 3.9-2-2 1.2-1.2.8.8 2.7-2.7 1.2 1.2Z"
+              ></path>
+            </svg>
+          </span>
+          Первое занятие бесплатно и ни к чему не обязывает
+        </p>
+      </div>
+
+      <div class="course-hero__visual" aria-hidden="true">
+        <div class="course-hero__blob"></div>
+        <span class="course-hero__signature">Валерий<br />Филипенко</span>
+        <svg class="course-hero__arrow" viewBox="0 0 120 80" fill="none">
+          <path
+            d="M4 8c10 38 45 55 92 48"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"></path>
+          <path
+            d="m84 45 14 11-17 7"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+        <img
+          class="course-hero__portrait"
+          src="/images/valerii-filipenko.webp"
+          alt=""
+          width="800"
+          height="1200"
+          loading="eager"
+          decoding="async"
+        />
+        <svg class="course-hero__formula" viewBox="0 0 210 160" fill="none">
+          <path
+            d="M52 74 82 54l34 20 32-20M82 54V20m34 54v34m32-54 25 17M52 74 30 58m22 16v34m64 0 32 18"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"></path>
+          <circle cx="82" cy="20" r="8"></circle>
+          <circle cx="30" cy="58" r="8"></circle>
+          <circle cx="52" cy="108" r="8"></circle>
+          <circle cx="148" cy="126" r="8"></circle>
+          <circle cx="173" cy="71" r="8"></circle>
+        </svg>
+        <div class="course-hero__note-card">
+          <strong>Химия —</strong>
+          <span>это не зубрёжка,<br />а понятная логика<br />и практика</span>
+        </div>
+        <svg class="course-hero__flask" viewBox="0 0 130 170" fill="none">
+          <path
+            d="M48 8h34M54 8v42L19 132a18 18 0 0 0 16.4 25h59.2A18 18 0 0 0 111 132L76 50V8"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            d="M31 118c10 6 21.5 9 34 9s24-3 34-9v27H31v-27Z"
+            fill="currentColor"></path>
+          <path
+            d="M39 105c7 4 15.5 6 26 6s19-2 26-6"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .course-hero {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding: 24px var(--ege-section-pad-x) 0;
+    background: var(--ege-primary-tint);
+    color: var(--ege-text);
+    font-family: var(--ege-font-family);
+  }
+
+  .course-hero__shell {
+    max-width: var(--ege-section-wide);
+    margin: 0 auto;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+
+  .course-hero__menu {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 32px;
+    align-items: center;
+    min-height: 72px;
+    padding: 10px 0;
+  }
+
+  .course-hero__brand {
+    display: inline-flex;
+    align-items: center;
+    color: var(--ege-text);
+    text-decoration: none;
+  }
+
+  .course-hero__brand img {
+    width: 132px;
+    height: auto;
+    display: block;
+  }
+
+  .course-hero__nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .course-hero__nav a,
+  .course-hero__menu-button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ege-radius-pill);
+    font-size: var(--ege-body-sm);
+    line-height: 1.2;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .course-hero__nav a {
+    padding: 0 18px;
+    color: var(--ege-text-soft);
+  }
+
+  .course-hero__nav a:hover {
+    background: var(--ege-surface-glass);
+    color: var(--ege-primary-deep);
+  }
+
+  .course-hero__menu-button {
+    padding: 0 22px;
+    background: var(--ege-primary);
+    color: var(--ege-inverse);
+  }
+
+  .course-hero__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 36px;
+    align-items: end;
+    min-height: 650px;
+  }
+
+  .course-hero__content {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    padding: 42px 0 36px;
+  }
+
+  .course-hero__title {
+    margin-top: 0;
+    font-size: var(--ege-h1);
+    line-height: var(--ege-lh-title);
+    letter-spacing: var(--ege-track-title);
+    font-weight: 800;
+  }
+
+  .course-hero__title span {
+    color: var(--ege-primary);
+  }
+
+  .course-hero__lead {
+    max-width: 520px;
+    margin-top: 26px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-lead);
+    line-height: var(--ege-lh-body);
+  }
+
+  .course-hero__bullets {
+    display: grid;
+    gap: 14px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .course-hero__bullets li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  .course-hero__bullets span {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--ege-primary);
+    border-radius: 50%;
+    color: var(--ege-primary);
+    flex: 0 0 auto;
+  }
+
+  .course-hero__bullets svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .course-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 36px;
+  }
+
+  .course-hero__button {
+    min-height: 70px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 0 28px;
+    border-radius: var(--ege-radius-sm);
+    font-size: var(--ege-button);
+    line-height: 1.2;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .course-hero__button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .course-hero__button--primary {
+    background: var(--ege-primary);
+    color: var(--ege-inverse);
+  }
+
+  .course-hero__button--ghost {
+    border: 1px solid var(--ege-primary);
+    background: var(--ege-surface-glass);
+    color: var(--ege-text);
+  }
+
+  .course-hero__note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    color: var(--ege-muted);
+    font-size: var(--ege-caption);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  .course-hero__note span {
+    width: 22px;
+    height: 22px;
+    color: var(--ege-lime-icon);
+    flex: 0 0 auto;
+  }
+
+  .course-hero__visual {
+    position: relative;
+    min-height: 590px;
+    align-self: stretch;
+  }
+
+  .course-hero__blob {
+    position: absolute;
+    inset: 52px -58px 14px 0;
+    border-radius: 42% 58% 50% 50% / 38% 32% 68% 62%;
+    background: var(--ege-primary-soft);
+  }
+
+  .course-hero__portrait {
+    position: absolute;
+    z-index: 2;
+    right: 138px;
+    bottom: 0;
+    width: min(390px, 58%);
+    height: auto;
+  }
+
+  .course-hero__signature {
+    position: absolute;
+    z-index: 3;
+    left: 52px;
+    top: 124px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-card-title);
+    line-height: 1.25;
+    font-weight: 700;
+    transform: rotate(-7deg);
+  }
+
+  .course-hero__arrow {
+    position: absolute;
+    z-index: 3;
+    left: 88px;
+    top: 174px;
+    width: 120px;
+    color: var(--ege-text-soft);
+  }
+
+  .course-hero__formula {
+    position: absolute;
+    z-index: 1;
+    right: 30px;
+    top: 118px;
+    width: 210px;
+    color: var(--ege-primary);
+  }
+
+  .course-hero__formula circle {
+    fill: var(--ege-primary-tint);
+    stroke: currentColor;
+    stroke-width: 2.4;
+  }
+
+  .course-hero__note-card {
+    position: absolute;
+    z-index: 3;
+    right: 0;
+    top: 330px;
+    width: 154px;
+    min-height: 150px;
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 32px 22px 20px;
+    background: var(--ege-lime);
+    color: var(--ege-text);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+    transform: rotate(-6deg);
+    box-shadow: var(--ege-shadow-card);
+  }
+
+  .course-hero__note-card::before {
+    content: "";
+    position: absolute;
+    left: 48px;
+    top: -12px;
+    width: 54px;
+    height: 22px;
+    border-radius: var(--ege-radius-xs);
+    background: var(--ege-primary);
+    transform: rotate(-4deg);
+  }
+
+  .course-hero__note-card strong {
+    font-weight: 800;
+  }
+
+  .course-hero__flask {
+    position: absolute;
+    z-index: 4;
+    right: 40px;
+    bottom: 38px;
+    width: 132px;
+    color: var(--ege-primary);
+  }
+
+  @media (max-width: 1024px) {
+    .course-hero__shell {
+      padding: 0 28px;
+    }
+
+    .course-hero__menu {
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+    }
+
+    .course-hero__nav {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .course-hero__grid {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .course-hero__content {
+      padding-bottom: 0;
+    }
+
+    .course-hero__visual {
+      min-height: 520px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .course-hero {
+      padding-top: 12px;
+    }
+
+    .course-hero__shell {
+      padding: 0 18px;
+    }
+
+    .course-hero__menu {
+      min-height: 0;
+    }
+
+    .course-hero__brand img {
+      width: 112px;
+    }
+
+    .course-hero__menu-button {
+      min-height: 38px;
+      padding: 0 16px;
+      font-size: var(--ege-caption);
+    }
+
+    .course-hero__nav {
+      gap: 6px;
+    }
+
+    .course-hero__nav a {
+      min-height: 36px;
+      padding: 0 14px;
+      background: var(--ege-surface-glass);
+      font-size: var(--ege-caption);
+    }
+
+    .course-hero__content {
+      padding-top: 36px;
+    }
+
+    .course-hero__actions {
+      display: grid;
+    }
+
+    .course-hero__button {
+      min-height: 60px;
+      width: 100%;
+    }
+
+    .course-hero__visual {
+      min-height: 430px;
+    }
+
+    .course-hero__portrait {
+      right: 66px;
+      width: min(310px, 72%);
+    }
+
+    .course-hero__formula,
+    .course-hero__signature,
+    .course-hero__arrow {
+      display: none;
+    }
+
+    .course-hero__note-card {
+      right: -4px;
+      top: 220px;
+      width: 132px;
+      min-height: 128px;
+      padding: 28px 16px 16px;
+      font-size: var(--ege-caption);
+    }
+
+    .course-hero__flask {
+      right: 0;
+      bottom: 24px;
+      width: 104px;
+    }
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+const facts = [
+  {
+    value: "8 000+",
+    label: "учеников подготовлено",
+    icon: "users",
+    accent: "primary",
+  },
+  {
+    value: "10 лет",
+    label: "опыта подготовки к ЕГЭ по химии",
+    icon: "cap",
+    accent: "lime",
+  },
+  {
+    value: "82,6",
+    label: "средний балл наших учеников",
+    icon: "star",
+    accent: "butter",
+  },
+  {
+    value: "600+",
+    label: "сдали ЕГЭ на 80+ баллов",
+    icon: "cup",
+    accent: "primary",
+  },
+  {
+    value: "90+",
+    label: "стали студентами топовых вузов",
+    icon: "building",
+    accent: "lime",
+  },
+];
+---
+
+<section class="course-facts ege-course-section" aria-label="Ключевые факты о курсе">
+  <div class="course-facts__shell ege-course-panel ege-course-panel--wide ege-course-panel--surface">
+    <ul class="course-facts__list">
+      {
+        facts.map((item) => (
+          <li
+            class:list={[
+              "course-facts__item",
+              "ege-course-card",
+              item.accent === "lime" && "ege-course-card--lime",
+              item.accent === "butter" && "ege-course-card--butter",
+              item.accent === "primary" && "ege-course-card--tint",
+            ]}
+          >
+            <span
+              class:list={[
+                "course-facts__icon",
+                "ege-course-icon-chip",
+                item.accent === "lime" && "ege-course-icon-chip--lime",
+                item.accent === "butter" && "ege-course-icon-chip--butter",
+              ]}
+              aria-hidden="true"
+            >
+              {item.icon === "users" && (
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M11.5 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10ZM3.5 26c.9-4.2 4-7 8-7s7.1 2.8 8 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+                  <path d="M21.5 15a4 4 0 1 0 0-8M21.5 19c3.6.4 6.1 2.9 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+                </svg>
+              )}
+              {item.icon === "cap" && (
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="m4 12 12-6 12 6-12 6-12-6Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" />
+                  <path d="M9 15v7c2 2.4 4.3 3.6 7 3.6s5-1.2 7-3.6v-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              )}
+              {item.icon === "star" && (
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="m16 4 3.6 7.4 8.2 1.2-5.9 5.8 1.4 8.2-7.3-3.9-7.3 3.9 1.4-8.2-5.9-5.8 8.2-1.2L16 4Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" />
+                </svg>
+              )}
+              {item.icon === "cup" && (
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M10 5h12v7a6 6 0 0 1-12 0V5Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" />
+                  <path d="M10 8H5v4a5 5 0 0 0 5 5M22 8h5v4a5 5 0 0 1-5 5M16 18v6M11 27h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              )}
+              {item.icon === "building" && (
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M5 27h22M8 27V12l8-6 8 6v15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M12 27v-7h8v7M12 15h.1M16 15h.1M20 15h.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+                </svg>
+              )}
+            </span>
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .course-facts__shell {
+    padding: 42px 52px;
+  }
+
+  .course-facts__list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 36px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .course-facts__item {
+    min-height: 220px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 14px;
+    padding: 24px 18px;
+    text-align: center;
+  }
+
+  .course-facts__icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .course-facts__item strong {
+    color: var(--ege-text);
+    font-size: var(--ege-card-title-lg);
+    line-height: var(--ege-lh-heading);
+    letter-spacing: var(--ege-track-tight);
+    font-weight: 800;
+  }
+
+  .course-facts__item span:last-child {
+    max-width: 160px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    .course-facts__shell {
+      padding: 34px;
+    }
+
+    .course-facts__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .course-facts__shell {
+      padding: 20px;
+      border-radius: var(--ege-radius-xl);
+    }
+
+    .course-facts__list {
+      grid-template-columns: 1fr;
+    }
+
+    .course-facts__item {
+      min-height: 170px;
+    }
+  }
+</style>

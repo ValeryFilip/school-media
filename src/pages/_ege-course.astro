@@ -1,52 +1,61 @@
----
+﻿---
 import MainLayout from "../layouts/MainLayout.astro";
+import EgeCourseHero from "../components/ege-course/EgeCourseHero.astro";
+import EgeCourseFacts from "../components/ege-course/EgeCourseFacts.astro";
+import EgeCourseDifficulties from "../components/ege-course/EgeCourseDifficulties.astro";
+import EgeCoursePreparation from "../components/ege-course/EgeCoursePreparation.astro";
+import EgeCourseMiniGroup from "../components/ege-course/EgeCourseMiniGroup.astro";
+import EgeCourseProgram from "../components/ege-course/EgeCourseProgram.astro";
 import EgeCourseParents from "../components/ege-course/EgeCourseParents.astro";
 import EgeCourseTeacher from "../components/ege-course/EgeCourseTeacher.astro";
 import EgeCourseFeatures from "../components/ege-course/EgeCourseFeatures.astro";
 import EgeCourseResults from "../components/ege-course/EgeCourseResults.astro";
 import EgeCoursePricing from "../components/ege-course/EgeCoursePricing.astro";
+import EgeCourseFaq from "../components/ege-course/EgeCourseFaq.astro";
+import "../styles/ege-course.css";
 ---
 
 <MainLayout
   title="Годовой курс ЕГЭ по химии в минигруппе"
   description="Подготовка к ЕГЭ по химии: годовой курс в минигруппе с живыми занятиями, домашними заданиями и поддержкой до самого экзамена."
+  showNav={false}
   showBreadcrumbs={false}
 >
-  <EgeCoursePricing />
-  <EgeCourseParents />
-  <EgeCourseTeacher />
-  <section class="ege-course-dark">
-    <div class="ege-course-dark__inner">
-      <EgeCourseFeatures />
-      <EgeCourseResults />
-    </div>
-  </section>
+  <div class="ege-course-page">
+    <EgeCourseHero />
+    <EgeCourseFacts />
+    <EgeCourseDifficulties />
+    <EgeCoursePreparation />
+    <EgeCourseTeacher />
+    <EgeCourseMiniGroup />
+    <EgeCourseProgram />
+    <section class="ege-course-dark">
+      <div class="ege-course-dark__inner">
+        <EgeCourseFeatures />
+        <EgeCourseResults />
+      </div>
+    </section>
+    <EgeCoursePricing />
+    <EgeCourseParents />
+    <EgeCourseFaq />
+  </div>
 </MainLayout>
 
 <style>
   .ege-course-dark {
-    --ege-dark-page: #141124;
-    --ege-dark-surface: #221d36;
-    --ege-dark-surface-soft: #2b2541;
-    --ege-dark-text: #ece9f5;
-    --ege-dark-muted: #9a96b2;
-    --ege-dark-primary: #7a5cf0;
-    --ege-dark-primary-hover: #6a49e8;
-    --ege-dark-lime: #d8e998;
-
-    background: #f3f1f8;
-    padding: 0 40px 80px;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    background: var(--ege-dark-page);
+    padding: var(--ege-section-pad-y) var(--ege-section-pad-x);
   }
 
   .ege-course-dark__inner {
-    max-width: 1280px;
+    max-width: var(--ege-section-wide);
     margin: 0 auto;
     padding: 36px;
-    background: var(--ege-dark-page);
-    border-radius: 36px;
-    box-shadow:
-      inset 0 0 0 1px rgba(160, 150, 210, 0.2),
-      0 18px 42px rgba(18, 15, 36, 0.18);
+    background: transparent;
+    border-radius: var(--ege-radius-section);
+    box-shadow: none;
   }
 
   .ege-course-dark__inner :global(.results) {
@@ -55,7 +64,7 @@ import EgeCoursePricing from "../components/ege-course/EgeCoursePricing.astro";
 
   @media (max-width: 900px) {
     .ege-course-dark {
-      padding: 0 24px 64px;
+      padding: 0 var(--ege-section-pad-x) var(--ege-section-pad-y);
     }
 
     .ege-course-dark__inner {
@@ -70,7 +79,7 @@ import EgeCoursePricing from "../components/ege-course/EgeCoursePricing.astro";
 
   @media (max-width: 640px) {
     .ege-course-dark {
-      padding: 0 16px 48px;
+      padding: 0 var(--ege-section-pad-x) var(--ege-section-pad-y);
     }
 
     .ege-course-dark__inner {

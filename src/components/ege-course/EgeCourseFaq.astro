@@ -1,0 +1,477 @@
+---
+const faqs = [
+  {
+    question: "Можно ли подготовиться с нуля?",
+    answer:
+      "Да. Курс выстроен по системе: начинаем с базы, постепенно закрываем пробелы, отрабатываем задания и доводим до уверенного результата на экзамене.",
+  },
+  {
+    question: "Сколько человек в минигруппе?",
+    answer:
+      "В минигруппе до 8 учеников. Такой формат сохраняет живую динамику занятия и оставляет время на вопросы каждого.",
+  },
+  {
+    question: "Будут ли домашние задания и проверка?",
+    answer:
+      "Да. После тем ученики получают практику, а преподаватель и куратор помогают разобрать ошибки и закрепить материал.",
+  },
+  {
+    question: "Если я пропущу занятие?",
+    answer:
+      "Материалы и записи остаются в личном кабинете, поэтому тему можно догнать и задать вопросы по непонятным моментам.",
+  },
+  {
+    question: "Можно ли оплачивать в рассрочку?",
+    answer:
+      "Да, доступна оплата в рассрочку без переплаты. Условия можно уточнить перед записью на пробное занятие.",
+  },
+];
+---
+
+<section class="course-faq" aria-labelledby="course-faq-title">
+  <div class="course-faq__shell">
+    <div class="course-faq__content">
+      <span class="course-faq__eyebrow ege-course-chip ege-course-chip--lime">FAQ</span>
+      <h2 class="course-faq__title" id="course-faq-title">
+        Вопросы<br />
+        <span>и ответы</span>
+      </h2>
+      <p class="course-faq__lead">
+        Собрали ответы на самые частые вопросы о годовом курсе, формате занятий
+        и подготовке к ЕГЭ по химии.
+      </p>
+
+      <a
+        class="course-faq__telegram"
+        href="https://t.me/egehim"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="course-faq__telegram-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M21.9 4.6 18.6 20c-.2 1.1-.8 1.3-1.6.8l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L6.3 13.4l-4.9-1.5c-1.1-.3-1.1-1 .2-1.5L20.3 3c.9-.3 1.7.2 1.6 1.6Z"
+            ></path>
+          </svg>
+        </span>
+        <span>Если останутся вопросы —<br />ответим в Telegram</span>
+      </a>
+
+      <div class="course-faq__decor" aria-hidden="true">
+        <svg class="course-faq__flask" viewBox="0 0 120 170" fill="none">
+          <path
+            d="M43 8h34M49 8v42L16 132a18 18 0 0 0 16.4 25h55.2A18 18 0 0 0 104 132L71 50V8"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+          <path
+            d="M27 121c9 6 20 9 33 9s24-3 33-9v23H27v-23Z"
+            fill="url(#faq-flask-fill)"></path>
+          <path
+            d="M35 111c7 4 15 6 25 6s18-2 25-6"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"></path>
+          <defs>
+            <linearGradient
+              id="faq-flask-fill"
+              x1="60"
+              x2="60"
+              y1="121"
+              y2="144"
+            >
+              <stop stop-color="var(--ege-primary)"></stop>
+              <stop offset="1" stop-color="var(--ege-primary-hover)"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="course-faq__note">
+          <span>CH<sub>3</sub></span>
+          <svg viewBox="0 0 76 70" fill="none">
+            <path
+              d="M28 16 46 28M46 28 43 50M46 28l18-9M28 16 14 30M14 30l8 18M22 48l21 2"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"></path>
+            <path
+              d="M4 35 14 30M43 50l11 12"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"></path>
+          </svg>
+          <strong>OH</strong>
+        </div>
+
+        <svg class="course-faq__molecule" viewBox="0 0 150 110" fill="none">
+          <path
+            d="M34 80 64 50M64 50l40 10M104 60l24-34M64 50 44 24M64 50l18 38"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"></path>
+          <circle cx="28" cy="86" r="10"></circle>
+          <circle cx="64" cy="50" r="14"></circle>
+          <circle cx="104" cy="60" r="12"></circle>
+          <circle cx="132" cy="20" r="10"></circle>
+          <circle cx="40" cy="18" r="10"></circle>
+          <circle cx="84" cy="94" r="10"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="course-faq__items">
+      {
+        faqs.map((item, index) => (
+          <details class="course-faq__item" open={index === 0}>
+            <summary class="course-faq__question">
+              <h3 class="course-faq__question-title">{item.question}</h3>
+              <span class="course-faq__toggle" aria-hidden="true" />
+            </summary>
+            <p class="course-faq__answer">{item.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .course-faq {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    background: var(--ege-page);
+    color: var(--ege-text);
+    font-family: var(--ege-font-family);
+  }
+
+  .course-faq__shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 54px;
+    max-width: var(--ege-section-wide);
+    margin: 0 auto;
+    padding: 72px 64px;
+    border-radius: var(--ege-radius-section);
+    background: var(--ege-primary-tint);
+    overflow: hidden;
+  }
+
+  .course-faq__content {
+    position: relative;
+    min-height: 620px;
+    z-index: 1;
+  }
+
+  .course-faq__title {
+    margin-top: 26px;
+    font-size: var(--ege-h2);
+    line-height: var(--ege-lh-title);
+    letter-spacing: var(--ege-track-title);
+    font-weight: 800;
+  }
+
+  .course-faq__title span {
+    color: var(--ege-primary);
+  }
+
+  .course-faq__lead {
+    max-width: 430px;
+    margin-top: 28px;
+    color: var(--ege-muted);
+    font-size: var(--ege-lead);
+    line-height: var(--ege-lh-body);
+  }
+
+  .course-faq__telegram {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 34px;
+    padding: 18px 24px 18px 18px;
+    border-radius: var(--ege-radius-lg);
+    background: var(--ege-surface);
+    color: var(--ege-text);
+    text-decoration: none;
+    font-size: var(--ege-body);
+    line-height: 1.35;
+    font-weight: 600;
+    box-shadow: var(--ege-shadow-card);
+  }
+
+  .course-faq__telegram-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--ege-radius-md);
+    background: var(--ege-lime-soft);
+    color: var(--ege-lime-icon);
+    flex: 0 0 auto;
+  }
+
+  .course-faq__telegram-icon svg {
+    width: 34px;
+    height: 34px;
+    transform: translate(-1px, 1px);
+  }
+
+  .course-faq__decor {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 330px;
+    pointer-events: none;
+  }
+
+  .course-faq__decor::before {
+    content: "";
+    position: absolute;
+    left: -70px;
+    bottom: -86px;
+    width: 360px;
+    height: 360px;
+    border-radius: 43% 57% 58% 42% / 42% 36% 64% 58%;
+    background: var(--ege-primary-soft);
+    opacity: 0.42;
+  }
+
+  .course-faq__flask {
+    position: absolute;
+    left: -24px;
+    bottom: 0;
+    width: 150px;
+    color: var(--ege-primary);
+    opacity: 0.72;
+  }
+
+  .course-faq__note {
+    position: absolute;
+    left: 230px;
+    bottom: 48px;
+    width: 116px;
+    height: 126px;
+    padding: 22px 16px 16px;
+    border-radius: 0 0 18px 0;
+    background: var(--ege-lime-soft);
+    color: var(--ege-lime-icon);
+    transform: rotate(7deg);
+    box-shadow: var(--ege-shadow-card);
+  }
+
+  .course-faq__note::before {
+    content: "";
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: -10px;
+    height: 18px;
+    border-radius: 2px;
+    background: var(--ege-primary-soft);
+  }
+
+  .course-faq__note span,
+  .course-faq__note strong {
+    position: absolute;
+    font-size: var(--ege-body);
+    line-height: 1;
+  }
+
+  .course-faq__note span {
+    right: 18px;
+    top: 38px;
+  }
+
+  .course-faq__note strong {
+    right: 20px;
+    bottom: 24px;
+  }
+
+  .course-faq__note svg {
+    position: absolute;
+    left: 14px;
+    top: 38px;
+    width: 76px;
+    height: 70px;
+  }
+
+  .course-faq__molecule {
+    position: absolute;
+    left: 390px;
+    bottom: 22px;
+    width: 150px;
+    color: var(--ege-primary);
+    opacity: 0.7;
+  }
+
+  .course-faq__molecule circle {
+    fill: var(--ege-primary-tint);
+    stroke: currentColor;
+    stroke-width: 3;
+  }
+
+  .course-faq__items {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding-top: 40px;
+  }
+
+  .course-faq__item {
+    border: 1px solid var(--ege-primary-soft);
+    border-radius: var(--ege-radius-lg);
+    background: var(--ege-surface);
+    overflow: hidden;
+    box-shadow: var(--ege-shadow-card);
+  }
+
+  .course-faq__item[open] {
+    background: var(--ege-primary-tint);
+    border-color: var(--ege-primary-soft);
+  }
+
+  .course-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 76px;
+    padding: 0 28px 0 34px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .course-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .course-faq__question-title {
+    font-size: var(--ege-h3);
+    line-height: var(--ege-lh-heading);
+    font-weight: 800;
+    letter-spacing: var(--ege-track-tight);
+  }
+
+  .course-faq__toggle {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--ege-primary);
+    border-radius: 50%;
+    color: var(--ege-primary);
+    flex: 0 0 auto;
+  }
+
+  .course-faq__toggle::before,
+  .course-faq__toggle::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 3px;
+    border-radius: var(--ege-radius-pill);
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  .course-faq__toggle::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .course-faq__item[open] .course-faq__toggle {
+    background: var(--ege-primary);
+    color: var(--ege-inverse);
+  }
+
+  .course-faq__item[open] .course-faq__toggle::after {
+    opacity: 0;
+  }
+
+  .course-faq__answer {
+    max-width: 560px;
+    padding: 0 88px 34px 34px;
+    color: var(--ege-muted);
+    font-size: var(--ege-lead);
+    line-height: var(--ege-lh-body);
+  }
+
+  @media (max-width: 1024px) {
+    .course-faq__shell {
+      grid-template-columns: 1fr;
+      padding: 48px 36px;
+    }
+
+    .course-faq__content {
+      min-height: 520px;
+    }
+
+    .course-faq__items {
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .course-faq__shell {
+      padding: 32px 20px;
+      border-radius: 24px;
+    }
+
+    .course-faq__content {
+      min-height: 0;
+      padding-bottom: 190px;
+    }
+
+    .course-faq__title {
+      font-size: var(--ege-h2);
+    }
+
+    .course-faq__lead {
+      max-width: none;
+    }
+
+    .course-faq__telegram {
+      width: 100%;
+    }
+
+    .course-faq__decor {
+      height: 190px;
+    }
+
+    .course-faq__flask {
+      left: -18px;
+      width: 104px;
+    }
+
+    .course-faq__note {
+      left: 140px;
+      bottom: 34px;
+      width: 94px;
+      height: 104px;
+    }
+
+    .course-faq__molecule {
+      left: auto;
+      right: -16px;
+      width: 112px;
+    }
+
+    .course-faq__question {
+      min-height: 68px;
+      padding: 0 18px 0 20px;
+    }
+
+    .course-faq__toggle {
+      width: 34px;
+      height: 34px;
+    }
+
+    .course-faq__answer {
+      padding: 0 20px 24px;
+    }
+  }
+</style>

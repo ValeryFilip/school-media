@@ -43,7 +43,7 @@ const items = [
   <div class="features__inner">
     <header class="features__header">
       <div class="features__intro">
-        <span class="features__eyebrow">что входит в курс</span>
+        <span class="features__eyebrow ege-course-chip ege-course-chip--dark">что входит в курс</span>
         <h2 class="features__title" id="features-title">
           Что входит в&nbsp;курс
         </h2>
@@ -148,12 +148,7 @@ const items = [
 
     /* ---- layout ---- */
     width: 100%;
-    font-family:
-      "Manrope",
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
+    font-family: var(--ege-font-family);
     color: var(--ege-dark-text, #ece9f5);
     font-weight: 500;
     line-height: 1.4;
@@ -180,28 +175,18 @@ const items = [
     max-width: 560px;
   }
 
-  .features__eyebrow {
-    align-self: flex-start;
-    background: var(--ege-dark-lime, #d8e998);
-    color: #1a1b2e;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 10px 22px;
-    border-radius: 999px;
-  }
-
   .features__title {
-    font-size: clamp(40px, 4.4vw, 56px);
+    font-size: var(--ege-h2);
     font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    letter-spacing: var(--ege-track-title);
+    line-height: var(--ege-lh-title);
     color: var(--ege-dark-text, #ece9f5);
     margin: 0;
   }
 
   .features__subtitle {
     color: var(--ege-dark-muted, #9a96b2);
-    font-size: 18px;
+    font-size: var(--ege-lead);
     font-weight: 500;
     line-height: 1.55;
     max-width: 460px;
@@ -281,11 +266,11 @@ const items = [
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: var(--ege-dark-primary, #7a5cf0);
-    color: #fff;
+    background: var(--ege-dark-primary);
+    color: var(--ege-inverse);
     display: grid;
     place-items: center;
-    font-size: 35px;
+    font-size: var(--ege-number);
     font-weight: 700;
     flex-shrink: 0;
   }
@@ -301,17 +286,17 @@ const items = [
   }
 
   .feature-card__title {
-    font-size: clamp(42px, 2.3vw, 48px);
+    font-size: var(--ege-card-title-lg);
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ege-track-tight);
     color: var(--ege-dark-text, #ece9f5);
     margin: 0;
   }
 
   .feature-card__desc {
     color: var(--ege-dark-muted, #9a96b2);
-    font-size: 24px;
+    font-size: var(--ege-lead);
     font-weight: 500;
     line-height: 1.65;
     margin: 0;
@@ -442,7 +427,7 @@ const items = [
   }
 
   .gift-card__title {
-    font-size: 32px;
+    font-size: var(--ege-h3);
     font-weight: 800;
     letter-spacing: -0.01em;
     line-height: 1.15;
@@ -451,7 +436,7 @@ const items = [
 
   .gift-card__desc {
     color: var(--ege-dark-muted, #9a96b2);
-    font-size: 16px;
+    font-size: var(--ege-body);
     font-weight: 500;
     line-height: 1.55;
     margin: 0 0 12px;
@@ -459,9 +444,9 @@ const items = [
 
   .gift-card__cta {
     align-self: flex-start;
-    background: var(--ege-dark-primary, #7a5cf0);
-    color: #fff;
-    font-size: 16px;
+    background: var(--ege-dark-primary);
+    color: var(--ege-inverse);
+    font-size: var(--ege-body);
     font-weight: 600;
     padding: 16px 28px 16px 22px;
     border-radius: 14px;
@@ -476,7 +461,7 @@ const items = [
       transform 180ms ease;
   }
   .gift-card__cta:hover {
-    background: var(--ege-dark-primary-hover, #6a49e8);
+    background: var(--ege-dark-primary-hover);
   }
   .gift-card__cta:active {
     transform: translateY(1px);
@@ -627,16 +612,16 @@ const items = [
     .feature-card__num {
       width: 48px;
       height: 48px;
-      font-size: 18px;
+      font-size: var(--ege-card-title);
     }
     .feature-card__title {
-      font-size: 20px;
+      font-size: var(--ege-card-title);
     }
     .gift-card {
       padding: 24px;
     }
     .gift-card__title {
-      font-size: 26px;
+      font-size: var(--ege-h3);
     }
   }
 </style>

@@ -1,0 +1,270 @@
+---
+const difficulties = [
+  {
+    title: "Не понимаю химию",
+    text: "Темы в школе проходят слишком быстро, остаются пробелы в знаниях.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_44 (1).png",
+    accent: "primary",
+  },
+  {
+    title: "Пробники на низкий балл",
+    text: "Тестовая часть решается, а во второй теряются баллы.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_45 (2).png",
+    accent: "lime",
+  },
+  {
+    title: "Сложно заниматься самому",
+    text: "Нет системы и плана, быстро пропадает мотивация.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_45 (3).png",
+    accent: "butter",
+  },
+  {
+    title: "Органика кажется хаосом",
+    text: "Реакции, механизмы и задачи путаются в голове.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_47 (4).png",
+    accent: "primary",
+  },
+  {
+    title: "Боюсь, что не хватит времени",
+    text: "Кажется, что год пролетит быстро и не получится всё подготовить.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_48 (5).png",
+    accent: "lime",
+  },
+  {
+    title: "Занимался, но результата нет",
+    text: "Были репетитор или курсы, но баллы почти не выросли.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_48 (6).png",
+    accent: "primary",
+  },
+  {
+    title: "Не понимаю, что учить",
+    text: "Много материалов, но непонятно, какие темы важнее для ЕГЭ.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_01_44 (1).png",
+    accent: "butter",
+  },
+];
+---
+
+<section class="course-difficulties ege-course-section" aria-labelledby="course-difficulties-title">
+  <div class="course-difficulties__shell ege-course-panel ege-course-panel--wide ege-course-panel--pastel-primary">
+    <header class="course-difficulties__header">
+      <div>
+        <span class="course-difficulties__chip ege-course-chip ege-course-chip--primary">знакомо?</span>
+        <h2 class="course-difficulties__title ege-course-section-title" id="course-difficulties-title">
+          С какими <span>трудностями</span> чаще всего приходят наши ученики
+        </h2>
+        <p class="course-difficulties__lead ege-course-section-lead">
+          Мы знаем, как с ними справиться и довести до результата на ЕГЭ.
+        </p>
+      </div>
+
+      <div class="course-difficulties__note" aria-hidden="true">
+        <img
+          src="/images/ege-course/ChatGPT Image 28 апр. 2026 г., 14_47_43.png"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+    </header>
+
+    <ul class="course-difficulties__grid">
+      {
+        difficulties.map((item) => (
+          <li class="course-difficulties__card ege-course-card">
+            <span
+              class:list={[
+                "course-difficulties__icon",
+                item.accent === "lime" && "course-difficulties__icon--lime",
+                item.accent === "butter" && "course-difficulties__icon--butter",
+              ]}
+              aria-hidden="true"
+            >
+              <img src={item.image} alt="" loading="lazy" />
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="course-difficulties__bottom">
+      <span class="course-difficulties__bottom-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M16 4a9 9 0 0 0-5 16.5V25h10v-4.5A9 9 0 0 0 16 4Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"></path>
+          <path d="M12 29h8M13 21h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>
+        </svg>
+      </span>
+      <p>На курсе у тебя будет система, поддержка и практика, чтобы уверенно прийти к высокому баллу на ЕГЭ.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .course-difficulties__shell {
+    padding: 44px 34px 18px;
+  }
+
+  .course-difficulties__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .course-difficulties__title {
+    max-width: 650px;
+    margin-top: 22px;
+  }
+
+  .course-difficulties__lead {
+    max-width: 760px;
+    margin-top: 14px;
+  }
+
+  .course-difficulties__note {
+    width: clamp(240px, 21vw, 340px);
+    display: block;
+  }
+
+  .course-difficulties__note img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 14px 22px rgb(60 40 120 / 0.12));
+  }
+
+  .course-difficulties__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .course-difficulties__card {
+    grid-column: span 3;
+    min-height: 310px;
+    display: grid;
+    grid-template-rows: 178px auto 1fr;
+    align-content: start;
+    justify-items: center;
+    gap: 12px;
+    padding: 24px 22px;
+    text-align: center;
+  }
+
+  .course-difficulties__card:nth-child(n + 5) {
+    grid-column: span 4;
+  }
+
+  .course-difficulties__icon {
+    width: clamp(148px, 11vw, 178px);
+    height: clamp(148px, 11vw, 178px);
+    display: block;
+    border-radius: 50%;
+    background: var(--ege-primary-soft);
+    overflow: hidden;
+  }
+
+  .course-difficulties__icon--lime {
+    background: var(--ege-lime-soft);
+  }
+
+  .course-difficulties__icon--butter {
+    background: var(--ege-butter-soft);
+  }
+
+  .course-difficulties__icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .course-difficulties__card h3 {
+    color: var(--ege-text);
+    font-size: var(--ege-card-title);
+    line-height: var(--ege-lh-heading);
+    letter-spacing: var(--ege-track-tight);
+    font-weight: 800;
+  }
+
+  .course-difficulties__card p {
+    color: var(--ege-muted);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  .course-difficulties__bottom {
+    max-width: 660px;
+    min-height: 94px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+    margin: 18px auto 0;
+    padding: 18px 28px;
+    border-radius: var(--ege-radius-lg);
+    background: var(--ege-primary-soft);
+  }
+
+  .course-difficulties__bottom-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ege-primary);
+    color: var(--ege-inverse);
+  }
+
+  .course-difficulties__bottom-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .course-difficulties__bottom p {
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    .course-difficulties__header {
+      grid-template-columns: 1fr;
+    }
+
+    .course-difficulties__note {
+      display: none;
+    }
+
+    .course-difficulties__card,
+    .course-difficulties__card:nth-child(n + 5) {
+      grid-column: span 6;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .course-difficulties__shell {
+      padding: 32px 18px 18px;
+      border-radius: var(--ege-radius-xl);
+    }
+
+    .course-difficulties__card,
+    .course-difficulties__card:nth-child(n + 5) {
+      grid-column: 1 / -1;
+      min-height: 0;
+    }
+
+    .course-difficulties__bottom {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+    }
+  }
+</style>

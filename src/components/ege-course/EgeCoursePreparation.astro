@@ -1,0 +1,240 @@
+---
+const steps = [
+  {
+    number: "1",
+    title: "Диагностика уровня",
+    text: "определяем пробелы и стартовую точку.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_31 (1).png",
+    accent: "primary",
+  },
+  {
+    number: "2",
+    title: "Проходим темы по системе",
+    text: "идём по понятной программе без хаоса.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_31 (2).png",
+    accent: "butter",
+  },
+  {
+    number: "3",
+    title: "Закрепляем практикой",
+    text: "домашки, задания в формате ЕГЭ и разбор ошибок.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_32 (3).png",
+    accent: "primary",
+  },
+  {
+    number: "4",
+    title: "Пишем пробники",
+    text: "отслеживаем прогресс и слабые места.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_32 (4).png",
+    accent: "lime",
+  },
+  {
+    number: "5",
+    title: "Доводим до экзамена",
+    text: "повторение, поддержка и финальная отработка.",
+    image: "/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_33 (5).png",
+    accent: "primary",
+  },
+];
+---
+
+<section
+  class="course-preparation ege-course-section"
+  aria-labelledby="course-preparation-title"
+>
+  <div
+    class="course-preparation__shell ege-course-panel ege-course-panel--wide ege-course-panel--pastel-lime"
+  >
+    <header class="course-preparation__header">
+      <div class="course-preparation__intro">
+        <span class="ege-course-chip ege-course-chip--lime">как проходит</span>
+        <h2
+          class="course-preparation__title ege-course-section-title"
+          id="course-preparation-title"
+        >
+          Как устроена подготовка
+        </h2>
+        <p class="course-preparation__lead ege-course-section-lead">
+          Шаг за шагом идём по году: теория, практика, домашние задания и
+          отслеживание прогресса.
+        </p>
+      </div>
+
+      <div class="course-preparation__note" aria-hidden="true">
+        <img
+          src="/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_00_33 (6).png"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+    </header>
+
+    <ol class="course-preparation__steps">
+      {
+        steps.map((step) => (
+          <li class="course-preparation__step ege-course-card">
+            <span class="course-preparation__number">{step.number}</span>
+            <span class:list={["course-preparation__icon"]} aria-hidden="true">
+              <img src={step.image} alt="" loading="lazy" />
+            </span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .course-preparation__shell {
+    padding: 44px 34px 36px;
+  }
+
+  .course-preparation__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 36px;
+    align-items: start;
+    margin-bottom: 38px;
+  }
+
+  .course-preparation__intro {
+    max-width: 680px;
+  }
+
+  .course-preparation__title {
+    margin-top: 22px;
+  }
+
+  .course-preparation__lead {
+    max-width: 660px;
+    margin-top: 22px;
+  }
+
+  .course-preparation__note {
+    width: clamp(300px, 28vw, 430px);
+    display: block;
+  }
+
+  .course-preparation__note img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 14px 22px rgb(60 40 120 / 0.12));
+  }
+
+  .course-preparation__steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: prep-steps;
+  }
+
+  .course-preparation__step {
+    position: relative;
+    min-height: 340px;
+    display: grid;
+    grid-template-rows: 146px auto 1fr;
+    justify-items: center;
+    align-content: start;
+    gap: 16px;
+    padding: 26px 20px 28px;
+    text-align: center;
+  }
+
+  .course-preparation__step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -22px;
+    width: 16px;
+    height: 16px;
+    border-top: 2px solid var(--ege-primary);
+    border-right: 2px solid var(--ege-primary);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .course-preparation__number {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ege-primary-soft);
+    color: var(--ege-primary-deep);
+    font-size: var(--ege-card-title);
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .course-preparation__icon {
+    width: clamp(128px, 9vw, 158px);
+    height: 126px;
+    margin-top: 36px;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .course-preparation__icon img {
+    display: block;
+    width: 130%;
+    height: 130%;
+    object-fit: contain;
+    transform: translate(-11%, -12%);
+  }
+
+  .course-preparation__step h3 {
+    color: var(--ege-text);
+    font-size: var(--ege-card-title);
+    line-height: var(--ege-lh-heading);
+    letter-spacing: var(--ege-track-tight);
+    font-weight: 800;
+  }
+
+  .course-preparation__step p {
+    color: var(--ege-muted);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    .course-preparation__header {
+      grid-template-columns: 1fr;
+    }
+
+    .course-preparation__note {
+      display: none;
+    }
+
+    .course-preparation__steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .course-preparation__step:not(:last-child)::after {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .course-preparation__shell {
+      padding: 32px 18px 22px;
+    }
+
+    .course-preparation__steps {
+      grid-template-columns: 1fr;
+    }
+
+    .course-preparation__step {
+      min-height: 0;
+    }
+  }
+</style>

@@ -1,0 +1,375 @@
+---
+const stages = [
+  {
+    number: "1",
+    title: "Основа",
+    topics: ["строение атома", "периодический закон", "химическая связь", "строение вещества"],
+    result:
+      "ученик уверенно решает задания на атом, периодичность, типы связи и свойства веществ.",
+    duration: "6-8 недель",
+    dates: "сентябрь - октябрь",
+    points: "до 12 первичных баллов",
+    open: true,
+  },
+  {
+    number: "2",
+    title: "Неорганика и общая химия",
+    topics: ["классы неорганических веществ", "ОВР", "электролиз", "гидролиз", "расчётные задачи"],
+    result:
+      "ученик разбирает цепочки превращений, реакции и расчёты из первой и второй части ЕГЭ.",
+    duration: "12-14 недель",
+    dates: "ноябрь - январь",
+    points: "до 22 первичных баллов",
+    open: false,
+  },
+  {
+    number: "3",
+    title: "Органическая химия",
+    topics: ["углеводороды", "кислородсодержащие соединения", "азотсодержащие соединения", "органические цепочки"],
+    result:
+      "ученик видит логику органики, пишет реакции, решает цепочки и задания высокого уровня.",
+    duration: "10-12 недель",
+    dates: "февраль - апрель",
+    points: "до 18 первичных баллов",
+    open: false,
+  },
+  {
+    number: "4",
+    title: "Финальная отработка",
+    topics: ["пробники", "разбор ошибок", "повторение слабых тем", "тренировка второй части"],
+    result:
+      "ученик доводит решение варианта до стабильного результата и закрывает личные слабые места.",
+    duration: "6-8 недель",
+    dates: "апрель - май",
+    points: "добираем 8-15 первичных баллов",
+    open: false,
+  },
+];
+
+const programStats = [
+  { value: "120", label: "уроков по темам ЕГЭ" },
+  { value: "5000+", label: "заданий для практики" },
+  { value: "12", label: "пробников с разбором" },
+  { value: "4", label: "этапа подготовки" },
+];
+---
+
+<section class="course-program ege-course-section" aria-labelledby="course-program-title">
+  <div class="course-program__shell ege-course-panel ege-course-panel--wide ege-course-panel--pastel-mint">
+    <header class="course-program__header">
+      <div class="course-program__intro">
+      <span class="ege-course-chip ege-course-chip--lime">что изучаем</span>
+      <h2 class="course-program__title ege-course-section-title" id="course-program-title">
+        Программа по этапам
+      </h2>
+      <p class="course-program__lead ege-course-section-lead">
+        Курс ведёт от фундамента до уверенной отработки на экзамене.
+      </p>
+      </div>
+      <figure class="course-program__sticker" aria-hidden="true">
+        <img
+          src="/images/ege-course/ChatGPT Image 28 апр. 2026 г., 18_44_08.png"
+          alt=""
+          loading="lazy"
+        />
+      </figure>
+    </header>
+
+    <div class="course-program__stats" aria-label="Ключевые цифры курса">
+      {
+        programStats.map((item) => (
+          <article class="course-program__stat ege-course-card">
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="course-program__list">
+      {
+        stages.map((stage) => (
+          <details class="course-program__item ege-course-card" open={stage.open}>
+            <summary class="course-program__summary">
+              <span class="course-program__number">{stage.number}</span>
+              <h3>{stage.title}</h3>
+              <span class="course-program__toggle" aria-hidden="true"></span>
+            </summary>
+
+            <div class="course-program__body">
+              <ul class="course-program__topics">
+                {stage.topics.map((topic) => (
+                  <li>{topic}</li>
+                ))}
+              </ul>
+
+              <div class="course-program__result">
+                <p>{stage.result}</p>
+                <dl>
+                  <div>
+                    <dt>Длительность</dt>
+                    <dd>{stage.duration}</dd>
+                  </div>
+                  <div>
+                    <dt>Даты</dt>
+                    <dd>{stage.dates}</dd>
+                  </div>
+                  <div>
+                    <dt>Баллы</dt>
+                    <dd>{stage.points}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .course-program__shell {
+    padding: 44px 40px;
+  }
+
+  .course-program__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 28vw, 390px);
+    gap: 36px;
+    align-items: start;
+    margin-bottom: 28px;
+  }
+
+  .course-program__intro {
+    min-width: 0;
+  }
+
+  .course-program__title {
+    margin-top: 22px;
+  }
+
+  .course-program__lead {
+    max-width: 760px;
+    margin-top: 14px;
+  }
+
+  .course-program__sticker {
+    margin: 0;
+    transform: rotate(-2deg);
+  }
+
+  .course-program__sticker img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 14px 22px rgb(60 40 120 / 0.12));
+  }
+
+  .course-program__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .course-program__stat {
+    min-height: 132px;
+    display: grid;
+    align-content: center;
+    gap: 8px;
+    padding: 22px;
+    background: rgb(255 255 255 / 0.82);
+  }
+
+  .course-program__stat strong {
+    color: var(--ege-primary);
+    font-size: clamp(34px, 4vw, 54px);
+    line-height: 1;
+    letter-spacing: var(--ege-track-tight);
+    font-weight: 900;
+  }
+
+  .course-program__stat span {
+    max-width: 180px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 700;
+  }
+
+  .course-program__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .course-program__item {
+    overflow: hidden;
+  }
+
+  .course-program__summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    min-height: 76px;
+    padding: 18px 28px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .course-program__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .course-program__number {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ege-primary-soft);
+    color: var(--ege-primary-deep);
+    font-size: var(--ege-card-title);
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .course-program__summary h3 {
+    color: var(--ege-text);
+    font-size: var(--ege-h3);
+    line-height: var(--ege-lh-heading);
+    letter-spacing: var(--ege-track-tight);
+    font-weight: 800;
+  }
+
+  .course-program__toggle {
+    width: 18px;
+    height: 18px;
+    border-right: 2px solid var(--ege-text);
+    border-bottom: 2px solid var(--ege-text);
+    transform: rotate(45deg);
+    transition: transform var(--ege-ease) 0.2s;
+  }
+
+  .course-program__item[open] .course-program__toggle {
+    transform: rotate(225deg);
+  }
+
+  .course-program__body {
+    padding: 0 28px 28px 90px;
+  }
+
+  .course-program__topics {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 20px 24px;
+    border-radius: var(--ege-radius-lg);
+    background: var(--ege-primary-tint);
+    list-style: none;
+  }
+
+  .course-program__topics li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body);
+    line-height: var(--ege-lh-card);
+    font-weight: 600;
+  }
+
+  .course-program__topics li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ege-primary);
+    transform: translateY(-50%);
+  }
+
+  .course-program__result {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ege-primary-soft);
+  }
+
+  .course-program__result p {
+    max-width: 760px;
+    color: var(--ege-text-soft);
+    font-size: var(--ege-body);
+    line-height: var(--ege-lh-body);
+    font-weight: 600;
+  }
+
+  .course-program__result dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0 0;
+  }
+
+  .course-program__result div {
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px;
+    border-radius: var(--ege-radius-md);
+    background: var(--ege-primary-tint);
+  }
+
+  .course-program__result dt {
+    color: var(--ege-muted);
+    font-size: var(--ege-caption);
+    line-height: var(--ege-lh-card);
+    font-weight: 700;
+  }
+
+  .course-program__result dd {
+    margin: 0;
+    color: var(--ege-text);
+    font-size: var(--ege-body-sm);
+    line-height: var(--ege-lh-card);
+    font-weight: 800;
+  }
+
+  @media (max-width: 760px) {
+    .course-program__shell {
+      padding: 32px 18px;
+    }
+
+    .course-program__header {
+      grid-template-columns: 1fr;
+    }
+
+    .course-program__sticker {
+      display: none;
+    }
+
+    .course-program__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .course-program__summary {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      padding: 16px 18px;
+    }
+
+    .course-program__body {
+      padding: 0 18px 22px;
+    }
+
+    .course-program__result dl {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .course-program__stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
