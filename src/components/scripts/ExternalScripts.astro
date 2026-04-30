@@ -12,6 +12,7 @@
 interface Props {
   loadPopup?: boolean;
   loadForms?: boolean;
+  loadCaptcha?: boolean;
   popupPath?: string;
   formsPath?: string;
 }
@@ -19,6 +20,7 @@ interface Props {
 const {
   loadPopup = true,
   loadForms = true,
+  loadCaptcha = true,
   popupPath = "/js/popup.js",
   formsPath = "/js/forms.js",
 } = Astro.props;
@@ -27,3 +29,7 @@ const {
 {loadPopup && <script src={popupPath} defer />}
 
 {loadForms && <script src={formsPath} defer />}
+
+{loadCaptcha && (
+  <script is:inline src="https://smartcaptcha.yandexcloud.net/captcha.js" defer />
+)}

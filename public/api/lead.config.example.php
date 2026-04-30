@@ -9,5 +9,8 @@ return [
         'password' => 'PUT_DATABASE_PASSWORD_HERE',
         'charset' => 'utf8mb4',
     ],
+    'captcha' => [
+        'secret' => 'PUT_YANDEX_CAPTCHA_SECRET_HERE',
+    ],
 ];
 

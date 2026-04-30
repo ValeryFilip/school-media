@@ -126,6 +126,7 @@ const sectionClass = [
         data-success-delay={String(successDelay)}
         data-required-any={requiredAny.join(",")}
         data-required-all={requiredAll.join(",")}
+        data-captcha="yandex"
         novalidate
       >
         <div class={`mdx-lead__fields ${fields.length <= 2 ? "mdx-lead__fields--compact" : ""}`}>
@@ -148,7 +149,7 @@ const sectionClass = [
                   placeholder={field.placeholder}
                   autocomplete={field.autocomplete}
                   required={field.required ?? false}
-                  inputmode={field.inputmode}
+                  inputmode={field.inputmode as "text" | "tel" | "email" | "url" | "search" | "none" | "numeric" | "decimal" | undefined}
                   pattern={field.pattern}
                   title={field.title}
                 />

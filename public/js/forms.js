@@ -13,6 +13,7 @@
   const LS_REF_FT = "attr:ref_first_touch";
   const LS_REF_LT = "attr:ref_last_touch";
   const DEFAULT_ENDPOINT = "/api/lead.php";
+  const YANDEX_CAPTCHA_KEY = "ysc1_Zrj4eeIltFnAC3DafTD8tgb8oxheQI5QZ88R1hL77af70847";
 
   const nowISO = () => new Date().toISOString();
   const hasKeys = (value) => value && Object.keys(value).length > 0;
@@ -326,6 +327,29 @@
     return result || { ok: true };
   };
 
+  const getCaptchaToken = (form) => {
+    if (form.dataset.captcha !== "yandex") return Promise.resolve("");
+    if (typeof window.smartCaptcha === "undefined") return Promise.resolve("");
+
+    return new Promise((resolve) => {
+      const container = document.createElement("div");
+      container.style.display = "none";
+      document.body.appendChild(container);
+
+      const widgetId = window.smartCaptcha.render(container, {
+        sitekey: YANDEX_CAPTCHA_KEY,
+        invisible: true,
+        hideShield: true,
+        callback: (token) => {
+          container.remove();
+          resolve(token);
+        },
+      });
+
+      window.smartCaptcha.execute(widgetId);
+    });
+  };
+
   const handleSuccess = (form) => {
     const successMessage = form.dataset.successMessage || "Заявка отправлена!";
     setStatus(form, "ok", successMessage);
@@ -374,7 +398,8 @@
       setStatus(form, "", "Отправляем...");
 
       try {
-        const payload = buildPayload(form, rawFields, trigger);
+        const captchaToken = await getCaptchaToken(form);
+        const payload = { ...buildPayload(form, rawFields, trigger), captcha_token: captchaToken };
         debugPayload(form, payload);
         const endpoint = form.dataset.endpoint || form.getAttribute("action") || DEFAULT_ENDPOINT;
         await sendRequest(endpoint, payload);

@@ -25,11 +25,13 @@ jobs:
       - name: Generate lead DB config
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          YANDEX_CAPTCHA_SECRET: ${{ secrets.YANDEX_CAPTCHA_SECRET }}
         run: |
           python3 - << 'PYEOF'
           import os
           pw = os.environ['DB_PASSWORD'].replace("'", "\\'")
-          config = f"""<?php\n\nreturn [\n    'db' => [\n        'host' => 'localhost',\n        'port' => 3306,\n        'database' => 'cy90253_egehim',\n        'username' => 'cy90253_egehim',\n        'password' => '{pw}',\n        'charset' => 'utf8mb4',\n    ],\n];\n"""
+          cs = os.environ['YANDEX_CAPTCHA_SECRET'].replace("'", "\\'")
+          config = f"""<?php\n\nreturn [\n    'db' => [\n        'host' => 'localhost',\n        'port' => 3306,\n        'database' => 'cy90253_egehim',\n        'username' => 'cy90253_egehim',\n        'password' => '{pw}',\n        'charset' => 'utf8mb4',\n    ],\n    'captcha' => [\n        'secret' => '{cs}',\n    ],\n];\n"""
           with open('public/api/lead.config.php', 'w') as f:
               f.write(config)
           PYEOF
