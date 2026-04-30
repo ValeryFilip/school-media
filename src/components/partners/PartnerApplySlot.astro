@@ -2,24 +2,24 @@
 /* src/components/partners/PartnerApplySlot.astro */
 ---
 
-<div class="utm-box" client:load>
+<div class="utm-box">
   <label
-    >���:
-    <input type="text" id="firstName" placeholder="����" required />
+    >Имя:
+    <input type="text" id="firstName" placeholder="Иван" required />
   </label>
 
   <label
-    >�������:
-    <input type="text" id="lastName" placeholder="������" required />
+    >Фамилия:
+    <input type="text" id="lastName" placeholder="Иванов" required />
   </label>
 
   <label
-    >Telegram (��� @):
+    >Telegram (без @):
     <input type="text" id="telegramInput" placeholder="vasya_123" required />
   </label>
 
   <label
-    >�������:
+    >Телефон:
     <input
       type="tel"
       id="phoneInput"
@@ -33,9 +33,9 @@
   <div class="consent-row">
     <input type="checkbox" id="consentPrivacy" name="consent_privacy" value="true" required />
     <label for="consentPrivacy">
-      �������� �
+      Согласен с
       <a href="/docs/privacy/" target="_blank" rel="noopener"
-        >��������� ������������������</a
+        >политикой конфиденциальности</a
       >
     </label>
   </div>
@@ -43,9 +43,9 @@
   <div class="consent-row">
     <input type="checkbox" id="consentPersonalData" name="consent_personal_data" value="true" required />
     <label for="consentPersonalData">
-      �������� ��
+      Согласен на
       <a href="/docs/agreement/" target="_blank" rel="noopener"
-        >��������� ������������ ������</a
+        >обработку персональных данных</a
       >
     </label>
   </div>
@@ -53,19 +53,19 @@
   <div class="consent-row">
     <input type="checkbox" id="consentMarketing" name="consent_marketing" value="true" required />
     <label for="consentMarketing">
-      �������� ��
+      Согласен на
       <a href="/docs/marketing-consent/" target="_blank" rel="noopener"
-        >��������� ��������</a
+        >получение рекламных сообщений</a
       >
     </label>
   </div>
-  <button id="generateUtmBtn" class="btn btn--blue">������ ������</button>
+
+  <button id="generateUtmBtn" class="btn btn--blue">Подать заявку</button>
   <div id="generateLoader" class="loader hidden"></div>
 
   <div class="result result--message hidden" id="utmResult">
     <p class="result-message">
-      ������ ����������. �� �������� ������ � ������� ������������ ������
-      ��������.
+      Заявка принята. Мы пришлём вашу реферальную ссылку в течение рабочего дня.
     </p>
   </div>
 </div>
@@ -212,12 +212,12 @@
       );
 
       if (!fn || !ln || !tg || !ph || !checksOk) {
-        alert("��������� ��� ���� � ����������� ��� �������.");
+        alert("Заполните все поля и подтвердите все согласия.");
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = "����������...";
+      btn.textContent = "Отправляем...";
       loader.classList.remove("hidden");
       result?.classList.add("hidden");
 
@@ -245,7 +245,7 @@
         alert("Ошибка соединения: " + e.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = "������ ������";
+        btn.textContent = "Подать заявку";
         loader.classList.add("hidden");
       }
     });

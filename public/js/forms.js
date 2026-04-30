@@ -13,7 +13,6 @@
   const LS_REF_FT = "attr:ref_first_touch";
   const LS_REF_LT = "attr:ref_last_touch";
   const DEFAULT_ENDPOINT = "/api/lead.php";
-  const RECAPTCHA_SITE_KEY = "6LdH2McrAAAAAAjXZeXVKTAtKoGwJCjS4d9wVe4Z";
 
   const nowISO = () => new Date().toISOString();
   const hasKeys = (value) => value && Object.keys(value).length > 0;
@@ -270,7 +269,7 @@
     return "";
   };
 
-  const buildPayload = (form, rawFields, trigger, recaptchaToken) => {
+  const buildPayload = (form, rawFields, trigger) => {
     const attr = readAttribution();
     const fields = normalizeFields(rawFields);
     const formType = form.dataset.formType || "lead";
@@ -283,7 +282,6 @@
       form_type: formType,
       form_id: formId,
       submission_id: submissionId,
-      recaptcha_token: recaptchaToken || "",
       ...metaFields,
     };
   };
@@ -328,20 +326,6 @@
     return result || { ok: true };
   };
 
-  const getRecaptchaToken = async (form) => {
-    if (form.dataset.recaptcha !== "true") return "";
-    if (typeof grecaptcha === "undefined" || window.location.hostname.includes("localhost")) return "";
-
-    return new Promise((resolve, reject) => {
-      grecaptcha.ready(() => {
-        grecaptcha
-          .execute(RECAPTCHA_SITE_KEY, { action: "submit" })
-          .then(resolve)
-          .catch(reject);
-      });
-    });
-  };
-
   const handleSuccess = (form) => {
     const successMessage = form.dataset.successMessage || "Заявка отправлена!";
     setStatus(form, "ok", successMessage);
@@ -377,7 +361,7 @@
       const rawFields = Object.fromEntries(new FormData(form).entries());
       const popup = form.closest("[data-popup]");
       const trigger = popup?.__lastTrigger || null;
-      const basePayload = buildPayload(form, rawFields, trigger, "");
+      const basePayload = buildPayload(form, rawFields, trigger);
       const validationError = validateCustomRules(form, basePayload);
 
       if (validationError) {
@@ -390,8 +374,7 @@
       setStatus(form, "", "Отправляем...");
 
       try {
-        const recaptchaToken = await getRecaptchaToken(form);
-        const payload = buildPayload(form, rawFields, trigger, recaptchaToken);
+        const payload = buildPayload(form, rawFields, trigger);
         debugPayload(form, payload);
         const endpoint = form.dataset.endpoint || form.getAttribute("action") || DEFAULT_ENDPOINT;
         await sendRequest(endpoint, payload);
