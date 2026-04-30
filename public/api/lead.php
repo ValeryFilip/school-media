@@ -26,8 +26,6 @@ if (!is_array($config) || !isset($config['db']) || !is_array($config['db'])) {
 
 try {
     $raw = parse_payload();
-    verify_captcha($raw['captcha_token'] ?? '', get_client_ip(), $config);
-
     $payload = normalize_payload($raw);
     validate_payload($payload);
 
@@ -50,28 +48,6 @@ try {
     error_log('Lead endpoint error: ' . $error->getMessage());
     $status = $error instanceof InvalidArgumentException ? 400 : 500;
     respond(['ok' => false, 'error' => $error->getMessage()], $status);
-}
-
-function verify_captcha(string $token, string $ip, array $config): void
-{
-    $secret = (string)($config['captcha']['secret'] ?? '');
-    if ($secret === '') return;
-    if ($token === '') return; // скрипт не загрузился — пропускаем
-
-    $url = 'https://smartcaptcha.yandexcloud.net/validate?' . http_build_query([
-        'secret' => $secret,
-        'token'  => $token,
-        'ip'     => $ip,
-    ]);
-
-    $ctx = stream_context_create(['http' => ['timeout' => 5, 'ignore_errors' => true]]);
-    $response = @file_get_contents($url, false, $ctx);
-    if ($response === false) return; // fail open — не блокируем если сервис недоступен
-
-    $data = json_decode($response, true);
-    if (!isset($data['status']) || $data['status'] !== 'ok') {
-        respond(['ok' => false, 'error' => 'Captcha failed'], 403);
-    }
 }
 
 function respond(array $data, int $status = 200): void

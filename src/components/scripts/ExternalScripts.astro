@@ -1,18 +1,7 @@
 ---
-/**
- * ExternalScripts.astro - Загрузчик внешних скриптов
- *
- * Загружает критичные внешние скрипты проекта:
- * - popup.js - управление модальными окнами
- * - forms.js - единый обработчик обычных форм
- *
- * Все скрипты загружаются асинхронно для оптимизации производительности.
- */
-
 interface Props {
   loadPopup?: boolean;
   loadForms?: boolean;
-  loadCaptcha?: boolean;
   popupPath?: string;
   formsPath?: string;
 }
@@ -20,7 +9,6 @@ interface Props {
 const {
   loadPopup = true,
   loadForms = true,
-  loadCaptcha = true,
   popupPath = "/js/popup.js",
   formsPath = "/js/forms.js",
 } = Astro.props;
@@ -29,7 +17,3 @@ const {
 {loadPopup && <script src={popupPath} defer />}
 
 {loadForms && <script src={formsPath} defer />}
-
-{loadCaptcha && (
-  <script is:inline src="https://smartcaptcha.yandexcloud.net/captcha.js" defer />
-)}
