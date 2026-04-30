@@ -7,9 +7,9 @@ import Seo from "../components/Seo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import ExternalScripts from "../components/scripts/ExternalScripts.astro";
 import YandexMetrika from "../components/analytics/YandexMetrika.astro";
-import GoogleAnalytics from "../components/analytics/GoogleAnalytics.astro";
 import JsonLd from "../components/JsonLd.astro";
 import PopupForm from "../components/PopupForm.astro";
+import CookieConsent from "../components/CookieConsent.astro";
 import {
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
@@ -178,7 +178,6 @@ const breadcrumbsJsonLd =
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
     <YandexMetrika />
-    <GoogleAnalytics />
 
     {/* JSON-LD структурированные данные */}
     <JsonLd data={orgJsonLd} />
@@ -214,6 +213,8 @@ const breadcrumbsJsonLd =
     </main>
 
     {showFooter && <SiteFooter pageUtmSource={pageUtmSource} />}
+
+    <CookieConsent />
 
     <PopupForm popupId="lead-popup" />
 

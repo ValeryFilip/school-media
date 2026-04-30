@@ -12,7 +12,7 @@
   const LS_SID = "attr:session_id";
   const LS_REF_FT = "attr:ref_first_touch";
   const LS_REF_LT = "attr:ref_last_touch";
-  const DEFAULT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzTaPkWHfzh1LI3igio8RXqNgX4DcIuWIiDHEMM_5qo5huDfu_TuNv8VcBnlQ0yVi5A/exec";
+  const DEFAULT_ENDPOINT = "/api/lead.php";
   const RECAPTCHA_SITE_KEY = "6LdH2McrAAAAAAjXZeXVKTAtKoGwJCjS4d9wVe4Z";
 
   const nowISO = () => new Date().toISOString();
@@ -310,11 +310,22 @@
     });
     body.append("raw_json", JSON.stringify(payload));
 
-    await fetch(endpoint, {
+    const response = await fetch(endpoint, {
       method: "POST",
       body,
-      mode: "no-cors",
+      headers: {
+        Accept: "application/json",
+      },
     });
+
+    const text = await response.text();
+    const result = text ? tryParse(text, null) : null;
+
+    if (!response.ok || result?.ok === false) {
+      throw new Error(result?.error || `Request failed with status ${response.status}`);
+    }
+
+    return result || { ok: true };
   };
 
   const getRecaptchaToken = async (form) => {

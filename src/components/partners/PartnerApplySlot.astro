@@ -1,25 +1,25 @@
-п»ї---
+---
 /* src/components/partners/PartnerApplySlot.astro */
 ---
 
 <div class="utm-box" client:load>
   <label
-    >РРјСЏ:
-    <input type="text" id="firstName" placeholder="РРІР°РЅ" required />
+    >Имя:
+    <input type="text" id="firstName" placeholder="Иван" required />
   </label>
 
   <label
-    >Р¤Р°РјРёР»РёСЏ:
-    <input type="text" id="lastName" placeholder="РџРµС‚СЂРѕРІ" required />
+    >Фамилия:
+    <input type="text" id="lastName" placeholder="Петров" required />
   </label>
 
   <label
-    >Telegram (Р±РµР· @):
+    >Telegram (без @):
     <input type="text" id="telegramInput" placeholder="vasya_123" required />
   </label>
 
   <label
-    >РўРµР»РµС„РѕРЅ:
+    >Телефон:
     <input
       type="tel"
       id="phoneInput"
@@ -31,25 +31,41 @@
   </label>
 
   <div class="consent-row">
-    <input type="checkbox" id="consentPersonal" required />
-    <label for="consentPersonal">
-      РЎРѕРіР»Р°СЃРµРЅ СЃ
-      <a href="/agreement/" target="_blank" rel="noopener"
-        >РѕР±СЂР°Р±РѕС‚РєРѕР№ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С…</a
-      >
-      Рё
-      <a href="/privacy/" target="_blank" rel="noopener"
-        >РїРѕР»РёС‚РёРєРѕР№ РєРѕРЅС„РёРґРµРЅС†РёР°Р»СЊРЅРѕСЃС‚Рё</a
+    <input type="checkbox" id="consentPrivacy" name="consent_privacy" value="true" required />
+    <label for="consentPrivacy">
+      Согласен с
+      <a href="/docs/privacy/" target="_blank" rel="noopener"
+        >политикой конфиденциальности</a
       >
     </label>
   </div>
-  <button id="generateUtmBtn" class="btn btn--blue">РџРѕРґР°С‚СЊ Р·Р°СЏРІРєСѓ</button>
+
+  <div class="consent-row">
+    <input type="checkbox" id="consentPersonalData" name="consent_personal_data" value="true" required />
+    <label for="consentPersonalData">
+      Согласен на
+      <a href="/docs/agreement/" target="_blank" rel="noopener"
+        >обработку персональных данных</a
+      >
+    </label>
+  </div>
+
+  <div class="consent-row">
+    <input type="checkbox" id="consentMarketing" name="consent_marketing" value="true" required />
+    <label for="consentMarketing">
+      Согласен на
+      <a href="/docs/marketing-consent/" target="_blank" rel="noopener"
+        >рекламную рассылку</a
+      >
+    </label>
+  </div>
+  <button id="generateUtmBtn" class="btn btn--blue">Подать заявку</button>
   <div id="generateLoader" class="loader hidden"></div>
 
   <div class="result result--message hidden" id="utmResult">
     <p class="result-message">
-      Р—Р°СЏРІРєР° РѕС‚РїСЂР°РІР»РµРЅР°. РњС‹ РїСЂРѕРІРµСЂРёРј РґР°РЅРЅС‹Рµ Рё РїСЂРёС€Р»РµРј РїРµСЂСЃРѕРЅР°Р»СЊРЅСѓСЋ СЃСЃС‹Р»РєСѓ
-      РѕС‚РґРµР»СЊРЅРѕ.
+      Заявка отправлена. Мы проверим данные и пришлем персональную ссылку
+      отдельно.
     </p>
   </div>
 </div>
@@ -191,17 +207,17 @@
       const tg = document.getElementById("telegramInput").value.trim();
       const ph = document.getElementById("phoneInput").value.trim();
 
-      const checksOk = ["consentPersonal"].every(
+      const checksOk = ["consentPrivacy", "consentPersonalData", "consentMarketing"].every(
         (id) => document.getElementById(id)?.checked,
       );
 
       if (!fn || !ln || !tg || !ph || !checksOk) {
-        alert("Р—Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ Рё РїРѕРґС‚РІРµСЂРґРёС‚Рµ РІСЃРµ СѓСЃР»РѕРІРёСЏ.");
+        alert("Заполните все поля и подтвердите все условия.");
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = "РћС‚РїСЂР°РІР»СЏРµРј...";
+      btn.textContent = "Отправляем...";
       loader.classList.remove("hidden");
       result?.classList.add("hidden");
 
@@ -212,6 +228,9 @@
         telegram: tg,
         phone: ph,
         utm,
+        consent_privacy: "true",
+        consent_personal_data: "true",
+        consent_marketing: "true",
       });
 
       try {
@@ -223,13 +242,13 @@
         if (res.ok && txt.includes("OK")) {
           result?.classList.remove("hidden");
         } else {
-          alert("РћС€РёР±РєР°: " + txt);
+          alert("Ошибка: " + txt);
         }
       } catch (e) {
-        alert("РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ: " + e.message);
+        alert("Ошибка подключения: " + e.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = "РџРѕРґР°С‚СЊ Р·Р°СЏРІРєСѓ";
+        btn.textContent = "Подать заявку";
         loader.classList.add("hidden");
       }
     });

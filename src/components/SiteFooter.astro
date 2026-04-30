@@ -3,6 +3,7 @@
 const year = new Date().getFullYear();
 import SupportFab from "./ui/SupportFab.astro";
 import ScrollToTop from "./ui/ScrollToTop.astro";
+import config from "../config";
 
 interface Props {
   /** UTM source по странице для кнопки попапа */
@@ -25,19 +26,20 @@ const { pageUtmSource = "main-page" } = Astro.props;
 
       <address class="footer-info">
         Самозанятый Филипенко Валерий Юрьевич<br />
-        Почта: <a href="mailto:valeryfilip96@gmail.com"
-          >valeryfilip96@gmail.com</a
+        Почта: <a href={`mailto:${config.contactEmail}`}
+          >{config.contactEmail}</a
         >
       </address>
 
       <nav class="footer-links" aria-label="Юридическая информация">
-        <a href="/privacy/" rel="noopener">Политика конфиденциальности</a><br />
-        <a href="/agreement/" rel="noopener">Обработка персональных данных</a><br
+        <a href="/docs/privacy/" rel="noopener">Политика конфиденциальности</a><br />
+        <a href="/docs/agreement/" rel="noopener">Согласие на обработку персональных данных</a><br
         />
-        <a href="/payment/" rel="noopener">Информация по оплате курсов</a><br />
-        <a href="/marketing-consent/" rel="noopener"
-          >Соглашение о рекламной рассылке</a
+        <a href="/docs/cookies/" rel="noopener">Политика cookie и аналитики</a><br />
+        <a href="/docs/marketing-consent/" rel="noopener"
+          >Согласие на рекламные рассылки</a
         ><br />
+        <a href="/docs/payment/" rel="noopener">Оплата и возвраты</a><br />
         <a href="/sitemap.xml" rel="noopener">Карта сайта (sitemap)</a>
       </nav>
 

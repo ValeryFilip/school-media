@@ -1,0 +1,160 @@
+---
+const storageKey = "school_media_cookie_consent";
+const consentVersion = "1";
+---
+
+<section
+  class="cookie-consent"
+  data-cookie-consent
+  data-storage-key={storageKey}
+  data-consent-version={consentVersion}
+  aria-label="Согласие на использование cookie"
+  hidden
+>
+  <p class="cookie-consent__text">
+    Используя сайт, вы соглашаетесь на cookie и обработку технических данных.
+    Подробнее — в
+    <a href="/docs/cookies/" target="_blank" rel="noopener">политике cookie</a>
+    и
+    <a href="/docs/privacy/" target="_blank" rel="noopener">политике обработки данных</a>.
+  </p>
+
+  <div class="cookie-consent__actions">
+    <button class="cookie-consent__button" type="button" data-cookie-consent-accept>
+      Согласен
+    </button>
+    <button class="cookie-consent__decline" type="button" data-cookie-consent-decline>
+      Не согласен
+    </button>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var consent = document.querySelector("[data-cookie-consent]");
+    if (!consent) return;
+
+    var key = consent.getAttribute("data-storage-key");
+    var version = consent.getAttribute("data-consent-version");
+    var acceptButton = consent.querySelector("[data-cookie-consent-accept]");
+    var declineButton = consent.querySelector("[data-cookie-consent-decline]");
+
+    try {
+      var saved = JSON.parse(localStorage.getItem(key) || "null");
+      if (saved && saved.version === version && typeof saved.accepted === "boolean") {
+        return;
+      }
+    } catch (error) {
+      localStorage.removeItem(key);
+    }
+
+    consent.hidden = false;
+
+    function saveConsent(accepted) {
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          accepted: accepted,
+          version: version,
+          answeredAt: new Date().toISOString(),
+        }),
+      );
+      consent.hidden = true;
+    }
+
+    if (acceptButton) {
+      acceptButton.addEventListener("click", function () {
+        saveConsent(true);
+      });
+    }
+
+    if (declineButton) {
+      declineButton.addEventListener("click", function () {
+        saveConsent(false);
+      });
+    }
+  })();
+</script>
+
+<style>
+  .cookie-consent {
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+    z-index: 1000;
+    display: grid;
+    width: min(360px, calc(100vw - 32px));
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    color: #172033;
+  }
+
+  .cookie-consent[hidden] {
+    display: none;
+  }
+
+  .cookie-consent__text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .cookie-consent__text a {
+    color: #245edb;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .cookie-consent__actions {
+    display: grid;
+    gap: 7px;
+  }
+
+  .cookie-consent__button {
+    min-height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 6px;
+    background: #172033;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .cookie-consent__decline {
+    width: fit-content;
+    justify-self: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #667085;
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.4;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  .cookie-consent__button:focus-visible,
+  .cookie-consent__decline:focus-visible {
+    outline: 3px solid rgba(36, 94, 219, 0.25);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 520px) {
+    .cookie-consent {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+      width: auto;
+    }
+  }
+</style>

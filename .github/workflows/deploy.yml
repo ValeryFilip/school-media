@@ -22,6 +22,18 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Generate lead DB config
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          python3 - << 'PYEOF'
+          import os
+          pw = os.environ['DB_PASSWORD'].replace("'", "\\'")
+          config = f"""<?php\n\nreturn [\n    'db' => [\n        'host' => 'localhost',\n        'port' => 3306,\n        'database' => 'cy90253_egehim',\n        'username' => 'cy90253_egehim',\n        'password' => '{pw}',\n        'charset' => 'utf8mb4',\n    ],\n];\n"""
+          with open('public/api/lead.config.php', 'w') as f:
+              f.write(config)
+          PYEOF
+
       - name: Build
         run: npm run build
 

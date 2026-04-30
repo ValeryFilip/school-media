@@ -23,15 +23,29 @@ const {
   popupId = "lead-popup",
   title = "Запись / заявка",
   submitText = "Отправить",
-  action = "https://script.google.com/macros/s/AKfycbzTaPkWHfzh1LI3igio8RXqNgX4DcIuWIiDHEMM_5qo5huDfu_TuNv8VcBnlQ0yVi5A/exec",
+  action = "/api/lead.php",
   formType = "popup",
   docs = [
     {
-      id: "consent",
+      id: "consent-privacy",
       html:
-        'Соглашаюсь с <a href="/agreement/" target="_blank" rel="noopener">условиями обработки персональных данных</a>, <a href="/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a> и <a href="/marketing-consent/" target="_blank" rel="noopener">условиями рекламной рассылки</a>',
+        'Согласен с <a href="/docs/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a>',
       required: true,
-      fieldName: "consent_all",
+      fieldName: "consent_privacy",
+    },
+    {
+      id: "consent-personal-data",
+      html:
+        'Согласен на <a href="/docs/agreement/" target="_blank" rel="noopener">обработку персональных данных</a>',
+      required: true,
+      fieldName: "consent_personal_data",
+    },
+    {
+      id: "consent-marketing",
+      html:
+        'Согласен на <a href="/docs/marketing-consent/" target="_blank" rel="noopener">рекламную рассылку</a>',
+      required: true,
+      fieldName: "consent_marketing",
     },
   ],
   /* UTM метки */

@@ -1,0 +1,289 @@
+---
+// src/pages/docs/marketing-consent.astro
+
+import MainLayout from "../../layouts/MainLayout.astro";
+import config from "../../config.ts";
+import {
+  buildWebPageJsonLd,
+  getSiteName,
+  pageUrlFromPath,
+} from "../../lib/seoData";
+
+const title = "Согласие на получение рекламных рассылок";
+const siteBase = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const description = `Условия и порядок получения рекламных сообщений по email, телефону и в мессенджерах на ${siteBase}.`;
+
+const breadcrumbs = [{ name: title }];
+
+// Генерация JSON-LD
+const origin = Astro.url.origin;
+const pageUrl = pageUrlFromPath(origin, Astro.url.pathname);
+const siteName = getSiteName(undefined, config.siteName);
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url: pageUrl,
+  name: title,
+  siteName,
+  about: "Согласие на получение рекламных рассылок",
+});
+---
+
+<MainLayout
+  title={title}
+  description={description}
+  seoType="website"
+  index={false}
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
+>
+  <main class="policy" aria-labelledby="marketing-consent-title">
+    <div class="container">
+      <h1 id="marketing-consent-title">
+        Согласие на получение рекламных и информационных сообщений
+      </h1>
+
+      <dl class="policy__meta">
+        <div>
+          <dt>Дата публикации</dt>
+          <dd>30 апреля 2026 года</dd>
+        </div>
+        <div>
+          <dt>Адрес сайта</dt>
+          <dd><a href="https://egehim.ru">https://egehim.ru</a></dd>
+        </div>
+      </dl>
+
+      <section class="policy__section">
+        <p>
+          Настоящим я даю согласие Филипенко Валерию Юрьевичу, плательщику
+          налога на профессиональный доход, владельцу сайта
+          <a href="https://egehim.ru">https://egehim.ru</a>, далее — «Оператор»,
+          на получение рекламных и информационных сообщений, а также на
+          обработку моих персональных данных для направления таких сообщений.
+        </p>
+        <p>
+          Согласие даётся в соответствии с Федеральным законом от 13.03.2006
+          № 38-ФЗ «О рекламе» и Федеральным законом от 27.07.2006 № 152-ФЗ
+          «О персональных данных».
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>1. Каналы получения сообщений</h2>
+        <p>
+          Я соглашаюсь получать сообщения по тем каналам связи, которые я сам
+          предоставил Оператору или в которых я сам подписался на сообщения
+          Оператора:
+        </p>
+        <ul>
+          <li>email;</li>
+          <li>Telegram;</li>
+          <li>VK;</li>
+          <li>WhatsApp;</li>
+        </ul>
+        <p>
+          Сообщения в мессенджерах направляются только если я сам предоставил
+          соответствующий контакт, написал Оператору первым, подписался на
+          канал, сообщество или бота, либо иным активным действием подтвердил
+          желание получать сообщения.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>2. Содержание сообщений</h2>
+        <p>Сообщения могут включать:</p>
+        <ul>
+          <li>информацию о курсах, занятиях, консультациях и образовательных материалах проекта ЕГЭХИМ;</li>
+          <li>напоминания о старте курсов, вебинаров, разборов и мероприятий;</li>
+          <li>полезные материалы по химии, подготовке к ЕГЭ и ОГЭ;</li>
+          <li>новости проекта;</li>
+          <li>специальные предложения, акции, скидки и промокоды;</li>
+          <li>приглашения на бесплатные и платные мероприятия.</li>
+        </ul>
+      </section>
+
+      <section class="policy__section">
+        <h2>3. Периодичность сообщений</h2>
+        <p>
+          Периодичность сообщений определяется Оператором, но обычно не
+          превышает 2–4 сообщений в неделю, за исключением важных уведомлений,
+          связанных с участием в мероприятии, стартом курса, изменением
+          расписания или техническими вопросами.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>4. Какие данные обрабатываются для рассылок</h2>
+        <p>Для направления сообщений Оператор может обрабатывать:</p>
+        <ul>
+          <li>имя;</li>
+          <li>адрес электронной почты;</li>
+          <li>номер телефона;</li>
+          <li>никнейм, ссылку на профиль или идентификатор в Telegram, VK, WhatsApp;</li>
+          <li>сведения о подписке, отписке и выбранном канале связи;</li>
+          <li>сведения о взаимодействии с сообщениями: открытия, клики, переходы, ответы;</li>
+          <li>технические данные: IP-адрес, дата и время подтверждения согласия, источник подписки.</li>
+        </ul>
+      </section>
+
+      <section class="policy__section">
+        <h2>5. Передача данных сервисам рассылок и связи</h2>
+        <p>
+          Оператор может поручать обработку данных сервисам рассылок,
+          мессенджерам, социальным сетям, почтовым сервисам и иным техническим
+          подрядчикам только в объёме, необходимом для отправки сообщений,
+          фиксации согласия, учёта отписок и соблюдения требований
+          законодательства.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>6. Срок действия согласия</h2>
+        <p>Согласие действует до момента его отзыва.</p>
+      </section>
+
+      <section class="policy__section">
+        <h2>7. Как отказаться от сообщений</h2>
+        <p>
+          Я могу отказаться от рекламных и информационных сообщений в любой
+          момент:
+        </p>
+        <ul>
+          <li>по ссылке «Отписаться» в письме, если такая ссылка предусмотрена;</li>
+          <li>
+            отправив письмо на email
+            <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a> с темой
+            «Отписка»;
+          </li>
+          <li>
+            написав «стоп», «отписаться» или аналогичное сообщение в
+            мессенджере, если сообщение получено через мессенджер;
+          </li>
+          <li>отключив уведомления в соответствующем сервисе, канале, сообществе, боте или браузере;</li>
+          <li>через личный кабинет, если такая возможность доступна.</li>
+        </ul>
+        <p>
+          После отзыва согласия Оператор прекращает направление рекламных
+          сообщений по соответствующему каналу связи.
+        </p>
+        <p>
+          При этом Оператор может продолжить направлять обязательные сервисные
+          сообщения, связанные с исполнением договора, доступом к курсу, оплатой,
+          изменением расписания, технической поддержкой или иными нерекламными
+          вопросами.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>8. Способ выражения согласия</h2>
+        <p>
+          Согласие выражается путём проставления отдельной отметки в форме на
+          сайте, подписки на рассылку, подписки на канал, бота или сообщество,
+          направления сообщения Оператору либо иного активного действия,
+          позволяющего подтвердить факт согласия.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>9. Связанные документы</h2>
+        <ul>
+          <li><a href="/docs/privacy/">Политика обработки персональных данных</a></li>
+          <li><a href="/docs/agreement/">Согласие на обработку персональных данных</a></li>
+          <li><a href="/docs/cookies/">Политика использования cookie-файлов и систем аналитики</a></li>
+          <li><a href="/docs/payment/">Оплата, безопасность платежей и возвраты</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .policy {
+      color: var(--black);
+      padding: var(--space-32, 32px) 0;
+    }
+    .policy .container {
+      max-width: var(--container, 900px);
+      padding: 0 var(--pad-desktop, 50px);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .policy h1 {
+      font-size: var(--h1, 32px);
+      line-height: 1.2;
+      margin: 0 0 var(--space-16, 16px);
+      font-weight: 700;
+    }
+    .policy h2 {
+      font-size: var(--h2, 24px);
+      line-height: 1.25;
+      margin: 28px 0 12px;
+      font-weight: 700;
+    }
+    .policy p,
+    .policy li {
+      font-size: 20px;
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
+
+    .policy a {
+      color: var(--blue, #0d6efd);
+      text-decoration: none;
+    }
+    .policy a:hover {
+      text-decoration: underline;
+    }
+    .policy__meta {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 24px;
+      padding: 16px;
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+    .policy__meta div {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.32fr) 1fr;
+      gap: 12px;
+    }
+    .policy__meta dt,
+    .policy__meta dd {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .policy__meta dt {
+      color: var(--muted, #6b7280);
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
+      .policy__meta div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+  </style>
+</MainLayout>

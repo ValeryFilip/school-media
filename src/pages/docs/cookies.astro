@@ -1,0 +1,294 @@
+---
+// src/pages/docs/cookies.astro
+
+import MainLayout from "../../layouts/MainLayout.astro";
+import config from "../../config.ts";
+import {
+  buildWebPageJsonLd,
+  getSiteName,
+  pageUrlFromPath,
+} from "../../lib/seoData";
+
+const title = "Политика использования cookie-файлов и систем аналитики";
+const description =
+  "Как сайт ЕГЭХИМ использует cookie-файлы и Яндекс.Метрику для работы сайта и аналитики.";
+
+const breadcrumbs = [{ name: title }];
+
+const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const pageUrl = pageUrlFromPath(origin, Astro.url.pathname);
+const siteName = getSiteName(undefined, config.siteName);
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url: pageUrl,
+  name: title,
+  siteName,
+  about: "Политика использования cookie-файлов и систем аналитики",
+});
+---
+
+<MainLayout
+  title={title}
+  description={description}
+  seoType="website"
+  index={false}
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
+>
+  <main class="policy" aria-labelledby="cookies-title">
+    <div class="container">
+      <h1 id="cookies-title">{title}</h1>
+
+      <dl class="policy__meta">
+        <div>
+          <dt>Дата публикации</dt>
+          <dd>30 апреля 2026 года</dd>
+        </div>
+        <div>
+          <dt>Адрес сайта</dt>
+          <dd><a href="https://egehim.ru">https://egehim.ru</a></dd>
+        </div>
+      </dl>
+
+      <section class="policy__section">
+        <p>
+          Настоящая Политика описывает, как сайт
+          <a href="https://egehim.ru">https://egehim.ru</a> использует файлы
+          cookie и системы веб-аналитики.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>1. Что такое cookie</h2>
+        <p>
+          Cookie — это небольшие текстовые файлы, которые сайт сохраняет на
+          устройстве пользователя: компьютере, смартфоне или планшете.
+        </p>
+        <p>
+          Cookie помогают сайту работать корректно, запоминать настройки
+          пользователя, анализировать посещаемость и улучшать материалы.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>2. Какие cookie используются</h2>
+        <p>Сайт может использовать следующие категории cookie:</p>
+        <ul>
+          <li>
+            <strong>Технические cookie</strong> — нужны для корректной работы
+            сайта, загрузки страниц, защиты от сбоев и сохранения базовых
+            настроек.
+          </li>
+          <li>
+            <strong>Аналитические cookie</strong> — помогают понять, какие
+            страницы посещают пользователи, сколько времени проводят на сайте,
+            откуда приходят и какие материалы оказываются полезными.
+          </li>
+          <li>
+            <strong>Функциональные cookie</strong> — могут использоваться для
+            сохранения пользовательских настроек, если такие функции реализованы
+            на сайте.
+          </li>
+          <li>
+            <strong>Маркетинговые cookie</strong> — на момент публикации сайт не
+            использует сторонние рекламные пиксели. Если такие инструменты будут
+            подключены, информация о них будет добавлена в настоящую Политику.
+          </li>
+        </ul>
+      </section>
+
+      <section class="policy__section">
+        <h2>3. Яндекс.Метрика</h2>
+        <p>На сайте используется сервис Яндекс.Метрика.</p>
+        <p>Яндекс.Метрика помогает Оператору:</p>
+        <ul>
+          <li>анализировать посещаемость сайта;</li>
+          <li>понимать, какие страницы и статьи читают пользователи;</li>
+          <li>улучшать структуру сайта;</li>
+          <li>находить технические проблемы;</li>
+          <li>оценивать эффективность материалов, рекламы и источников переходов;</li>
+          <li>улучшать удобство сайта для пользователей.</li>
+        </ul>
+        <p>
+          Яндекс.Метрика может собирать техническую информацию о посещении
+          сайта, включая IP-адрес, данные cookie, сведения о браузере,
+          устройстве, операционной системе, источнике перехода, просмотренных
+          страницах и действиях пользователя на сайте.
+        </p>
+        <p>
+          Подробнее о работе сервиса можно прочитать в официальных документах:
+          <a href="https://yandex.ru/legal/metrica_termsofuse/ru/" target="_blank" rel="noopener noreferrer"
+            >условия использования Яндекс.Метрики</a
+          >,
+          <a href="https://yandex.ru/legal/confidential/" target="_blank" rel="noopener noreferrer"
+            >политика конфиденциальности Яндекса</a
+          >,
+          <a href="https://yandex.ru/support/metrica/ru/general/cookie-usage" target="_blank" rel="noopener noreferrer"
+            >справка Яндекс.Метрики о cookie и localStorage</a
+          >.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>4. Цели использования cookie и аналитики</h2>
+        <p>Cookie и аналитика используются для:</p>
+        <ul>
+          <li>обеспечения стабильной работы сайта;</li>
+          <li>улучшения скорости загрузки и удобства навигации;</li>
+          <li>анализа интереса пользователей к статьям, курсам и страницам сайта;</li>
+          <li>улучшения качества образовательных материалов;</li>
+          <li>оценки эффективности рекламных и информационных кампаний;</li>
+          <li>предотвращения технических ошибок и злоупотреблений.</li>
+        </ul>
+      </section>
+
+      <section class="policy__section">
+        <h2>5. Управление cookie</h2>
+        <p>Пользователь может управлять cookie в настройках своего браузера:</p>
+        <ul>
+          <li>разрешить использование cookie;</li>
+          <li>запретить использование cookie;</li>
+          <li>удалить ранее сохранённые cookie;</li>
+          <li>настроить уведомления о сохранении cookie.</li>
+        </ul>
+        <p>
+          Если пользователь ограничит или отключит cookie, отдельные функции
+          сайта могут работать некорректно.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>6. Согласие на использование cookie</h2>
+        <p>
+          При первом посещении сайта пользователю может быть показано
+          уведомление об использовании cookie и систем аналитики.
+        </p>
+        <p>
+          Продолжая пользоваться сайтом после отображения уведомления о cookie,
+          пользователь подтверждает, что ознакомлен с использованием cookie и
+          систем аналитики.
+        </p>
+        <p>
+          Если на сайте используются маркетинговые cookie или рекламные пиксели,
+          их подключение осуществляется с учётом требований законодательства
+          Российской Федерации.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>7. Изменение политики cookie</h2>
+        <p>
+          Оператор вправе изменять настоящую Политику. Новая редакция вступает
+          в силу с момента публикации на сайте.
+        </p>
+        <p>
+          Актуальная версия доступна по адресу:
+          <a href="https://egehim.ru/docs/cookies/">https://egehim.ru/docs/cookies/</a>
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>8. Контакты и связанные документы</h2>
+        <p>
+          По вопросам использования cookie и аналитики можно написать Оператору
+          на email: <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>.
+        </p>
+        <ul>
+          <li><a href="/docs/privacy/">Политика обработки персональных данных</a></li>
+          <li><a href="/docs/agreement/">Согласие на обработку персональных данных</a></li>
+          <li><a href="/docs/marketing-consent/">Согласие на рекламные и информационные сообщения</a></li>
+          <li><a href="/docs/payment/">Оплата, безопасность платежей и возвраты</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .policy {
+      color: var(--black);
+      padding: var(--space-32, 32px) 0;
+    }
+    .policy .container {
+      max-width: var(--container, 900px);
+      padding: 0 var(--pad-desktop, 50px);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .policy h1 {
+      font-size: var(--h1, 32px);
+      line-height: 1.2;
+      margin: 0 0 var(--space-16, 16px);
+      font-weight: 700;
+    }
+    .policy h2 {
+      font-size: var(--h2, 24px);
+      line-height: 1.25;
+      margin: 28px 0 12px;
+      font-weight: 700;
+    }
+    .policy p,
+    .policy li {
+      font-size: 20px;
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
+    .policy a {
+      color: var(--blue, #0d6efd);
+      text-decoration: none;
+    }
+    .policy a:hover {
+      text-decoration: underline;
+    }
+    .policy__meta {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 24px;
+      padding: 16px;
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+    .policy__meta div {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.32fr) 1fr;
+      gap: 12px;
+    }
+    .policy__meta dt,
+    .policy__meta dd {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .policy__meta dt {
+      color: var(--muted, #6b7280);
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
+      .policy__meta div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+  </style>
+</MainLayout>

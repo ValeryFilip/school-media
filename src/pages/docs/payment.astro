@@ -1,0 +1,325 @@
+---
+// src/pages/docs/payment.astro
+
+import MainLayout from "../../layouts/MainLayout.astro";
+import config from "../../config.ts";
+import {
+  buildWebPageJsonLd,
+  getSiteName,
+  pageUrlFromPath,
+} from "../../lib/seoData";
+
+const title = "Оплата и безопасность платежей";
+const description =
+  "Как происходит оплата курсов: приём платежей на Stepik.org, безопасность, правила и ссылки на официальные документы.";
+
+// крошки: ваш компонент добавит «Домой», здесь — только текущая страница
+const breadcrumbs = [{ name: title }];
+
+// Генерация JSON-LD (origin — из Astro.site)
+const origin = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const pageUrl = pageUrlFromPath(origin, Astro.url.pathname);
+const siteName = getSiteName(undefined, config.siteName);
+const siteBase = origin;
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url: pageUrl,
+  name: title,
+  siteName,
+  about: "Оплата и безопасность платежей",
+});
+---
+
+<MainLayout
+  title={title}
+  description={description}
+  seoType="website"
+  index={false}
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
+>
+  <main class="policy" aria-labelledby="payment-title">
+    <div class="container">
+      <h1 id="payment-title">Оплата, безопасность платежей и возвраты</h1>
+
+      <dl class="policy__meta">
+        <div>
+          <dt>Дата публикации</dt>
+          <dd>30 апреля 2026 года</dd>
+        </div>
+        <div>
+          <dt>Адрес сайта</dt>
+          <dd><a href="https://egehim.ru">https://egehim.ru</a></dd>
+        </div>
+      </dl>
+
+      <section class="policy__section">
+        <h2>1. Общие положения</h2>
+        <p>
+          На сайте <a href="https://egehim.ru">https://egehim.ru</a> размещается
+          информация о курсах, материалах и образовательных продуктах проекта
+          ЕГЭХИМ.
+        </p>
+        <p>
+          Оплата самостоятельных онлайн-курсов, размещённых на образовательной
+          платформе Stepik, осуществляется на стороне платформы
+          <a href="https://stepik.org" target="_blank" rel="noopener noreferrer"
+            >Stepik.org</a
+          >.
+        </p>
+        <p>
+          Сайт <a href="https://egehim.ru">https://egehim.ru</a> не принимает
+          платежи банковскими картами, не обрабатывает и не хранит платёжные
+          реквизиты пользователей.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>2. Оплата через Stepik</h2>
+        <p>
+          При переходе на Stepik пользователь оплачивает курс на стороне
+          платформы Stepik и её платёжных партнёров. Все операции с банковскими
+          картами и иными платёжными средствами выполняются на стороне Stepik и
+          платёжных сервисов, используемых платформой.
+        </p>
+        <p>Оператор сайта egehim.ru не получает и не хранит:</p>
+        <ul>
+          <li>номер банковской карты;</li>
+          <li>срок действия карты;</li>
+          <li>CVC/CVV-код;</li>
+          <li>данные платёжного аккаунта;</li>
+          <li>иные платёжные реквизиты пользователя.</li>
+        </ul>
+        <p>
+          При этом Оператор может получать от Stepik сведения, необходимые для
+          сопровождения курса и предоставления доступа к материалам, например:
+        </p>
+        <ul>
+          <li>имя или никнейм пользователя;</li>
+          <li>email пользователя;</li>
+          <li>сведения о выбранном курсе;</li>
+          <li>сведения о факте покупки или статусе доступа к курсу;</li>
+          <li>
+            данные об учебном прогрессе, если такие сведения доступны автору
+            курса на платформе.
+          </li>
+        </ul>
+      </section>
+
+      <section class="policy__section">
+        <h2>3. Документы Stepik</h2>
+        <p>
+          Оплата, доступ к курсу, правила возвратов и обработка платёжных данных
+          регулируются документами платформы Stepik.
+        </p>
+        <p>
+          Перед оплатой пользователь должен ознакомиться с актуальными
+          документами Stepik, размещёнными на сайте Stepik.org, включая:
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://welcome.stepik.org/ru/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              >пользовательское соглашение Stepik</a
+            >;
+          </li>
+          <li>
+            <a
+              href="https://welcome.stepik.org/ru/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              >политику конфиденциальности Stepik</a
+            >;
+          </li>
+          <li>
+            правила оплаты и возвратов, указанные в пользовательском соглашении
+            <a
+              href="https://welcome.stepik.org/ru/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Stepik</a
+            >;
+          </li>
+          <li>иные документы, применимые к покупке курса.</li>
+        </ul>
+        <p>
+          Оформляя оплату на Stepik, пользователь взаимодействует с платформой
+          Stepik и её платёжными партнёрами на условиях, установленных Stepik.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>4. Возвраты</h2>
+        <p>
+          Возврат оплаты за курс, приобретённый на Stepik, осуществляется по
+          правилам платформы Stepik.
+        </p>
+        <p>Условия возврата могут зависеть от:</p>
+        <ul>
+          <li>даты покупки;</li>
+          <li>даты обращения за возвратом;</li>
+          <li>способа оплаты;</li>
+          <li>объёма пройденного материала;</li>
+          <li>правил конкретного курса;</li>
+          <li>иных условий, установленных Stepik.</li>
+        </ul>
+        <p>
+          По вопросам оплаты и возврата средств пользователь должен обращаться в
+          поддержку Stepik через официальные каналы платформы.
+        </p>
+        <p>
+          Если вопрос связан с содержанием курса, материалами, доступом или
+          сопровождением, пользователь также может написать Оператору на email:
+          <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>5. Если оплата происходит не через Stepik</h2>
+        <p>
+          Если для отдельных услуг, консультаций, групповых занятий или иных
+          форматов обучения Оператор предлагает другой способ оплаты, условия
+          оплаты и возврата указываются на соответствующей странице, в договоре,
+          счёте, оферте или переписке с пользователем.
+        </p>
+        <p>
+          Настоящий документ в первую очередь регулирует оплату самостоятельных
+          онлайн-курсов, размещённых на Stepik.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>6. Безопасность платежей</h2>
+        <p>
+          Так как сайт <a href="https://egehim.ru">https://egehim.ru</a> не
+          принимает оплату напрямую и не обрабатывает данные банковских карт,
+          безопасность платёжных операций обеспечивается платформой Stepik и её
+          платёжными партнёрами.
+        </p>
+        <p>
+          Пользователь не должен передавать Оператору данные банковской карты,
+          CVC/CVV-код, коды подтверждения из SMS или банковских приложений.
+        </p>
+        <p>
+          Если пользователь получил подозрительное сообщение с просьбой сообщить
+          платёжные данные, он должен не передавать такие сведения и при
+          необходимости связаться с Оператором по email:
+          <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>.
+        </p>
+      </section>
+
+      <section class="policy__section">
+        <h2>7. Связанные документы</h2>
+        <ul>
+          <li><a href="/docs/privacy/">Политика обработки персональных данных</a></li>
+          <li><a href="/docs/agreement/">Согласие на обработку персональных данных</a></li>
+          <li><a href="/docs/cookies/">Политика использования cookie-файлов и систем аналитики</a></li>
+          <li><a href="/docs/marketing-consent/">Согласие на рекламные и информационные сообщения</a></li>
+          <li>
+            <a href="https://welcome.stepik.org/ru/terms" target="_blank" rel="noopener noreferrer"
+              >Пользовательское соглашение Stepik</a
+            >
+          </li>
+          <li>
+            <a href="https://welcome.stepik.org/ru/privacy" target="_blank" rel="noopener noreferrer"
+              >Политика конфиденциальности Stepik</a
+            >
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .policy {
+      color: var(--black);
+      padding: var(--space-32, 32px) 0;
+    }
+    .policy .container {
+      max-width: var(--container, 900px);
+      padding: 0 var(--pad-desktop, 50px);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .policy h1 {
+      font-size: var(--h1, 32px);
+      line-height: 1.2;
+      margin: 0 0 var(--space-16, 16px);
+      font-weight: 700;
+    }
+    .policy h2 {
+      font-size: var(--h2, 24px);
+      line-height: 1.25;
+      margin: 28px 0 12px;
+      font-weight: 700;
+    }
+    .policy p,
+    .policy li {
+      font-size: 20px;
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .policy ul {
+      padding-left: 20px;
+    }
+    .policy__section + .policy__section {
+      margin-top: 16px;
+    }
+
+    .policy a {
+      color: var(--blue, #0d6efd);
+      text-decoration: none;
+    }
+    .policy a:hover {
+      text-decoration: underline;
+    }
+    .policy__meta {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 24px;
+      padding: 16px;
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+    .policy__meta div {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.32fr) 1fr;
+      gap: 12px;
+    }
+    .policy__meta dt,
+    .policy__meta dd {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .policy__meta dt {
+      color: var(--muted, #6b7280);
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .policy .container {
+        padding: 0 var(--pad-mobile, 20px);
+      }
+      .policy p,
+      .policy li {
+        font-size: 16px;
+      }
+      .policy h1 {
+        font-size: clamp(24px, 6.5vw, 32px);
+      }
+      .policy h2 {
+        font-size: clamp(18px, 5vw, 24px);
+      }
+      .policy__meta div {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+  </style>
+</MainLayout>

@@ -2,6 +2,7 @@
 export interface SiteConfig {
   siteName: string;
   siteUrl: string;
+  contactEmail: string;
   description: string;
   author: string;
 }
@@ -9,6 +10,7 @@ export interface SiteConfig {
 const config: SiteConfig = {
   siteName: 'ЕГЭХИМ',
   siteUrl: 'https://egehim.ru',
+  contactEmail: 'info@egehim.ru',
   description: 'Современная онлайн-школа подготовки к ЕГЭ и ОГЭ по химии под руководством Валерия Филипенко',
   author: 'Филипенко Валерий',
 };

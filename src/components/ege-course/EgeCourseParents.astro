@@ -5,42 +5,58 @@ const items = [
     desc: "Регулярные занятия без хаоса и пропусков.",
     icon: "calendar",
     accent: "violet",
+    image: "/images/ege-course/parent-calendar-trim.png",
   },
   {
     title: "Домашние задания и контроль",
     desc: "Ребёнок не просто слушает, а системно закрепляет темы.",
     icon: "clipboard",
     accent: "lime",
+    image: "/images/ege-course/parent-checklist-trim.png",
   },
   {
     title: "Пробники и зачёты",
     desc: "Проверяем прогресс и вовремя видим слабые места.",
     icon: "chart",
     accent: "violet",
+    image: "/images/ege-course/parent-chart-trim.png",
   },
   {
     title: "Обратная связь",
     desc: "Понятно объясняем, как идёт подготовка и на что обратить внимание.",
     icon: "message",
     accent: "violet",
+    image: "/images/ege-course/parent-message-trim.png",
   },
   {
     title: "Связь с родителями",
     desc: "При необходимости держим контакт и отвечаем на вопросы.",
     icon: "family",
     accent: "lime",
+    image: "/images/ege-course/parent-family-trim.png",
   },
   {
     title: "Подготовка до экзамена",
     desc: "Сопровождаем ученика до самого ЕГЭ, а не бросаем на полпути.",
     icon: "cap",
     accent: "violet",
+    image: "/images/ege-course/parent-cap-trim.png",
   },
 ];
 ---
 
 <section class="parents" aria-labelledby="parents-title">
   <div class="parents__shell">
+    <figure class="parents__background" aria-hidden="true">
+      <img
+        src="/images/ege-course/parent-main-trim.png"
+        alt=""
+        width="1044"
+        height="979"
+        loading="lazy"
+      />
+    </figure>
+
     <div class="parents__grid">
       <div class="parents__content">
         <span class="parents__eyebrow ege-course-chip ege-course-chip--lime">для родителей</span>
@@ -59,43 +75,7 @@ const items = [
             items.map((item) => (
               <li class="parent-card">
                 <span class:list={["parent-card__icon", `parent-card__icon--${item.accent}`]} aria-hidden="true">
-                  {item.icon === "calendar" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M7 2v4M17 2v4M3 9h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                      <rect x="4" y="5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="2" />
-                      <path d="M8 13h2M14 13h2M8 17h2M14 17h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                  )}
-                  {item.icon === "clipboard" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <rect x="6" y="4" width="12" height="17" rx="3" stroke="currentColor" stroke-width="2" />
-                      <path d="M9 4.5h6a1.5 1.5 0 0 0-3 0H9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                      <path d="m9 11 1.8 1.8L15 8.7M9 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                  )}
-                  {item.icon === "chart" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M4 19h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                      <path d="M7 19v-7M12 19V6M17 19v-11" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                  )}
-                  {item.icon === "message" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M8 18.5c-3.2 0-5.5-2.4-5.5-5.8S4.8 7 8 7h8c3.2 0 5.5 2.4 5.5 5.7S19.2 18.5 16 18.5h-2.4L9.7 21v-2.5H8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    </svg>
-                  )}
-                  {item.icon === "family" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="2" />
-                      <circle cx="16.5" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2" />
-                      <path d="M4.5 19c0-2.8 2.4-5 5.5-5s5.5 2.2 5.5 5M13.5 18.5c.2-1.9 1.8-3.5 4.2-3.5 1 0 2 .3 2.8.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                  )}
-                  {item.icon === "cap" && (
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="m3 9 9-4 9 4-9 4-9-4ZM6 11.5V15l6 3 6-3v-3.5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    </svg>
-                  )}
+                  <img src={item.image} alt="" width="128" height="128" loading="lazy" />
                 </span>
                 <div class="parent-card__body">
                   <h3 class="parent-card__title">{item.title}</h3>
@@ -107,63 +87,7 @@ const items = [
         </ul>
       </div>
 
-      <div class="parents__visual" aria-hidden="true">
-        <div class="parents__blob"></div>
-
-        <svg class="parents__molecule" viewBox="0 0 120 100" fill="none">
-          <path d="M24 22 46 42M52 44 76 40M80 38 94 18M48 48 42 74" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
-          <circle cx="20" cy="18" r="8" />
-          <circle cx="50" cy="46" r="9" />
-          <circle cx="82" cy="40" r="8" />
-          <circle cx="98" cy="14" r="7" />
-          <circle cx="40" cy="82" r="8" />
-        </svg>
-
-        <span class="parents__spark parents__spark--star">
-          <svg viewBox="0 0 40 40" fill="none">
-            <path d="m20 3 4.9 11.1L37 16l-9 7.9L30.5 37 20 30.4 9.5 37 12 23.9 3 16l12.1-1.9L20 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-          </svg>
-        </span>
-
-        <span class="parents__spark parents__spark--dots">
-          <svg viewBox="0 0 36 24" fill="currentColor">
-            <circle cx="4" cy="4" r="2.2" />
-            <circle cx="18" cy="12" r="2.2" />
-            <circle cx="30" cy="6" r="2.2" />
-            <circle cx="24" cy="20" r="2.2" />
-          </svg>
-        </span>
-
-        <figure class="parents__hero-image parents__hero-image--main">
-          <img
-            src="/images/ege-course/f2.png"
-            alt=""
-            width="620"
-            height="470"
-            loading="lazy"
-          />
-        </figure>
-
-        <figure class="parents__hero-image parents__hero-image--progress">
-          <img
-            src="/images/ege-course/f7.png"
-            alt=""
-            width="360"
-            height="240"
-            loading="lazy"
-          />
-        </figure>
-
-        <figure class="parents__hero-image parents__hero-image--support">
-          <img
-            src="/images/ege-course/f6.png"
-            alt=""
-            width="320"
-            height="220"
-            loading="lazy"
-          />
-        </figure>
-      </div>
+      <div class="parents__visual" aria-hidden="true"></div>
     </div>
 
     <aside class="parents__note">
@@ -199,6 +123,7 @@ const items = [
   .parents {
     width: 100vw;
     margin-inline: calc(50% - 50vw);
+    padding: var(--ege-section-gap) var(--ege-section-pad-x) 0;
     background: var(--ege-page);
     color: var(--ege-text);
     font-family: var(--ege-font-family);
@@ -206,25 +131,47 @@ const items = [
   }
 
   .parents__shell {
+    position: relative;
     max-width: var(--ege-section-wide);
     margin: 0 auto;
-    padding: 32px var(--ege-section-pad-x) var(--ege-section-pad-y);
+    padding: 40px;
+    border-radius: var(--ege-radius-section);
+    background: var(--ege-primary-tint);
+    box-shadow: var(--ege-shadow-section);
+    overflow: hidden;
+  }
+
+  .parents__background {
+    position: absolute;
+    right: 24px;
+    top: 34px;
+    bottom: 92px;
+    z-index: 0;
+    width: min(52%, 760px);
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .parents__background img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center right;
+    display: block;
   }
 
   .parents__grid {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
     gap: 36px;
     align-items: start;
-    background: rgba(255, 255, 255, 0.46);
-    border-radius: var(--ege-radius-section);
-    padding: 40px;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      0 18px 42px rgba(var(--ege-primary-rgb), 0.06);
+    z-index: 1;
   }
 
   .parents__content {
+    position: relative;
+    z-index: 2;
     min-width: 0;
   }
 
@@ -269,28 +216,26 @@ const items = [
   }
 
   .parent-card__icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 22px;
+    width: 86px;
+    height: 86px;
     display: grid;
     place-items: center;
     margin-bottom: 16px;
   }
 
-  .parent-card__icon svg {
-    width: 30px;
-    height: 30px;
+  .parent-card__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     display: block;
   }
 
   .parent-card__icon--violet {
-    background: var(--ege-primary-tint);
-    color: var(--ege-primary);
+    color: inherit;
   }
 
   .parent-card__icon--lime {
-    background: var(--ege-lime-soft);
-    color: var(--ege-lime-icon);
+    color: inherit;
   }
 
   .parent-card__body {
@@ -316,87 +261,12 @@ const items = [
   .parents__visual {
     position: relative;
     min-height: 690px;
-    overflow: hidden;
-  }
-
-  .parents__blob {
-    position: absolute;
-    inset: 42px 20px 132px 34px;
-    background:
-      radial-gradient(circle at 28% 42%, rgba(255, 255, 255, 0.92) 0 16%, transparent 16.2%),
-      linear-gradient(180deg, var(--ege-primary-tint) 0%, var(--ege-primary-soft) 100%);
-    border-radius: 44% 56% 52% 48% / 32% 35% 65% 68%;
-    opacity: 0.96;
-  }
-
-  .parents__molecule,
-  .parents__spark {
-    position: absolute;
-    color: rgba(var(--ege-primary-rgb), 0.62);
-  }
-
-  .parents__molecule {
-    top: 14px;
-    right: 10px;
-    width: 118px;
-    height: auto;
-  }
-
-  .parents__molecule circle {
-    stroke: currentColor;
-    stroke-width: 2.5;
-  }
-
-  .parents__spark--star {
-    left: 24px;
-    top: 250px;
-    width: 42px;
-    height: 42px;
-  }
-
-  .parents__spark--dots {
-    top: 168px;
-    right: 6px;
-    width: 38px;
-    height: 26px;
-  }
-
-  .parents__hero-image {
-    position: absolute;
-    margin: 0;
-  }
-
-  .parents__hero-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .parents__hero-image--main {
-    left: 10px;
-    right: 12px;
-    top: 108px;
-    z-index: 2;
-  }
-
-  .parents__hero-image--progress {
-    left: -10px;
-    bottom: 100px;
-    width: 230px;
-    z-index: 3;
-    filter: drop-shadow(0 16px 30px rgba(var(--ege-primary-rgb), 0.12));
-  }
-
-  .parents__hero-image--support {
-    right: -6px;
-    bottom: 166px;
-    width: 210px;
-    z-index: 3;
-    filter: drop-shadow(0 16px 30px rgba(var(--ege-primary-rgb), 0.12));
+    pointer-events: none;
   }
 
   .parents__note {
     position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
@@ -404,7 +274,9 @@ const items = [
     margin-top: 18px;
     padding: 22px 28px;
     border-radius: var(--ege-radius-xl);
-    background: linear-gradient(180deg, rgba(237, 231, 253, 0.96) 0%, rgba(232, 238, 255, 0.88) 100%);
+    background: var(--ege-dark-surface);
+    color: var(--ege-dark-text);
+    box-shadow: var(--ege-shadow-dark);
     overflow: hidden;
   }
 
@@ -416,7 +288,7 @@ const items = [
     width: 140px;
     height: 140px;
     border-radius: 42%;
-    background: rgba(var(--ege-primary-rgb), 0.08);
+    background: rgba(var(--ege-primary-mark-rgb), 0.16);
     transform: translateY(-50%);
   }
 
@@ -450,7 +322,7 @@ const items = [
     z-index: 1;
     width: 96px;
     height: 96px;
-    color: rgba(var(--ege-primary-rgb), 0.4);
+    color: rgba(216, 233, 152, 0.58);
   }
 
   .parents__note-flask svg {
@@ -461,30 +333,30 @@ const items = [
 
   @media (max-width: 1180px) {
     .parents__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
     }
 
-    .parents__visual {
-      min-height: 560px;
+    .parents__background {
+      width: min(52%, 620px);
+      opacity: 0.72;
     }
   }
 
   @media (max-width: 900px) {
     .parents__shell {
-      padding: 24px var(--ege-section-pad-x) var(--ege-section-pad-y);
-    }
-
-    .parents__grid {
       padding: 28px;
-      border-radius: 30px;
     }
 
     .parents__list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .parents__visual {
-      min-height: 500px;
+    .parents__background {
+      top: 120px;
+      right: -12px;
+      bottom: 150px;
+      width: 58%;
+      opacity: 0.45;
     }
 
     .parents__note {
@@ -500,13 +372,13 @@ const items = [
 
   @media (max-width: 640px) {
     .parents__shell {
-      padding: 16px var(--ege-section-pad-x) var(--ege-section-pad-y);
+      padding: 20px;
+      border-radius: 24px;
     }
 
     .parents__grid {
+      grid-template-columns: 1fr;
       gap: 26px;
-      padding: 20px;
-      border-radius: 24px;
     }
 
     .parents__lead {
@@ -522,29 +394,16 @@ const items = [
     }
 
     .parents__visual {
-      min-height: 380px;
-    }
-
-    .parents__blob {
-      inset: 32px 0 80px;
-    }
-
-    .parents__molecule,
-    .parents__spark--dots,
-    .parents__hero-image--support {
       display: none;
     }
 
-    .parents__hero-image--main {
-      left: -8px;
-      right: -8px;
-      top: 70px;
-    }
-
-    .parents__hero-image--progress {
-      width: 170px;
-      left: -12px;
-      bottom: 46px;
+    .parents__background {
+      top: 230px;
+      right: -38px;
+      bottom: auto;
+      width: 86%;
+      height: 330px;
+      opacity: 0.36;
     }
 
     .parents__note {
