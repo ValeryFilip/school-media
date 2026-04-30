@@ -201,6 +201,22 @@
     const loader = document.getElementById("generateLoader");
     const result = document.getElementById("utmResult");
 
+    const getCaptchaToken = () => {
+      if (typeof window.smartCaptcha === "undefined") return Promise.resolve("");
+      return new Promise((resolve) => {
+        const container = document.createElement("div");
+        container.style.display = "none";
+        document.body.appendChild(container);
+        const widgetId = window.smartCaptcha.render(container, {
+          sitekey: "ysc1_Zrj4eeIltFnAC3DafTD8tgb8oxheQI5QZ88R1hL77af70847",
+          invisible: true,
+          hideShield: true,
+          callback: (token) => { container.remove(); resolve(token); },
+        });
+        window.smartCaptcha.execute(widgetId);
+      });
+    };
+
     btn?.addEventListener("click", async () => {
       const fn = document.getElementById("firstName").value.trim();
       const ln = document.getElementById("lastName").value.trim();
@@ -221,6 +237,7 @@
       loader.classList.remove("hidden");
       result?.classList.add("hidden");
 
+      const captchaToken = await getCaptchaToken();
       const utm = `https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign=telegram&utm_content=${encodeURIComponent(tg)}`;
       const body = new URLSearchParams({
         name: fn,
@@ -228,6 +245,7 @@
         telegram: tg,
         phone: ph,
         utm,
+        captcha_token: captchaToken,
         consent_privacy: "true",
         consent_personal_data: "true",
         consent_marketing: "true",

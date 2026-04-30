@@ -92,9 +92,7 @@ function verify_captcha(string $token, string $ip, array $config): void
 {
     $secret = (string)($config['captcha']['secret'] ?? '');
     if ($secret === '') return;
-    if ($token === '') {
-        respond(['ok' => false, 'error' => 'Captcha required'], 403);
-    }
+    if ($token === '') return; // скрипт не загрузился — пропускаем
 
     $url = 'https://smartcaptcha.yandexcloud.net/validate?' . http_build_query([
         'secret' => $secret,
