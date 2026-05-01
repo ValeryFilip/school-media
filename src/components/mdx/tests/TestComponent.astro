@@ -367,6 +367,16 @@ const { questions } = Astro.props;
       }
     }
 
+    function normalizeAnswer(value) {
+      const raw = value.trim().toLowerCase();
+      const numeric = raw
+        .replace(/\s+/g, "")
+        .replace(/%$/, "")
+        .replace(",", ".");
+
+      return /^-?\d+(\.\d+)?$/.test(numeric) ? numeric : raw;
+    }
+
     answerButton.addEventListener("click", () => {
       resetUI();
       const questionType = test.dataset.type;
@@ -390,7 +400,7 @@ const { questions } = Astro.props;
           return;
         }
 
-        if (writtenAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        if (normalizeAnswer(writtenAnswer) === normalizeAnswer(correctAnswer)) {
           showCorrect();
         } else {
           showIncorrect();
