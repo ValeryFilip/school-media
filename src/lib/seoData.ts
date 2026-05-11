@@ -27,7 +27,7 @@ export const ORGANIZATION_DATA = {
     name: "Валерий Филипенко",
     role: "Профессиональный репетитор по химии с опытом работы 10 лет. Обучил более 2000 учеников. Автор научных статей и курсов по химии. Специализируется на подготовке к ЕГЭ и ОГЭ, а также на подготовке к олимпиадам.",
     photo: "/images/valerii-filipenko.webp",
-    url: "https://t.me/valery_chemistry",
+    url: "https://t.me/+KznfEhtzkeNlZjIy",
   },
 } as const;
 
