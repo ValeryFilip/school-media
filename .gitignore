@@ -21,7 +21,7 @@ public/api/lead.config.php
 .claude/settings.local.json
 
 # Internal docs and logs (may contain private info)
-docs/
+/docs/
 
 # IDE
 .vscode/
