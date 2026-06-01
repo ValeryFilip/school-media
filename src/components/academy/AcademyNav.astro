@@ -239,6 +239,15 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
     border-bottom: 1px solid var(--line);
     backdrop-filter: blur(14px);
   }
+  /* При открытом моб-меню скролл блокируется (overflow:hidden на html/body),
+     а это ломает position:sticky — шапка «отлипает» и уезжает за экран.
+     Пиним её через fixed, чтобы верх оставался на месте под панелью. */
+  .academy-nav.is-menu-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
   /* На мобиле убираем backdrop-filter — он создаёт containing block
      для position:fixed внутри, и панель меню перестаёт быть viewport-fixed. */
   @media (max-width: 980px) {
@@ -732,8 +741,10 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
     };
 
     menus.forEach(function (d) {
+      var header = d.closest(".academy-nav");
       d.addEventListener("toggle", function () {
         lock(d.open);
+        if (header) header.classList.toggle("is-menu-open", d.open);
       });
       d.querySelectorAll(".academy-nav__panel a").forEach(function (a) {
         a.addEventListener("click", function () {

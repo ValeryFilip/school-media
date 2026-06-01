@@ -1164,6 +1164,15 @@ const jsonLd = {
       grid-template-columns: 1fr;
     }
 
+    /* Плашка «история года» в десктопе абсолютная (top/right) и на узких
+       экранах наезжает на имя — возвращаем её в поток первым рядом грида. */
+    .review-card--featured .review-card__label {
+      position: static;
+      top: auto;
+      right: auto;
+      justify-self: start;
+    }
+
     .review-card__head {
       align-items: flex-start;
     }
