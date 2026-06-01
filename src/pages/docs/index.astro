@@ -1,17 +1,16 @@
 ---
-import MainLayout from "../../layouts/MainLayout.astro";
-
+import AcademyLayout from "../../layouts/AcademyLayout.astro";
 const title = "Документы";
 const description = "Юридические документы сайта ЕГЭХИМ.";
 ---
 
-<MainLayout title={title} description={description} index={false}>
-  <main class="docs-index" aria-labelledby="docs-title">
+<AcademyLayout title={title} description={description} index={false}>
+  <article class="docs-index" aria-labelledby="docs-title">
     <div class="container">
       <h1 id="docs-title">Документы</h1>
-      <p>Юридические документы сайта.</p>
+      <p class="docs-index__lead">Юридические документы сайта.</p>
 
-      <ul>
+      <ul class="docs-index__list">
         <li><a href="/docs/privacy/">Политика обработки персональных данных</a></li>
         <li><a href="/docs/agreement/">Согласие на обработку персональных данных</a></li>
         <li><a href="/docs/cookies/">Политика использования cookie-файлов и систем аналитики</a></li>
@@ -19,50 +18,113 @@ const description = "Юридические документы сайта ЕГЭ
         <li><a href="/docs/payment/">Оплата, безопасность платежей и возвраты</a></li>
       </ul>
     </div>
-  </main>
+  </article>
 
   <style>
+    /* Индекс /docs/ в академной молочной палитре */
     .docs-index {
-      color: var(--black);
-      padding: var(--space-32, 32px) 0;
+      display: block;
+      padding: clamp(56px, 8vw, 96px) var(--academy-gutter) clamp(56px, 10vw, 120px);
+      background: var(--paper);
+      color: var(--inkSoft);
     }
     .docs-index .container {
-      max-width: var(--container, 900px);
-      padding: 0 var(--pad-desktop, 50px);
+      max-width: 820px;
       margin: 0 auto;
+      padding: 0;
       box-sizing: border-box;
     }
+
+    .docs-index h1::before {
+      content: "// раздел";
+      display: block;
+      margin-bottom: 0.85em;
+      font-family: var(--academy-font-mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rust);
+    }
     .docs-index h1 {
-      font-size: var(--h1, 32px);
-      line-height: 1.2;
-      margin: 0 0 var(--space-16, 16px);
+      margin: 0 0 clamp(20px, 3vw, 32px);
+      font-family: var(--academy-font-display);
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
       font-weight: 700;
+      color: var(--ink);
     }
-    .docs-index p,
-    .docs-index li {
-      font-size: 20px;
-      line-height: 1.7;
-    }
-    .docs-index ul {
-      padding-left: 20px;
-    }
-    .docs-index a {
-      color: var(--blue, #0d6efd);
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    .docs-index__lead {
+      margin: 0 0 clamp(28px, 4vw, 48px);
+      font-family: var(--academy-font-body);
+      font-size: clamp(17px, 1.4vw, 20px);
+      line-height: 1.6;
+      color: var(--inkSoft);
     }
 
-    @media (max-width: 600px) {
-      .docs-index .container {
-        padding: 0 var(--pad-mobile, 20px);
+    /* Список документов — брутал-плашка с тонкими сепараторами */
+    .docs-index__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .docs-index__list li {
+      margin: 0;
+      padding: 0;
+      background: var(--paper);
+    }
+    .docs-index__list a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--academy-font-display);
+      font-size: clamp(16px, 1.5vw, 19px);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      transition:
+        background 0.16s ease,
+        color 0.16s ease,
+        border-color 0.16s ease;
+    }
+    .docs-index__list a::after {
+      content: "→";
+      color: var(--rust);
+      font-family: var(--academy-font-mono);
+      font-size: 0.95em;
+      flex: 0 0 auto;
+    }
+    .docs-index__list a:hover {
+      background: var(--milk);
+      border-left-color: var(--rust);
+    }
+
+    @media print {
+      header,
+      nav,
+      footer {
+        display: none !important;
       }
-      .docs-index p,
-      .docs-index li {
-        font-size: 16px;
+      .docs-index {
+        padding: 0;
+        background: #fff;
+        color: #000;
       }
-      .docs-index h1 {
-        font-size: clamp(24px, 6.5vw, 32px);
+      .docs-index h1::before {
+        display: none;
+      }
+      .docs-index__list a {
+        color: #000;
       }
     }
   </style>
-</MainLayout>
+</AcademyLayout>

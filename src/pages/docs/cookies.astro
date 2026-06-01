@@ -1,7 +1,7 @@
 ---
 // src/pages/docs/cookies.astro
 
-import MainLayout from "../../layouts/MainLayout.astro";
+import AcademyLayout from "../../layouts/AcademyLayout.astro";
 import config from "../../config.ts";
 import {
   buildWebPageJsonLd,
@@ -27,7 +27,7 @@ const webPageJsonLd = buildWebPageJsonLd({
 });
 ---
 
-<MainLayout
+<AcademyLayout
   title={title}
   description={description}
   seoType="website"
@@ -36,7 +36,7 @@ const webPageJsonLd = buildWebPageJsonLd({
   showBreadcrumbs={true}
   webPageJsonLd={webPageJsonLd}
 >
-  <main class="policy" aria-labelledby="cookies-title">
+  <article class="policy" aria-labelledby="cookies-title">
     <div class="container">
       <h1 id="cookies-title">{title}</h1>
 
@@ -202,93 +202,199 @@ const webPageJsonLd = buildWebPageJsonLd({
         </ul>
       </section>
     </div>
-  </main>
+  </article>
 
-  <style>
+    <style>
+    /* Док-страница в академной молочной палитре */
     .policy {
-      color: var(--black);
-      padding: var(--space-32, 32px) 0;
+      display: block;
+      padding: clamp(56px, 8vw, 96px) var(--academy-gutter) clamp(56px, 10vw, 120px);
+      background: var(--paper);
+      color: var(--inkSoft);
     }
     .policy .container {
-      max-width: var(--container, 900px);
-      padding: 0 var(--pad-desktop, 50px);
+      max-width: 820px;
       margin: 0 auto;
+      padding: 0;
       box-sizing: border-box;
     }
+
+    /* Кикер над H1 */
+    .policy h1::before {
+      content: "// документ";
+      display: block;
+      margin-bottom: 0.85em;
+      font-family: var(--academy-font-mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rust);
+    }
     .policy h1 {
-      font-size: var(--h1, 32px);
-      line-height: 1.2;
-      margin: 0 0 var(--space-16, 16px);
+      margin: 0 0 clamp(28px, 4vw, 48px);
+      font-family: var(--academy-font-display);
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
       font-weight: 700;
+      color: var(--ink);
+      text-wrap: balance;
     }
     .policy h2 {
-      font-size: var(--h2, 24px);
-      line-height: 1.25;
-      margin: 28px 0 12px;
+      margin: 2.2em 0 0.6em;
+      padding-top: 1em;
+      border-top: 1px solid var(--line);
+      font-family: var(--academy-font-display);
+      font-size: clamp(26px, 3.4vw, 38px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
       font-weight: 700;
+      color: var(--ink);
+      scroll-margin-top: 90px;
+    }
+    .policy h3 {
+      margin: 1.6em 0 0.5em;
+      font-family: var(--academy-font-display);
+      font-size: clamp(20px, 2.2vw, 24px);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      font-weight: 650;
+      color: var(--ink);
     }
     .policy p,
     .policy li {
-      font-size: 20px;
+      font-family: var(--academy-font-body);
+      font-size: clamp(17px, 1.25vw, 19px);
       line-height: 1.7;
-      margin: 0 0 12px;
+      color: var(--inkSoft);
+      margin: 0 0 0.85em;
     }
-    .policy ul {
-      padding-left: 20px;
+    .policy strong {
+      color: var(--ink);
+      font-weight: 650;
     }
-    .policy__section + .policy__section {
-      margin-top: 16px;
+    .policy ul,
+    .policy ol {
+      padding-left: 0;
+      margin: 0.4em 0 1.2em;
+      list-style: none;
     }
+    .policy li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 0.45em;
+    }
+    .policy ul > li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      top: 0.05em;
+      font-family: var(--academy-font-mono);
+      color: var(--rust);
+      font-size: 0.95em;
+    }
+    .policy ol {
+      counter-reset: docs-li;
+    }
+    .policy ol > li {
+      counter-increment: docs-li;
+    }
+    .policy ol > li::before {
+      content: counter(docs-li, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 0.2em;
+      font-family: var(--academy-font-mono);
+      color: var(--rust);
+      font-size: 0.8em;
+      letter-spacing: 0.05em;
+    }
+
     .policy a {
-      color: var(--blue, #0d6efd);
-      text-decoration: none;
+      color: var(--rust);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--rust);
+      transition:
+        background 0.16s ease,
+        color 0.16s ease;
     }
     .policy a:hover {
-      text-decoration: underline;
+      background: var(--rust);
+      color: var(--paper);
+      text-decoration-color: var(--paper);
     }
+
+    /* Мета-плашка (дата публикации, адрес сайта) */
     .policy__meta {
       display: grid;
-      gap: 10px;
-      margin: 0 0 24px;
-      padding: 16px;
-      border: 1px solid var(--border, #e5e7eb);
-      border-radius: 14px;
-      background: #f8fafc;
+      gap: 0;
+      margin: 0 0 clamp(32px, 5vw, 56px);
+      padding: 0;
+      background: var(--milk);
+      border: 1px solid var(--line);
+      border-radius: 0;
     }
-    .policy__meta div {
+    .policy__meta > div {
       display: grid;
-      grid-template-columns: minmax(150px, 0.32fr) 1fr;
-      gap: 12px;
+      grid-template-columns: minmax(160px, 0.4fr) 1fr;
+      gap: 16px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--line);
+      align-items: baseline;
     }
-    .policy__meta dt,
-    .policy__meta dd {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.45;
+    .policy__meta > div:first-child {
+      border-top: 0;
     }
     .policy__meta dt {
-      color: var(--muted, #6b7280);
-      font-weight: 700;
+      margin: 0;
+      font-family: var(--academy-font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+      font-weight: 500;
+    }
+    .policy__meta dd {
+      margin: 0;
+      font-family: var(--academy-font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .policy__section + .policy__section {
+      margin-top: 0;
     }
 
     @media (max-width: 600px) {
-      .policy .container {
-        padding: 0 var(--pad-mobile, 20px);
-      }
-      .policy p,
-      .policy li {
-        font-size: 16px;
-      }
-      .policy h1 {
-        font-size: clamp(24px, 6.5vw, 32px);
-      }
-      .policy h2 {
-        font-size: clamp(18px, 5vw, 24px);
-      }
-      .policy__meta div {
+      .policy__meta > div {
         grid-template-columns: 1fr;
-        gap: 2px;
+        gap: 4px;
+      }
+    }
+
+    @media print {
+      header,
+      nav,
+      footer {
+        display: none !important;
+      }
+      .policy {
+        padding: 0;
+        background: #fff;
+        color: #000;
+      }
+      .policy h1::before {
+        display: none;
+      }
+      .policy__meta {
+        background: transparent;
+      }
+      .policy a {
+        color: #000;
       }
     }
   </style>
-</MainLayout>
+</AcademyLayout>
