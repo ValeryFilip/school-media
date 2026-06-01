@@ -23,8 +23,25 @@
       return fallback;
     }
   };
+  const memoryStorage = new Map();
+  const storage = {
+    getItem(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch {
+        return memoryStorage.get(key) || null;
+      }
+    },
+    setItem(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        memoryStorage.set(key, value);
+      }
+    },
+  };
   const uuid = () =>
-    crypto?.randomUUID?.() ||
+    globalThis.crypto?.randomUUID?.() ||
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
       const rand = (Math.random() * 16) | 0;
       const next = char === "x" ? rand : (rand & 0x3) | 0x8;
@@ -90,10 +107,10 @@
   };
 
   const ensureSessionId = () => {
-    let sid = localStorage.getItem(LS_SID);
+    let sid = storage.getItem(LS_SID);
     if (!sid) {
       sid = uuid();
-      localStorage.setItem(LS_SID, sid);
+      storage.setItem(LS_SID, sid);
     }
     return sid;
   };
@@ -109,16 +126,16 @@
       referrer: ref,
       utm: hasKeys(utm) ? utm : undefined,
     };
-    localStorage.setItem(LS_LT, JSON.stringify(lastTouch));
+    storage.setItem(LS_LT, JSON.stringify(lastTouch));
 
-    if (!localStorage.getItem(LS_FT) && hasKeys(utm)) {
+    if (!storage.getItem(LS_FT) && hasKeys(utm)) {
       const firstTouch = {
         ts: nowISO(),
         landing_page: location.href,
         referrer: ref,
         utm,
       };
-      localStorage.setItem(LS_FT, JSON.stringify(firstTouch));
+      storage.setItem(LS_FT, JSON.stringify(firstTouch));
     }
 
     if (referral) {
@@ -129,9 +146,9 @@
         code: referral.code,
         key: referral.key,
       };
-      localStorage.setItem(LS_REF_LT, JSON.stringify(lastReferralTouch));
+      storage.setItem(LS_REF_LT, JSON.stringify(lastReferralTouch));
 
-      if (!localStorage.getItem(LS_REF_FT)) {
+      if (!storage.getItem(LS_REF_FT)) {
         const firstReferralTouch = {
           ts: nowISO(),
           landing_page: location.href,
@@ -139,18 +156,18 @@
           code: referral.code,
           key: referral.key,
         };
-        localStorage.setItem(LS_REF_FT, JSON.stringify(firstReferralTouch));
+        storage.setItem(LS_REF_FT, JSON.stringify(firstReferralTouch));
       }
     }
   };
 
   const readAttribution = () => ({
-    session_id: localStorage.getItem(LS_SID) || "",
-    first_touch: tryParse(localStorage.getItem(LS_FT)) || null,
-    ref_first_touch: tryParse(localStorage.getItem(LS_REF_FT)) || null,
-    ref_last_touch: tryParse(localStorage.getItem(LS_REF_LT)) || null,
+    session_id: storage.getItem(LS_SID) || "",
+    first_touch: tryParse(storage.getItem(LS_FT)) || null,
+    ref_first_touch: tryParse(storage.getItem(LS_REF_FT)) || null,
+    ref_last_touch: tryParse(storage.getItem(LS_REF_LT)) || null,
     last_touch:
-      tryParse(localStorage.getItem(LS_LT)) || {
+      tryParse(storage.getItem(LS_LT)) || {
         ts: nowISO(),
         page: location.href,
         referrer: document.referrer || "",

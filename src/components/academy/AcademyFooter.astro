@@ -1,0 +1,149 @@
+---
+import { egeLandingData } from "../../data/egeLanding";
+
+const {
+  articlesCount = 156,
+  updated = "",
+  footer = egeLandingData.footer,
+} = Astro.props;
+
+const year = new Date().getFullYear();
+const columns = footer.columns ?? [];
+const legalLinks = footer.legalLinks ?? [];
+const socialGroups = footer.socialGroups ?? [];
+const bottomLinks = footer.bottomLinks ?? [];
+---
+
+<footer class="border-t border-aline bg-apaper2">
+  <section class="gutter pt-16 pb-14" aria-labelledby="academy-footer-cta-title">
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-7">
+        <h3
+          id="academy-footer-cta-title"
+          class="font-display font-bold text-[clamp(40px,6vw,108px)] leading-[0.9] tracking-[-0.02em]"
+        >
+          Учись<br />
+          <span class="text-adim">бесплатно.</span>
+        </h3>
+      </div>
+      <div class="col-span-12 md:col-span-5 flex items-end">
+        <p class="body-serif w-full">
+          Академия ХИМ.LAB — бесплатная база знаний. Можно читать статьи, разборы и формулы,
+          а если нужна система — перейти к&nbsp;курсам или написать нам в&nbsp;<a
+            href="https://t.me/+KznfEhtzkeNlZjIy"
+            class="underline decoration-rust hover:text-rust">телеграм</a
+          >.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="gutter pb-10">
+    <div class="grid grid-cols-12 gap-px bg-aline border border-aline mb-10">
+      <div class="col-span-12 lg:col-span-4 bg-apaper p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-7 h-7 border border-aink grid place-items-center">
+            <span class="font-mono text-[10px]">Ch</span>
+          </div>
+          <span class="font-display font-bold">{footer.brand}</span>
+        </div>
+
+        <p class="font-mono text-xs text-ainkSoft max-w-xs">
+          <Fragment set:html={footer.description} />
+        </p>
+
+        {footer.addressHtml && (
+          <address class="font-mono text-xs text-adim max-w-xs mt-4 not-italic leading-relaxed">
+            <Fragment set:html={footer.addressHtml} />
+          </address>
+        )}
+
+        {legalLinks.length > 0 && (
+          <nav class="font-mono text-xs text-ainkSoft mt-5 space-y-2" aria-label="Юридическая информация">
+            {legalLinks.map((link) => (
+              <a class="block hover:text-rust transition" href={link.href} rel={link.rel}>
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        )}
+      </div>
+
+      {columns.slice(0, 2).map((column) => (
+        <div class="col-span-12 sm:col-span-6 lg:col-span-2 bg-apaper p-6 md:p-8">
+          <div class="label mb-3">{column.title}</div>
+          <ul class="font-mono text-sm space-y-2 text-ainkSoft">
+            {column.links?.map((link) => (
+              <li>
+                <a
+                  class="hover:text-rust transition"
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : link.rel}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <div class="col-span-12 lg:col-span-4 bg-apaper p-6 md:p-8">
+        <button
+          type="button"
+          class="popup-btn relative w-full inline-flex items-center justify-center gap-3 border-0 bg-rust text-apaper font-display font-bold uppercase tracking-tight px-5 py-5 hover:bg-aink transition cursor-pointer"
+          data-popup-id="lead-popup"
+          data-source="academy-footer"
+          data-variant="footer"
+          data-campaign="academy"
+        >
+          {footer.cta?.label ?? "Начать бесплатно"}
+        </button>
+
+        {socialGroups.map((group, groupIndex) => (
+          <div class={groupIndex === 0 ? "mt-5" : "mt-7"}>
+            <div class="label mb-3">{group.title}</div>
+            <div class="grid grid-cols-3 gap-px bg-aline border border-aline">
+              {group.links?.map((link) => (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-mono text-xs bg-apaper px-3 py-4 text-ainkSoft text-center hover:bg-rust hover:text-apaper transition"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <div class="mt-7 pt-5 border-t border-aline">
+          <div class="label mb-3">// статус</div>
+          <div class="flex items-center gap-3 font-mono text-xs text-ainkSoft">
+            <span class="w-2 h-2 bg-rust"></span>
+            <span>{articlesCount} статей{updated ? ` · обновлено ${updated}` : ""}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="pt-6 border-t border-aline flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-adim uppercase tracking-wider"
+    >
+      <div>{footer.copyright || `${year} © Школа химии Валерия Филипенко`}</div>
+      <div class="flex flex-wrap gap-x-4 gap-y-2">
+        {bottomLinks.map((link) => (
+          <a class="hover:text-rust transition" href={link.href} rel={link.rel}>{link.label}</a>
+        ))}
+      </div>
+    </div>
+
+    {footer.disclaimer && (
+      <p class="mt-4 font-mono text-[10px] text-adim/80 max-w-4xl">
+        {footer.disclaimer}
+      </p>
+    )}
+  </div>
+</footer>

@@ -1,78 +1,260 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import AcademyLayout from "../layouts/AcademyLayout.astro";
 ---
 
-<MainLayout
+<AcademyLayout
   title="404 — Страница не найдена"
-  description="Страница не найдена. Вернитесь на главную или в раздел академии."
+  description="Страница не найдена. Вернитесь на главную или воспользуйтесь меню."
   showBreadcrumbs={false}
   index={false}
   follow={false}
 >
-  <section class="section">
-    <div class="container error-container">
-      <div class="error-text">
-        <h1>404 — Страница не найдена</h1>
-        <p>Упс! Запрашиваемая страница не существует.</p>
-        <div class="error-actions" role="group" aria-label="Навигация">
-          <a class="btn btn--blue" href="/">На главную</a>
-          <a class="btn btn--blue" href="/academy/">В академию</a>
+  <section class="e404 section">
+    <div class="e404__inner">
+      <div class="e404__copy">
+        <span class="e404__kicker">// HTTP 404 / страница не найдена</span>
+
+        <p class="e404__code" aria-hidden="true">404</p>
+
+        <h1 class="e404__title">
+          Такой страницы<br />
+          <span class="e404__title-soft">здесь нет.</span>
+        </h1>
+
+        <p class="e404__lead">
+          Возможно, ссылка устарела или мы перенесли материал. Вернитесь на
+          главную или воспользуйтесь меню&nbsp;— там есть разборы, формулы
+          и&nbsp;курсы по&nbsp;химии.
+        </p>
+
+        <div class="e404__actions" role="group" aria-label="Навигация">
+          <a class="e404__btn e404__btn--primary" href="/">
+            На&nbsp;главную <span aria-hidden="true">→</span>
+          </a>
+          <a class="e404__btn e404__btn--ghost" href="javascript:history.back()" data-back>
+            ← Вернуться назад
+          </a>
         </div>
+
+        <dl class="e404__meta">
+          <div>
+            <dt>Код</dt>
+            <dd>404</dd>
+          </div>
+          <div>
+            <dt>Статус</dt>
+            <dd>not_found</dd>
+          </div>
+          <div>
+            <dt>Что делать</dt>
+            <dd>вернуться или открыть меню</dd>
+          </div>
+        </dl>
       </div>
-      <div class="error-image">
-        <img src="/images/technical/404.webp" alt="Страница не найдена" />
+
+      <div class="e404__media">
+        <img
+          src="/images/technical/404.webp"
+          alt="Страница не найдена"
+          loading="eager"
+          decoding="async"
+        />
       </div>
     </div>
   </section>
 
-  <style>
-    .error-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 70vh;
-      gap: 40px;
-    }
-
-    .error-text {
-      flex: 1;
-    }
-
-    .error-text h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-
-    .error-text p {
-      font-size: 1.25rem;
-      margin-bottom: 24px;
-      color: var(--gray);
-    }
-
-    .error-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .error-image {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-    .error-image img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    @media (max-width: 768px) {
-      .error-container {
-        flex-direction: column;
-        text-align: center;
+  <script is:inline>
+    // если зашли по прямой ссылке — прячем «вернуться назад»
+    (function () {
+      if (!document.referrer) {
+        var back = document.querySelector("[data-back]");
+        if (back) back.style.display = "none";
       }
-      .error-image {
-        order: -1;
-      }
+    })();
+  </script>
+</AcademyLayout>
+
+<style>
+  /* Страница 404 в академной молочной палитре */
+  .e404 {
+    background: var(--paper);
+    color: var(--inkSoft);
+    padding: clamp(64px, 9vw, 120px) var(--academy-gutter)
+      clamp(72px, 10vw, 140px);
+  }
+
+  .e404__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  /* ── Текст ── */
+  .e404__copy {
+    display: grid;
+    gap: clamp(18px, 2.4vw, 28px);
+  }
+
+  .e404__kicker {
+    font-family: var(--academy-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .e404__code {
+    margin: 0;
+    font-family: var(--academy-font-display);
+    font-size: clamp(96px, 18vw, 220px);
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .e404__title {
+    margin: 0;
+    font-family: var(--academy-font-display);
+    font-size: clamp(32px, 4.4vw, 56px);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .e404__title-soft {
+    color: var(--dim);
+  }
+
+  .e404__lead {
+    margin: 0;
+    max-width: 56ch;
+    font-family: var(--academy-font-body);
+    font-size: clamp(16px, 1.3vw, 19px);
+    line-height: 1.65;
+    color: var(--inkSoft);
+  }
+
+  /* ── Кнопки (брутал) ── */
+  .e404__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: clamp(8px, 1.5vw, 16px);
+  }
+
+  .e404__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    font-family: var(--academy-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease,
+      border-color 0.16s ease;
+  }
+
+  .e404__btn--primary {
+    background: var(--rust);
+    color: var(--paper);
+    border-color: var(--rust);
+  }
+  .e404__btn--primary:hover {
+    background: var(--rustDark);
+    border-color: var(--rustDark);
+  }
+
+  .e404__btn--ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .e404__btn--ghost:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* ── Мини-мета ── */
+  .e404__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: clamp(20px, 3vw, 32px) 0 0;
+    background: var(--milk);
+    border: 1px solid var(--line);
+  }
+  .e404__meta > div {
+    display: grid;
+    gap: 6px;
+    padding: 14px 18px;
+    border-left: 1px solid var(--line);
+  }
+  .e404__meta > div:first-child {
+    border-left: 0;
+  }
+  .e404__meta dt {
+    margin: 0;
+    font-family: var(--academy-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+    font-weight: 500;
+  }
+  .e404__meta dd {
+    margin: 0;
+    font-family: var(--academy-font-mono);
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  /* ── Картинка: чистый PNG, без рамки ── */
+  .e404__media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .e404__media img {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+  }
+
+  /* ── Адаптив ── */
+  @media (max-width: 900px) {
+    .e404__inner {
+      grid-template-columns: 1fr;
+      gap: clamp(28px, 6vw, 48px);
     }
-  </style>
-</MainLayout>
+    .e404__media {
+      order: -1;
+    }
+    .e404__media img {
+      max-width: 320px;
+    }
+    .e404__meta {
+      grid-template-columns: 1fr;
+    }
+    .e404__meta > div {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .e404__meta > div:first-child {
+      border-top: 0;
+    }
+  }
+</style>

@@ -1,6 +1,7 @@
 // В этом файле НУЖЕН defineConfig
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import tailwind from '@astrojs/tailwind';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -32,5 +33,5 @@ export default defineConfig({
     },
 
     // Здесь можно подключать интеграции (RSS, sitemap, tailwind и т. д.)
-    integrations: [mdx()],
+    integrations: [mdx(), tailwind({ applyBaseStyles: false })],
 });

@@ -1,14 +1,15 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
-import ReviewCard from "../components/reviews/ReviewCard.astro";
-import StepikCourse from "../components/reviews/StepikCourse.astro";
-import LeadCapture from "../components/mainpage/LeadCapture.astro";
-import MessengerContactsLite from "../components/mdx/MessengerContactsLite.astro";
+import AcademyLayout from "../layouts/AcademyLayout.astro";
+import AcademyBreadcrumbs from "../components/academy/AcademyBreadcrumbs.astro";
+import AcademyFaq from "../components/academy/AcademyFaq.astro";
+import EgeH2 from "../components/ege/EgeH2.astro";
 import { TUTORING_REVIEWS, STEPIK_COURSES } from "../data/reviews-page";
+import { buildFAQJsonLd } from "../lib/seoData";
 
 const featured =
-  TUTORING_REVIEWS.find((r) => r.featured) ?? TUTORING_REVIEWS[0];
-const rest = TUTORING_REVIEWS.filter((r) => r.id !== featured.id).sort(
+  TUTORING_REVIEWS.find((review) => review.featured) ?? TUTORING_REVIEWS[0];
+
+const rest = TUTORING_REVIEWS.filter((review) => review.id !== featured.id).sort(
   (a, b) => {
     const aHasScore = a.after != null ? 1 : 0;
     const bHasScore = b.after != null ? 1 : 0;
@@ -22,26 +23,25 @@ const rest = TUTORING_REVIEWS.filter((r) => r.id !== featured.id).sort(
     const bAfter = b.after ?? -1;
     if (bAfter !== aAfter) return bAfter - aAfter;
 
-    const aDelta =
-      a.before != null && a.after != null ? a.after - a.before : -1;
-    const bDelta =
-      b.before != null && b.after != null ? b.after - b.before : -1;
+    const aDelta = a.before != null && a.after != null ? a.after - a.before : -1;
+    const bDelta = b.before != null && b.after != null ? b.after - b.before : -1;
     if (bDelta !== aDelta) return bDelta - aDelta;
 
     return a.id - b.id;
   },
 );
 
-const reviewsWithScreens = TUTORING_REVIEWS.filter((r) => r.hasScreens);
+const reviewsWithScreens = TUTORING_REVIEWS.filter((review) => review.hasScreens);
 const reviewsWithScores = TUTORING_REVIEWS.filter(
-  (r) => r.before != null && r.after != null,
+  (review) => review.before != null && review.after != null,
 );
-const screensModalData = reviewsWithScreens.map((r) => ({
-  id: r.id,
-  name: r.name,
-  screens: r.screens ?? 1,
-  images: r.screenImages ?? [],
+const screensModalData = reviewsWithScreens.map((review) => ({
+  id: review.id,
+  name: review.name,
+  screens: review.screens ?? review.screenImages?.length ?? 1,
+  images: review.screenImages ?? [],
 }));
+
 const totalStepikReviews = STEPIK_COURSES.reduce(
   (sum, course) => sum + course.reviewsCount,
   0,
@@ -59,7 +59,6 @@ const stepikAverageRating = (
   ) / totalStepikReviews
 ).toFixed(1);
 const totalReviewCount = TUTORING_REVIEWS.length + totalStepikReviews;
-const pageUrl = Astro.url.href;
 
 const seo = {
   title:
@@ -68,10 +67,41 @@ const seo = {
     "Реальные отзывы учеников о репетиторстве, минигруппах и курсах Stepik по химии. Баллы до и после, скриншоты результатов и отзывы о подготовке к ЕГЭ и ОГЭ.",
 };
 
-const breadcrumbs = [
-  { name: "Главная", href: "/" },
-  { name: "Отзывы по химии" },
+const pageUrl = `${Astro.url.origin}/otzyvy-na-kursi/`;
+const REVIEWS_FAQ = [
+  {
+    q: "Это реальные отзывы учеников?",
+    a: "Да. На странице собраны отзывы учеников о подготовке, мини-группах, репетиторстве и курсах Stepik по химии.",
+  },
+  {
+    q: "Можно посмотреть скриншоты результатов?",
+    a: "Да. В отзывах со скриншотами есть кнопка открытия модального окна с подтверждениями и переписками.",
+  },
+  {
+    q: "Отзывы относятся только к ЕГЭ?",
+    a: "Нет. На странице есть отзывы по подготовке к ЕГЭ, ОГЭ, мини-группам, индивидуальным занятиям и самостоятельным курсам.",
+  },
+  {
+    q: "Где смотреть отзывы о курсах Stepik?",
+    a: "Отзывы и рейтинги курсов Stepik вынесены в отдельный блок на этой странице, рядом со ссылками на сами курсы.",
+  },
 ];
+const reviewsFaqJsonLd = buildFAQJsonLd(REVIEWS_FAQ);
+const socialIconMap = {
+  tg: "/images/technical/telegram.webp",
+  vk: "/images/technical/vk.webp",
+};
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .map((part) => part.trim()[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("");
+const getReviewHref = (link: string, courseUrl: string, reviewsUrl?: string) =>
+  link !== "#" ? link : (reviewsUrl ?? courseUrl);
+const getStars = (rating: number) => "★".repeat(Math.round(rating));
+
 const reviewSchema = TUTORING_REVIEWS.map((review, index) => ({
   "@type": "ListItem",
   position: index + 1,
@@ -86,23 +116,8 @@ const reviewSchema = TUTORING_REVIEWS.map((review, index) => ({
     url: review.socialUrl || pageUrl,
   },
 }));
-const stepikCourseSchema = {
-  "@type": "Course",
-  "@id": `${pageUrl}#stepik-courses`,
-  name: "Курсы Stepik по химии ЕГЭХИМ",
-  provider: {
-    "@type": "Person",
-    name: "Валерий Филипенко",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: stepikAverageRating,
-    reviewCount: totalStepikReviews,
-    bestRating: 5,
-    worstRating: 1,
-  },
-};
-const webPageJsonLd = {
+
+const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -133,936 +148,1041 @@ const webPageJsonLd = {
       numberOfItems: TUTORING_REVIEWS.length,
       itemListElement: reviewSchema,
     },
-    stepikCourseSchema,
+    {
+      "@type": "Course",
+      "@id": `${pageUrl}#stepik-courses`,
+      name: "Курсы Stepik по химии ЕГЭХИМ",
+      provider: {
+        "@type": "Person",
+        name: "Валерий Филипенко",
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: stepikAverageRating,
+        reviewCount: totalStepikReviews,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    },
   ],
 };
 ---
 
-<MainLayout
+<AcademyLayout
   title={seo.title}
   description={seo.description}
+  url={pageUrl}
+  addSiteSuffix={false}
   image={featured.photo ?? "/images/mainpage/reviews/maks-photo.webp"}
   imageAlt="Отзывы учеников о подготовке к ЕГЭ и ОГЭ по химии"
-  breadcrumbs={breadcrumbs}
-  webPageJsonLd={webPageJsonLd}
+  breadcrumbs={[
+    { name: "Отзывы по химии" },
+  ]}
+  showBreadcrumbs={true}
+  breadcrumbRoot="/"
+  jsonLd={jsonLd}
+  faqJsonLd={reviewsFaqJsonLd}
 >
-  <div class="rv-scope">
-    <!-- Hero -->
-    <section class="rv-hero-wrap" aria-labelledby="rv-hero-title">
-      <div class="container rv-hero">
-        <p class="rv-hero__kicker">
-          отзывы по химии · ЕГЭ, ОГЭ, Stepik · 2019—2026
-        </p>
-        <h1 class="rv-hero__title" id="rv-hero-title">
-          Отзывы о курсах подготовки к <em
-            >ЕГЭ и ОГЭ по химии Валерия Филипенко</em
-          >
-        </h1>
-        <p class="rv-hero__lede">
-          Реальные отзывы о репетиторстве, минигруппах и курсах Stepik по химии:
-          с баллами до и после, скриншотами результатов и ссылками на соцсети.
-        </p>
-        <div class="rv-hero__stats">
-          <div class="rv-hero__stat">
-            <strong>{stepikAverageRating}</strong>
-            <span>средний рейтинг курсов Stepik</span>
+  <div class="reviews-v2">
+    <section class="reviews-hero" aria-labelledby="reviews-title">
+      <div class="gutter reviews-hero__inner">
+        <AcademyBreadcrumbs
+          class="mb-10"
+          items={[
+            { label: "ЕГЭХИМ", href: "/" },
+            { label: "Отзывы" },
+          ]}
+        />
+
+        <div class="reviews-hero__grid">
+          <div>
+            <div class="sec-num">[01] / отзывы</div>
+            <h1 id="reviews-title" class="reviews-hero__title">
+              Отзывы учеников о курсах, мини-группах и подготовке по химии
+            </h1>
           </div>
-          <div class="rv-hero__stat">
-            <strong>+{averageScoreGrowth}</strong>
-            <span>средний прирост по отзывам с баллами</span>
-          </div>
-          <div class="rv-hero__stat">
-            <strong>{totalReviewCount}</strong>
-            <span>отзывов на странице и в курсах Stepik</span>
+          <div class="reviews-hero__copy">
+            <p class="reviews-hero__seo">
+              Реальные отзывы учеников о репетиторстве, мини-группах и курсах
+              Stepik: с баллами до и после, ссылками на соцсети и скриншотами
+              результатов.
+            </p>
+            <div class="reviews-hero__stats" aria-label="Статистика отзывов">
+              <div>
+                <b>{stepikAverageRating}</b>
+                <span>средний рейтинг Stepik</span>
+              </div>
+              <div>
+                <b>+{averageScoreGrowth}</b>
+                <span>средний прирост баллов</span>
+              </div>
+              <div>
+                <b>{totalReviewCount}</b>
+                <span>отзывов и оценок</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Fixed corner blobs (stay on scroll) -->
-    <div class="rv-blob rv-blob--tl" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--tr" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--bl" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--br" aria-hidden="true"></div>
+    <section class="reviews-section" aria-labelledby="tutor-reviews-title">
+      <div class="gutter">
+        <EgeH2
+          variant="academy"
+          secNum="[02] / ученики"
+          text="Репетиторство и мини-группы"
+          id="tutor-reviews-title"
+          description="Отзывы отсортированы так же, как на старой странице: выше идут истории с результатами, скриншотами и самым большим прогрессом."
+        />
 
-    <!-- Body with grid background -->
-    <div class="rv-body-bg">
-      <!-- Section 1 — Tutoring reviews -->
-      <section class="container rv-section" aria-labelledby="rv-s1-title">
-        <div class="rv-section__head">
-          <div>
-            <h2 class="rv-section__title" id="rv-s1-title">
-              Репетиторство <em>&amp;</em> минигруппы
-            </h2>
-            <p class="rv-section__sub">
-              Индивидуальные занятия и мини-группы до 4 человек. Подготовка к
-              ЕГЭ, ОГЭ и поступлению в медицинские вузы.
-            </p>
-          </div>
-          <div class="rv-section__meta">
-            <strong>{TUTORING_REVIEWS.length}</strong>
-            <span>отзывов</span>
-          </div>
-        </div>
-
-        <!-- Featured card -->
-        <div class="rv-featured-wrap">
-          <div class="rv-featured-badge" aria-label="История года">
-            история года
-          </div>
-          <ReviewCard review={featured} featured />
-        </div>
-
-        <!-- Masonry grid -->
-        <ul class="rv-masonry" aria-label="Отзывы учеников">
-          {
-            rest.map((r, i) => (
-              <li class="rv-masonry__item">
-                <ReviewCard
-                  review={r}
-                  colorIndex={((i % 4) + 1) as 1 | 2 | 3 | 4}
-                />
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <!-- SEO block 1 — tutoring & mini-groups -->
-      <div class="container rv-seo">
-        <h2 class="rv-seo__title">
-          Отзывы о занятия по химии ЕГЭ, ОГЭ у репетитора Валерия Фиилипенко
-        </h2>
-        <p>
-          На этой странице собраны отзывы учеников о подготовке к ЕГЭ, ОГЭ или
-          успеваемости в школе по химии с Валерием Филипенко. В них можно
-          увидеть, как проходят занятия, с каким уровнем ребята приходят на
-          курсы, какие темы вызывают больше всего трудностей и за счёт чего
-          получается улучшить результат.
-        </p>
-        <p>
-          Валерий Филипенко — репетитор по химии и основатель школы ЕГЭХИМ.
-          Подготовка проходит онлайн: в мини-группах и индивидуально. Эти
-          форматы отличаются по темпу и степени личной работы с учеником, но в
-          обоих случаях занятия строятся вокруг требований ЕГЭ, реальных заданий
-          и типичных ошибок, на которых выпускники чаще всего теряют баллы.
-          Индивидуальные занятия по химии подходят ученикам, которым нужна более
-          точная настройка подготовки: можно спокойно разобрать пробелы,
-          вернуться к базовым темам, отдельно потренировать расчётные задачи,
-          ОВР, органику, неорганику или вторую часть. Мини-группы подходят тем,
-          кому нужна системная подготовка по программе: есть расписание,
-          домашние задания, разбор ошибок и возможность задавать вопросы — без
-          потокового формата, где преподаватель почти не видит конкретного
-          ученика.
-        </p>
-        <p>
-          В отзывах о Валерии Филипенко ученики часто пишут о понятных
-          объяснениях и спокойной подаче материала. Для ЕГЭ по химии это
-          особенно важно, потому что многие темы связаны между собой: степени
-          окисления нужны для ОВР, строение вещества помогает в химической
-          связи, свойства классов веществ возвращаются в цепочках и заданиях
-          второй части. Когда эти связи становятся понятными, химия перестаёт
-          восприниматься как набор отдельных правил. Отдельное внимание
-          уделяется экзаменационной практике: ученик учится видеть условие,
-          выбирать способ решения, проверять единицы измерения и не терять баллы
-          на мелочах.
-        </p>
-        <p>
-          Отзывы о репетиторе по химии помогают заранее понять стиль работы
-          преподавателя. Одним ученикам нужна подробная база с нуля, другим —
-          усиление сложных тем и подготовка на высокий балл. При чтении отзывов
-          стоит обращать внимание не только на итоговый результат, но и на путь
-          ученика: сколько времени он готовился, с каким уровнем пришёл и какие
-          темы удалось подтянуть. Если вы ищете репетитора по химии для ЕГЭ или
-          подготовку в мини-группе, отзывы о Валерии Филипенко помогут составить
-          более точное представление о школе ЕГЭХИМ.
-        </p>
-      </div>
-
-      <!-- CTA signup -->
-      <LeadCapture
-        id="reviews-lead"
-        title="Ищете проффессонального репетитора по химии ЕГЭ или ОГЭ?"
-        subtitle="Обратитесь к нам! Поможем с выбором формата занятий, составим план подготовки и подберём лучшего репетитора для достижения высоких баллов."
-        utmSource="reviews"
-      />
-
-      <!-- Section 2 — Stepik courses -->
-      <section class="container rv-section" aria-labelledby="rv-s2-title">
-        <div class="rv-section__head">
-          <div>
-            <h2 class="rv-section__title" id="rv-s2-title">
-              Самостоятельные курсы <em>на Stepik</em>
-            </h2>
-            <p class="rv-section__sub">
-              Онлайн-курсы в своём темпе. Все отзывы собраны со страниц курсов
-              прямо на платформе.
-            </p>
-          </div>
-          <div class="rv-section__meta">
-            <strong>{STEPIK_COURSES.length}</strong>
-            <span>курсов</span>
-          </div>
-        </div>
-
-        <div class="rv-courses">
-          {STEPIK_COURSES.map((c) => <StepikCourse course={c} />)}
-        </div>
-      </section>
-
-      <!-- SEO block 2 — Stepik courses -->
-      <div class="container rv-seo">
-        <h2 class="rv-seo__title">
-          Отзывы о самостоятельных курсах Валерия Филипенко на Stepik
-        </h2>
-        <p>
-          На этой странице также собраны отзывы о самостоятельных курсах по
-          химии школы ЕГЭХИМ на Stepik. Эти курсы подходят ученикам, которые
-          хотят готовиться к ЕГЭ по химии онлайн в удобном темпе: смотреть
-          уроки, решать задания и возвращаться к сложным темам в любое время.
-          Курсы охватывают ключевые разделы ЕГЭ по химии — общую химию,
-          неорганику, органику, ОВР, электролиз и другие темы. Каждый курс можно
-          проходить отдельно, в зависимости от того, какой раздел нужно
-          подтянуть.
-        </p>
-        <p>
-          В отзывах о Stepik-курсах по химии ученики чаще всего отмечают
-          понятную структуру: темы идут последовательно, объяснения сразу
-          связаны с практикой ЕГЭ, а задания помогают закрепить теорию. Отзывы
-          также помогают понять, что ждёт внутри: как устроены уроки, насколько
-          подробно разбираются задания, какой уровень подачи материала и сколько
-          времени в среднем уходит на прохождение.
-        </p>
-        <p>
-          Самостоятельные онлайн-курсы требуют дисциплины: ученик сам выбирает
-          расписание и темп. Но именно это делает их удобными — можно заниматься
-          в любое время, пересматривать уроки и возвращаться к ошибкам. Курсы
-          используют и как основную подготовку к ЕГЭ, и как дополнение к
-          занятиям с репетитором: в некоторых отзывах ученики пишут, что сначала
-          разбирали тему на курсе, а потом закрепляли её на индивидуальных
-          занятиях с Валерием Филипенко.
-        </p>
-        <p>
-          Если вы ищете курс по химии для ЕГЭ, отзывы на этой странице помогут
-          заранее составить представление об обучении. Все курсы ЕГЭХИМ на
-          Stepik разработаны Валерием Филипенко — репетитором по химии с
-          многолетним опытом подготовки к ЕГЭ.
-        </p>
-      </div>
-
-      <!-- Screens modal (dialog) -->
-      <dialog
-        class="rv-modal"
-        id="screens-modal"
-        aria-modal="true"
-        aria-label="Скриншоты"
-      >
-        <div class="rv-modal__box">
-          <div class="rv-modal__head">
-            <div class="rv-modal__title">
-              Скриншоты · <span id="modal-name"></span>
-              <span class="rv-modal__counter" id="modal-counter"></span>
-            </div>
-            <button
-              class="rv-modal__close"
-              id="modal-close"
-              aria-label="Закрыть">✕</button
-            >
-          </div>
-          <div class="rv-modal__stage">
-            <button
-              class="rv-modal__nav"
-              id="modal-prev"
-              aria-label="Предыдущий">‹</button
-            >
-            <div class="rv-modal__img">
-              <img id="modal-image" src="" alt="" />
-              <div class="rv-modal__img-label">
-                <strong id="modal-img-title"></strong>
+        {featured && (
+          <article class="review-card review-card--featured">
+            <div class="review-card__label">история года</div>
+            <div class="review-card__head">
+              <div class:list={["review-card__avatar", featured.photo && "review-card__avatar--image"]}>
+                {featured.photo ? (
+                  <img src={featured.photo} alt="" loading="lazy" decoding="async" />
+                ) : (
+                  getInitials(featured.name)
+                )}
+              </div>
+              <div>
+                <h3>{featured.name}</h3>
+                <div class="review-card__meta">
+                  {featured.tag && <span>{featured.tag}</span>}
+                  {featured.exam && <span>{featured.exam}</span>}
+                  {featured.socialUrl && (
+                    <a href={featured.socialUrl} target="_blank" rel="noopener noreferrer">
+                      написать
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
-            <button class="rv-modal__nav" id="modal-next" aria-label="Следующий"
-              >›</button
-            >
-          </div>
-        </div>
-      </dialog>
 
-      <!-- Мессенджеры -->
-      <div class="container">
-        <MessengerContactsLite
-          title="Заинтресованы в высоких баллах по химии?"
-          subtitle="Ответим на вопросы и поможем выбрать подходящий формат занятий и курс!"
-        />
+            <blockquote>{featured.text}</blockquote>
+
+            {featured.before != null && featured.after != null && (
+              <div class="review-score">
+                <div>
+                  <span>было</span>
+                  <b>{featured.before}</b>
+                </div>
+                <i aria-hidden="true">→</i>
+                <div>
+                  <span>стало</span>
+                  <b>{featured.after}</b>
+                </div>
+                <small>
+                  прирост +{featured.after - featured.before}
+                  {" "}
+                  {featured.exam === "ОГЭ" ? "балла" : "баллов"}
+                </small>
+              </div>
+            )}
+
+            {featured.hasScreens && (
+              <button
+                class="review-screens"
+                type="button"
+                data-open-review-modal
+                data-review-id={featured.id}
+              >
+                <span>▣</span>
+                открыть скриншоты
+              </button>
+            )}
+          </article>
+        )}
+
+        <div class="reviews-grid">
+          {rest.map((review) => (
+            <article class="review-card">
+              <div class="review-card__head">
+                <div class:list={["review-card__avatar", review.photo && "review-card__avatar--image"]}>
+                  {review.photo ? (
+                    <img src={review.photo} alt="" loading="lazy" decoding="async" />
+                  ) : (
+                    getInitials(review.name)
+                  )}
+                </div>
+                <div>
+                  <h3>{review.name}</h3>
+                  <div class="review-card__meta">
+                    {review.tag && <span>{review.tag}</span>}
+                    {review.exam && <span>{review.exam}</span>}
+                    {review.socialUrl && (
+                      <a href={review.socialUrl} target="_blank" rel="noopener noreferrer">
+                        {socialIconMap[review.social] && (
+                          <img src={socialIconMap[review.social]} alt="" loading="lazy" decoding="async" />
+                        )}
+                        написать
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <blockquote>{review.text}</blockquote>
+
+              {review.before != null && review.after != null && (
+                <div class="review-score">
+                  <div>
+                    <span>было</span>
+                    <b>{review.before}</b>
+                  </div>
+                  <i aria-hidden="true">→</i>
+                  <div>
+                    <span>стало</span>
+                    <b>{review.after}</b>
+                  </div>
+                  <small>
+                    прирост +{review.after - review.before}
+                    {" "}
+                    {review.exam === "ОГЭ" ? "балла" : "баллов"}
+                  </small>
+                </div>
+              )}
+
+              {review.hasScreens && (
+                <button
+                  class="review-screens"
+                  type="button"
+                  data-open-review-modal
+                  data-review-id={review.id}
+                >
+                  <span>▣</span>
+                  {review.screens === 1 ? "скриншот результата" : `${review.screens} скриншота`}
+                </button>
+              )}
+            </article>
+          ))}
+        </div>
       </div>
-    </div><!-- /.rv-body-bg -->
-  </div><!-- /.rv-scope -->
-</MainLayout>
+    </section>
+
+    <section class="reviews-section reviews-section--alt" aria-labelledby="stepik-title">
+      <div class="gutter">
+        <EgeH2
+          variant="academy"
+          secNum="[03] / stepik"
+          text="Отзывы о курсах Stepik"
+          id="stepik-title"
+          description="Курсы, рейтинги и отзывы перенесены из старой страницы. Длинные комментарии раскрываются прямо в карточке."
+        />
+
+        <div class="stepik-list">
+          {STEPIK_COURSES.map((course) => (
+            <section class="stepik-card" aria-labelledby={`${course.id}-title`}>
+              <div class="stepik-card__head">
+                <div>
+                  <div class="stepik-card__kicker">
+                    {course.access === "free" ? "бесплатный" : course.access === "paid" ? "платный" : "курс"} · Stepik
+                  </div>
+                  <h3 id={`${course.id}-title`}>{course.title}</h3>
+                  <div class="stepik-card__rating" aria-label={`Рейтинг ${course.rating} из 5`}>
+                    <span>{getStars(course.rating)}</span>
+                    <b>{course.rating.toFixed(1)}</b>
+                    <em>{course.reviewsCount} отзывов</em>
+                    {course.studentsCount && <em>{course.studentsCount} учеников</em>}
+                  </div>
+                </div>
+                <a href={course.url} target="_blank" rel="noopener noreferrer">
+                  открыть курс
+                </a>
+              </div>
+
+              <div class="stepik-reviews">
+                {course.reviews.map((review, index) => (
+                  <article class="stepik-review" data-stepik-review data-expanded="false">
+                    <div class="stepik-review__head">
+                      <b>{review.nick}</b>
+                      <span aria-label={`${review.stars} звезд`}>
+                        {"★".repeat(review.stars)}
+                      </span>
+                      <a
+                        href={getReviewHref(review.link, course.url, course.reviewsUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        отзыв
+                      </a>
+                    </div>
+                    <p id={`${course.id}-review-${index}`} data-stepik-text>{review.text}</p>
+                    <button
+                      type="button"
+                      hidden
+                      data-stepik-toggle
+                      aria-expanded="false"
+                      aria-controls={`${course.id}-review-${index}`}
+                    >
+                      читать далее
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews-seo">
+      <div class="gutter">
+        <h2>Отзывы о подготовке к ЕГЭ и ОГЭ по химии</h2>
+        <p>
+          На странице собраны отзывы учеников о подготовке к экзаменам по химии
+          с Валерием Филипенко: индивидуальные занятия, мини-группы и
+          самостоятельные курсы Stepik. В отзывах можно посмотреть стартовый
+          уровень, итоговый результат, формат занятий и скриншоты подтверждений.
+        </p>
+        <p>
+          Такой формат помогает заранее понять, кому подходит обучение в
+          ЕГЭХИМ: школьникам с нуля, ученикам профильных классов, тем, кто
+          готовится к ОГЭ, и выпускникам, которым нужен высокий балл для
+          медицинских и химических направлений.
+        </p>
+      </div>
+    </section>
+
+    <AcademyFaq
+      secNum="[04] / вопросы"
+      title="Частые вопросы"
+      description="Ответы на популярные вопросы об отзывах, скриншотах и курсах Stepik."
+      items={REVIEWS_FAQ}
+      alignList={true}
+    />
+
+    <dialog class="reviews-modal" id="reviews-modal" aria-label="Скриншоты отзыва">
+      <div class="reviews-modal__box">
+        <div class="reviews-modal__head">
+          <div>
+            <span>скриншоты</span>
+            <h2 id="reviews-modal-name"></h2>
+          </div>
+          <button type="button" id="reviews-modal-close" aria-label="Закрыть">×</button>
+        </div>
+        <div class="reviews-modal__stage">
+          <button type="button" id="reviews-modal-prev" aria-label="Предыдущий скрин">←</button>
+          <figure>
+            <img id="reviews-modal-image" src="" alt="" />
+            <figcaption id="reviews-modal-counter"></figcaption>
+          </figure>
+          <button type="button" id="reviews-modal-next" aria-label="Следующий скрин">→</button>
+        </div>
+      </div>
+    </dialog>
+  </div>
+</AcademyLayout>
 
 <script is:inline define:vars={{ screensModalData }}>
-  const modal = document.getElementById("screens-modal");
-  const modalName = document.getElementById("modal-name");
-  const modalCounter = document.getElementById("modal-counter");
-  const modalClose = document.getElementById("modal-close");
-  const modalPrev = document.getElementById("modal-prev");
-  const modalNext = document.getElementById("modal-next");
-  const modalImgTitle = document.getElementById("modal-img-title");
-  const modalImage = document.getElementById("modal-image");
+  const modal = document.getElementById("reviews-modal");
+  const modalName = document.getElementById("reviews-modal-name");
+  const modalCounter = document.getElementById("reviews-modal-counter");
+  const modalClose = document.getElementById("reviews-modal-close");
+  const modalPrev = document.getElementById("reviews-modal-prev");
+  const modalNext = document.getElementById("reviews-modal-next");
+  const modalImage = document.getElementById("reviews-modal-image");
 
-  let currentIdx = 0;
-  let currentScreens = 1;
-  let currentImages = [];
+  let currentIndex = 0;
+  let currentReview = null;
 
-  function updateModal() {
-    if (modalCounter)
-      modalCounter.textContent = `${currentIdx + 1} / ${currentScreens}`;
-    if (modalImgTitle)
-      modalImgTitle.textContent = `Скрин ${currentIdx + 1} — поступление / переписка`;
-    if (modalImage) {
-      modalImage.src = currentImages[currentIdx] ?? "";
-      modalImage.alt = `${modalName?.textContent ?? "Отзыв"} — скрин ${currentIdx + 1}`;
+  const updateModal = () => {
+    if (!currentReview || !modalImage) return;
+    const image = currentReview.images[currentIndex] || "";
+    modalImage.src = image;
+    modalImage.alt = `${currentReview.name} — скриншот ${currentIndex + 1}`;
+    if (modalCounter) {
+      modalCounter.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${String(currentReview.screens).padStart(2, "0")}`;
     }
-  }
+  };
 
-  function openModal(reviewId) {
-    const review = screensModalData.find((r) => r.id === reviewId);
+  const openModal = (reviewId) => {
+    const review = screensModalData.find((item) => item.id === reviewId);
     if (!review || !modal) return;
-    currentIdx = 0;
-    currentScreens = review.screens;
-    currentImages = review.images ?? [];
+    currentReview = review;
+    currentIndex = 0;
     if (modalName) modalName.textContent = review.name;
     updateModal();
     modal.showModal();
-    document.body.style.overflow = "hidden";
-  }
+    document.documentElement.classList.add("is-modal-open");
+    document.body.classList.add("is-modal-open");
+  };
 
-  function closeModal() {
+  const closeModal = () => {
     if (!modal) return;
     modal.close();
-    document.body.style.overflow = "";
-  }
+    document.documentElement.classList.remove("is-modal-open");
+    document.body.classList.remove("is-modal-open");
+  };
 
-  // Open triggers
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-open-modal]");
-    if (!btn) return;
-    const id = Number(btn.dataset.reviewId);
-    if (id) openModal(id);
+  const step = (direction) => {
+    if (!currentReview) return;
+    currentIndex =
+      (currentIndex + direction + currentReview.screens) % currentReview.screens;
+    updateModal();
+  };
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-open-review-modal]");
+    if (!trigger) return;
+    openModal(Number(trigger.dataset.reviewId));
   });
 
   modalClose?.addEventListener("click", closeModal);
-
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
+  modalPrev?.addEventListener("click", () => step(-1));
+  modalNext?.addEventListener("click", () => step(1));
+  modal?.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
   });
-
   modal?.addEventListener("cancel", closeModal);
 
-  modalPrev?.addEventListener("click", () => {
-    currentIdx = (currentIdx - 1 + currentScreens) % currentScreens;
-    updateModal();
-  });
-
-  modalNext?.addEventListener("click", () => {
-    currentIdx = (currentIdx + 1) % currentScreens;
-    updateModal();
-  });
-
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", (event) => {
     if (!modal?.open) return;
-    if (e.key === "ArrowLeft") {
-      currentIdx = (currentIdx - 1 + currentScreens) % currentScreens;
-      updateModal();
-    }
-    if (e.key === "ArrowRight") {
-      currentIdx = (currentIdx + 1) % currentScreens;
-      updateModal();
-    }
+    if (event.key === "ArrowLeft") step(-1);
+    if (event.key === "ArrowRight") step(1);
   });
+
+  const syncStepikReview = (card) => {
+    const text = card.querySelector("[data-stepik-text]");
+    const toggle = card.querySelector("[data-stepik-toggle]");
+    if (!text || !toggle) return;
+
+    const expanded = card.dataset.expanded === "true";
+    const overflowing = text.scrollHeight - text.clientHeight > 1;
+    toggle.hidden = expanded ? false : !overflowing;
+    toggle.textContent = expanded ? "свернуть" : "читать далее";
+    toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+  };
+
+  const setupStepikReviews = () => {
+    document.querySelectorAll("[data-stepik-review]").forEach((card) => {
+      const toggle = card.querySelector("[data-stepik-toggle]");
+      if (!toggle || toggle.dataset.bound === "true") {
+        syncStepikReview(card);
+        return;
+      }
+
+      toggle.dataset.bound = "true";
+      toggle.addEventListener("click", () => {
+        card.dataset.expanded = card.dataset.expanded === "true" ? "false" : "true";
+        requestAnimationFrame(() => syncStepikReview(card));
+      });
+      requestAnimationFrame(() => syncStepikReview(card));
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupStepikReviews, { once: true });
+  } else {
+    setupStepikReviews();
+  }
+  window.addEventListener("resize", setupStepikReviews, { passive: true });
 </script>
 
-<style is:global>
-  /* ============================================================
-     Токены new-global.css, изолированные внутри .rv-scope.
-     Не затрагивают другие страницы сайта.
-     ============================================================ */
-  .rv-scope {
-    /* Neutral */
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-500: #6b7280;
-    --gray-600: #4b5563;
-    --gray-700: #374151;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
-
-    /* Brand scale */
-    --brand-500: #366ef0;
-    --brand-50: color-mix(in oklab, var(--brand-500) 6%, white);
-    --brand-100: color-mix(in oklab, var(--brand-500) 14%, white);
-    --brand-200: color-mix(in oklab, var(--brand-500) 28%, white);
-    --brand-300: color-mix(in oklab, var(--brand-500) 45%, white);
-    --brand-400: color-mix(in oklab, var(--brand-500) 65%, white);
-    --brand-600: color-mix(in oklab, var(--brand-500) 90%, black);
-    --brand-700: color-mix(in oklab, var(--brand-500) 78%, black);
-
-    /* Accent scale */
-    --accent-500: #f09936;
-    --accent-50: color-mix(in oklab, var(--accent-500) 6%, white);
-    --accent-100: color-mix(in oklab, var(--accent-500) 14%, white);
-    --accent-200: color-mix(in oklab, var(--accent-500) 28%, white);
-    --accent-400: color-mix(in oklab, var(--accent-500) 65%, white);
-    --accent-600: color-mix(in oklab, var(--accent-500) 90%, black);
-    --accent-700: color-mix(in oklab, var(--accent-500) 78%, black);
-
-    /* Success scale */
-    --success-500: #10b981;
-    --success-50: color-mix(in oklab, var(--success-500) 6%, white);
-    --success-200: color-mix(in oklab, var(--success-500) 28%, white);
-
-    /* Semantic colors */
-    --color-brand: var(--brand-500);
-    --color-accent: var(--accent-500);
-    --color-success: var(--success-500);
-    --color-bg: #ffffff;
-    --color-surface: #ffffff;
-    --color-elevated: #ffffff;
-    --color-text: var(--gray-900);
-    --color-text-secondary: var(--gray-600);
-    --color-text-muted: var(--gray-500);
-    --color-text-inverse: #ffffff;
-    --color-border: var(--gray-200);
-    --color-border-strong: var(--gray-300);
-    --color-brand-hover: var(--brand-600);
-    --color-accent-hover: var(--accent-600);
-    --color-overlay: color-mix(in srgb, var(--gray-900) 75%, transparent);
-    --color-focus-ring: color-mix(in srgb, var(--brand-500) 35%, transparent);
-
-    /* Gradients */
-    --gradient-brand-subtle: linear-gradient(
-      180deg,
-      var(--brand-50) 0%,
-      var(--gray-50) 100%
-    );
-    --gradient-brand-accent: linear-gradient(
-      120deg,
-      var(--brand-100) 0%,
-      var(--gray-50) 40%,
-      var(--accent-100) 100%
-    );
-
-    /* Typography */
-    --ff-sans: "Raleway", system-ui, -apple-system, sans-serif;
-    --ff-heading: var(--ff-sans);
-    --fw-regular: 400;
-    --fw-medium: 500;
-    --fw-semibold: 600;
-    --fw-bold: 700;
-
-    --fs-11: 0.6875rem;
-    --fs-12: 0.75rem;
-    --fs-13: 0.8125rem;
-    --fs-14: 0.875rem;
-    --fs-15: 0.9375rem;
-    --fs-16: 1rem;
-    --fs-18: 1.125rem;
-    --fs-20: 1.25rem;
-    --fs-24: 1.5rem;
-    --fs-28: 1.75rem;
-    --fs-32: 2rem;
-    --fs-h1: clamp(2rem, 5vw, 3rem);
-    --fs-h2: clamp(1.625rem, 3.8vw, 2.5rem);
-    --fs-h3: clamp(1.25rem, 2.6vw, 1.75rem);
-    --fs-h4: clamp(1.125rem, 2vw, 1.375rem);
-
-    --lh-tight: 1.12;
-    --lh-snug: 1.22;
-    --lh-base: 1.6;
-    --lh-ui: 1.2;
-    --lh-caption: 1.45;
-
-    --ls-tight: -0.02em;
-    --ls-normal: 0;
-    --ls-wide: 0.02em;
-
-    /* Radii */
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1.25rem;
-    --radius-xl: 1.5rem;
-    --radius-pill: 999px;
-
-    /* Shadows */
-    --shadow-1: 0 1px 10px 2px
-      color-mix(in srgb, var(--gray-900) 4%, transparent);
-    --shadow-2: 0 8px 22px color-mix(in srgb, var(--gray-900) 12%, transparent);
-    --shadow-3: 0 18px 50px color-mix(in srgb, var(--gray-900) 16%, transparent);
-    --shadow-inset: inset 0 1px 2px
-      color-mix(in srgb, var(--gray-900) 8%, transparent);
-
-    /* Spacing (дополняет lend.css) */
-    --space-4: 0.25rem;
-    --space-8: 0.5rem;
-    --space-12: 0.75rem;
-    --space-16: 1rem;
-    --space-20: 1.25rem;
-    --space-24: 1.5rem;
-    --space-32: 2rem;
-    --space-40: 2.5rem;
-    --space-48: 3rem;
-    --space-64: 4rem;
-
-    /* Motion */
-    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --dur-1: 150ms;
-    --dur-2: 220ms;
-
-    /* Inputs */
-    --color-bg-invert: var(--gray-900);
-  }
-</style>
-
 <style>
-  /* ===== Fixed blobs ===== */
-  .rv-blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.55;
-  }
-  .rv-blob--tl {
-    width: 480px;
-    height: 380px;
-    top: -80px;
-    left: -100px;
-    background: radial-gradient(
-      ellipse,
-      rgba(54, 110, 240, 0.45) 0%,
-      transparent 70%
-    );
-  }
-  .rv-blob--tr {
-    width: 420px;
-    height: 340px;
-    top: -60px;
-    right: -100px;
-    background: radial-gradient(
-      ellipse,
-      rgba(100, 149, 255, 0.38) 0%,
-      transparent 70%
-    );
-  }
-  .rv-blob--bl {
-    width: 460px;
-    height: 360px;
-    bottom: -100px;
-    left: -80px;
-    background: radial-gradient(
-      ellipse,
-      rgba(130, 100, 255, 0.35) 0%,
-      transparent 70%
-    );
-  }
-  .rv-blob--br {
-    width: 440px;
-    height: 360px;
-    bottom: -80px;
-    right: -80px;
-    background: radial-gradient(
-      ellipse,
-      rgba(54, 110, 240, 0.4) 0%,
-      transparent 70%
-    );
+  .reviews-v2 {
+    background: var(--paper);
   }
 
-  /* ===== Grid background (reviews body only) ===== */
-  .rv-body-bg {
+  .reviews-hero {
     position: relative;
-    background-image:
-      linear-gradient(rgba(54, 110, 240, 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(54, 110, 240, 0.07) 1px, transparent 1px);
-    background-size: 44px 44px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
   }
 
-  /* ===== Hero ===== */
-  .rv-hero-wrap {
-    background: var(--gradient-brand-subtle);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .rv-hero {
-    padding-top: var(--space-48);
-    padding-bottom: var(--space-64);
-  }
-
-  .rv-hero__kicker {
-    font-size: var(--fs-12);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-16);
-    display: flex;
-    align-items: center;
-    gap: var(--space-12);
-  }
-  .rv-hero__kicker::before {
+  .reviews-hero::before {
     content: "";
-    width: 32px;
-    height: 1px;
-    background: var(--color-text-muted);
-    flex: 0 0 auto;
-  }
-
-  .rv-hero__title {
-    font-size: var(--fs-h1);
-    font-weight: var(--fw-bold);
-    line-height: var(--lh-tight);
-    letter-spacing: var(--ls-tight);
-    margin-bottom: var(--space-24);
-    color: var(--color-text);
-  }
-  .rv-hero__title em {
-    font-style: italic;
-    color: var(--color-brand);
-  }
-
-  .rv-hero__lede {
-    font-size: var(--fs-18);
-    color: var(--color-text-secondary);
-    max-width: 60ch;
-    margin-bottom: var(--space-32);
-    line-height: var(--lh-base);
-  }
-
-  .rv-hero__stats {
-    display: flex;
-    gap: var(--space-48);
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
-  .rv-hero__stat {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .rv-hero__stat strong {
-    font-size: clamp(var(--fs-32), 4vw, 42px);
-    font-weight: var(--fw-bold);
-    line-height: 1;
-    color: var(--color-text);
-  }
-  .rv-hero__stat span {
-    font-size: var(--fs-12);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* ===== Section ===== */
-  .rv-section {
-    padding-top: var(--space-64);
-    padding-bottom: var(--space-64);
-  }
-
-  .rv-section__head {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--space-32);
-    align-items: flex-start;
-    padding-bottom: var(--space-32);
-    margin-bottom: var(--space-48);
-    border-bottom: 1px solid var(--color-border);
-  }
-  .rv-section__title {
-    font-size: var(--fs-h2);
-    font-weight: var(--fw-bold);
-    line-height: var(--lh-tight);
-    letter-spacing: var(--ls-tight);
-    margin-bottom: var(--space-16);
-    max-width: 22ch;
-  }
-  .rv-section__title em {
-    font-style: italic;
-    color: var(--color-brand);
-  }
-  .rv-section__sub {
-    color: var(--color-text-secondary);
-    max-width: 52ch;
-    margin: 0;
-    font-size: var(--fs-16);
-    line-height: var(--lh-base);
-  }
-  .rv-section__meta {
-    text-align: right;
-    padding-top: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: flex-end;
-  }
-  .rv-section__meta strong {
-    font-size: clamp(var(--fs-24), 3vw, 36px);
-    font-weight: var(--fw-bold);
-    line-height: 1;
-    color: var(--color-text);
-  }
-  .rv-section__meta span {
-    font-size: var(--fs-12);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* ===== Featured card ===== */
-  .rv-featured-wrap {
-    position: relative;
-    margin-bottom: var(--space-48);
-  }
-  .rv-featured-badge {
     position: absolute;
-    top: -14px;
-    left: 24px;
-    z-index: 2;
-    background: var(--color-text);
-    color: var(--color-text-inverse);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    font-size: var(--fs-11);
-    font-weight: var(--fw-semibold);
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.38;
+    pointer-events: none;
+  }
+
+  .reviews-hero__inner {
+    position: relative;
+    padding-top: var(--academy-hero-y-start);
+    padding-bottom: var(--academy-hero-y-end);
+  }
+
+  .reviews-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.55fr);
+    gap: var(--academy-gap-lg);
+    align-items: end;
+  }
+
+  .reviews-hero__title {
+    margin: 10px 0 0;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-hero-title);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+
+  .reviews-hero__copy {
+    display: grid;
+    gap: 24px;
+  }
+
+  .reviews-hero__seo {
+    margin: 0;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-body-sm);
+    line-height: 1.65;
+    color: var(--inkSoft);
+  }
+
+  .reviews-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .reviews-hero__stats div {
+    min-height: var(--academy-meta-cell-min-h);
+    padding: 14px;
+    background: #fffdf7;
+  }
+
+  .reviews-hero__stats b {
+    display: block;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-small-title);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .reviews-hero__stats span {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-micro);
+    line-height: 1.35;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    color: var(--dim);
+  }
+
+  .reviews-section {
+    border-top: 1px solid var(--line);
+    padding: var(--academy-section-y) 0;
+  }
+
+  .reviews-section--alt {
+    background: var(--milk);
+  }
+
+
+  .review-card {
+    position: relative;
+    display: grid;
+    gap: 22px;
+    padding: var(--academy-card-pad);
+    border: 1px solid var(--line);
+    background: #fffdf7;
+    color: var(--ink);
+  }
+
+  .review-card--featured {
+    margin-bottom: 32px;
+    background:
+      linear-gradient(rgba(255, 253, 247, 0.88), rgba(255, 253, 247, 0.96)),
+      repeating-linear-gradient(135deg, rgba(178, 58, 20, 0.18) 0 1px, transparent 1px 12px);
+    border-color: var(--ink);
+  }
+
+  .review-card__label {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .review-card__head {
     display: flex;
     align-items: center;
-    gap: 6px;
-  }
-  .rv-featured-badge::before {
-    content: "★";
-    color: var(--color-accent);
+    gap: 14px;
   }
 
-  /* ===== Masonry 2 columns ===== */
-  .rv-masonry {
-    columns: 2;
-    column-gap: 40px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .review-card__avatar {
+    width: var(--academy-icon-lg);
+    height: var(--academy-icon-lg);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--rust);
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-action);
+    font-weight: 700;
+    overflow: hidden;
   }
-  .rv-masonry > * {
-    break-inside: avoid;
-    padding-top: 18px;
-    margin-bottom: var(--space-24);
-    display: block;
+
+  .review-card__avatar img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  /* ===== Stepik courses list ===== */
-  .rv-courses {
+  .review-card h3 {
+    margin: 0 0 8px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .review-card__meta {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-48);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
 
-  /* ===== Screens modal ===== */
-  .rv-modal {
-    border: none;
-    border-radius: var(--radius-xl);
+  .review-card__meta span,
+  .review-card__meta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .review-card__meta a {
+    color: var(--rust);
+  }
+
+  .review-card__meta img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+  }
+
+  .review-card blockquote {
+    margin: 0;
+    font-family: var(--academy-font-body);
+    font-size: var(--academy-prose);
+    line-height: 1.58;
+    color: var(--inkSoft);
+  }
+
+  .review-score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1px;
+    align-items: stretch;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .review-score div,
+  .review-score i,
+  .review-score small {
+    background: var(--paper);
+  }
+
+  .review-score div {
+    display: grid;
+    place-items: center;
+    min-height: var(--academy-row-min-h);
+    padding: 12px;
+  }
+
+  .review-score span,
+  .review-score small {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .review-score b {
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .review-score i {
+    display: grid;
+    place-items: center;
+    min-width: 48px;
+    color: var(--rust);
+    font-style: normal;
+  }
+
+  .review-score small {
+    grid-column: 1 / -1;
+    padding: 10px 12px;
+    text-align: center;
+    color: var(--rust);
+  }
+
+  .review-screens {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 12px 16px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .review-screens:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .reviews-grid {
+    columns: 2;
+    column-gap: 24px;
+  }
+
+  .reviews-grid .review-card {
+    break-inside: avoid;
+    margin-bottom: 24px;
+  }
+
+  .stepik-list {
+    display: grid;
+    gap: 32px;
+  }
+
+  .stepik-card {
+    border: 1px solid var(--line);
+    background: #fffdf7;
+    padding: var(--academy-card-pad);
+  }
+
+  .stepik-card__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: start;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stepik-card__kicker,
+  .stepik-card__rating,
+  .stepik-review__head,
+  .stepik-review button {
+    font-family: var(--academy-font-mono);
+  }
+
+  .stepik-card__kicker {
+    margin-bottom: 10px;
+    font-size: var(--academy-caption);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .stepik-card h3 {
+    max-width: 780px;
+    margin: 0 0 14px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stepik-card__rating {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-size: var(--academy-meta);
+    color: var(--dim);
+  }
+
+  .stepik-card__rating span {
+    color: var(--ochre);
+  }
+
+  .stepik-card__rating b {
+    color: var(--ink);
+  }
+
+  .stepik-card__rating em {
+    font-style: normal;
+  }
+
+  .stepik-card__head > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 13px 16px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .stepik-card__head > a:hover {
+    background: var(--rust);
+    border-color: var(--rust);
+  }
+
+  .stepik-reviews {
+    columns: 2;
+    column-gap: 16px;
+  }
+
+  .stepik-review {
+    break-inside: avoid;
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .stepik-review__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--academy-meta);
+  }
+
+  .stepik-review__head span {
+    color: var(--ochre);
+  }
+
+  .stepik-review__head a {
+    margin-left: auto;
+    color: var(--rust);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .stepik-review p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+    margin: 0;
+    font-family: var(--academy-font-body);
+    font-size: var(--academy-body-sm);
+    line-height: 1.58;
+    color: var(--inkSoft);
+  }
+
+  .stepik-review[data-expanded="true"] p {
+    display: block;
+    overflow: visible;
+  }
+
+  .stepik-review button {
+    justify-self: start;
+    border: 0;
+    background: transparent;
+    color: var(--rust);
+    padding: 0;
+    font-size: var(--academy-caption);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .reviews-seo {
+    padding: 42px 0;
+    border-top: 1px solid var(--line);
+    color: var(--dim);
+  }
+
+  .reviews-seo h2 {
+    max-width: var(--academy-copy-max);
+    margin: 0 0 14px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-action);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .reviews-seo p {
+    max-width: var(--academy-seo-max);
+    margin: 0 0 12px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-meta);
+    line-height: 1.6;
+  }
+
+  .reviews-modal {
+    width: min(960px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    border: 0;
     padding: 0;
     background: transparent;
-    max-width: min(960px, 96vw);
-    width: 100%;
-    box-shadow: var(--shadow-3);
-  }
-  .rv-modal::backdrop {
-    background: var(--color-overlay);
-    backdrop-filter: blur(6px);
+    color: var(--ink);
   }
 
-  .rv-modal__box {
-    background: var(--color-surface);
-    border-radius: var(--radius-xl);
-    padding: var(--space-32);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-24);
+  .reviews-modal::backdrop {
+    background:
+      linear-gradient(rgba(239, 233, 218, 0.88), rgba(239, 233, 218, 0.92)),
+      repeating-linear-gradient(135deg, rgba(178, 58, 20, 0.18) 0 1px, transparent 1px 12px);
   }
 
-  .rv-modal__head {
+  .reviews-modal__box {
+    border: 1px solid var(--ink);
+    background: #fffdf7;
+  }
+
+  .reviews-modal__head {
     display: flex;
+    align-items: start;
     justify-content: space-between;
-    align-items: center;
-    gap: var(--space-12);
-  }
-  .rv-modal__title {
-    font-size: var(--fs-20);
-    font-weight: var(--fw-semibold);
-    line-height: var(--lh-snug);
-  }
-  .rv-modal__counter {
-    font-size: var(--fs-12);
-    color: var(--color-text-muted);
-    margin-left: var(--space-12);
-    font-weight: var(--fw-medium);
-  }
-  .rv-modal__close {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--gray-100);
-    border: 1px solid var(--color-border);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    font-size: var(--fs-16);
-    transition:
-      background var(--dur-1) var(--ease),
-      color var(--dur-1) var(--ease);
-    flex: 0 0 auto;
-  }
-  .rv-modal__close:hover {
-    background: var(--color-text);
-    color: var(--color-text-inverse);
-    border-color: var(--color-text);
+    gap: 20px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--ink);
   }
 
-  .rv-modal__stage {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: var(--space-16);
-    align-items: center;
+  .reviews-modal__head span,
+  .reviews-modal__stage button,
+  .reviews-modal figcaption {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
   }
-  .rv-modal__nav {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--color-text);
-    color: var(--color-text-inverse);
-    border: none;
-    display: grid;
-    place-items: center;
-    font-size: var(--fs-24);
+
+  .reviews-modal h2 {
+    margin: 6px 0 0;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
     line-height: 1;
-    cursor: pointer;
-    transition: background var(--dur-1) var(--ease);
-    flex: 0 0 auto;
-  }
-  .rv-modal__nav:hover {
-    background: var(--color-brand);
   }
 
-  .rv-modal__img {
-    background: var(--gray-100);
-    border-radius: var(--radius-lg);
-    display: block;
-    position: relative;
-    overflow: auto;
-    max-height: min(75vh, 960px);
+  .reviews-modal__head button {
+    width: var(--academy-icon-sm);
+    height: var(--academy-icon-sm);
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: var(--academy-action);
+    cursor: pointer;
   }
-  .rv-modal__img img {
+
+  .reviews-modal__head button:hover,
+  .reviews-modal__stage button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .reviews-modal__stage {
+    display: grid;
+    grid-template-columns: var(--academy-icon-md) minmax(0, 1fr) var(--academy-icon-md);
+    gap: 1px;
+    background: var(--line);
+  }
+
+  .reviews-modal__stage button {
+    border: 0;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .reviews-modal figure {
+    margin: 0;
+    min-height: 320px;
+    max-height: calc(100vh - 160px);
+    overflow: auto;
+    background: var(--milk);
+  }
+
+  .reviews-modal img {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
-    background: var(--gray-100);
-  }
-  .rv-modal__img-label {
-    position: absolute;
-    left: 50%;
-    bottom: 12px;
-    transform: translateX(-50%);
-    z-index: 1;
-    text-align: center;
-    font-size: var(--fs-12);
-    color: var(--color-text-secondary);
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.92);
-    border-radius: var(--radius-pill);
-    backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-1);
-  }
-  .rv-modal__img-label strong {
-    font-size: var(--fs-18);
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
   }
 
-  /* ===== Responsive ===== */
-  @media (max-width: 900px) {
-    .rv-hero__stats {
-      gap: var(--space-24);
-    }
-    .rv-section__head {
+  .reviews-modal figcaption {
+    padding: 12px 16px;
+    background: #fffdf7;
+    border-top: 1px solid var(--line);
+  }
+
+  .is-modal-open {
+    overflow: hidden;
+  }
+
+  @media (max-width: 980px) {
+    .reviews-hero__grid,
+    .stepik-card__head {
       grid-template-columns: 1fr;
-      gap: var(--space-12);
     }
-    .rv-section__meta {
-      text-align: left;
-      align-items: flex-start;
-      padding-top: 0;
-    }
-  }
 
-  /* ===== SEO text blocks ===== */
-  .rv-seo {
-    padding-top: var(--space-40);
-    padding-bottom: var(--space-40);
-    border-top: 1px solid var(--color-border);
-  }
-  .rv-seo__title {
-    font-size: var(--fs-15);
-    font-weight: var(--fw-semibold);
-    color: var(--color-text-secondary);
-    line-height: var(--lh-snug);
-    margin-bottom: var(--space-16);
-  }
-  .rv-seo p {
-    font-size: var(--fs-13);
-    color: var(--color-text-muted);
-    line-height: var(--lh-base);
-    margin-bottom: var(--space-12);
-  }
-  .rv-seo p:last-child {
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 600px) {
-    .rv-hero {
-      padding-top: var(--space-32);
-      padding-bottom: var(--space-40);
-    }
-    .rv-hero__title {
-      font-size: var(--fs-h2);
-    }
-    .rv-hero__lede {
-      font-size: var(--fs-16);
-    }
-    .rv-hero__stats {
-      gap: var(--space-16);
-    }
-    .rv-section {
-      padding-top: var(--space-40);
-      padding-bottom: var(--space-40);
-    }
-    .rv-section__title {
-      font-size: var(--fs-h2);
-    }
-    .rv-masonry {
+    .reviews-grid,
+    .stepik-reviews {
       columns: 1;
     }
-    .rv-modal__box {
-      padding: var(--space-24) var(--space-16);
+  }
+
+  @media (max-width: 680px) {
+    .reviews-hero__stats {
+      grid-template-columns: 1fr;
     }
-    .rv-modal__stage {
-      gap: var(--space-8);
+
+    .review-card__head {
+      align-items: flex-start;
     }
-    .rv-modal__nav {
-      width: 36px;
-      height: 36px;
-      font-size: var(--fs-20);
+
+    .review-score {
+      grid-template-columns: 1fr;
+    }
+
+    .review-score i {
+      min-height: 42px;
+    }
+
+    .reviews-modal__stage {
+      grid-template-columns: 1fr;
+    }
+
+    .reviews-modal__stage button {
+      min-height: var(--academy-icon-sm);
     }
   }
 </style>
+

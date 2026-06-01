@@ -1,0 +1,29 @@
+---
+interface Crumb {
+  label: string;
+  href?: string;
+}
+const { items = [], class: cls = "mb-12" } = Astro.props as {
+  items: Crumb[];
+  class?: string;
+};
+---
+
+<nav
+  class={`flex items-center flex-wrap gap-2 font-mono text-[11px] text-adim tracking-widest uppercase ${cls}`}
+>
+  {
+    items.map((c, i) => (
+      <>
+        {c.href ? (
+          <a href={c.href} class="hover:text-aink">
+            {c.label}
+          </a>
+        ) : (
+          <span class="text-aink">{c.label}</span>
+        )}
+        {i < items.length - 1 && <span>/</span>}
+      </>
+    ))
+  }
+</nav>

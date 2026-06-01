@@ -1,0 +1,62 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Item {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  secNum?: string;
+  title?: string;
+  titleAccent?: string;
+  description?: string;
+  items?: Item[];
+  alignList?: boolean;
+}
+
+const {
+  secNum = "[05] / FAQ",
+  title = "Что обычно спрашивают",
+  titleAccent = "",
+  description = "",
+  items = [],
+  alignList = false,
+} = Astro.props as Props;
+
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+const listClass = `border-t border-aline max-w-4xl${alignList ? " md:ml-[25%]" : ""}`;
+---
+
+{
+  items.length > 0 && (
+    <section class="section bg-apaper2">
+      <div class="gutter py-16 md:py-24">
+        <EgeH2
+          variant="academy"
+          secNum={secNum}
+          text={`${title}${titleAccent ? ` ${titleAccent}` : ""}`}
+          mark={titleAccent}
+          color="dim"
+          description={description}
+        />
+
+        <div class={listClass}>
+          {items.map((it, i) => (
+            <details class="faq">
+              <summary>
+                <div class="font-mono text-sm text-rust mt-1 w-12 shrink-0">{pad(i)}</div>
+                <div
+                  class="font-display font-medium text-xl md:text-2xl leading-snug flex-1"
+                  set:html={it.q}
+                />
+                <span class="faq-plus">+</span>
+              </summary>
+              <div class="faq-body" set:html={it.a} />
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

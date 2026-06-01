@@ -1,0 +1,232 @@
+---
+import "../styles/academy.css";
+import { getCollection } from "astro:content";
+import Seo from "../components/Seo.astro";
+import JsonLd from "../components/JsonLd.astro";
+import AcademyNav from "../components/academy/AcademyNav.astro";
+import AcademyFooter from "../components/academy/AcademyFooter.astro";
+import AcademyCursorTrail from "../components/academy/AcademyCursorTrail.astro";
+import EgeFloatingActions from "../components/ege/EgeFloatingActions.astro";
+import EgePopupForm from "../components/ege/EgePopupForm.astro";
+import ExternalScripts from "../components/scripts/ExternalScripts.astro";
+import YandexMetrika from "../components/analytics/YandexMetrika.astro";
+import CookieConsent from "../components/CookieConsent.astro";
+import config from "../config.ts";
+import { egeLandingData } from "../data/egeLanding";
+import {
+  buildBreadcrumbsJsonLd,
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+  getSiteName,
+} from "../lib/seoData";
+import { academyCategoryPath, academyPath } from "../lib/academyPaths";
+import { fmtFull, toDate } from "../lib/academyArticles";
+
+interface Crumb {
+  name: string;
+  href?: string;
+}
+
+const {
+  title = "Академия ХИМ.LAB — разборы, формулы, ЕГЭ-задачи по химии",
+  description = "База знаний по химии: разборы заданий ЕГЭ, формулы и реакции, конспекты тем кодификатора, тактика подготовки.",
+  image = "/images/technical/og-home.png",
+  url,
+  seoType = "website",
+  index = true,
+  follow = true,
+  addSiteSuffix = true,
+  siteName,
+  imageAlt,
+  datePublished,
+  dateModified,
+  prevUrl,
+  nextUrl,
+  breadcrumbs = [],
+  showBreadcrumbs = false,
+  articleJsonLd,
+  videoJsonLd,
+  courseJsonLd,
+  productJsonLd,
+  faqJsonLd,
+  webPageJsonLd,
+  jsonLd = [],
+  breadcrumbRoot = academyPath(),
+} = Astro.props;
+
+const origin = Astro.url.origin;
+const siteNameFinal = getSiteName(siteName, config.siteName);
+const orgJsonLd = buildOrganizationJsonLd(origin);
+const websiteJsonLd = buildWebSiteJsonLd(origin, siteNameFinal);
+const breadcrumbsJsonLd =
+  showBreadcrumbs && breadcrumbs.length > 0
+    ? buildBreadcrumbsJsonLd(
+        origin,
+        siteNameFinal,
+        breadcrumbs as Crumb[],
+        breadcrumbRoot,
+        Astro.url.pathname,
+      )
+    : null;
+const extraJsonLd = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+const jsonLdItems = [
+  orgJsonLd,
+  websiteJsonLd,
+  breadcrumbsJsonLd,
+  articleJsonLd,
+  videoJsonLd,
+  courseJsonLd,
+  productJsonLd,
+  faqJsonLd,
+  webPageJsonLd,
+  ...extraJsonLd,
+].filter(Boolean);
+
+const academyNavArticles = (
+  await getCollection("articles", ({ data }) => data.visible !== false)
+).sort((a, b) => {
+  const da = a.data.date instanceof Date ? a.data.date : new Date(a.data.date);
+  const db = b.data.date instanceof Date ? b.data.date : new Date(b.data.date);
+  return db.getTime() - da.getTime();
+});
+
+const academyNavCategories = Array.from(
+  new Set(academyNavArticles.map((article) => String(article.data.category || "").trim()).filter(Boolean)),
+)
+  .sort((a, b) => a.localeCompare(b, "ru"))
+  .map((label) => ({ label, href: academyCategoryPath(label) }));
+
+// Параметры футера: считаем «живые» значения для всех страниц,
+// которые используют этот лейаут (то же, что главная академии).
+const footerArticlesCount = academyNavArticles.length;
+const footerUpdated = academyNavArticles[0]
+  ? fmtFull(toDate(academyNavArticles[0].data.date))
+  : "";
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#EFE9DA" />
+
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      url={url}
+      type={seoType}
+      index={index}
+      follow={follow}
+      addSiteSuffix={addSiteSuffix}
+      siteName={siteNameFinal}
+      imageAlt={imageAlt}
+      datePublished={datePublished}
+      dateModified={dateModified}
+    />
+
+    {prevUrl && <link rel="prev" href={prevUrl} />}
+    {nextUrl && <link rel="next" href={nextUrl} />}
+    <link rel="alternate" type="application/rss+xml" title={`${siteNameFinal} — RSS`} href="/rss.xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+    <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script is:inline defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <YandexMetrika />
+
+    {jsonLdItems.map((item) => <JsonLd data={item} />)}
+  </head>
+  <body class="academy-root">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:bg-apaper focus:px-4 focus:py-3 focus:text-aink">
+      Перейти к основному содержимому
+    </a>
+    <AcademyNav
+      articlesCount={academyNavArticles.length}
+      searchArticles={academyNavArticles}
+      categories={academyNavCategories}
+    />
+    <main id="main">
+      <slot />
+    </main>
+    <AcademyFooter articlesCount={footerArticlesCount} updated={footerUpdated} />
+    <AcademyCursorTrail />
+    <EgeFloatingActions {...egeLandingData.floatingActions} theme="academy" />
+    <EgePopupForm {...egeLandingData.popupForm} theme="academy" />
+    <CookieConsent />
+    <ExternalScripts />
+
+    <script>
+      // PT-grid фон в hero
+      (function () {
+        const grid = document.getElementById("ptBg");
+        if (grid) {
+          for (let i = 0; i < 18 * 5; i++)
+            grid.appendChild(document.createElement("div"));
+        }
+      })();
+
+      // GSAP reveal + счётчики
+      const runAcademyIdle = (fn: () => void) => {
+        if ("requestIdleCallback" in window) {
+          (window as any).requestIdleCallback(fn, { timeout: 1200 });
+        } else {
+          setTimeout(fn, 1);
+        }
+      };
+
+      runAcademyIdle(function initAcademyScrollEffects() {
+        const g = (window as any).gsap;
+        const ST = (window as any).ScrollTrigger;
+        if (!g || !ST) {
+          setTimeout(initAcademyScrollEffects, 120);
+          return;
+        }
+        g.registerPlugin(ST);
+        document.querySelectorAll(".titrate").forEach((el) => {
+          ST.create({
+            trigger: el,
+            start: "top 85%",
+            once: true,
+            onEnter: () => el.classList.add("in"),
+          });
+        });
+        document.querySelectorAll("[data-counter]").forEach((el) => {
+          const target = parseInt((el as HTMLElement).dataset.counter || "0", 10);
+          ST.create({
+            trigger: el,
+            start: "top 88%",
+            once: true,
+            onEnter: () => {
+              const obj = { v: 0 };
+              g.to(obj, {
+                v: target,
+                duration: 1.8,
+                ease: "expo.out",
+                onUpdate: () => {
+                  el.textContent =
+                    target >= 1000
+                      ? Math.round(obj.v).toLocaleString("ru-RU")
+                      : String(Math.round(obj.v));
+                },
+              });
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

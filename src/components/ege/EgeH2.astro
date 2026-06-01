@@ -1,0 +1,181 @@
+---
+/*
+  Унифицированный H2 для тёмных лендингов (ege.css).
+  Шрифт / размер / межбуквенный — фиксированы (стандарт «брутал-Хим.LAB»).
+  Управляешь только:
+    – text: полный текст заголовка;
+    – подсветкой слов (подчёркивание и/или цвет текста).
+
+  Простой режим:
+    <EgeH2 text="Сколько ты заработаешь?"
+           underline="заработаешь"
+           underlineColor="fuchsia"
+    />
+
+  С цветом без подчёркивания:
+    <EgeH2 text="Продукт уже продаёт за вас."
+           mark="продаёт"
+           color="acid"
+    />
+
+  Несколько меток в одном заголовке:
+    <EgeH2 text="Уже зарабатывают на химии. Реальные кейсы, не маркетинг."
+           marks={[
+             { text: "зарабатывают", underline: "fuchsia" },
+             { text: "Реальные кейсы, не маркетинг.", color: "dim" },
+           ]}
+    />
+*/
+
+type AccentColor = "acid" | "fuchsia" | "dim" | "paper" | "ink";
+
+export interface Mark {
+  /** Подстрока в text, которую обернём span'ом (первое вхождение). */
+  text: string;
+  /** Добавляет подчёркивание соответствующего цвета. */
+  underline?: "acid" | "fuchsia";
+  /** Цвет текста подсвеченного фрагмента. */
+  color?: AccentColor;
+}
+
+interface Props {
+  /** Полный текст заголовка. Допустим &nbsp;, <br/> и пр. */
+  text: string;
+  /** Простой режим: подстрока для подчёркивания. */
+  underline?: string;
+  /** Цвет линии подчёркивания. По умолчанию — acid. */
+  underlineColor?: "acid" | "fuchsia";
+  /** Простой режим: подстрока, у которой меняем только цвет текста. */
+  mark?: string;
+  /** Цвет текста подсвеченной подстроки (для simple-режима). */
+  color?: AccentColor;
+  /** Расширенный режим: несколько меток (если задан — простые поля игнорируются). */
+  marks?: Mark[];
+  /** Дополнительные классы (например, выравнивание, max-width). */
+  class?: string;
+  /** id для якоря. */
+  id?: string;
+  /** Режим отображения: старый лендинговый или академичный блок с номером и описанием. */
+  variant?: "landing" | "academy";
+  /** Академичный режим: номер/лейбл секции слева. */
+  secNum?: string;
+  /** Академичный режим: описание под заголовком. */
+  description?: string;
+  /** Академичный режим: сетка или компактная колонка. */
+  layout?: "grid" | "stack";
+}
+
+const {
+  text,
+  underline,
+  underlineColor = "acid",
+  mark,
+  color,
+  marks,
+  class: extraClass = "",
+  id,
+  variant = "landing",
+  secNum = "",
+  description = "",
+  layout = "grid",
+} = Astro.props;
+
+// ── Сбор меток из simple-режима в общий массив ──────────────
+const collectedMarks: Mark[] = (() => {
+  if (marks && marks.length) return marks;
+  const list: Mark[] = [];
+  if (underline)
+    list.push({ text: underline, underline: underlineColor, color });
+  if (mark) list.push({ text: mark, color: color ?? "acid" });
+  return list;
+})();
+
+// ── Маппинг цветов на Tailwind-классы ──────────────────────
+const colorClass: Record<AccentColor, string> = {
+  acid: "text-acid",
+  fuchsia: "text-fuchsia2",
+  dim: "text-dim",
+  paper: "text-paper",
+  ink: "text-ink",
+};
+
+function classForMark(m: Mark): string {
+  const parts: string[] = [];
+  if (m.underline)
+    parts.push(m.underline === "fuchsia" ? "ul-f" : "ul-a");
+  if (m.color) parts.push(colorClass[m.color]);
+  return parts.join(" ");
+}
+
+// ── Замена первых вхождений каждой метки <span>'ом ─────────
+//    Делается по индексам, чтобы вставленные <span> не «съели»
+//    последующие совпадения.
+function buildHtml(input: string, list: Mark[]): string {
+  if (!list.length) return input;
+  type Slice = { start: number; end: number; html: string };
+  const slices: Slice[] = [];
+  for (const m of list) {
+    if (!m.text) continue;
+    const i = input.indexOf(m.text);
+    if (i < 0) continue;
+    const cls = classForMark(m);
+    slices.push({
+      start: i,
+      end: i + m.text.length,
+      html: cls
+        ? `<span class="${cls}">${m.text}</span>`
+        : m.text,
+    });
+  }
+  // Сортируем по началу, проверяем что не пересекаются.
+  slices.sort((a, b) => a.start - b.start);
+  let out = "";
+  let cursor = 0;
+  for (const s of slices) {
+    if (s.start < cursor) continue; // пропускаем пересекающиеся
+    out += input.slice(cursor, s.start);
+    out += s.html;
+    cursor = s.end;
+  }
+  out += input.slice(cursor);
+  return out;
+}
+
+const html = buildHtml(text, collectedMarks);
+const headingClass =
+  variant === "academy"
+    ? [
+        "font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] text-aink",
+        extraClass,
+      ]
+    : [
+        "font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em]",
+        extraClass,
+      ];
+---
+
+{
+  variant === "academy" ? (
+    <div
+      class:list={[
+        layout === "stack"
+          ? "grid grid-cols-1 gap-4 mb-8"
+          : "grid grid-cols-12 gap-6 mb-14",
+      ]}
+    >
+      {secNum && (
+        <div class={layout === "stack" ? "" : "col-span-12 md:col-span-3"}>
+          <div class="sec-num" set:html={secNum} />
+        </div>
+      )}
+      <div class={layout === "stack" ? "" : "col-span-12 md:col-span-9"}>
+        <h2 id={id} class:list={headingClass} set:html={html} />
+        {description && (
+          <p class="mt-6 max-w-2xl text-lg leading-snug text-ainkSoft/80" set:html={description} />
+        )}
+      </div>
+    </div>
+  ) : (
+    <h2 id={id} class:list={headingClass} set:html={html} />
+  )
+}

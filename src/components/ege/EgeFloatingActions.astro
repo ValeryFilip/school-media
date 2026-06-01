@@ -1,0 +1,283 @@
+---
+interface FloatingLink {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  supportLabel?: string;
+  scrollLabel?: string;
+  links?: FloatingLink[];
+  theme?: "landing" | "academy";
+}
+
+const {
+  supportLabel = "Написать нам",
+  scrollLabel = "Наверх",
+  links = [],
+  theme = "landing",
+} = Astro.props as Props;
+---
+
+<div class:list={["ege-float", theme === "academy" && "ege-float--academy"]} aria-label="Быстрые действия">
+  {
+    links.length > 0 && (
+      <div class="ege-float__support">
+        <div class="ege-float__caption">напишите нам</div>
+        <button
+          class="ege-float__btn ege-float__btn--support"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="ege-float-menu"
+          title={supportLabel}
+        >
+          <span class="ege-float__symbol">?</span>
+        </button>
+        <div class="ege-float__menu" id="ege-float-menu" role="menu" aria-label={supportLabel}>
+          {links.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              role="menuitem"
+              class="ege-float__item"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <button class="ege-float__btn ege-float__btn--top" type="button" aria-label={scrollLabel} title={scrollLabel}>
+    <span class="ege-float__symbol">↑</span>
+  </button>
+</div>
+
+<style>
+  .ege-float {
+    position: fixed;
+    right: clamp(14px, 2vw, 24px);
+    bottom: calc(env(safe-area-inset-bottom) + clamp(14px, 2vw, 24px));
+    z-index: 70;
+    display: grid;
+    gap: 8px;
+    justify-items: end;
+    pointer-events: none;
+  }
+
+  .ege-float__support {
+    position: relative;
+    pointer-events: auto;
+    display: grid;
+    gap: 6px;
+    justify-items: end;
+  }
+
+  .ege-float__caption {
+    max-width: 90px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    line-height: 1.1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(242, 242, 242, 0.62);
+    text-align: right;
+    pointer-events: none;
+  }
+
+  .ege-float__btn {
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--paper);
+    background: var(--ink);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-family: "JetBrains Mono", monospace;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease,
+      border-color 0.16s ease,
+      transform 0.16s ease,
+      opacity 0.16s ease;
+  }
+
+  .ege-float__btn:hover,
+  .ege-float__support.is-open .ege-float__btn--support {
+    background: var(--acid);
+    border-color: var(--acid);
+    color: var(--ink);
+    transform: translateY(-1px);
+  }
+
+  .ege-float__btn--top {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+  }
+
+  .ege-float__btn--top.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .ege-float__symbol {
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .ege-float__menu {
+    position: absolute;
+    right: 60px;
+    bottom: 0;
+    min-width: 190px;
+    border: 1px solid var(--line);
+    background: var(--ink);
+    display: grid;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(8px);
+    transition:
+      opacity 0.16s ease,
+      transform 0.16s ease;
+  }
+
+  .ege-float__support.is-open .ege-float__menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .ege-float__item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    transition:
+      background 0.16s ease,
+      color 0.16s ease;
+  }
+
+  .ege-float__item:last-child {
+    border-bottom: 0;
+  }
+
+  .ege-float__item:hover {
+    background: var(--acid);
+    color: var(--ink);
+  }
+
+  .ege-float--academy {
+    z-index: 1900;
+  }
+
+  .ege-float--academy .ege-float__btn {
+    border-color: var(--line);
+    background: #fffdf7;
+    color: var(--ink);
+  }
+
+  .ege-float--academy .ege-float__caption {
+    color: var(--dim);
+  }
+
+  .ege-float--academy .ege-float__support:hover .ege-float__caption,
+  .ege-float--academy .ege-float__support.is-open .ege-float__caption {
+    color: var(--rust);
+  }
+
+  .ege-float--academy .ege-float__btn:hover,
+  .ege-float--academy .ege-float__support.is-open .ege-float__btn--support {
+    border-color: var(--rust);
+    background: var(--rust);
+    color: var(--paper);
+  }
+
+  .ege-float--academy .ege-float__menu {
+    border-color: var(--line);
+    border-top: 4px solid var(--rust);
+    background: #fffdf7;
+  }
+
+  .ege-float--academy .ege-float__item {
+    border-bottom-color: var(--line);
+    background: #fffdf7;
+    color: var(--ink);
+  }
+
+  .ege-float--academy .ege-float__item:hover {
+    background: var(--milk);
+    color: var(--rust);
+  }
+
+  @media (max-width: 640px) {
+    .ege-float {
+      right: 12px;
+      bottom: calc(env(safe-area-inset-bottom) + 12px);
+    }
+
+    .ege-float__btn {
+      width: 48px;
+      height: 48px;
+    }
+
+    .ege-float__menu {
+      right: 56px;
+      min-width: min(190px, calc(100vw - 88px));
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const root =
+      document.currentScript?.parentElement?.querySelector(".ege-float") ||
+      document.querySelector(".ege-float");
+    if (!root) return;
+
+    const support = root.querySelector(".ege-float__support");
+    const supportBtn = root.querySelector(".ege-float__btn--support");
+    const topBtn = root.querySelector(".ege-float__btn--top");
+
+    function setSupportOpen(open) {
+      if (!support || !supportBtn) return;
+      support.classList.toggle("is-open", open);
+      supportBtn.setAttribute("aria-expanded", String(open));
+    }
+
+    supportBtn?.addEventListener("click", () => {
+      setSupportOpen(!support?.classList.contains("is-open"));
+    });
+
+    document.addEventListener("click", (event) => {
+      if (support && !support.contains(event.target)) setSupportOpen(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setSupportOpen(false);
+    });
+
+    function onScroll() {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      topBtn?.classList.toggle("is-visible", y > 300);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    topBtn?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script>

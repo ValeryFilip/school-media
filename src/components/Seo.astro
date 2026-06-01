@@ -58,6 +58,14 @@ const ogImage = absUrl(origin, image);
 /** Название сайта: пропс > config.siteName > 'EGEHIM' */
 const siteName = getSiteName(siteNameProp, (config as any)?.siteName);
 
+const imageType = (() => {
+  const normalized = image?.toLowerCase().split(/[?#]/)[0] ?? "";
+  if (normalized.endsWith(".png")) return "image/png";
+  if (normalized.endsWith(".webp")) return "image/webp";
+  if (normalized.endsWith(".gif")) return "image/gif";
+  return "image/jpeg";
+})();
+
 /** <title> с суффиксом */
 const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
 ---
@@ -80,7 +88,7 @@ const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
 {ogImage && (
   <meta
     property="og:image:type"
-    content={image?.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg"}
+    content={imageType}
   />
 )}
 {ogImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}

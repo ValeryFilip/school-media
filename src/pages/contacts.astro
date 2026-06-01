@@ -1,14 +1,15 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
-import LeadCapture from "../components/mainpage/LeadCapture.astro";
+import AcademyLayout from "../layouts/AcademyLayout.astro";
+import AcademyBreadcrumbs from "../components/academy/AcademyBreadcrumbs.astro";
+import AcademyFaq from "../components/academy/AcademyFaq.astro";
+import EgeH2 from "../components/ege/EgeH2.astro";
+import { buildFAQJsonLd } from "../lib/seoData";
 
 const seo = {
   title: "Контакты — ЕГЭХИМ. Написать Валерию Филипенко",
   description:
     "Контакты школы ЕГЭХИМ: Telegram, WhatsApp, ВКонтакте, YouTube. Напишите нам по любому вопросу о подготовке к ЕГЭ и ОГЭ по химии.",
 };
-
-const breadcrumbs = [{ name: "Главная", href: "/" }, { name: "Контакты" }];
 
 const MESSENGERS = [
   {
@@ -18,8 +19,6 @@ const MESSENGERS = [
     handle: "@valery_chemistry",
     desc: "Самый быстрый способ связаться. Ответим на вопросы о форматах, расписании и курсах.",
     cta: "Написать в Telegram",
-    bg: "var(--brand-50)",
-    borderColor: "var(--brand-200)",
   },
   {
     href: "https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20",
@@ -28,8 +27,6 @@ const MESSENGERS = [
     handle: "+7 981 836-49-92",
     desc: "Подходит, если удобнее общаться по номеру телефона. Отвечаем в рабочее время.",
     cta: "Написать",
-    bg: "var(--success-50)",
-    borderColor: "var(--success-200)",
   },
   {
     href: "https://vk.me/valeryfilip",
@@ -38,8 +35,6 @@ const MESSENGERS = [
     handle: "@valeryfilip",
     desc: "Напишите в личные сообщения ВКонтакте — удобно, если вы уже используете VK.",
     cta: "Написать в VK",
-    bg: "var(--accent-50)",
-    borderColor: "var(--accent-200)",
   },
 ];
 
@@ -69,761 +64,840 @@ const SOCIALS = [
     cta: "Вступить в канал",
   },
 ];
+
+const OTHER_CONTACTS = [
+  {
+    href: "mailto:info@egehim.ru",
+    icon: "/images/technical/mail.webp",
+    label: "Электронная почта",
+    value: "info@egehim.ru",
+  },
+  {
+    href: "https://t.me/chemistry_examBot",
+    icon: "/images/technical/telegram.webp",
+    label: "Telegram-бот",
+    value: "@chemistry_examBot — бесплатные курсы",
+    external: true,
+  },
+];
+
+const FAQ = [
+  {
+    q: "Как быстрее связаться со школой?",
+    a: "Лучше всего написать в Telegram или оставить заявку на сайте.",
+  },
+  {
+    q: "Можно ли записаться на индивидуальные занятия по химии?",
+    a: "Да, если есть свободные места. Формат и расписание обсуждаются отдельно.",
+  },
+  {
+    q: "Есть ли мини-группы по химии для ЕГЭ?",
+    a: "Да, набор в мини-группы открывается по расписанию. Количество мест ограничено.",
+  },
+  {
+    q: "Можно ли заниматься самостоятельно?",
+    a: "Да, для этого есть курсы ЕГЭХИМ на Stepik по отдельным разделам химии.",
+  },
+  {
+    q: "Вы работаете онлайн?",
+    a: "Да, подготовка проходит онлайн, поэтому заниматься можно из разных городов.",
+  },
+];
+
+const FORM_FIELDS = [
+  {
+    label: "ФИО",
+    name: "name",
+    type: "text",
+    placeholder: "Ваше имя и фамилия",
+    autocomplete: "name",
+    required: true,
+  },
+  {
+    label: "Телефон",
+    name: "phone",
+    type: "tel",
+    placeholder: "+7 (___) ___-__-__",
+    autocomplete: "tel",
+    required: false,
+  },
+  {
+    label: "Телеграм",
+    name: "telegram",
+    type: "text",
+    placeholder: "@username",
+    autocomplete: "off",
+    required: false,
+  },
+];
+
+const CONSENTS = [
+  {
+    html:
+      'Согласен с <a href="/docs/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a>',
+    fieldName: "consent_privacy",
+  },
+  {
+    html:
+      'Согласен на <a href="/docs/agreement/" target="_blank" rel="noopener">обработку персональных данных</a>',
+    fieldName: "consent_personal_data",
+  },
+  {
+    html:
+      'Согласен на <a href="/docs/marketing-consent/" target="_blank" rel="noopener">рекламную рассылку</a>',
+    fieldName: "consent_marketing",
+  },
+];
+
+const STEPS = [
+  "Познакомим с онлайн-школой",
+  "Расскажем, как проходят занятия",
+  "Запишем на бесплатный урок",
+];
+
+const pageUrl = `${Astro.url.origin}/contacts/`;
+
+const contactJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: seo.title,
+  description: seo.description,
+  url: pageUrl,
+  mainEntity: {
+    "@type": "Organization",
+    name: "ЕГЭХИМ",
+    email: "info@egehim.ru",
+    sameAs: SOCIALS.map((item) => item.href),
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        telephone: "+79818364992",
+        availableLanguage: "ru",
+      },
+    ],
+  },
+};
+
+const faqJsonLd = buildFAQJsonLd(FAQ);
 ---
 
-<MainLayout
+<AcademyLayout
   title={seo.title}
   description={seo.description}
-  breadcrumbs={breadcrumbs}
+  url={pageUrl}
+  addSiteSuffix={false}
+  breadcrumbs={[
+    { name: "Контакты" },
+  ]}
+  showBreadcrumbs={true}
+  breadcrumbRoot="/"
+  jsonLd={[contactJsonLd, faqJsonLd]}
 >
-  <div class="rv-scope">
-    <!-- Hero -->
-    <section class="rv-hero-wrap" aria-labelledby="ct-hero-title">
-      <div class="container rv-hero">
-        <p class="rv-hero__kicker">контакты · ЕГЭХИМ · онлайн-школа химии</p>
-        <h1 class="rv-hero__title" id="ct-hero-title">
-          Написать <em>Валерию Филипенко</em>
-        </h1>
-        <p class="rv-hero__lede">
-          Связаться со школой ЕГЭХИМ можно по почте, в Telegram или через форму
-          на сайте. Отвечаем на вопросы по подготовке к ЕГЭ по химии,
-          мини-группам, индивидуальным занятиям и самостоятельным курсам.
-        </p>
+  <div class="contacts-v2">
+    <section class="contacts-hero" aria-labelledby="contacts-title">
+      <div class="gutter contacts-hero__inner">
+        <AcademyBreadcrumbs
+          class="mb-10"
+          items={[
+            { label: "ЕГЭХИМ", href: "/" },
+            { label: "Контакты" },
+          ]}
+        />
+
+        <div class="contacts-hero__grid">
+          <div>
+            <div class="sec-num mb-4">[01] / контакты</div>
+            <h1 id="contacts-title" class="contacts-hero__title">
+              Написать Валерию Филипенко и связаться со школой ЕГЭХИМ
+            </h1>
+          </div>
+          <div class="contacts-hero__copy">
+            <p class="contacts-hero__seo">
+              Связаться со школой ЕГЭХИМ можно по почте, в Telegram или через форму
+              на сайте. Отвечаем на вопросы по подготовке к ЕГЭ по химии,
+              мини-группам, индивидуальным занятиям и самостоятельным курсам.
+            </p>
+            <div class="contacts-hero__meta">
+              <span>онлайн-школа химии</span>
+              <span>ЕГЭ В· ОГЭ В· курсы</span>
+              <span>ответим в рабочее время</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Corner blobs -->
-    <div class="rv-blob rv-blob--tl" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--tr" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--bl" aria-hidden="true"></div>
-    <div class="rv-blob rv-blob--br" aria-hidden="true"></div>
+    <section class="contacts-section" aria-labelledby="direct-title">
+      <div class="gutter">
+        <EgeH2
+          variant="academy"
+          secNum="[02] / напрямую"
+          text="Написать напрямую"
+          id="direct-title"
+          description="По вопросам записи на мини-группы, индивидуальные занятия и курсы по химии пишите в Telegram или на электронную почту. Если вы уже проходите курс, укажите имя ученика и формат обучения."
+        />
 
-    <div class="rv-body-bg">
-      <!-- Section 1 — Direct messaging -->
-      <section class="container ct-section" aria-labelledby="ct-s1-title">
-        <div class="ct-section__head">
-          <div>
-            <h2 class="ct-section__title" id="ct-s1-title">
-              Написать напрямую
-            </h2>
-            <p class="ct-section__sub">
-              По вопросам записи на мини-группы, индивидуальные занятия и курсы
-              по химии пишите в Telegram или на электронную почту. Если вы уже
-              проходите курс, укажите имя ученика и формат обучения — так мы
-              быстрее найдём нужную информацию.
-            </p>
-          </div>
+        <div class="contacts-grid">
+          {MESSENGERS.map((item) => (
+            <a class="contact-card" href={item.href} target="_blank" rel="noopener noreferrer">
+              <span class="contact-card__icon">
+                <img src={item.icon} alt="" width="40" height="40" loading="lazy" decoding="async" />
+              </span>
+              <span class="contact-card__name">{item.name}</span>
+              <span class="contact-card__handle">{item.handle}</span>
+              <span class="contact-card__desc">{item.desc}</span>
+              <span class="contact-card__cta">{item.cta}</span>
+            </a>
+          ))}
         </div>
-        <div class="ct-cards">
-          {
-            MESSENGERS.map((m) => (
-              <a
-                class="ct-card"
-                href={m.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={`--ct-bg: ${m.bg}; --ct-border: ${m.borderColor};`}
-              >
-                <div class="ct-card__icon">
-                  <img
-                    src={m.icon}
-                    alt=""
-                    width="48"
-                    height="48"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="ct-card__name">{m.name}</div>
-                <div class="ct-card__handle">{m.handle}</div>
-                <p class="ct-card__desc">{m.desc}</p>
-                <span class="ct-card__cta">{m.cta}</span>
-              </a>
-            ))
-          }
-        </div>
-      </section>
-
-      <!-- Section 2 — Social networks -->
-      <section class="container ct-section" aria-labelledby="ct-s2-title">
-        <div class="ct-section__head">
-          <div>
-            <h2 class="ct-section__title" id="ct-s2-title">Соцсети и каналы</h2>
-            <p class="ct-section__sub">
-              Полезные материалы, разборы задач и новости курсов
-            </p>
-          </div>
-        </div>
-        <div class="ct-cards">
-          {
-            SOCIALS.map((s) => (
-              <a
-                class="ct-card ct-card--social"
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="ct-card__icon">
-                  <img
-                    src={s.icon}
-                    alt=""
-                    width="48"
-                    height="48"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="ct-card__name">{s.name}</div>
-                <div class="ct-card__handle">{s.handle}</div>
-                <p class="ct-card__desc">{s.desc}</p>
-                <span class="ct-card__cta ct-card__cta--outline">{s.cta}</span>
-              </a>
-            ))
-          }
-        </div>
-      </section>
-
-      <!-- Section 3 — Contact form -->
-      <LeadCapture
-        id="contacts-lead"
-        title="Начни подготовку с пробного бесплатного занятия"
-        subtitle="Поможем с выбором формата подготовки и ответим на вопросы о курсах, расписании и стоимости занятий по химии."
-        utmSource="contacts"
-      />
-
-      <!-- FAQ -->
-      <section class="container ct-faq-section" aria-labelledby="ct-faq-title">
-        <div class="ct-section__head">
-          <div>
-            <h2 class="ct-section__title" id="ct-faq-title">Частые вопросы</h2>
-            <p class="ct-section__sub">
-              Ответы на популярные вопросы о школе и форматах занятий
-            </p>
-          </div>
-        </div>
-        <div class="ct-faq">
-          <details class="ct-faq__item">
-            <summary class="ct-faq__q">Как быстрее связаться со школой?</summary
-            >
-            <p class="ct-faq__a">
-              Лучше всего написать в Telegram или оставить заявку на сайте.
-            </p>
-          </details>
-          <details class="ct-faq__item">
-            <summary class="ct-faq__q"
-              >Можно ли записаться на индивидуальные занятия по химии?</summary
-            >
-            <p class="ct-faq__a">
-              Да, если есть свободные места. Формат и расписание обсуждаются
-              отдельно.
-            </p>
-          </details>
-          <details class="ct-faq__item">
-            <summary class="ct-faq__q"
-              >Есть ли мини-группы по химии для ЕГЭ?</summary
-            >
-            <p class="ct-faq__a">
-              Да, набор в мини-группы открывается по расписанию. Количество мест
-              ограничено.
-            </p>
-          </details>
-          <details class="ct-faq__item">
-            <summary class="ct-faq__q"
-              >Можно ли заниматься самостоятельно?</summary
-            >
-            <p class="ct-faq__a">
-              Да, для этого есть курсы ЕГЭХИМ на Stepik по отдельным разделам
-              химии.
-            </p>
-          </details>
-          <details class="ct-faq__item">
-            <summary class="ct-faq__q">Вы работаете онлайн?</summary>
-            <p class="ct-faq__a">
-              Да, подготовка проходит онлайн, поэтому заниматься можно из разных
-              городов.
-            </p>
-          </details>
-        </div>
-      </section>
-
-      <!-- Other: email + bot -->
-      <div class="container ct-other-wrap">
-        <a class="ct-other-item" href="mailto:info@egehim.ru">
-          <div class="ct-other-item__icon">
-            <img
-              src="/images/technical/mail.webp"
-              alt=""
-              width="24"
-              height="24"
-              loading="lazy"
-            />
-          </div>
-          <div class="ct-other-item__text">
-            <span class="ct-other-item__label">Электронная почта</span>
-            <span class="ct-other-item__value">info@egehim.ru</span>
-          </div>
-        </a>
-        <a
-          class="ct-other-item"
-          href="https://t.me/chemistry_examBot"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="ct-other-item__icon">
-            <img
-              src="/images/technical/telegram.webp"
-              alt=""
-              width="24"
-              height="24"
-              loading="lazy"
-            />
-          </div>
-          <div class="ct-other-item__text">
-            <span class="ct-other-item__label">Telegram-бот</span>
-            <span class="ct-other-item__value"
-              >@chemistry_examBot — бесплатные курсы</span
-            >
-          </div>
-        </a>
       </div>
+    </section>
 
-      <!-- SEO block -->
-      <div class="container rv-seo">
-        <h2 class="rv-seo__title">
-          Контакты репетитора по химии и школы ЕГЭХИМ
-        </h2>
+    <section class="contacts-section contacts-section--alt" aria-labelledby="social-title">
+      <div class="gutter">
+        <EgeH2
+          variant="academy"
+          secNum="[03] / соцсети"
+          text="Соцсети и каналы"
+          id="social-title"
+          description="Полезные материалы, разборы задач и новости курсов."
+        />
+
+        <div class="contacts-grid">
+          {SOCIALS.map((item) => (
+            <a class="contact-card contact-card--light" href={item.href} target="_blank" rel="noopener noreferrer">
+              <span class="contact-card__icon">
+                <img src={item.icon} alt="" width="40" height="40" loading="lazy" decoding="async" />
+              </span>
+              <span class="contact-card__name">{item.name}</span>
+              <span class="contact-card__handle">{item.handle}</span>
+              <span class="contact-card__desc">{item.desc}</span>
+              <span class="contact-card__cta">{item.cta}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="contacts-section" aria-labelledby="lead-title">
+      <div class="gutter">
+        <div class="contacts-lead">
+          <div class="contacts-lead__intro">
+            <EgeH2
+              variant="academy"
+              secNum="[04] / заявка"
+              text="Начни подготовку с пробного бесплатного занятия"
+              id="lead-title"
+              description="Поможем с выбором формата подготовки и ответим на вопросы о курсах, расписании и стоимости занятий по химии."
+              layout="stack"
+            />
+            <ol class="contacts-steps">
+              {STEPS.map((step, index) => (
+                <li>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <form
+            class="contacts-form"
+            action="/api/lead.php"
+            method="post"
+            aria-label="Заявка на пробное бесплатное занятие"
+            data-form
+            data-endpoint="/api/lead.php"
+            data-form-type="lead"
+            data-form-id="contacts-lead"
+            data-success-message="Заявка отправлена!"
+            data-success-redirect="/thank-you"
+            data-success-delay="1500"
+            data-required-any="phone,telegram"
+            data-required-all="name"
+            novalidate
+          >
+            {FORM_FIELDS.map((field, index) => (
+              <label class="contacts-field">
+                <span><b>[{String(index + 1).padStart(2, "0")}]</b> {field.label}</span>
+                <input
+                  type={field.type as any}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  autocomplete={field.autocomplete}
+                  required={field.required}
+                />
+              </label>
+            ))}
+
+            <div class="contacts-consents">
+              {CONSENTS.map((item) => (
+                <label>
+                  <input type="checkbox" name={item.fieldName} value="true" required />
+                  <span set:html={item.html} />
+                </label>
+              ))}
+            </div>
+
+            <button type="submit" class="contacts-submit">Отправить заявку</button>
+            <div class="contacts-status" data-form-status hidden></div>
+            <pre class="contacts-debug" data-form-debug hidden></pre>
+
+            <div class="contacts-form__messengers">
+              <span>Можно написать сразу:</span>
+              {MESSENGERS.map((item) => (
+                <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.name}>
+                  <img src={item.icon} alt="" width="22" height="22" loading="lazy" decoding="async" />
+                </a>
+              ))}
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <AcademyFaq
+      secNum="[05] / вопросы"
+      title="Частые вопросы"
+      description="Ответы на популярные вопросы о школе и форматах занятий."
+      items={FAQ}
+      alignList={true}
+    />
+
+    <section class="contacts-section" aria-labelledby="other-title">
+      <div class="gutter">
+        <EgeH2
+          variant="academy"
+          secNum="[06] / еще"
+          text="Почта и бот"
+          id="other-title"
+        />
+
+        <div class="contacts-other">
+          {OTHER_CONTACTS.map((item) => (
+            <a href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined}>
+              <span>
+                <img src={item.icon} alt="" width="24" height="24" loading="lazy" decoding="async" />
+              </span>
+              <b>{item.label}</b>
+              <em>{item.value}</em>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="contacts-seo">
+      <div class="gutter">
+        <h2>Контакты репетитора по химии и школы ЕГЭХИМ</h2>
         <p>
           ЕГЭХИМ — онлайн-школа подготовки к ЕГЭ и ОГЭ по химии под руководством
           Валерия Филипенко. На этой странице собраны контакты для связи:
-          Telegram, WhatsApp, ВКонтакте, электронная почта и форма заявки на
-          сайте. Если вы ищете репетитора по химии, хотите записаться на
-          индивидуальные занятия или узнать о наборе в мини-группы, напишите в
-          удобный мессенджер. Мы ответим на вопросы о формате подготовки,
-          расписании, стоимости, программе курса и текущих свободных местах.
+          Telegram, WhatsApp, ВКонтакте, электронная почта и форма заявки на сайте.
+          Если вы ищете репетитора по химии, хотите записаться на индивидуальные занятия
+          или узнать о наборе в мини-группы, напишите в удобный мессенджер.
         </p>
-        <p></p>
         <p>
-          Для самостоятельной подготовки доступны курсы ЕГЭХИМ на Stepik по
-          отдельным разделам химии. Также можно подписаться на YouTube-канал,
-          Telegram-канал или сообщество VK: там выходят бесплатные материалы,
-          разборы заданий, теория и советы по подготовке к экзаменам.
+          Для самостоятельной подготовки доступны курсы ЕГЭХИМ на Stepik по отдельным
+          разделам химии. Также можно подписаться на YouTube-канал, Telegram-канал
+          или сообщество VK: там выходят бесплатные материалы, разборы заданий,
+          теория и советы по подготовке к экзаменам.
         </p>
-      </div><!-- /.rv-body-bg -->
-    </div><!-- /.rv-scope -->
+        <p class="contacts-note">
+          * WhatsApp принадлежит компании Meta, признанной экстремистской организацией
+          и запрещённой на территории РФ.
+        </p>
+      </div>
+    </section>
   </div>
+</AcademyLayout>
 
-  <style is:global>
-    .rv-scope {
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
+<style>
+  .contacts-v2 {
+    background: var(--paper);
+  }
 
-      --brand-500: #366ef0;
-      --brand-50: color-mix(in oklab, var(--brand-500) 6%, white);
-      --brand-100: color-mix(in oklab, var(--brand-500) 14%, white);
-      --brand-200: color-mix(in oklab, var(--brand-500) 28%, white);
-      --brand-300: color-mix(in oklab, var(--brand-500) 45%, white);
-      --brand-400: color-mix(in oklab, var(--brand-500) 65%, white);
-      --brand-600: color-mix(in oklab, var(--brand-500) 90%, black);
-      --brand-700: color-mix(in oklab, var(--brand-500) 78%, black);
+  .contacts-hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
 
-      --accent-500: #f09936;
-      --accent-50: color-mix(in oklab, var(--accent-500) 6%, white);
-      --accent-100: color-mix(in oklab, var(--accent-500) 14%, white);
-      --accent-200: color-mix(in oklab, var(--accent-500) 28%, white);
-      --accent-400: color-mix(in oklab, var(--accent-500) 65%, white);
-      --accent-600: color-mix(in oklab, var(--accent-500) 90%, black);
-      --accent-700: color-mix(in oklab, var(--accent-500) 78%, black);
+  .contacts-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.38;
+    pointer-events: none;
+  }
 
-      --success-500: #10b981;
-      --success-50: color-mix(in oklab, var(--success-500) 6%, white);
-      --success-200: color-mix(in oklab, var(--success-500) 28%, white);
+  .contacts-hero__inner {
+    position: relative;
+    padding-top: var(--academy-hero-y-start);
+    padding-bottom: var(--academy-hero-y-end);
+  }
 
-      --color-brand: var(--brand-500);
-      --color-accent: var(--accent-500);
-      --color-success: var(--success-500);
-      --color-bg: #ffffff;
-      --color-surface: #ffffff;
-      --color-elevated: #ffffff;
-      --color-text: var(--gray-900);
-      --color-text-secondary: var(--gray-600);
-      --color-text-muted: var(--gray-500);
-      --color-text-inverse: #ffffff;
-      --color-border: var(--gray-200);
-      --color-border-strong: var(--gray-300);
-      --color-brand-hover: var(--brand-600);
-      --color-accent-hover: var(--accent-600);
-      --color-focus-ring: color-mix(in srgb, var(--brand-500) 35%, transparent);
+  .contacts-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.55fr);
+    gap: var(--academy-gap-lg);
+    align-items: end;
+  }
 
-      --gradient-brand-subtle: linear-gradient(
-        180deg,
-        var(--brand-50) 0%,
-        var(--gray-50) 100%
-      );
+  .contacts-hero__title {
+    margin: 0;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-hero-title);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
 
-      --ff-sans: "Raleway", system-ui, -apple-system, sans-serif;
-      --fw-regular: 400;
-      --fw-medium: 500;
-      --fw-semibold: 600;
-      --fw-bold: 700;
+  .contacts-hero__copy {
+    display: grid;
+    gap: 24px;
+  }
 
-      --fs-11: 0.6875rem;
-      --fs-12: 0.75rem;
-      --fs-13: 0.8125rem;
-      --fs-14: 0.875rem;
-      --fs-15: 0.9375rem;
-      --fs-16: 1rem;
-      --fs-18: 1.125rem;
-      --fs-20: 1.25rem;
-      --fs-24: 1.5rem;
-      --fs-28: 1.75rem;
-      --fs-32: 2rem;
-      --fs-h1: clamp(2rem, 5vw, 3rem);
-      --fs-h2: clamp(1.625rem, 3.8vw, 2.5rem);
+  .contacts-hero__seo {
+    margin: 0;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-body-sm);
+    line-height: 1.65;
+    color: var(--inkSoft);
+  }
 
-      --lh-tight: 1.12;
-      --lh-snug: 1.22;
-      --lh-base: 1.6;
+  .contacts-hero__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
 
-      --ls-tight: -0.02em;
+  .contacts-hero__meta span {
+    min-height: var(--academy-meta-cell-min-h);
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    background: #fffdf7;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-micro);
+    line-height: 1.35;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
 
-      --radius-sm: 0.5rem;
-      --radius-md: 0.75rem;
-      --radius-lg: 1.25rem;
-      --radius-xl: 1.5rem;
-      --radius-pill: 999px;
+  .contacts-section {
+    border-top: 1px solid var(--line);
+    padding: var(--academy-section-y) 0;
+  }
 
-      --shadow-1: 0 1px 10px 2px
-        color-mix(in srgb, var(--gray-900) 4%, transparent);
-      --shadow-2: 0 8px 22px
-        color-mix(in srgb, var(--gray-900) 12%, transparent);
+  .contacts-section--alt {
+    background: var(--milk);
+  }
 
-      --space-4: 0.25rem;
-      --space-8: 0.5rem;
-      --space-12: 0.75rem;
-      --space-16: 1rem;
-      --space-20: 1.25rem;
-      --space-24: 1.5rem;
-      --space-32: 2rem;
-      --space-40: 2.5rem;
-      --space-48: 3rem;
-      --space-64: 4rem;
+  .contacts-lead h2,
+  .contacts-seo h2 {
+    margin: 0 0 14px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-section-title);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
 
-      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-      --dur-1: 150ms;
-      --dur-2: 220ms;
-    }
-  </style>
+  .contacts-lead__intro p {
+    margin: 0;
+    max-width: var(--academy-lead-max);
+    font-family: var(--academy-font-body);
+    font-size: var(--academy-lead);
+    line-height: 1.55;
+    color: var(--inkSoft);
+  }
 
-  <style>
-    /* ===== Blobs ===== */
-    .rv-blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.55;
-    }
-    .rv-blob--tl {
-      width: 480px;
-      height: 380px;
-      top: -80px;
-      left: -100px;
-      background: radial-gradient(
-        ellipse,
-        rgba(54, 110, 240, 0.45) 0%,
-        transparent 70%
-      );
-    }
-    .rv-blob--tr {
-      width: 420px;
-      height: 340px;
-      top: -60px;
-      right: -100px;
-      background: radial-gradient(
-        ellipse,
-        rgba(100, 149, 255, 0.38) 0%,
-        transparent 70%
-      );
-    }
-    .rv-blob--bl {
-      width: 460px;
-      height: 360px;
-      bottom: -100px;
-      left: -80px;
-      background: radial-gradient(
-        ellipse,
-        rgba(130, 100, 255, 0.35) 0%,
-        transparent 70%
-      );
-    }
-    .rv-blob--br {
-      width: 440px;
-      height: 360px;
-      bottom: -80px;
-      right: -80px;
-      background: radial-gradient(
-        ellipse,
-        rgba(54, 110, 240, 0.4) 0%,
-        transparent 70%
-      );
-    }
+  .contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
 
-    /* ===== Grid background ===== */
-    .rv-body-bg {
-      position: relative;
-      background-image:
-        linear-gradient(rgba(54, 110, 240, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(54, 110, 240, 0.07) 1px, transparent 1px);
-      background-size: 44px 44px;
-    }
+  .contact-card {
+    min-height: var(--academy-card-min-h);
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: var(--academy-card-pad);
+    background: #fffdf7;
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      background 150ms ease,
+      color 150ms ease;
+  }
 
-    /* ===== Hero ===== */
-    .rv-hero-wrap {
-      background: var(--gradient-brand-subtle);
-      border-bottom: 1px solid var(--color-border);
-    }
-    .rv-hero {
-      padding-top: var(--space-48);
-      padding-bottom: var(--space-64);
-    }
-    .rv-hero__kicker {
-      font-size: var(--fs-12);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--color-text-muted);
-      margin-bottom: var(--space-16);
-      display: flex;
-      align-items: center;
-      gap: var(--space-12);
-    }
-    .rv-hero__kicker::before {
-      content: "";
-      width: 32px;
-      height: 1px;
-      background: var(--color-text-muted);
-      flex: 0 0 auto;
-    }
-    .rv-hero__title {
-      font-size: var(--fs-h1);
-      font-weight: var(--fw-bold);
-      line-height: var(--lh-tight);
-      letter-spacing: var(--ls-tight);
-      margin-bottom: var(--space-24);
-      color: var(--color-text);
-    }
-    .rv-hero__title em {
-      font-style: italic;
-      color: var(--color-brand);
-    }
-    .rv-hero__lede {
-      font-size: var(--fs-18);
-      color: var(--color-text-secondary);
-      max-width: 56ch;
-      line-height: var(--lh-base);
-    }
+  .contact-card:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
 
-    /* ===== Sections ===== */
-    .ct-section {
-      padding-top: var(--space-64);
-      padding-bottom: var(--space-64);
-    }
-    .ct-section__head {
-      padding-bottom: var(--space-16);
-      margin-bottom: var(--space-20);
-    }
-    .ct-section__title {
-      font-size: var(--fs-h2);
-      font-weight: var(--fw-bold);
-      line-height: var(--lh-tight);
-      letter-spacing: var(--ls-tight);
-      margin-bottom: var(--space-12);
-      color: var(--color-text);
-    }
-    .ct-section__sub {
-      font-size: var(--fs-16);
-      color: var(--color-text-secondary);
-      line-height: var(--lh-base);
-    }
+  .contact-card--light {
+    background: var(--paper);
+  }
 
-    /* ===== Contact cards grid ===== */
-    .ct-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-24);
-    }
+  .contact-card__icon {
+    width: var(--academy-icon-lg);
+    height: var(--academy-icon-lg);
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: var(--milk);
+    margin-bottom: 8px;
+  }
 
-    .ct-card {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-12);
-      padding: var(--space-32);
-      border-radius: var(--radius-xl);
-      background: var(--ct-bg, var(--color-surface));
-      border: 1px solid var(--ct-border, var(--color-border));
-      text-decoration: none;
-      color: inherit;
-      transition:
-        transform var(--dur-2) var(--ease),
-        box-shadow var(--dur-2) var(--ease);
-    }
-    .ct-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-2);
-    }
-    .ct-card--social {
-      --ct-bg: var(--color-surface);
-      --ct-border: var(--color-border);
-    }
+  .contact-card:hover .contact-card__icon {
+    background: var(--paper);
+  }
 
-    .ct-card__icon {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radius-md);
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      display: grid;
-      place-items: center;
-      box-shadow: var(--shadow-1);
-      margin-bottom: var(--space-4);
-    }
-    .ct-card__icon img {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
-      display: block;
-    }
-    .ct-card__name {
-      font-size: var(--fs-18);
-      font-weight: var(--fw-semibold);
-      line-height: var(--lh-snug);
-      color: var(--color-text);
-    }
-    .ct-card__handle {
-      font-size: var(--fs-14);
-      color: var(--color-text-muted);
-      font-weight: var(--fw-medium);
-    }
-    .ct-card__desc {
-      font-size: var(--fs-15);
-      color: var(--color-text-secondary);
-      line-height: var(--lh-base);
-      flex: 1;
-      margin: 0;
-    }
-    .ct-card__cta {
-      display: block;
-      margin-top: var(--space-8);
-      padding: var(--space-12) var(--space-20);
-      border-radius: var(--radius-pill);
-      background: var(--color-brand);
-      color: var(--color-text-inverse);
-      font-size: var(--fs-14);
-      font-weight: var(--fw-semibold);
-      text-align: center;
-      transition: background var(--dur-1) var(--ease);
-    }
-    .ct-card:hover .ct-card__cta {
-      background: var(--color-brand-hover);
-    }
-    .ct-card__cta--outline {
-      background: transparent;
-      color: var(--color-brand);
-      border: 1.5px solid var(--color-brand);
-    }
-    .ct-card:hover .ct-card__cta--outline {
-      background: var(--brand-50);
-    }
+  .contact-card__icon img {
+    width: var(--academy-icon-sm);
+    height: var(--academy-icon-sm);
+    object-fit: contain;
+  }
 
-    /* ===== Other contacts row ===== */
-    .ct-other-wrap {
-      display: flex;
-      gap: var(--space-24);
-      padding-bottom: var(--space-48);
-      flex-wrap: wrap;
-    }
-    .ct-other-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-16);
-      padding: var(--space-20) var(--space-24);
-      border-radius: var(--radius-lg);
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      text-decoration: none;
-      color: inherit;
-      flex: 1;
-      min-width: 240px;
-      transition:
-        border-color var(--dur-2) var(--ease),
-        box-shadow var(--dur-2) var(--ease);
-    }
-    .ct-other-item:hover {
-      border-color: var(--color-brand);
-      box-shadow: var(--shadow-1);
-    }
-    .ct-other-item__icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-md);
-      background: var(--brand-50);
-      border: 1px solid var(--color-border);
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-    }
-    .ct-other-item__icon img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-    }
-    .ct-other-item__text {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .ct-other-item__label {
-      font-size: var(--fs-11);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-text-muted);
-      font-weight: var(--fw-semibold);
-    }
-    .ct-other-item__value {
-      font-size: var(--fs-15);
-      font-weight: var(--fw-medium);
-      color: var(--color-text);
-    }
+  .contact-card__name {
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
 
-    /* ===== SEO block ===== */
-    .rv-seo {
-      padding-top: var(--space-40);
-      padding-bottom: var(--space-40);
-      border-top: 1px solid var(--color-border);
-    }
-    .rv-seo__title {
-      font-size: var(--fs-15);
-      font-weight: var(--fw-semibold);
-      color: var(--color-text-secondary);
-      line-height: var(--lh-snug);
-      margin-bottom: var(--space-16);
-    }
-    .rv-seo p {
-      font-size: var(--fs-13);
-      color: var(--color-text-muted);
-      line-height: var(--lh-base);
-      margin-bottom: var(--space-12);
-    }
-    .rv-seo p:last-child {
-      margin-bottom: 0;
-    }
+  .contact-card__handle,
+  .contact-card__cta {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-meta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
 
-    /* ===== FAQ ===== */
-    .ct-faq-section {
-      padding-top: var(--space-64);
-      padding-bottom: var(--space-64);
-    }
-    .ct-faq {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-    .ct-faq__item {
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      background: var(--color-surface);
-      overflow: hidden;
-      transition: border-color var(--dur-2) var(--ease);
-    }
-    .ct-faq__item[open] {
-      border-color: var(--color-brand);
-    }
-    .ct-faq__q {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-16);
-      padding: var(--space-20) var(--space-24);
-      font-size: var(--fs-16);
-      font-weight: var(--fw-semibold);
-      color: var(--color-text);
-      cursor: pointer;
-      list-style: none;
-      line-height: var(--lh-snug);
-      user-select: none;
-    }
-    .ct-faq__q::-webkit-details-marker {
-      display: none;
-    }
-    .ct-faq__q::after {
-      content: "";
-      flex: 0 0 20px;
-      width: 20px;
-      height: 20px;
-      background: var(--color-brand);
-      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      mask-size: contain;
-      mask-repeat: no-repeat;
-      mask-position: center;
-      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      -webkit-mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      transition: transform var(--dur-2) var(--ease);
-      opacity: 0.5;
-    }
-    .ct-faq__item[open] .ct-faq__q::after {
-      transform: rotate(180deg);
-      opacity: 1;
-    }
-    .ct-faq__a {
-      padding: 0 var(--space-24) var(--space-20);
-      font-size: var(--fs-15);
-      color: var(--color-text-secondary);
-      line-height: var(--lh-base);
-      margin: 0;
+  .contact-card:hover .contact-card__handle,
+  .contact-card:hover .contact-card__cta {
+    color: var(--paper);
+  }
+
+  .contact-card__desc {
+    margin-top: 12px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-body-sm);
+    line-height: 1.55;
+    color: var(--inkSoft);
+  }
+
+  .contact-card:hover .contact-card__desc {
+    color: color-mix(in srgb, var(--paper) 76%, transparent);
+  }
+
+  .contact-card__cta {
+    align-self: end;
+    margin-top: 24px;
+  }
+
+  .contacts-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(360px, 0.65fr);
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .contacts-lead__intro,
+  .contacts-form {
+    padding: var(--academy-panel-pad);
+    background: #fffdf7;
+  }
+
+  .contacts-steps {
+    display: grid;
+    gap: 1px;
+    margin: 34px 0 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .contacts-steps li {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: var(--academy-row-min-h);
+    padding: 14px 16px;
+    background: var(--paper);
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-body-sm);
+    color: var(--inkSoft);
+  }
+
+  .contacts-steps span {
+    color: var(--rust);
+  }
+
+  .contacts-form {
+    display: grid;
+    gap: 14px;
+  }
+
+  .contacts-field {
+    display: grid;
+    gap: 7px;
+  }
+
+  .contacts-field span,
+  .contacts-consents,
+  .contacts-status,
+  .contacts-form__messengers {
+    font-family: var(--academy-font-mono);
+  }
+
+  .contacts-field span {
+    font-size: var(--academy-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .contacts-field b {
+    color: var(--rust);
+    font-weight: 700;
+  }
+
+  .contacts-field input {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 16px 18px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-control);
+    line-height: 1.5;
+  }
+
+  .contacts-field input:hover {
+    background: var(--milk);
+  }
+
+  .contacts-field input:focus {
+    outline: none;
+    border-color: var(--rust);
+    background: #fffdf7;
+    box-shadow: inset 0 0 0 1px var(--rust);
+  }
+
+  .contacts-field input::placeholder {
+    color: var(--dim);
+  }
+
+  .contacts-consents {
+    display: grid;
+    gap: 9px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: var(--milk);
+    font-size: var(--academy-caption);
+    line-height: 1.45;
+    color: var(--dim);
+  }
+
+  .contacts-consents label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .contacts-consents input {
+    margin-top: 2px;
+    accent-color: var(--rust);
+  }
+
+  .contacts-consents a {
+    color: var(--ink);
+    text-decoration-color: var(--rust);
+  }
+
+  .contacts-submit {
+    width: 100%;
+    border: 0;
+    background: var(--rust);
+    color: var(--paper);
+    padding: 17px 18px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-action);
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .contacts-submit:hover {
+    background: var(--ink);
+  }
+
+  .contacts-status {
+    font-size: var(--academy-meta);
+    color: var(--ink);
+  }
+
+  .contacts-status.ok {
+    color: var(--rust);
+  }
+
+  .contacts-status.err {
+    color: var(--rustDark);
+  }
+
+  .contacts-debug {
+    white-space: pre-wrap;
+    color: var(--dim);
+    font-size: var(--academy-micro);
+  }
+
+  .contacts-form__messengers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-top: 6px;
+    font-size: var(--academy-meta);
+    color: var(--dim);
+  }
+
+  .contacts-form__messengers a {
+    width: var(--academy-icon-sm);
+    height: var(--academy-icon-sm);
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .contacts-form__messengers img {
+    width: var(--academy-icon-micro);
+    height: var(--academy-icon-micro);
+    object-fit: contain;
+  }
+
+
+  .contacts-other {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .contacts-other a {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    align-items: center;
+    min-height: var(--academy-contact-row-min-h);
+    padding: 24px;
+    background: #fffdf7;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .contacts-other a:hover {
+    background: var(--milk);
+  }
+
+  .contacts-other span {
+    grid-row: span 2;
+    width: var(--academy-icon-md);
+    height: var(--academy-icon-md);
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .contacts-other img {
+    width: var(--academy-icon-xs);
+    height: var(--academy-icon-xs);
+    object-fit: contain;
+  }
+
+  .contacts-other b {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .contacts-other em {
+    font-style: normal;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-small-title);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .contacts-seo {
+    padding: 42px 0;
+    border-top: 1px solid var(--line);
+    color: var(--dim);
+  }
+
+  .contacts-seo h2 {
+    max-width: var(--academy-copy-max);
+    font-size: var(--academy-action);
+    line-height: 1.25;
+  }
+
+  .contacts-seo p {
+    max-width: var(--academy-seo-max);
+    margin: 0 0 12px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-meta);
+    line-height: 1.6;
+  }
+
+  .contacts-note {
+    color: color-mix(in srgb, var(--dim) 72%, transparent);
+  }
+
+  @media (max-width: 980px) {
+    .contacts-hero__grid,
+    .contacts-lead {
+      grid-template-columns: 1fr;
     }
 
-    /* ===== Mobile ===== */
-    @media (max-width: 860px) {
-      .ct-cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .contacts-grid {
+      grid-template-columns: 1fr;
     }
-    @media (max-width: 560px) {
-      .ct-cards {
-        grid-template-columns: 1fr;
-      }
-      .rv-hero {
-        padding-top: var(--space-32);
-        padding-bottom: var(--space-40);
-      }
-      .ct-section {
-        padding-top: var(--space-40);
-        padding-bottom: var(--space-40);
-      }
-      .ct-faq-section {
-        padding-top: var(--space-40);
-        padding-bottom: var(--space-40);
-      }
-      .ct-card {
-        padding: var(--space-24);
-      }
-      .ct-other-wrap {
-        flex-direction: column;
-      }
-      .ct-faq__q {
-        padding: var(--space-16) var(--space-20);
-      }
-      .ct-faq__a {
-        padding: 0 var(--space-20) var(--space-16);
-      }
+  }
+
+  @media (max-width: 680px) {
+    .contacts-hero__meta,
+    .contacts-other {
+      grid-template-columns: 1fr;
     }
-  </style>
-</MainLayout>
+
+    .contact-card {
+      min-height: auto;
+    }
+  }
+</style>
+
+

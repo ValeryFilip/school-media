@@ -1,0 +1,378 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { academyArticlePath } from "../../lib/academyPaths";
+import { ORGANIZATION_DATA } from "../../lib/seoData";
+
+type Article = CollectionEntry<"articles">;
+
+interface Props {
+  articles?: Article[];
+  variant?: "hero" | "nav";
+  placeholder?: string;
+  showShortcut?: boolean;
+}
+
+const {
+  articles = [],
+  variant = "hero",
+  placeholder = "ищи: «гидролиз солей», «задача 34», «органика — алкены»...",
+  showShortcut = true,
+} = Astro.props as Props;
+
+const stripHtml = (value: string) => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+const searchItems = articles.map((article) => {
+  const title = stripHtml(article.data.title);
+  const description = stripHtml(article.data.description ?? "");
+  const category = String(article.data.category ?? "");
+  const tags = article.data.tags ?? [];
+  const author = ORGANIZATION_DATA.defaultAuthor.name;
+
+  return {
+    href: academyArticlePath(category, article.slug),
+    title,
+    description,
+    category,
+    tags,
+    author,
+    search: [title, description, category, tags.join(" "), author].join(" "),
+  };
+});
+
+const json = JSON.stringify(searchItems).replace(/</g, "\\u003c");
+---
+
+<div class={`academy-search academy-search--${variant}`} data-academy-search>
+  <div class="academy-search__control">
+    <span
+      class="academy-search__icon"
+      aria-hidden="true"
+      >⌕</span
+    >
+    <input
+      type="search"
+      placeholder={placeholder}
+      class={`academy-search__input ${variant === "hero" ? "search-input" : ""}`}
+      aria-label="Поиск по статьям Академии"
+      aria-expanded="false"
+      autocomplete="off"
+      data-academy-search-input
+    />
+    {
+      showShortcut && (
+        <div class="academy-search__shortcut" aria-hidden="true">
+          <kbd>⌘</kbd>
+          <kbd>K</kbd>
+        </div>
+      )
+    }
+  </div>
+
+  <div
+    class="academy-search__results"
+    role="listbox"
+    hidden
+    data-academy-search-results
+  >
+  </div>
+
+  <script type="application/json" data-academy-search-data set:html={json}></script>
+</div>
+
+<script>
+  const escapeHtml = (value: string) =>
+    String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const normalize = (value: string) =>
+    String(value || "")
+      .toLowerCase()
+      .replace(/ё/g, "е")
+      .trim();
+
+  document.querySelectorAll("[data-academy-search]").forEach((root) => {
+    const input = root.querySelector("[data-academy-search-input]") as HTMLInputElement | null;
+    const results = root.querySelector("[data-academy-search-results]") as HTMLElement | null;
+    const dataNode = root.querySelector("[data-academy-search-data]") as HTMLScriptElement | null;
+    if (!input || !results || !dataNode) return;
+
+    let items: any[] | null = null;
+    const getItems = () => {
+      if (items) return items;
+      items = JSON.parse(dataNode.textContent || "[]").map((item: any) => ({
+        ...item,
+        normalizedSearch: normalize(item.search),
+      }));
+      return items;
+    };
+
+    const close = () => {
+      results.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+    };
+
+    const open = () => {
+      results.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+    };
+
+    const render = () => {
+      const query = normalize(input.value);
+      const tokens = query.split(/\s+/).filter(Boolean);
+
+      if (!tokens.length) {
+        results.innerHTML = "";
+        close();
+        return;
+      }
+
+      const matches = getItems()
+        .filter((item: any) => tokens.every((token) => item.normalizedSearch.includes(token)))
+        .slice(0, 8);
+
+      if (!matches.length) {
+        results.innerHTML = `
+          <div class="academy-search__empty">
+            Ничего не нашли. Попробуй другое слово или тему.
+          </div>
+        `;
+        open();
+        return;
+      }
+
+      results.innerHTML = matches
+        .map(
+          (item: any) => `
+            <a class="academy-search__item" href="${escapeHtml(item.href)}" role="option">
+              <span class="academy-search__meta">${escapeHtml(item.category)}</span>
+              <span class="academy-search__title">${escapeHtml(item.title)}</span>
+              ${
+                item.description
+                  ? `<span class="academy-search__description">${escapeHtml(item.description)}</span>`
+                  : ""
+              }
+            </a>
+          `,
+        )
+        .join("");
+      open();
+    };
+
+    input.addEventListener("input", render);
+    input.addEventListener("focus", render);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        input.focus();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!root.contains(event.target as Node)) close();
+    });
+  });
+</script>
+
+<style is:global>
+  .academy-search {
+    position: relative;
+    margin-top: 3rem;
+    max-width: 48rem;
+    z-index: 1000;
+  }
+
+  .academy-search--nav {
+    margin-top: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  .academy-search::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: -10px;
+    background: var(--milk);
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+
+  .academy-search--nav::before {
+    display: none;
+  }
+
+  .academy-search__control {
+    position: relative;
+    z-index: 1;
+    max-width: 48rem;
+  }
+
+  .academy-search--nav .academy-search__control {
+    max-width: none;
+  }
+
+  .academy-search__icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--dim);
+  }
+
+  .academy-search--nav .academy-search__icon {
+    left: 12px;
+    font-size: 12px;
+  }
+
+  .academy-search--nav .academy-search__input {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fffdf7;
+    padding: 8px 12px 8px 32px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  .academy-search--nav .academy-search__input:focus {
+    outline: none;
+    border-color: var(--rust);
+    background: #fffdf7;
+  }
+
+  .academy-search__shortcut {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: var(--dim);
+  }
+
+  .academy-search__shortcut kbd {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 4px 8px;
+  }
+
+  @media (min-width: 768px) {
+    .academy-search__shortcut {
+      display: flex;
+    }
+  }
+
+  .academy-search__results {
+    position: absolute;
+    z-index: 1001;
+    left: 0;
+    right: 0;
+    top: calc(100% + 10px);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--rust);
+    background: #fffdf7;
+    max-height: min(420px, 70vh);
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rust) var(--milk);
+  }
+
+  .academy-search__results::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .academy-search__results::-webkit-scrollbar-track {
+    background: var(--milk);
+    border-left: 1px solid var(--line);
+  }
+
+  .academy-search__results::-webkit-scrollbar-thumb {
+    background: var(--rust);
+    border: 2px solid var(--milk);
+  }
+
+  .academy-search__results::-webkit-scrollbar-thumb:hover {
+    background: var(--rustDark);
+  }
+
+  .academy-search__item {
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .academy-search__item:last-child {
+    border-bottom: 0;
+  }
+
+  .academy-search__item:hover,
+  .academy-search__item:focus-visible {
+    outline: none;
+    background: var(--milk);
+  }
+
+  .academy-search__meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .academy-search__title {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .academy-search__description {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--inkSoft);
+  }
+
+  .academy-search__empty {
+    padding: 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--dim);
+  }
+
+  @media (max-width: 640px) {
+    .academy-search {
+      max-width: none;
+    }
+
+    .academy-search__results {
+      max-height: 360px;
+    }
+  }
+</style>
