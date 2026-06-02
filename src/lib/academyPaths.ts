@@ -1,6 +1,6 @@
 import { slugify } from "./slugify";
 
-export const ACADEMY_BASE_PATH = "/academy-v2";
+export const ACADEMY_BASE_PATH = "/academy";
 
 export function academyPath(path = ""): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
