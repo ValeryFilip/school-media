@@ -200,7 +200,7 @@ export function buildArticleJsonLd(params: {
     image?: string;
     jobTitle?: string;
   };
-  keywords?: string[];
+  keywords?: readonly string[];
   articleSection?: string;
   videoJson?: any; // Вложенный VideoObject
 }) {
@@ -262,7 +262,7 @@ export function buildCourseJsonLd(params: {
   providerName?: string;
   ratingValue?: number;
   reviewCount?: number;
-  keywords?: string[];
+  keywords?: readonly string[];
 }) {
   const { origin, url, name, description, providerName, ratingValue, reviewCount, keywords } = params;
 
@@ -438,7 +438,7 @@ export function buildProductJsonLd(params: {
 /**
  * Генерирует JSON-LD для FAQPage
  */
-export function buildFAQJsonLd(items: Array<{ q: string; a: string }>) {
+export function buildFAQJsonLd(items: ReadonlyArray<{ q: string; a: string }>) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",

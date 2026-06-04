@@ -6,7 +6,7 @@ interface Props {
   section: string;
   title: { text: string; marks?: readonly any[] };
   mode?: "dark" | "paper";
-  items: Array<[string, string, string]>;
+  items: ReadonlyArray<readonly [string, string, string]>;
   hero?: { label: string; title: string; text: string };
 }
 

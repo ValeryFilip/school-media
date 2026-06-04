@@ -56,7 +56,7 @@ interface Props {
   /** Цвет текста подсвеченной подстроки (для simple-режима). */
   color?: AccentColor;
   /** Расширенный режим: несколько меток (если задан — простые поля игнорируются). */
-  marks?: Mark[];
+  marks?: readonly Mark[];
   /** Дополнительные классы (например, выравнивание, max-width). */
   class?: string;
   /** id для якоря. */
@@ -87,7 +87,7 @@ const {
 } = Astro.props;
 
 // ── Сбор меток из simple-режима в общий массив ──────────────
-const collectedMarks: Mark[] = (() => {
+const collectedMarks: readonly Mark[] = (() => {
   if (marks && marks.length) return marks;
   const list: Mark[] = [];
   if (underline)
@@ -121,7 +121,7 @@ function classForMark(m: Mark): string {
 //    так корректно обрабатываются ВЛОЖЕННЫЕ метки (например,
 //    «методика» внутри уже подсвеченного dim-сегмента получит
 //    одновременно `text-dim` и `ul-a`).
-function buildHtml(input: string, list: Mark[]): string {
+function buildHtml(input: string, list: readonly Mark[]): string {
   if (!list.length) return input;
   const classAt: Set<string>[] = Array.from(
     { length: input.length },

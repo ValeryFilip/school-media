@@ -5,8 +5,8 @@ interface Props {
   data: {
     section: string;
     title: { text: string; marks?: readonly any[] };
-    items: string[];
-    stats?: Array<{ value: string; label: string }>;
+    items: readonly string[];
+    stats?: ReadonlyArray<{ value: string; label: string }>;
   };
 }
 

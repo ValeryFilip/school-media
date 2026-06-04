@@ -5,7 +5,7 @@ import type { Mark } from "./EgeH2.astro";
 interface Props {
   section?: string;
   /** Новый формат: текст + метки, рендерится через EgeH2. */
-  title?: { text: string; marks?: Mark[] };
+  title?: { text: string; marks?: readonly Mark[] };
   /** Старый формат (обратная совместимость): сырое HTML. */
   titleHtml?: string;
 }

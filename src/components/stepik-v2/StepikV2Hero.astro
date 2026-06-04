@@ -19,16 +19,16 @@ type HeroVisual = "molecule" | "lattice" | "cascade" | "electrons";
 
 interface Props {
   data: {
-    labels?: string[];
+    labels?: readonly string[];
     label: string;
     kicker: string;
     titleHtml: string;
     descriptionHtml: string;
     primaryCta: { href: string; label: string };
     secondaryCta: { href: string; label: string };
-    stats: Array<{ value: string; label: string }>;
-    formulas: string[];
-    marquee: string[];
+    stats: ReadonlyArray<{ value: string; label: string }>;
+    formulas: readonly string[];
+    marquee: readonly string[];
     moleculeLabels?: MoleculeLabels;
     heroVisual?: HeroVisual;
   };
@@ -84,8 +84,12 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
       </div>
     )}
 
-    <div class="grid grid-cols-12 gap-10 items-start">
-      <div class="col-span-12 lg:col-span-8">
+    {/* gap-x-0 на мобиле: на 12-col grid 11 gap'ов × 40px = 440px,
+        а на 320px viewport это шире самого контейнера → весь grid
+        вылезает за край. На lg+ items стоят бок-о-бок, тогда нужен
+        горизонтальный gap. min-w-0 на колонках разрешает h1 переноситься. */}
+    <div class="grid grid-cols-12 gap-x-0 gap-y-10 lg:gap-10 items-start">
+      <div class="col-span-12 lg:col-span-8 min-w-0">
         <div class="font-mono text-[12px] text-fuchsia2 uppercase tracking-widest mb-5">{data.kicker}</div>
         <h1
           class="font-display font-bold tracking-[-0.035em] leading-[0.88] text-[clamp(44px,7.8vw,124px)] break-words [overflow-wrap:anywhere]"
@@ -103,12 +107,14 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
         </div>
       </div>
 
-      <div class="col-span-12 lg:col-span-4">
+      <div class="col-span-12 lg:col-span-4 min-w-0">
         {/* Hero-визуал: molecule (бензол, через EgeScripts) | lattice | cascade | electrons.
             На мобильных капается размером (max-w-[280px] mx-auto), чтобы декор-квадрат
-            не отъедал пол-экрана. На lg+ — без ограничений. */}
+            не отъедал пол-экрана. На lg+ — без ограничений.
+            overflow-hidden — чтобы 3D-проекции lattice/molecule не вырисовывались
+            за пределами стейджа и не пушили horizontal scroll. */}
         <div
-          class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none"
+          class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none overflow-hidden"
           id={heroVisual === "molecule" ? "moleculeStage" : undefined}
         >
           {heroVisual === "lattice"   && <StepikV2HeroLattice />}

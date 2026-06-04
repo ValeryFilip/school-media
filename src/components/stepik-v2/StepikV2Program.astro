@@ -5,8 +5,8 @@ interface Props {
   data: {
     section: string;
     title: { text: string; marks?: readonly any[] };
-    cells: Array<{ sym: string; code: string; name: string; topics: number; hours: number; acid?: boolean }>;
-    modules: Array<{ code: string; title: string; meta: string; topics: string[]; acid?: boolean }>;
+    cells: ReadonlyArray<{ sym: string; code: string; name: string; topics: number; hours: number; acid?: boolean }>;
+    modules: ReadonlyArray<{ code: string; title: string; meta: string; topics: readonly string[]; acid?: boolean }>;
   };
 }
 
