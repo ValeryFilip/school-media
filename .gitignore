@@ -51,3 +51,7 @@ temp/
 
    public/images/postgresql-18.3-2-windows-x64.exe
    *.exe
+
+# Локальные бэкапы старых v1 страниц курсов (organika/neorganika/obschaya/ovr).
+# Заменены v2-версиями, но оригиналы сохранены на случай отката.
+_old-backup/

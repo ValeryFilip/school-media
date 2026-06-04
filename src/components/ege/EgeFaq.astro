@@ -1,0 +1,42 @@
+---
+import EgeH2 from "./EgeH2.astro";
+import type { Mark } from "./EgeH2.astro";
+
+interface Props {
+  section?: string;
+  /** Новый формат: текст + метки, рендерится через EgeH2. */
+  title?: { text: string; marks?: Mark[] };
+  /** Старый формат (обратная совместимость): сырое HTML. */
+  titleHtml?: string;
+}
+
+const {
+  section = "[13] / FAQ",
+  title,
+  titleHtml = 'Вопросы, <span class="text-dim">которые ты&nbsp;задаёшь себе в&nbsp;3&nbsp;часа ночи</span> перед&nbsp;тем, как&nbsp;записаться.',
+} = Astro.props as Props;
+---
+
+<!-- ============== 13. FAQ ============== -->
+<section class="section relative" id="faq">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-16">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        {
+          title ? (
+            <EgeH2 text={title.text} marks={title.marks} class="titrate" />
+          ) : (
+            <h2 class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate">
+              <Fragment set:html={titleHtml} />
+            </h2>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="border-t border-line" id="faqList"></div>
+  </div>
+</section>

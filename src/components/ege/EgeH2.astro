@@ -27,7 +27,13 @@
     />
 */
 
-type AccentColor = "acid" | "fuchsia" | "dim" | "paper" | "ink";
+type AccentColor =
+  | "acid"
+  | "fuchsia"
+  | "dim"
+  | "paper"
+  | "ink"
+  | "inkSoft";
 
 export interface Mark {
   /** Подстрока в text, которую обернём span'ом (первое вхождение). */
@@ -97,6 +103,9 @@ const colorClass: Record<AccentColor, string> = {
   dim: "text-dim",
   paper: "text-paper",
   ink: "text-ink",
+  // Полупрозрачный ink — для «приглушённых» меток на ярком фоне
+  // (на фуксии acid/dim теряют контраст, а text-ink/55 сохраняет иерархию).
+  inkSoft: "text-ink/55",
 };
 
 function classForMark(m: Mark): string {
@@ -107,37 +116,40 @@ function classForMark(m: Mark): string {
   return parts.join(" ");
 }
 
-// ── Замена первых вхождений каждой метки <span>'ом ─────────
-//    Делается по индексам, чтобы вставленные <span> не «съели»
-//    последующие совпадения.
+// ── Замена меток <span>'ами ─────────────────────────────────
+//    Класс каждой метки накапливается в множество per-символ —
+//    так корректно обрабатываются ВЛОЖЕННЫЕ метки (например,
+//    «методика» внутри уже подсвеченного dim-сегмента получит
+//    одновременно `text-dim` и `ul-a`).
 function buildHtml(input: string, list: Mark[]): string {
   if (!list.length) return input;
-  type Slice = { start: number; end: number; html: string };
-  const slices: Slice[] = [];
+  const classAt: Set<string>[] = Array.from(
+    { length: input.length },
+    () => new Set<string>(),
+  );
   for (const m of list) {
     if (!m.text) continue;
     const i = input.indexOf(m.text);
     if (i < 0) continue;
     const cls = classForMark(m);
-    slices.push({
-      start: i,
-      end: i + m.text.length,
-      html: cls
-        ? `<span class="${cls}">${m.text}</span>`
-        : m.text,
-    });
+    if (!cls) continue;
+    const parts = cls.split(/\s+/).filter(Boolean);
+    for (let p = i; p < i + m.text.length; p++) {
+      for (const c of parts) classAt[p].add(c);
+    }
   }
-  // Сортируем по началу, проверяем что не пересекаются.
-  slices.sort((a, b) => a.start - b.start);
+  const keyOf = (s: Set<string>) =>
+    Array.from(s).sort().join(" ");
   let out = "";
-  let cursor = 0;
-  for (const s of slices) {
-    if (s.start < cursor) continue; // пропускаем пересекающиеся
-    out += input.slice(cursor, s.start);
-    out += s.html;
-    cursor = s.end;
+  let i = 0;
+  while (i < input.length) {
+    const k = keyOf(classAt[i]);
+    let j = i + 1;
+    while (j < input.length && keyOf(classAt[j]) === k) j++;
+    const chunk = input.slice(i, j);
+    out += k ? `<span class="${k}">${chunk}</span>` : chunk;
+    i = j;
   }
-  out += input.slice(cursor);
   return out;
 }
 

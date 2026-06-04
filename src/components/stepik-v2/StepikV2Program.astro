@@ -1,0 +1,104 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: {
+    section: string;
+    title: { text: string; marks?: readonly any[] };
+    cells: Array<{ sym: string; code: string; name: string; topics: number; hours: number; acid?: boolean }>;
+    modules: Array<{ code: string; title: string; meta: string; topics: string[]; acid?: boolean }>;
+  };
+}
+
+const { data } = Astro.props as Props;
+---
+
+<section class="section relative" id="program">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3"><div class="sec-num">{data.section}</div></div>
+      <div class="col-span-12 md:col-span-9"><EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" /></div>
+    </div>
+
+    <div class="program-cells grid grid-cols-2 border border-line mb-12" style={`--program-cols: ${data.cells.length};`}>
+      {data.cells.map((cell) => (
+        <div class="cell aspect-square md:aspect-[5/4] p-4 md:p-5 flex flex-col justify-between">
+          <div class="absolute top-2.5 left-3 font-mono text-[10px] text-dim">{cell.code}</div>
+          <div class="absolute bottom-2.5 right-3 font-mono text-[10px] text-dim">{cell.topics} тем · {cell.hours}ч</div>
+          <div class="flex items-center justify-center flex-1">
+            <div class="text-center">
+              <div class:list={["font-display font-bold text-[clamp(36px,6vw,64px)] leading-none", cell.acid && "text-acid"]}>{cell.sym}</div>
+              <div class="font-mono text-xs mt-3 text-dim">{cell.name}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div>
+      {data.modules.map((module, i) => (
+        <details class="prog-group" open={i === 0}>
+          <summary class="flex items-center justify-between gap-6">
+            <div class="flex items-center gap-6 min-w-0">
+              <div class="font-mono text-sm text-dim shrink-0">[{module.code}]</div>
+              <h3 class:list={["font-display font-bold text-2xl md:text-4xl tracking-tight m-0", module.acid && "text-acid"]}>{module.title}</h3>
+              <div class="font-mono text-xs text-dim hidden md:block">/ {module.meta}</div>
+            </div>
+            <div class="faq-plus shrink-0">+</div>
+          </summary>
+          <div class="pb-8 pt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+              {module.topics.map((topic, topicIndex) => (
+                <h3 class="topic-pill"><span class="pill-num">{String(topicIndex + 1).padStart(2, "0")}</span>{topic}</h3>
+              ))}
+            </div>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .program-cells {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 768px) {
+    .program-cells {
+      grid-template-columns: repeat(var(--program-cols, 5), minmax(0, 1fr));
+    }
+  }
+  .cell {
+    position: relative;
+    border: 1px solid var(--line);
+    background: var(--ink);
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+  .cell:hover { background: var(--acid); color: var(--ink); border-color: var(--acid); }
+  .cell:hover .text-acid, .cell:hover .text-dim { color: var(--ink); }
+  .prog-group { border-bottom: 1px solid var(--line); }
+  .prog-group summary { padding: 28px 0; list-style: none; cursor: pointer; }
+  .prog-group summary::-webkit-details-marker { display: none; }
+  .prog-group[open] summary { padding-bottom: 18px; }
+  .prog-group[open] .faq-plus { transform: rotate(45deg); background: var(--acid); color: var(--ink); }
+  .faq-plus {
+    transition: transform .25s ease, background .2s ease, color .2s ease;
+    display: inline-grid; place-items: center;
+    width: 36px; height: 36px;
+    border: 1px solid var(--line);
+    font-family: "JetBrains Mono", monospace; font-size: 18px;
+  }
+  .topic-pill {
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    font-weight: 400;
+    margin: 0;
+    background: var(--ink);
+    transition: all 150ms ease;
+  }
+  .topic-pill:hover { background: var(--acid); color: var(--ink); border-color: var(--acid); }
+  .pill-num { font-size: 10px; color: var(--dim); margin-right: 10px; }
+  .topic-pill:hover .pill-num { color: var(--ink); opacity: 0.7; }
+</style>

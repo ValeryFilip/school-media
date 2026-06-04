@@ -1,0 +1,74 @@
+---
+/*
+  Универсальная FAQ-секция для тёмных лендингов (ege.css) в брутал-стиле
+  refer/package. Принимает массив { q, a } — кол-во вопросов = длина массива.
+
+  Слот `extra` — для блока поддержки / вспомогательного контента под FAQ.
+*/
+import EgeH2 from "./EgeH2.astro";
+import type { SectionTitle } from "../../data/referLanding";
+
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  secNum: string;
+  title: SectionTitle;
+  lead?: string;
+  items: FaqItem[];
+  /** id секции для якорной ссылки. */
+  id?: string;
+  /** Какой вопрос открыт изначально (индекс). По умолчанию — 0. */
+  defaultOpen?: number;
+}
+
+const {
+  secNum,
+  title,
+  lead,
+  items,
+  id = "faq",
+  defaultOpen = 0,
+} = Astro.props;
+
+const pad2 = (n: number) => String(n + 1).padStart(2, "0");
+---
+
+<section class="section relative" id={id}>
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={title.text} marks={title.marks} />
+        {
+          lead && (
+            <p class="mt-6 max-w-2xl text-lg leading-snug text-paper/80">
+              {lead}
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    <div>
+      {
+        items.map((it, i) => (
+          <details class="faq" open={i === defaultOpen}>
+            <summary>
+              <span class="faq-num">[{pad2(i)}]</span>
+              <span class="faq-q-text">{it.q}</span>
+              <span class="faq-plus">+</span>
+            </summary>
+            <div class="faq-body">{it.a}</div>
+          </details>
+        ))
+      }
+    </div>
+
+    <slot name="extra" />
+  </div>
+</section>

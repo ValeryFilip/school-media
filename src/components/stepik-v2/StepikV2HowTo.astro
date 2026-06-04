@@ -1,0 +1,70 @@
+---
+/*
+  StepikV2HowTo — отдельная секция «Куда попадёшь после оплаты».
+  Снимает страх редиректа на внешнюю платформу и фиксирует:
+  чек, возврат, рассрочка — через Stepik, мы не посредник.
+
+  Контент одинаковый для всех 4 v2-лендингов — захардкожен здесь.
+  Размещение: между [10] выгода и [11→12] цена, как объяснение
+  «прозрачного маршрута до первого урока» прямо перед прайсом.
+*/
+import EgeH2 from "../ege/EgeH2.astro";
+
+const section = "[11] / куда попадёшь после оплаты";
+const title = {
+  text: "Прозрачный маршрут до первого урока. Три шага.",
+  marks: [
+    { text: "Три шага.", color: "fuchsia" as const },
+  ],
+};
+
+const steps = [
+  {
+    code: "01",
+    tag: "// оплата",
+    title: "Жмёшь «купить со скидкой»",
+    text: "Кнопка ведёт на страницу курса в Stepik — внешний образовательный маркетплейс, где живёт курс.",
+  },
+  {
+    code: "02",
+    tag: "// на платформе",
+    title: "Оплачиваешь на стороне Stepik",
+    text: "Карта, Я.Сплит или Т-Банк — рассрочка на 4 части под 0%. Чек со Stepik приходит на почту автоматом.",
+  },
+  {
+    code: "03",
+    tag: "// доступ",
+    title: "Курс открывается сразу",
+    text: "Заходишь на Stepik через сайт или приложение iOS / Android — открываешь первый урок, начинаешь учиться.",
+  },
+];
+---
+
+<section class="section relative" id="how-to">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={title.text} marks={title.marks} class="titrate" />
+        <p class="mt-6 max-w-2xl font-mono text-[12px] text-dim leading-snug">
+          Я размещаю свои курсы на Stepik — это образовательный маркетплейс. Оплата, чек, возврат
+          и рассрочка проходят на стороне платформы, по её правилам. Я не выписываю чек и не
+          обрабатываю возврат сам — этим занимается Stepik.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
+      {steps.map((s) => (
+        <div class="bg-ink p-8 md:p-10 relative">
+          <div class="absolute top-4 right-5 font-mono text-[10px] text-dim">[{s.code}]</div>
+          <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-5">{s.tag}</div>
+          <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-3 m-0">{s.title}</h3>
+          <p class="text-paper/75 text-sm leading-snug">{s.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,722 @@
+---
+interface LinkItem {
+  href?: string;
+  label: string;
+  description?: string;
+  external?: boolean;
+  columns?: Array<{
+    title?: string;
+    links: LinkItem[];
+  }>;
+}
+
+interface Cta {
+  href?: string;
+  label: string;
+  popupId?: string;
+  source?: string;
+  variant?: string;
+  campaign?: string;
+}
+
+interface Props {
+  logoSrc?: string;
+  logoAlt?: string;
+  brand?: string;
+  meta?: string;
+  siteLinks?: LinkItem[];
+  landingLinks?: LinkItem[];
+  links?: LinkItem[];
+  cta?: Cta;
+}
+
+const {
+  logoSrc = "/images/technical/egehim(kursi).webp",
+  logoAlt = "ЕГЭХИМ — курсы",
+  brand = "ЕГЭХИМ",
+  meta = "/ ЕГЭ · 2026",
+  siteLinks = [],
+  landingLinks,
+  links = [],
+  cta = { href: "#form", label: "Пробный урок" },
+} = Astro.props as Props;
+
+const pageLinks = landingLinks ?? links;
+const ctaAttrs = cta.popupId
+  ? {
+      "data-popup-id": cta.popupId,
+      "data-source": cta.source ?? "landing-menu",
+      "data-variant": cta.variant ?? "desktop",
+      "data-campaign": cta.campaign ?? "ege",
+    }
+  : {};
+---
+
+<header class="ege-nav">
+  <div class="ege-nav__inner gutter">
+    <div class="ege-nav__left">
+      <a class="ege-nav__brand" href="/" aria-label={logoAlt}>
+        <span class="ege-nav__logo-cell">
+          <img src={logoSrc} alt={logoAlt} class="ege-nav__logo" width="118" height="42" loading="eager" decoding="async" />
+        </span>
+        {
+          (brand || meta) && (
+            <span class="ege-nav__brand-text">
+              {brand && <span class="ege-nav__brand-name">{brand}</span>}
+              {meta && <span class="ege-nav__brand-meta">{meta}</span>}
+            </span>
+          )
+        }
+      </a>
+
+      <nav class="ege-nav__site" aria-label="Навигация по сайту">
+        {siteLinks.map((link) => (
+          link.columns ? (
+            <details class="ege-nav__details">
+              <summary>{link.label}</summary>
+              <div class="ege-nav__dropdown">
+                {link.columns.map((column) => (
+                  <div class="ege-nav__dropdown-column">
+                    {column.title && <div class="ege-nav__dropdown-title">{column.title}</div>}
+                    {column.links.map((item) => (
+                      <a
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                        class="ege-nav__dropdown-link"
+                      >
+                        <span>{item.label}</span>
+                        {item.description && <small>{item.description}</small>}
+                      </a>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </details>
+          ) : (
+            <a
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+            >
+              {link.label}
+            </a>
+          )
+        ))}
+      </nav>
+    </div>
+
+    <div class="ege-nav__right">
+      <nav class="ege-nav__landing" aria-label="Навигация по лендингу">
+        {pageLinks.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
+      </nav>
+
+      {
+        cta.popupId ? (
+          <button type="button" class="ege-nav__cta popup-btn cta-pulse" {...ctaAttrs}>
+            {cta.label}
+          </button>
+        ) : (
+          <a href={cta.href} class="ege-nav__cta cta-pulse">
+            {cta.label}
+          </a>
+        )
+      }
+    </div>
+
+    <details class="ege-nav__mobile">
+      <summary aria-label="Открыть меню">
+        <span></span>
+        <span></span>
+      </summary>
+      <div class="ege-nav__panel">
+        <div class="ege-nav__panel-body">
+          <section class="ege-nav__panel-section">
+            <div class="ege-nav__panel-kicker">// сайт</div>
+            <nav class="ege-nav__panel-list" aria-label="Навигация по сайту">
+              {siteLinks.map((link) =>
+                link.columns ? (
+                  <details class="ege-nav__panel-details">
+                    <summary>{link.label}</summary>
+                    <div class="ege-nav__panel-dropdown">
+                      {link.columns.map((column) => (
+                        <div class="ege-nav__panel-subgroup">
+                          {column.title && (
+                            <div class="ege-nav__panel-sublabel">{column.title}</div>
+                          )}
+                          {column.links.map((item) => (
+                            <a
+                              href={item.href}
+                              target={item.external ? "_blank" : undefined}
+                              rel={item.external ? "noopener noreferrer" : undefined}
+                            >
+                              {item.label}
+                            </a>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                ) : (
+                  <a
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                ),
+              )}
+            </nav>
+          </section>
+
+          {pageLinks.length > 0 && (
+            <section class="ege-nav__panel-section">
+              <div class="ege-nav__panel-kicker">// лендинг</div>
+              <nav class="ege-nav__panel-list" aria-label="Навигация по лендингу">
+                {pageLinks.map((link) => (
+                  <a href={link.href}>{link.label}</a>
+                ))}
+              </nav>
+            </section>
+          )}
+        </div>
+
+        <div class="ege-nav__panel-footer">
+          {
+            cta.popupId ? (
+              <button type="button" class="ege-nav__panel-cta popup-btn" {...ctaAttrs}>
+                {cta.label}
+              </button>
+            ) : (
+              <a href={cta.href} class="ege-nav__panel-cta">
+                {cta.label}
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  .ege-nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    border-bottom: 1px solid var(--line);
+    background: rgba(10, 10, 10, 0.84);
+    backdrop-filter: blur(12px);
+  }
+  /* На мобиле backdrop-filter создаёт containing block для fixed-потомков,
+     и панель меню «прилипает» к шапке вместо viewport. Отключаем. */
+  @media (max-width: 980px) {
+    .ege-nav {
+      background: var(--ink);
+      backdrop-filter: none;
+    }
+  }
+
+  .ege-nav__inner {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .ege-nav__left,
+  .ege-nav__right {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.5vw, 34px);
+    min-width: 0;
+  }
+
+  .ege-nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--paper);
+    text-decoration: none;
+    flex: 0 0 auto;
+  }
+
+  .ege-nav__logo-cell {
+    width: 118px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .ege-nav__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    filter: brightness(0) invert(1);
+  }
+
+  .ege-nav__brand-text {
+    display: grid;
+    gap: 2px;
+  }
+
+  .ege-nav__brand-name {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .ege-nav__brand-meta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .ege-nav__site,
+  .ege-nav__landing {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .ege-nav__site a,
+  .ege-nav__landing a,
+  .ege-nav__details summary {
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.16s ease;
+  }
+
+  .ege-nav__site a:hover,
+  .ege-nav__landing a:hover,
+  .ege-nav__details:hover summary {
+    color: var(--paper);
+  }
+
+  .ege-nav__details {
+    position: relative;
+  }
+
+  .ege-nav__details summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ege-nav__details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ege-nav__details summary::after {
+    content: " +";
+    color: var(--acid);
+  }
+
+  .ege-nav__details[open] summary::after {
+    content: " -";
+  }
+
+  .ege-nav__dropdown {
+    position: absolute;
+    top: calc(100% + 23px);
+    left: -18px;
+    width: min(720px, calc(100vw - 48px));
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    padding: 1px;
+    border: 1px solid var(--paper);
+    background: var(--line);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+  }
+
+  .ege-nav__dropdown-column {
+    display: grid;
+    align-content: start;
+    gap: 1px;
+    background: var(--line);
+  }
+
+  .ege-nav__dropdown-title {
+    padding: 13px 14px;
+    background: var(--ink);
+    color: var(--dim);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+
+  .ege-nav__dropdown-link {
+    display: grid;
+    gap: 5px;
+    padding: 15px 14px;
+    background: var(--ink);
+    color: var(--paper) !important;
+    white-space: normal;
+  }
+
+  .ege-nav__dropdown-link:hover {
+    background: var(--acid);
+    color: var(--ink) !important;
+  }
+
+  .ege-nav__dropdown-link small {
+    color: var(--dim);
+    font-size: 10px;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
+  }
+
+  .ege-nav__dropdown-link:hover small {
+    color: rgba(10, 10, 10, 0.68);
+  }
+
+  .ege-nav__landing {
+    padding-left: clamp(14px, 2vw, 26px);
+    border-left: 1px solid var(--line);
+  }
+
+  .ege-nav__cta,
+  .ege-nav__panel-cta {
+    border: 1px solid var(--paper);
+    background: transparent;
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease,
+      border-color 0.16s ease;
+  }
+
+  .ege-nav__cta:hover,
+  .ege-nav__panel-cta:hover {
+    background: var(--acid);
+    color: var(--ink);
+    border-color: var(--acid);
+  }
+
+  .ege-nav__mobile {
+    display: none;
+    position: relative;
+  }
+
+  .ege-nav__mobile > summary {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    gap: 5px;
+    border: 1px solid var(--paper);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ege-nav__mobile > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ege-nav__mobile > summary span {
+    width: 18px;
+    height: 1px;
+    background: var(--paper);
+    display: block;
+    transform-origin: center;
+    transition: transform 200ms ease;
+  }
+
+  /* Бургер → X при открытии */
+  .ege-nav__mobile[open] > summary {
+    background: var(--acid);
+    border-color: var(--acid);
+  }
+  .ege-nav__mobile[open] > summary span {
+    background: var(--ink);
+  }
+  .ege-nav__mobile[open] > summary span:first-child {
+    transform: translateY(3px) rotate(45deg);
+  }
+  .ege-nav__mobile[open] > summary span:last-child {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+
+  /* Панель — фуллскрин под навигацией: flex-col c скроллом в теле
+     и липким футером с CTA. z-index 2200 — выше floating-actions/попапов. */
+  .ege-nav__panel {
+    position: fixed;
+    top: 56px; /* высота .ege-nav (h-14 = 56px) */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2200;
+    display: flex;
+    flex-direction: column;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 560px) {
+    .ege-nav__panel {
+      top: 58px; /* мобильная высота nav (min-height: 58px) */
+    }
+  }
+
+  .ege-nav__panel-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 22px clamp(16px, 4vw, 28px) 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .ege-nav__panel-kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 10px;
+  }
+
+  /* Список ссылок: вертикальные ряды, 1px line-сепараторы */
+  .ege-nav__panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .ege-nav__panel-list > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 14px;
+    background: var(--coal);
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .ege-nav__panel-list > a::after {
+    content: "→";
+    color: var(--acid);
+    font-size: 13px;
+  }
+  .ege-nav__panel-list > a:hover {
+    background: var(--acid);
+    color: var(--ink);
+  }
+  .ege-nav__panel-list > a:hover::after {
+    color: var(--ink);
+  }
+
+  /* Вложенные details (например «Наши курсы» с колонками) */
+  .ege-nav__panel-details {
+    background: var(--coal);
+  }
+  .ege-nav__panel-details > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 14px;
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+  }
+  .ege-nav__panel-details > summary::-webkit-details-marker {
+    display: none;
+  }
+  .ege-nav__panel-details > summary::after {
+    content: "+";
+    color: var(--acid);
+    font-size: 16px;
+    transition: transform 200ms ease;
+  }
+  .ege-nav__panel-details[open] > summary::after {
+    content: "−";
+  }
+
+  .ege-nav__panel-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+    border-top: 1px solid var(--line);
+  }
+  .ege-nav__panel-subgroup {
+    background: var(--ink);
+    padding: 4px 0;
+  }
+  .ege-nav__panel-sublabel {
+    padding: 10px 14px 6px;
+    color: var(--acid);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .ege-nav__panel-subgroup a {
+    display: block;
+    padding: 11px 14px 11px 22px;
+    color: var(--dim);
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    line-height: 1.25;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 150ms ease, background 150ms ease;
+  }
+  .ege-nav__panel-subgroup a:hover {
+    color: var(--ink);
+    background: var(--acid);
+  }
+
+  .ege-nav__panel-footer {
+    flex-shrink: 0;
+    padding: 14px clamp(16px, 4vw, 28px)
+      calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+  }
+  .ege-nav__panel-cta {
+    width: 100%;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--acid);
+    color: var(--ink);
+    border: 1px solid var(--acid);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .ege-nav__panel-cta:hover {
+    background: var(--paper);
+  }
+
+  @media (max-width: 1380px) {
+    .ege-nav__brand-text {
+      display: none;
+    }
+
+    .ege-nav__site,
+    .ege-nav__landing {
+      gap: 14px;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  @media (max-width: 1240px) {
+    .ege-nav__site {
+      display: none;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .ege-nav__right {
+      display: none;
+    }
+
+    .ege-nav__mobile {
+      display: block;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .ege-nav__inner {
+      min-height: 58px;
+      gap: 12px;
+    }
+
+    .ege-nav__logo-cell {
+      width: 96px;
+      height: 34px;
+    }
+
+    .ege-nav__brand-text {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  /* Мобильное меню: блокируем скролл body, Escape и клик по ссылке закрывают. */
+  (function () {
+    var menus = document.querySelectorAll(".ege-nav__mobile");
+    if (!menus.length) return;
+
+    var lock = function (yes) {
+      document.body.style.overflow = yes ? "hidden" : "";
+      document.documentElement.style.overflow = yes ? "hidden" : "";
+    };
+
+    var closeAll = function () {
+      menus.forEach(function (d) {
+        if (d.open) d.open = false;
+      });
+      lock(false);
+    };
+
+    menus.forEach(function (d) {
+      d.addEventListener("toggle", function () {
+        lock(d.open);
+      });
+      // Любая ссылка внутри панели закрывает меню (внутренние якоря тоже)
+      d.querySelectorAll(".ege-nav__panel a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          d.open = false;
+          lock(false);
+        });
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAll();
+    });
+  })();
+</script>

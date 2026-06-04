@@ -1,0 +1,218 @@
+---
+import EgeAcidButton from "./EgeAcidButton.astro";
+import EgeH2 from "./EgeH2.astro";
+
+interface Props {
+  cta?: {
+    href?: string;
+    label?: string;
+    html?: string;
+    note?: string;
+  };
+  /** Декоративная метка-секция слева. По умолчанию [04] (после selfpaced + self). */
+  section?: string;
+}
+
+const {
+  cta = {
+    href: "#form",
+    html: "Записаться на пробный к&nbsp;Валерию",
+    note: "60 МИН · БЕСПЛАТНО · С АВТОРОМ КУРСА",
+  },
+  section = "[04] / АВТОР",
+} = Astro.props as Props;
+---
+
+<!-- ============== АВТОР КУРСА ============== -->
+<section class="section relative" id="author">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">{section}</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <EgeH2
+              text="Валерий&nbsp;Филипенко. Не&nbsp;«команда из&nbsp;42&nbsp;экспертов». Один автор — одна методика."
+              marks={[
+                {
+                  text: "Не&nbsp;«команда из&nbsp;42&nbsp;экспертов». Один автор — одна методика.",
+                  color: "dim",
+                },
+                { text: "методика", underline: "acid" },
+              ]}
+              class="titrate"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-px bg-line border border-line">
+          <!-- Photo + ID card -->
+          <div class="col-span-12 md:col-span-5 bg-ink p-6 md:p-8">
+            <div
+              class="flex items-start justify-between mb-6 font-mono text-[11px]"
+            >
+              <span>ID · 0001</span>
+              <span class="text-dim">[ HEAD OF METHOD ]</span>
+            </div>
+            <div
+              class="aspect-[4/5] border border-line relative overflow-hidden mb-6"
+            >
+              <img
+                src="/images/valerii-filipenko.webp"
+                alt="Валерий Филипенко — преподаватель химии"
+                class="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div
+                class="absolute top-3 right-3 font-mono text-[10px] text-acid"
+              >
+                ● rec
+              </div>
+            </div>
+            <div class="font-display font-bold text-3xl">Валерий Филипенко</div>
+            <div class="font-mono text-xs text-dim mt-1">
+              СПБГТИ (ТУ) · красный диплом
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a
+                href="https://t.me/valery_chemistry"
+                target="_blank"
+                rel="noopener"
+                class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition"
+                >tg @valery_chemistry</a
+              >
+              <a
+                href="https://www.youtube.com/@chemistry_exam"
+                target="_blank"
+                rel="noopener"
+                class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition"
+                >YouTube</a
+              >
+              <a
+                href="https://vk.com/chemistry_exam"
+                target="_blank"
+                rel="noopener"
+                class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition"
+                >VK</a
+              >
+            </div>
+          </div>
+
+          <!-- Right: bio + stats -->
+          <div class="col-span-12 md:col-span-7 bg-ink">
+            <!-- Stats grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 border-b border-line">
+              <div class="p-6 border-r border-line">
+                <div
+                  class="font-display font-bold text-4xl text-acid"
+                  data-counter="100"
+                >
+                  0
+                </div>
+                <div class="label mt-2">Свой ЕГЭ</div>
+              </div>
+              <div class="p-6 border-r border-line">
+                <div class="font-display font-bold text-4xl" data-counter="10">
+                  0
+                </div>
+                <div class="label mt-2">Лет в подготовке</div>
+              </div>
+              <div class="p-6">
+                <div class="font-display font-bold text-4xl" data-counter="2000" data-suffix="+">
+                  0
+                </div>
+                <div class="label mt-2">Выпускников</div>
+              </div>
+              <div class="p-6 border-r border-line border-t md:border-t-0">
+                <div class="font-display font-bold text-4xl" data-counter="3">
+                  0
+                </div>
+                <div class="label mt-2">100-балльников</div>
+              </div>
+              <div class="p-6 border-r border-line border-t md:border-t-0">
+                <div
+                  class="font-display font-bold text-4xl text-fuchsia2"
+                  data-counter="8"
+                >
+                  0
+                </div>
+                <div class="label mt-2">Статей в РИНЦ</div>
+              </div>
+              <div class="p-6 border-t md:border-t-0">
+                <div class="font-display font-bold text-4xl" data-counter="8">
+                  0
+                </div>
+                <div class="label mt-2">Курсов выпустил</div>
+              </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="p-6 md:p-8 space-y-5 text-paper/90">
+              <p class="font-display text-xl md:text-2xl leading-snug">
+                «Я сдавал ЕГЭ в&nbsp;2014&nbsp;на&nbsp;100&nbsp;баллов
+                и&nbsp;помню самые тяжёлые дни подготовки: когда пытаешься
+                понять неорганику, реакции и&nbsp;логику экзамена, а&nbsp;всё
+                разваливается. С&nbsp;тех пор я&nbsp;собрал методику, с&nbsp;которой
+                ребята учат неорганику буквально закрытыми глазами».
+              </p>
+              <ul class="font-mono text-sm space-y-3 text-paper/85 mt-6">
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[01]</span
+                  ><span
+                    >Окончил СПБГТИ&nbsp;(ТУ) с&nbsp;красным дипломом. Был
+                    президентским стипендиатом и&nbsp;стипендиатом правительства РФ.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[02]</span
+                  ><span
+                    >С&nbsp;2016&nbsp;года ведёт авторские курсы. 8&nbsp;потоков,
+                    2000+ учеников, средний балл выпуска — 81,5.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[03]</span
+                  ><span
+                    >Автор семи курсов на&nbsp;Stepik и&nbsp;сборника собственных
+                    авторских вариантов ЕГЭ.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[04]</span
+                  ><span
+                    >Знает кодификатор изнутри — какие задания будут
+                    и&nbsp;каких ловушек ждать. Постоянно подтверждает свою
+                    квалификацию и&nbsp;знания об&nbsp;экзамене.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[05]</span
+                  ><span
+                    >Ведёт телеграм-канал про&nbsp;химию: каждый день разборы
+                    задач, экзаменационные ловушки и&nbsp;мотивация без&nbsp;воды.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Author CTA -->
+              <div
+                class="pt-6 border-t border-line mt-8 flex flex-wrap items-center gap-4"
+              >
+              <EgeAcidButton
+                href={cta.href ?? "#form"}
+                label={cta.label}
+                html={cta.html}
+                arrow="→"
+                class="px-6 py-4"
+              />
+                <div class="font-mono text-[11px] text-dim">
+                  {cta.note}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>

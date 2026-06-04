@@ -1,0 +1,139 @@
+---
+import "../styles/ege.css";
+import EgeNav from "../components/ege/EgeNav.astro";
+import EgeFooter from "../components/ege/EgeFooter.astro";
+import EgeFloatingActions from "../components/ege/EgeFloatingActions.astro";
+import EgePopupForm from "../components/ege/EgePopupForm.astro";
+import EgeTrail from "../components/ege/EgeTrail.astro";
+import ExternalScripts from "../components/scripts/ExternalScripts.astro";
+import Seo from "../components/Seo.astro";
+import JsonLd from "../components/JsonLd.astro";
+import YandexMetrika from "../components/analytics/YandexMetrika.astro";
+import CookieConsent from "../components/CookieConsent.astro";
+import config from "../config";
+import {
+  buildBreadcrumbsJsonLd,
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+  getSiteName,
+} from "../lib/seoData";
+
+const {
+  title = "ХИМ.LAB — подготовка к ЕГЭ по химии · 95+ баллов",
+  description = config.description,
+  image = "/images/technical/og-home.png",
+  url,
+  seoType = "website",
+  index = true,
+  follow = true,
+  addSiteSuffix = false,
+  siteName,
+  imageAlt,
+  prevUrl,
+  nextUrl,
+  breadcrumbs = [],
+  showBreadcrumbs = false,
+  courseJsonLd,
+  productJsonLd,
+  faqJsonLd,
+  videoJsonLd,
+  webPageJsonLd,
+  jsonLd = [],
+  nav,
+  footer,
+  floatingActions,
+  popupForm,
+} = Astro.props;
+
+const origin = Astro.url.origin;
+const siteNameFinal = getSiteName(siteName, config.siteName);
+const orgJsonLd = buildOrganizationJsonLd(origin);
+const websiteJsonLd = buildWebSiteJsonLd(origin, siteNameFinal);
+const breadcrumbsJsonLd =
+  showBreadcrumbs && breadcrumbs.length > 0
+    ? buildBreadcrumbsJsonLd(origin, siteNameFinal, breadcrumbs, false, Astro.url.pathname)
+    : null;
+const extraJsonLd = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+const jsonLdItems = [
+  orgJsonLd,
+  websiteJsonLd,
+  breadcrumbsJsonLd,
+  courseJsonLd,
+  productJsonLd,
+  videoJsonLd,
+  faqJsonLd,
+  webPageJsonLd,
+  ...extraJsonLd,
+].filter(Boolean);
+
+---
+
+<!doctype html>
+<html lang="ru" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0B0F14" />
+
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      url={url}
+      type={seoType}
+      index={index}
+      follow={follow}
+      addSiteSuffix={addSiteSuffix}
+      siteName={siteNameFinal}
+      imageAlt={imageAlt}
+    />
+    {prevUrl && <link rel="prev" href={prevUrl} />}
+    {nextUrl && <link rel="next" href={nextUrl} />}
+
+    <link rel="alternate" type="application/rss+xml" title={`${siteNameFinal} RSS`} href="/rss.xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      media="print"
+      onload="this.onload=null;this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      />
+    </noscript>
+
+    <YandexMetrika />
+    {jsonLdItems.map((item) => <JsonLd data={item} />)}
+
+    <script is:inline defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script is:inline defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  </head>
+  <body class="bg-ink text-paper">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:bg-acid focus:px-4 focus:py-3 focus:font-mono focus:text-sm focus:text-ink"
+    >
+      Перейти к содержимому
+    </a>
+    {nav && <EgeNav {...nav} />}
+    <main id="main">
+      <slot />
+    </main>
+    {footer && <EgeFooter {...footer} />}
+    {floatingActions && <EgeFloatingActions {...floatingActions} />}
+    <EgeTrail />
+    <slot name="after-footer" />
+    <EgePopupForm {...popupForm} />
+    <CookieConsent />
+    <ExternalScripts />
+  </body>
+</html>

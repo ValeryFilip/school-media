@@ -1,0 +1,1391 @@
+---
+import { egeLandingFaqItems } from "../../lib/egeLandingSeo";
+
+const { data = {} } = Astro.props;
+const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
+---
+
+<script type="application/json" id="egeLandingRuntimeData" set:html={JSON.stringify(runtimeData)}></script>
+
+<script is:inline>
+      const __egeRuntime = (() => {
+        const node = document.getElementById("egeLandingRuntimeData");
+        if (!node) return {};
+        try {
+          return JSON.parse(node.textContent || "{}");
+        } catch {
+          return {};
+        }
+      })();
+      const __egeAfterPaint = (fn) =>
+        requestAnimationFrame(() => requestAnimationFrame(fn));
+      const __egeIdle = (fn, timeout = 1200) => {
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(fn, { timeout });
+        } else {
+          setTimeout(fn, 1);
+        }
+      };
+
+      // ====================== PT BG ======================
+      __egeAfterPaint(function buildPTBg() {
+        const grid = document.getElementById("ptBg");
+        if (!grid || grid.dataset.ready === "true") return;
+        grid.dataset.ready = "true";
+        for (let i = 0; i < 18 * 5; i++)
+          grid.appendChild(document.createElement("div"));
+      });
+
+      // ====================== MOLECULE ======================
+      (function buildMolecule() {
+        const stage = document.getElementById("molecule");
+        if (!stage) return;
+        const R = 38;
+        const atoms = [];
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+          atoms.push({
+            type: "C",
+            x: 50 + Math.cos(a) * R,
+            y: 50 + Math.sin(a) * R,
+            label: "C",
+          });
+        }
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+          atoms.push({
+            type: "H",
+            x: 50 + Math.cos(a) * (R + 18),
+            y: 50 + Math.sin(a) * (R + 18),
+            label: "H",
+          });
+        }
+        atoms[6] = { type: "O", x: atoms[6].x, y: atoms[6].y, label: "OH" };
+
+        atoms.forEach((a) => {
+          const el = document.createElement("div");
+          el.className = `atom ${a.type}`;
+          const size = a.type === "C" ? 36 : a.type === "O" ? 38 : 28;
+          el.style.width = el.style.height = size + "px";
+          el.style.left = `calc(${a.x}% - ${size / 2}px)`;
+          el.style.top = `calc(${a.y}% - ${size / 2}px)`;
+          el.style.fontSize = (a.type === "C" ? 14 : 11) + "px";
+          el.textContent = a.label;
+          stage.appendChild(el);
+        });
+
+        function bond(x1, y1, x2, y2, double = false) {
+          const dx = x2 - x1;
+          const dy = y2 - y1;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+          const b = document.createElement("div");
+          b.className = "bond";
+          b.style.width = dist + "%";
+          b.style.left = x1 + "%";
+          b.style.top = y1 + "%";
+          b.style.transform = `rotate(${angle}deg)`;
+          stage.appendChild(b);
+          if (double) {
+            const b2 = b.cloneNode();
+            b2.style.top = y1 + 0.8 + "%";
+            stage.appendChild(b2);
+          }
+        }
+        for (let i = 0; i < 6; i++) {
+          const a = atoms[i];
+          const b = atoms[(i + 1) % 6];
+          bond(a.x, a.y, b.x, b.y, i % 2 === 0);
+        }
+        for (let i = 0; i < 6; i++)
+          bond(atoms[i].x, atoms[i].y, atoms[i + 6].x, atoms[i + 6].y);
+
+        const moleculeStage = document.getElementById("moleculeStage");
+        // На v2-страницах (lattice/cascade/electrons) #molecule может
+        // быть, а #moleculeStage — нет; не валим скрипт.
+        if (!moleculeStage) return;
+        const xEl = document.getElementById("moleculeX");
+        const yEl = document.getElementById("moleculeY");
+        let tx = 0;
+        let ty = 0;
+        let cx = 0;
+        let cy = 0;
+        moleculeStage.addEventListener("mousemove", (e) => {
+          const r = moleculeStage.getBoundingClientRect();
+          const nx = (e.clientX - r.left) / r.width - 0.5;
+          const ny = (e.clientY - r.top) / r.height - 0.5;
+          tx = nx * 44;
+          ty = ny * -44;
+          if (xEl) xEl.textContent = `X: ${(nx * 2).toFixed(2)}`;
+          if (yEl) yEl.textContent = `Y: ${(-ny * 2).toFixed(2)}`;
+        });
+        let auto = 0;
+        function loop() {
+          cx += (tx - cx) * 0.08;
+          cy += (ty - cy) * 0.08;
+          auto += 0.15;
+          stage.style.transform = `rotateY(${cx + auto}deg) rotateX(${cy}deg)`;
+          requestAnimationFrame(loop);
+        }
+        loop();
+      })();
+
+      // ====================== HERO CHAOS 100 ======================
+      (function assembly() {
+        const scene = document.getElementById("assembly");
+        if (!scene) return;
+        const stateEl = document.getElementById("aState");
+        const countEl = document.getElementById("aCount");
+        const cap = document.getElementById("aCap");
+        const pool = ["H", "O", "C", "N", "e⁻", "+", "·", "Na", "Cl", "S", "K", "O₂"];
+
+        // Храним id текущего рAF, чтобы при resize → build() убить старый
+        // бесконечный цикл. Без этого каждый resize плодит новый
+        // rAF-loop, старые продолжают мутировать style.transform на
+        // несуществующих уже частицах → стек циклов растёт линейно.
+        let heroChaosFrameId = null;
+
+        const mouse = { x: -999, y: -999, active: false };
+        scene.addEventListener("mousemove", (e) => {
+          const r = scene.getBoundingClientRect();
+          mouse.x = e.clientX - r.left;
+          mouse.y = e.clientY - r.top;
+          mouse.active = true;
+        });
+        scene.addEventListener("mouseleave", () => {
+          mouse.active = false;
+        });
+
+        function build() {
+          // Убиваем старый rAF, если был. Без этого resize-стек растёт.
+          if (heroChaosFrameId !== null) {
+            cancelAnimationFrame(heroChaosFrameId);
+            heroChaosFrameId = null;
+          }
+          const W = scene.clientWidth || 380;
+          const H = scene.clientHeight || 380;
+          scene.innerHTML = "";
+
+          const cw = 360;
+          const ch = 200;
+          const cv = document.createElement("canvas");
+          cv.width = cw;
+          cv.height = ch;
+          const ctx = cv.getContext("2d");
+          if (!ctx) return;
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.font = "700 150px 'Space Grotesk', sans-serif";
+          ctx.fillText("100", cw / 2, ch / 2);
+
+          const img = ctx.getImageData(0, 0, cw, ch).data;
+          const pts = [];
+          const step = 7;
+          for (let y = 0; y < ch; y += step) {
+            for (let x = 0; x < cw; x += step) {
+              if (img[(y * cw + x) * 4 + 3] > 128) pts.push([x, y]);
+            }
+          }
+
+          const boxW = W * 0.82;
+          const scale = boxW / cw;
+          const offX = (W - cw * scale) / 2;
+          const offY = (H - ch * scale) / 2;
+
+          const fragment = document.createDocumentFragment();
+          const particles = pts.map((p) => {
+            const el = document.createElement("div");
+            el.className = "pnode" + (Math.random() < 0.18 ? " fx" : "");
+            el.textContent = pool[(Math.random() * pool.length) | 0];
+            fragment.appendChild(el);
+            return {
+              el,
+              x: Math.random() * W,
+              y: Math.random() * H,
+              vx: (Math.random() - 0.5) * 2.4,
+              vy: (Math.random() - 0.5) * 2.4,
+              tx: offX + p[0] * scale,
+              ty: offY + p[1] * scale,
+              ph: Math.random() * Math.PI * 2,
+            };
+          });
+          scene.appendChild(fragment);
+
+          if (countEl) countEl.textContent = String(particles.length);
+
+          const cycle = 8200;
+          const start = performance.now();
+          function frame(now) {
+            const t = (now - start) % cycle;
+            let mode;
+            if (t < 3000) mode = "chaos";
+            else if (t < 4700) mode = "assemble";
+            else if (t < 7200) mode = "hold";
+            else mode = "scatter";
+
+            if (mode === "chaos") {
+              if (stateEl) {
+                stateEl.textContent = "[CHAOS]";
+                stateEl.style.color = "var(--fuchsia2)";
+              }
+              cap?.classList.remove("show");
+              particles.forEach((p) => {
+                p.el.classList.remove("on");
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+              });
+            } else if (mode === "assemble") {
+              if (stateEl) {
+                stateEl.textContent = "[ASSEMBLING]";
+                stateEl.style.color = "var(--acid)";
+              }
+              particles.forEach((p) => {
+                p.x += (p.tx - p.x) * 0.14;
+                p.y += (p.ty - p.y) * 0.14;
+                p.el.classList.add("on");
+              });
+            } else if (mode === "hold") {
+              if (stateEl) {
+                stateEl.textContent = "[100 / 100]";
+                stateEl.style.color = "var(--acid)";
+              }
+              cap?.classList.add("show");
+              particles.forEach((p) => {
+                p.ph += 0.05;
+                p.x += (p.tx + Math.cos(p.ph) * 1.2 - p.x) * 0.2;
+                p.y += (p.ty + Math.sin(p.ph) * 1.2 - p.y) * 0.2;
+              });
+            } else {
+              if (!particles._scattered) {
+                particles.forEach((p) => {
+                  const a = Math.random() * Math.PI * 2;
+                  const s = 2 + Math.random() * 3;
+                  p.vx = Math.cos(a) * s;
+                  p.vy = Math.sin(a) * s;
+                });
+                particles._scattered = true;
+              }
+              cap?.classList.remove("show");
+              particles.forEach((p) => {
+                p.el.classList.remove("on");
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+              });
+            }
+
+            if (mode !== "scatter") particles._scattered = false;
+
+            if (mouse.active) {
+              const R = 80;
+              const R2 = R * R;
+              particles.forEach((p) => {
+                const dx = p.x - mouse.x;
+                const dy = p.y - mouse.y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < R2 && d2 > 0.01) {
+                  const d = Math.sqrt(d2);
+                  const f = (1 - d / R) * 26;
+                  p.x += (dx / d) * f;
+                  p.y += (dy / d) * f;
+                }
+              });
+            }
+
+            particles.forEach((p) => {
+              p.el.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`;
+            });
+            heroChaosFrameId = requestAnimationFrame(frame);
+          }
+          __egeAfterPaint(() => {
+            heroChaosFrameId = requestAnimationFrame(frame);
+          });
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => __egeAfterPaint(build));
+          setTimeout(() => {
+            if (!scene.children.length) build();
+          }, 1500);
+        } else {
+          __egeAfterPaint(build);
+        }
+        window.addEventListener("resize", () => {
+          clearTimeout(window.__heroChaosResize);
+          window.__heroChaosResize = setTimeout(build, 250);
+        });
+      })();
+
+      // ====================== HERO PERIODIC CLUSTER ======================
+      function spin3D(stageId, sceneId, opts = {}) {
+        const stage = document.getElementById(stageId);
+        const scene = document.getElementById(sceneId);
+        if (!stage || !scene) return;
+        const speed = opts.speed ?? 0.1;
+        const baseX = opts.baseX ?? 0;
+        let tx = 0;
+        let ty = 0;
+        let cx = 0;
+        let cy = 0;
+        let auto = 0;
+        stage.addEventListener("mousemove", (e) => {
+          const r = stage.getBoundingClientRect();
+          tx = ((e.clientX - r.left) / r.width - 0.5) * 44;
+          ty = ((e.clientY - r.top) / r.height - 0.5) * -44;
+        });
+        (function loop() {
+          cx += (tx - cx) * 0.08;
+          cy += (ty - cy) * 0.08;
+          auto += speed;
+          scene.style.transform = `rotateY(${cx + auto}deg) rotateX(${baseX + cy}deg)`;
+          requestAnimationFrame(loop);
+        })();
+      }
+
+      function makeHeroBond(scene, x1, y1, x2, y2, color) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        const b = document.createElement("div");
+        b.className = "bond";
+        b.style.width = dist + "%";
+        b.style.left = x1 + "%";
+        b.style.top = y1 + "%";
+        b.style.transform = `rotate(${angle}deg)`;
+        if (color) b.style.background = color;
+        scene.appendChild(b);
+      }
+
+      __egeAfterPaint(function buildCluster() {
+        const scene = document.getElementById("sceneB");
+        if (!scene) return;
+        const center = { sym: "C", num: 6, mass: "12.01", cls: "" };
+        const ring = [
+          { sym: "H", num: 1, mass: "1.008", cls: "" },
+          { sym: "O", num: 8, mass: "16.00", cls: "fx" },
+          { sym: "N", num: 7, mass: "14.01", cls: "ac" },
+          { sym: "Na", num: 11, mass: "22.99", cls: "" },
+          { sym: "Cl", num: 17, mass: "35.45", cls: "" },
+          { sym: "Fe", num: 26, mass: "55.85", cls: "" },
+        ];
+        const size = 78;
+        const R = 36;
+        const nodes = [];
+        nodes.push({ ...center, x: 50, y: 50, z: 34 });
+        ring.forEach((e, i) => {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+          nodes.push({
+            ...e,
+            x: 50 + Math.cos(a) * R,
+            y: 50 + Math.sin(a) * R,
+            z: i % 2 === 0 ? 30 : -30,
+          });
+        });
+
+        for (let i = 1; i <= 6; i++) makeHeroBond(scene, nodes[0].x, nodes[0].y, nodes[i].x, nodes[i].y);
+        for (let i = 1; i <= 6; i++) {
+          const a = nodes[i];
+          const b = nodes[(i % 6) + 1];
+          makeHeroBond(scene, a.x, a.y, b.x, b.y, "rgba(242,242,242,0.4)");
+        }
+
+        const fragment = document.createDocumentFragment();
+        nodes.forEach((n) => {
+          const c = document.createElement("div");
+          c.className = "cell";
+          c.style.width = c.style.height = size + "px";
+          c.style.left = `calc(${n.x}% - ${size / 2}px)`;
+          c.style.top = `calc(${n.y}% - ${size / 2}px)`;
+          c.style.transform = `translateZ(${n.z}px)`;
+          let symColor = "var(--paper)";
+          if (n.cls === "fx") symColor = "var(--fuchsia2)";
+          if (n.cls === "ac") symColor = "var(--acid)";
+          c.innerHTML = `<span class="cell-num">${n.num}</span>
+            <span class="cell-sym" style="color:${symColor}">${n.sym}</span>
+            <span class="cell-mass">${n.mass}</span>`;
+          fragment.appendChild(c);
+        });
+        scene.appendChild(fragment);
+        spin3D("stageB", "sceneB", { speed: 0.1 });
+      });
+
+      // ====================== FLOATING FORMULAS ======================
+      __egeIdle(function floatingFormulas() {
+        const field = document.getElementById("formulaField");
+        if (!field || field.dataset.ready === "true") return;
+        if (!window.gsap) {
+          // Ограничиваем ретраи (max ~12 секунд ожидания GSAP).
+          // Без cap бесконечный setTimeout-loop тратил бы CPU вечно.
+          floatingFormulas._gsapTries = (floatingFormulas._gsapTries || 0) + 1;
+          if (floatingFormulas._gsapTries < 100) {
+            setTimeout(floatingFormulas, 120);
+          }
+          return;
+        }
+        field.dataset.ready = "true";
+        const formulas = [
+          "H₂O",
+          "NaCl",
+          "CO₂",
+          "HCl",
+          "NH₃",
+          "O₂",
+          "H₂SO₄",
+          "NaOH",
+          "CH₄",
+          "CaCO₃",
+          "KOH",
+          "C₂H₅OH",
+          "Fe₂O₃",
+        ];
+        for (let i = 0; i < 18; i++) {
+          const el = document.createElement("div");
+          el.className = "formula-particle";
+          el.textContent =
+            formulas[Math.floor(Math.random() * formulas.length)];
+          el.style.left = Math.random() * 100 + "%";
+          el.style.top = Math.random() * 100 + "%";
+          el.style.fontSize = 10 + Math.random() * 8 + "px";
+          el.style.opacity = 0.15 + Math.random() * 0.25;
+          field.appendChild(el);
+          gsap.to(el, {
+            x: (Math.random() - 0.5) * 60,
+            y: (Math.random() - 0.5) * 60,
+            duration: 8 + Math.random() * 8,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+          });
+        }
+      });
+
+      // ====================== 03. PAIN POINTS (interactive) ======================
+      __egeIdle(function buildPain() {
+        const grid = document.getElementById("painGrid");
+        if (!grid) return;
+        const symptoms = __egeRuntime.symptoms ?? [
+          {
+            id: 1,
+            anx: 140,
+            t: "«Школьная учительница объясняет — а я не понимаю».",
+            d: "На уроке вроде всё понятно, а дома открываешь вариант — и не знаешь, с чего начать.",
+          },
+          {
+            id: 2,
+            anx: 220,
+            t: "«Вроде готовлюсь, а пробники на 40 баллов».",
+            d: "Задачи решаются кусками: сегодня получилось, завтра та же тема снова развалилась.",
+          },
+          {
+            id: 3,
+            anx: 180,
+            t: "«Органика — это ад. Кажется, я тупой».",
+            d: "Дело не&nbsp;в&nbsp;тебе. Дело в&nbsp;том, что никто не&nbsp;показал, как читать структурную формулу.",
+          },
+          {
+            id: 4,
+            anx: 200,
+            t: "«Скоро ЕГЭ, а мне кажется, что я не готовлюсь».",
+            d: "Время уходит на ролики, конспекты и обещания начать с понедельника — результата в баллах не видно.",
+          },
+          {
+            id: 5,
+            anx: 120,
+            t: "«На занятии кивают: всё нормально, а ошибок меньше не становится».",
+            d: "Нужен не контроль ради контроля, а разбор, почему ты ошибся и как больше не попадаться.",
+          },
+          {
+            id: 6,
+            anx: 240,
+            t: "«В онлайн-школе я — один из 8000 учеников».",
+            d: "Когда вопросов много, а обратная связь общая, легко выпасть и заметить это только перед пробником.",
+          },
+        ];
+
+        symptoms.forEach((s, i) => {
+          const num = String(i + 1).padStart(2, "0");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.dataset.anx = s.anx;
+          btn.dataset.selected = "false";
+          btn.className =
+            "pain-card col-span-12 md:col-span-4 bg-ink p-8 group text-left transition relative border-l-4 border-transparent";
+          btn.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-mono text-xs text-fuchsia2">// СИМПТОМ ${num}</div>
+        <div class="pain-check w-5 h-5 border border-paper/40 grid place-items-center font-mono text-[10px] shrink-0">+</div>
+      </div>
+      <div class="font-display font-bold text-2xl md:text-3xl leading-tight mb-4">${s.t}</div>
+      <p class="text-dim text-sm">${s.d}</p>
+      <div class="mt-8 h-2 bg-line relative overflow-hidden">
+        <div class="pain-bar absolute inset-y-0 left-0 bg-fuchsia2 transition-all duration-500" style="width:${Math.min(100, s.anx / 3)}%"></div>
+      </div>
+      <div class="flex items-center justify-between font-mono text-[10px] mt-2">
+        <span class="pain-label text-dim">У МЕНЯ ТАК?</span>
+        <span class="text-fuchsia2">+${s.anx} ТРЕВОГИ</span>
+      </div>
+    `;
+          btn.addEventListener("click", () => {
+            const on = btn.dataset.selected === "true";
+            btn.dataset.selected = on ? "false" : "true";
+            btn.classList.toggle("is-selected", !on);
+            updateAggregate();
+          });
+          grid.appendChild(btn);
+        });
+
+        const score = document.getElementById("anxScore");
+        const bar = document.getElementById("anxBar");
+        const zone = document.getElementById("anxZone");
+        const diag = document.getElementById("anxDiag");
+        const rx = document.getElementById("anxRx");
+
+        function updateAggregate() {
+          const selected = Array.from(
+            grid.querySelectorAll('[data-selected="true"]'),
+          );
+          const total = selected.reduce((a, b) => a + Number(b.dataset.anx), 0);
+          const max = 600;
+          const pct = (total / max) * 100;
+          const count = selected.length;
+
+          // Animate score
+          const cur = parseInt(score.textContent.replace(/\D/g, "")) || 0;
+          gsap.to(
+            { v: cur },
+            {
+              v: total,
+              duration: 0.6,
+              ease: "expo.out",
+              onUpdate: function () {
+                score.textContent = Math.round(this.targets()[0].v);
+              },
+            },
+          );
+          bar.style.width = pct + "%";
+
+          // Zone classification
+          let zoneText, diagText, rxText, barColor;
+          if (count === 0) {
+            zoneText = "— SAFE ZONE";
+            diagText = "[ выбери симптомы выше ]";
+            rxText =
+              "// потыкай в карточки сверху — посмотрим, что у&nbsp;тебя болит на&nbsp;самом деле.";
+            barColor = "var(--fuchsia2)";
+          } else if (total < 200) {
+            zoneText = "НОРМА · ЗЕЛЁНАЯ ЗОНА";
+            diagText = "[ диагноз: лёгкая тревожность ]";
+            rxText =
+              '// Тебе хватит платформы и&nbsp;тренажёра. <a href="#prices" class="text-acid hover:underline">Тариф «Самостоятельный» →</a>';
+            barColor = "var(--acid)";
+          } else if (total < 400) {
+            zoneText = "СТАНДАРТНАЯ ПАНИКА";
+            diagText = "[ диагноз: типичный одиннадцатиклассник ]";
+            rxText =
+              '// Тебе нужна минигруппа: уроки с&nbsp;автором, системная домашка и&nbsp;разбор ошибок. <a href="#prices" class="text-acid hover:underline">Тариф «Минигруппа» →</a>';
+            barColor = "var(--fuchsia2)";
+          } else {
+            zoneText = "🔥 КРАСНАЯ ЗОНА";
+            diagText = "[ диагноз: пора звать Валерия лично ]";
+            rxText =
+              '// Нужен индивидуальный формат: занятия 1&nbsp;на&nbsp;1, плотная домашка и&nbsp;разбор слабых мест. <a href="#prices" class="text-acid hover:underline">Тариф «Индивидуально» →</a>';
+            barColor = "var(--fuchsia2)";
+          }
+          zone.textContent = zoneText;
+          diag.textContent = diagText;
+          rx.innerHTML = rxText;
+          bar.style.background = barColor;
+        }
+      });
+
+      __egeIdle(function buildSteps() {
+        const grid = document.getElementById("stepsGrid");
+        if (!grid) return;
+        const steps = __egeRuntime.steps ?? [
+          {
+            num: "01",
+            sym: "Dg",
+            mass: "60 мин",
+            title: "Первый созвон с&nbsp;автором",
+            text: "Проводим диагностику, знакомимся с&nbsp;экзаменом, разбираем пробелы и&nbsp;настраиваем траекторию будущей подготовки.",
+          },
+          {
+            num: "02",
+            sym: "Pl",
+            mass: "36 нед",
+            title: "Личный план на&nbsp;36 недель",
+            text: "Получаешь карту из&nbsp;62&nbsp;тем с&nbsp;дедлайнами. Видно, какие недели — органика, какие — задачи, когда первый пробник.",
+          },
+          {
+            num: "03",
+            sym: "Le",
+            mass: "2/нед",
+            title: "Уроки в&nbsp;минигруппе",
+            text: "Два занятия в&nbsp;неделю по&nbsp;90&nbsp;минут. В&nbsp;группе можно перебивать, задавать вопросы и&nbsp;спорить.",
+          },
+          {
+            num: "04",
+            sym: "Hw",
+            mass: "24 ч",
+            title: "Домашка с&nbsp;проверкой",
+            text: "Двухуровневая домашняя работа: развернутые задания, тестовые задания формата ЕГЭ и&nbsp;задачи уровня ЕГЭ.",
+          },
+          {
+            num: "05",
+            sym: "Pt",
+            mass: "12 шт",
+            title: "Пробники каждый месяц",
+            text: "Полные варианты ЕГЭ в&nbsp;течение курса. После каждого — разбор в&nbsp;группе ошибок учащихся.",
+          },
+          {
+            num: "06",
+            sym: "Ex",
+            mass: "25.05",
+            title: "Поддержка до&nbsp;и&nbsp;после экзамена",
+            text: "За&nbsp;неделю до&nbsp;ЕГЭ — антипаника-сессия. Если результат спорный — помогаем с&nbsp;апелляцией.",
+          },
+        ];
+        steps.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "step bg-ink p-6 md:p-8 flex gap-6 cursor-default";
+          div.innerHTML = `
+      <div class="step-icon" data-num="${s.num}" data-mass="${s.mass}">${s.sym}</div>
+      <div class="flex-1">
+        <div class="font-mono text-[11px] text-acid mb-2">// ШАГ ${s.num}</div>
+        <div class="font-display font-bold text-2xl leading-tight mb-3">${s.title}</div>
+        <p class="text-paper/80 text-sm leading-snug">${s.text}</p>
+      </div>
+    `;
+          grid.appendChild(div);
+        });
+      });
+
+      // ====================== 06. COMPARE ======================
+      __egeIdle(function buildCompare() {
+        const wrap = document.getElementById("cmpBody");
+        if (!wrap) return;
+        const rows = __egeRuntime.compareRows ?? [
+          {
+            p: "Человек в группе",
+            a: { v: "до 6", m: "yes", hl: true },
+            b: { v: "вебинар на&nbsp;тысячи", m: "no" },
+          },
+          {
+            p: "Кто ведёт занятия",
+            a: { v: "автор курса · эксперт ЕГЭ", m: "yes" },
+            b: { v: "лектор потока", m: "mid" },
+          },
+          {
+            p: "Кто отвечает на вопросы",
+            a: { v: "автор курса", m: "yes" },
+            b: { v: "куратор с&nbsp;ЕГЭ 75+", m: "mid" },
+          },
+          {
+            p: "Проверка домашки",
+            a: { v: "тесты автоматически, развёрнутая часть автором", m: "yes" },
+            b: { v: "автотесты, самопроверка или куратор", m: "mid" },
+          },
+          {
+            p: "Среднее повышение балла",
+            a: { v: "+46 баллов", m: "yes", hl: true },
+            b: { v: "вам не расскажут", m: "no" },
+          },
+          {
+            p: "Доля сдавших на&nbsp;80+",
+            a: { v: "каждый 3-й", m: "yes", hl: true },
+            b: { v: "27–41%", m: "no" },
+          },
+          {
+            p: "Цена",
+            a: { v: "выше, но&nbsp;за работу автора", m: "mid" },
+            b: { v: "дешевле за счёт потока", m: "yes" },
+          },
+          {
+            p: "Итоговая логика",
+            a: { v: "меньше людей → больше внимания", m: "yes" },
+            b: { v: "больше поток → меньше контакта", m: "no" },
+          },
+        ];
+        const sym = (m) =>
+          m === "yes" ? "✓" : m === "no" ? "✕" : m === "mid" ? "~" : "·";
+        rows.forEach((r) => {
+          const div = document.createElement("div");
+          div.className = "cmp-row";
+          const aVal = r.a.hl
+            ? `<span class="bg-acid text-ink px-1 font-display font-medium text-lg">${r.a.v}</span>`
+            : `<span class="font-display font-medium text-lg">${r.a.v}</span>`;
+          div.innerHTML = `
+      <div class="cmp-label font-mono text-sm">${r.p}</div>
+      <div class="cmp-win">
+        <div class="flex items-center gap-3">
+          <span class="mark-${r.a.m} font-mono">${sym(r.a.m)}</span>
+          ${aVal}
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-3 cmp-other">
+          <span class="mark-${r.b.m} font-mono">${sym(r.b.m)}</span>
+          <span class="font-display font-medium text-lg ${r.b.m === "no" ? "line-through decoration-line decoration-1" : ""}">${r.b.v}</span>
+        </div>
+      </div>
+    `;
+          wrap.appendChild(div);
+        });
+      });
+
+      // ====================== 07. PROGRAM ======================
+      __egeIdle(function buildProgram() {
+        const top = document.getElementById("progTop");
+        const acc = document.getElementById("progAccordion");
+        if (!top || !acc) return;
+
+        const sections = __egeRuntime.programSections ?? [
+          {
+            sym: "Об",
+            code: "01",
+            name: "Общая химия",
+            topics: 18,
+            weeks: 8,
+            tasks: 8,
+            points: 12,
+            exTasks: "1–7, 23",
+            list: [
+              "Строение атома · квантовые числа",
+              "Периодический закон и&nbsp;ПСХЭ",
+              "Химическая связь · ионная, ковалентная",
+              "Электроотрицательность · полярность",
+              "Скорость хим. реакций · кинетика",
+              "Хим. равновесие · принцип Ле&nbsp;Шателье",
+              "Термохимия · тепловой эффект",
+              "Растворы · концентрация · pH",
+              "Электролитическая диссоциация",
+              "Окислительно-восстановительные реакции",
+              "Электролиз растворов и&nbsp;расплавов",
+              "Гидролиз солей",
+              "Электрохимия · ряд активности",
+              "Классификация неорганических соединений",
+              "Номенклатура · IUPAC",
+              "Расчёты по&nbsp;формулам",
+              "Стехиометрия · уравнения",
+              "Газовые законы",
+            ],
+          },
+          {
+            sym: "Нг",
+            code: "02",
+            name: "Неорганика",
+            topics: 16,
+            weeks: 9,
+            tasks: 11,
+            points: 15,
+            exTasks: "8–13, 22, 24–26",
+            list: [
+              "Водород и&nbsp;его соединения",
+              "Галогены · Cl, Br, I, F",
+              "Халькогены · кислород, сера",
+              "Азот и&nbsp;его соединения",
+              "Углерод · аллотропия",
+              "Кремний · силикаты",
+              "Щелочные металлы · Na, K, Li",
+              "Щёлочноземельные · Mg, Ca",
+              "Алюминий и&nbsp;его соединения",
+              "Железо · Fe, Fe²⁺, Fe³⁺",
+              "Медь, цинк, хром · переходные",
+              "Кислоты · классификация и&nbsp;свойства",
+              "Основания и&nbsp;амфотерные гидроксиды",
+              "Соли · средние, кислые, основные",
+              "Оксиды · кислотные, основные, амфотерные",
+              "Качественные реакции на&nbsp;катионы и&nbsp;анионы",
+            ],
+          },
+          {
+            sym: "Ог",
+            code: "03",
+            name: "Органика",
+            topics: 20,
+            weeks: 14,
+            acid: true,
+            tasks: 12,
+            points: 18,
+            exTasks: "14–21, 32",
+            list: [
+              "Алканы · номенклатура, изомерия",
+              "Алкены · правило Марковникова",
+              "Алкины · реакция Кучерова",
+              "Алкадиены · диеновый синтез",
+              "Циклоалканы и&nbsp;арены",
+              "Бензол · реакции замещения",
+              "Спирты одноатомные и&nbsp;многоатомные",
+              "Фенолы · кислотные свойства",
+              "Альдегиды и&nbsp;кетоны",
+              "Карбоновые кислоты",
+              "Сложные эфиры · гидролиз",
+              "Жиры · омыление",
+              "Углеводы · моно-, ди-, поли-",
+              "Амины первичные, вторичные, третичные",
+              "Аминокислоты · биполярный ион",
+              "Белки · пептидная связь",
+              "Нуклеиновые кислоты",
+              "Высокомолекулярные соединения",
+              "Изомерия · цис-, транс-, оптическая",
+              "Цепочки превращений · мостики между классами",
+            ],
+          },
+          {
+            sym: "34",
+            code: "04",
+            name: "Задачи 33–35",
+            topics: 8,
+            weeks: 5,
+            acid: true,
+            tasks: 3,
+            points: 11,
+            exTasks: "33, 34, 35",
+            list: [
+              "Задача 33 · реакции по&nbsp;цепочке",
+              "Задача 34 · смеси и&nbsp;примеси",
+              "Задача 34 · избыток и&nbsp;недостаток",
+              "Задача 34 · растворы · ω, c, m",
+              "Задача 35 · вывод формулы органики",
+              "Задача 35 · газы и&nbsp;пары",
+              "Задача 35 · кристаллогидраты",
+              "Стратегия времени на&nbsp;ЕГЭ · 90 мин",
+            ],
+          },
+        ];
+
+        // Top cells
+        sections.forEach((s, i) => {
+          const c = document.createElement("div");
+          c.className =
+            "cell aspect-square md:aspect-[5/4] p-4 md:p-5 flex flex-col justify-between cursor-pointer" +
+            (s.acid ? " cell-acid" : "");
+          c.dataset.idx = i;
+          c.innerHTML = `
+      <div class="cell-num">${s.code}</div>
+      <div class="cell-mass">${s.topics} тем · ${s.weeks} нед</div>
+      <div class="flex items-center justify-center flex-1 -mt-2 -mb-2">
+        <div class="text-center">
+          <div class="font-display font-bold text-[clamp(40px,7vw,72px)] leading-none ${s.acid ? "text-acid" : ""}">${s.sym}</div>
+          <div class="font-mono text-xs mt-3 cell-meta text-dim">${s.name}</div>
+        </div>
+      </div>
+    `;
+          c.addEventListener("click", () => {
+            const d = acc.querySelectorAll("details")[i];
+            if (d) {
+              d.open = !d.open;
+              d.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          });
+          top.appendChild(c);
+        });
+
+        // Accordion
+        sections.forEach((s, i) => {
+          const d = document.createElement("details");
+          d.className = "prog-group";
+          if (i === 0) d.open = true;
+          d.innerHTML = `
+      <summary class="flex items-center justify-between gap-6 group">
+        <div class="flex items-center gap-6">
+          <div class="font-mono text-sm text-dim">[${s.code}]</div>
+          <div class="font-display font-bold text-2xl md:text-4xl tracking-tight ${s.acid ? "text-acid" : ""}">${s.name}</div>
+          <div class="font-mono text-xs text-dim hidden md:block">/ ${s.topics} тем · ${s.weeks} нед.</div>
+        </div>
+        <div class="faq-plus font-mono text-3xl shrink-0">+</div>
+      </summary>
+      <div class="pb-8 pt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+          ${s.list
+            .map(
+              (t, idx) => `
+            <div class="topic-pill bg-ink">
+              <span class="pill-num">${String(idx + 1).padStart(2, "0")}</span>${t}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+
+        <!-- Summary footer: how many tasks + points -->
+        <div class="mt-px grid grid-cols-12 gap-px bg-line border border-line border-t-0">
+          <div class="col-span-12 md:col-span-3 bg-ink p-5">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">// что закроем</div>
+            <div class="font-display font-bold text-base mt-2">Раздел <span class="${s.acid ? "text-acid" : "text-paper"}">«${s.name}»</span></div>
+          </div>
+          <div class="col-span-6 md:col-span-3 bg-ink p-5 group">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">решишь заданий</div>
+            <div class="flex items-baseline gap-2 mt-2">
+              <div class="font-display font-bold text-5xl text-acid">${s.tasks}</div>
+              <div class="font-mono text-xs text-dim">/ 34 в&nbsp;варианте</div>
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-2">№ ${s.exTasks}</div>
+          </div>
+          <div class="col-span-6 md:col-span-3 bg-ink p-5">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">возьмёшь баллов</div>
+            <div class="flex items-baseline gap-2 mt-2">
+              <div class="font-display font-bold text-5xl text-acid">+${s.points}</div>
+              <div class="font-mono text-xs text-dim">/ 56 первичных</div>
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-2">≈ ${Math.round((s.points / 56) * 100)}% теста</div>
+          </div>
+          <div class="col-span-12 md:col-span-3 bg-acid text-ink p-5 flex flex-col justify-between">
+            <div class="font-mono text-[10px] uppercase tracking-wider">// итог по&nbsp;разделу</div>
+            <div class="font-display font-bold text-2xl leading-tight">${s.weeks} недель → +${s.points} баллов</div>
+          </div>
+        </div>
+      </div>
+    `;
+          acc.appendChild(d);
+        });
+      });
+
+      // ====================== 08. INCLUDES (zigzag) ======================
+      __egeIdle(function buildIncludes() {
+        const wrap = document.getElementById("includesList");
+        if (!wrap) return;
+        const items = __egeRuntime.includes ?? [
+          {
+            num: "01",
+            tag: "LIVE",
+            title: "Уроки в&nbsp;минигруппе",
+            desc: "Два&nbsp;раза в&nbsp;неделю по&nbsp;90&nbsp;минут. Группа до&nbsp;6&nbsp;человек — это разговор, а&nbsp;не&nbsp;лекция в&nbsp;пустоту. Можно перебивать, задавать вопросы и&nbsp;спорить с&nbsp;автором.",
+            bullets: [
+              "Расписание подстраивается под&nbsp;группу",
+              "Запись + конспект после занятия",
+              "Можно пропустить — догонишь по&nbsp;записи",
+            ],
+            ph: "screen · zoom + whiteboard",
+          },
+          {
+            num: "02",
+            tag: "HW",
+            title: "Домашка с&nbsp;проверкой",
+            desc: "Тесты, которые робот проверяет за&nbsp;30&nbsp;секунд, и&nbsp;развёрнутая часть с&nbsp;проверкой эксперта. В&nbsp;базе и&nbsp;на курсах — 4000+ заданий уровня ЕГЭ.",
+            bullets: [
+              "Автопроверка тестовой части",
+              "Разбор развёрнутых заданий",
+              "Ошибки возвращаются в&nbsp;повторение",
+            ],
+            ph: "screen · solution review",
+          },
+          {
+            num: "03",
+            tag: "APP",
+            title: "Платформа и&nbsp;тренажёр",
+            desc: "Личный кабинет с&nbsp;твоим прогрессом по&nbsp;темам. Тренажёр на&nbsp;4000+ задач — решаешь по&nbsp;дороге в&nbsp;школу, на&nbsp;перемене, ночью.",
+            bullets: [
+              "Доступ с&nbsp;любого устройства · 24/7",
+              "Адаптивный режим — даёт то, что&nbsp;ты&nbsp;не&nbsp;знаешь",
+              "Карточки для&nbsp;повторения · spaced repetition",
+            ],
+            ph: "screen · LMS dashboard",
+          },
+          {
+            num: "04",
+            tag: "TG",
+            title: "Поддержка автора",
+            desc: "Закрытый чат в&nbsp;Telegram, где можно написать «не&nbsp;понимаю задачу 14». Автор работает с&nbsp;группой лично: объясняет, помогает и&nbsp;показывает, как сделать лучше.",
+            bullets: [
+              "Ответы автора в&nbsp;чате группы",
+              "Помощь по&nbsp;домашке и&nbsp;разбору ошибок",
+              "Антипаника-чат в&nbsp;апреле и&nbsp;мае",
+            ],
+            ph: "screen · telegram chat",
+          },
+          {
+            num: "05",
+            tag: "TEST",
+            title: "Пробники и&nbsp;диагностики",
+            desc: "12&nbsp;пробных ЕГЭ за&nbsp;курс — это полный вариант 210&nbsp;минут с&nbsp;тематическими ловушками. Каждый — с&nbsp;разбором от&nbsp;автора.",
+            bullets: [
+              "Имитация условий ЕГЭ · бланки + таймер",
+              "Разбор типичных и&nbsp;сложных ошибок",
+              "Сравнение с&nbsp;группой и&nbsp;средним по&nbsp;стране",
+            ],
+            ph: "screen · mock exam pdf",
+          },
+        ];
+        items.forEach((it, i) => {
+          const reversed = i % 2 === 1;
+          const div = document.createElement("div");
+          div.className = "inc-row grid grid-cols-12 items-stretch";
+          div.innerHTML = `
+      <div class="col-span-12 md:col-span-7 ${reversed ? "md:order-2" : ""} p-8 md:p-12 flex flex-col justify-center ${reversed ? "md:border-l border-line" : "md:border-r border-line"}">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="font-mono text-[11px] text-acid">[${it.num}]</span>
+          <span class="font-mono text-[11px] text-dim">// ${it.tag}</span>
+        </div>
+        <h3 class="font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.0] mb-5">${it.title}</h3>
+        <p class="text-paper/80 text-base md:text-lg max-w-lg leading-snug mb-6">${it.desc}</p>
+        <ul class="font-mono text-sm space-y-2 text-paper/85">
+          ${it.bullets.map((b) => `<li>→ ${b}</li>`).join("")}
+        </ul>
+      </div>
+      <div class="col-span-12 md:col-span-5 ${reversed ? "md:order-1" : ""} p-6 md:p-10 flex items-center justify-center">
+        <div class="inc-img w-full">
+          <div class="inc-img-ph">// ${it.ph}</div>
+        </div>
+      </div>
+    `;
+          wrap.appendChild(div);
+        });
+      });
+
+      // ====================== 09. CASES SLIDER ======================
+      __egeIdle(function buildCases() {
+        const track = document.getElementById("casesTrack");
+        const counter = document.getElementById("caseCounter");
+        if (!track) return;
+        const cases = __egeRuntime.cases ?? [
+          {
+            num: "01",
+            name: "Артём К.",
+            initials: "АК",
+            start: 52,
+            end: 96,
+            school: "Лицей 1535",
+            city: "Москва",
+            tg: "@artem_chem",
+            tariff: "Минигруппа",
+            text: "Пришёл с&nbsp;52, на&nbsp;ЕГЭ написал 96. До&nbsp;курса считал органику пыткой, а&nbsp;после Маши хотел поступать на&nbsp;хим.фак. Сейчас учусь на&nbsp;первом курсе МГУ.",
+          },
+          {
+            num: "02",
+            name: "Полина М.",
+            initials: "ПМ",
+            start: 48,
+            end: 92,
+            school: "Гимн. 1576",
+            city: "Москва",
+            tg: "@polya_med",
+            tariff: "Минигруппа",
+            text: "Шла на&nbsp;медицинский, химия была кошмаром. За&nbsp;7&nbsp;месяцев — с&nbsp;48&nbsp;до&nbsp;92. Регулярные разборы ДЗ держали в&nbsp;тонусе, без&nbsp;этого я&nbsp;бы&nbsp;не&nbsp;сдала.",
+          },
+          {
+            num: "03",
+            name: "Даня Р.",
+            initials: "ДР",
+            start: 61,
+            end: 100,
+            school: "СУНЦ УрФУ",
+            city: "Екатеринбург",
+            tg: "@danya_phys",
+            tariff: "VIP · Индивидуально",
+            text: "100&nbsp;баллов. Если бы&nbsp;не&nbsp;Валерий — было&nbsp;бы&nbsp;80. Он показал, как решать&nbsp;34 за&nbsp;6&nbsp;минут вместо&nbsp;15. На&nbsp;ЕГЭ это решило всё.",
+          },
+          {
+            num: "04",
+            name: "Соня В.",
+            initials: "СВ",
+            start: 38,
+            end: 87,
+            school: "Шк. 192",
+            city: "Новосибирск",
+            tg: "@sonya_chem",
+            tariff: "Минигруппа",
+            text: "Я&nbsp;была абсолютным нулём. Сентябрь — 38, май — 87. Это +49&nbsp;баллов. Главное — расписание на&nbsp;36&nbsp;недель: знаешь, что и&nbsp;когда учить.",
+          },
+          {
+            num: "05",
+            name: "Никита Ш.",
+            initials: "НШ",
+            start: 54,
+            end: 94,
+            school: "Лицей ВШЭ",
+            city: "Москва",
+            tg: "@nik_bio",
+            tariff: "Минигруппа",
+            text: "До&nbsp;этого ходил в&nbsp;большую онлайн-школу — там в&nbsp;потоке было 400&nbsp;человек, я&nbsp;ничего не&nbsp;запоминал. У&nbsp;Валерия в&nbsp;группе 5&nbsp;ребят и&nbsp;он помнит всё.",
+          },
+          {
+            num: "06",
+            name: "Маша Б.",
+            initials: "МБ",
+            start: 44,
+            end: 89,
+            school: "Гимн. 56",
+            city: "Санкт-Петербург",
+            tg: "@masha_chemist",
+            tariff: "Минигруппа",
+            text: "Валерий разбирал ошибки в&nbsp;ДЗ так, что становилось понятно, где именно я&nbsp;теряю баллы. Это сильно спокойнее, чем просто видеть красные крестики.",
+          },
+          {
+            num: "07",
+            name: "Лев Г.",
+            initials: "ЛГ",
+            start: 50,
+            end: 91,
+            school: "Шк. 7",
+            city: "Казань",
+            tg: "@lev_kazan",
+            tariff: "Самостоятельный",
+            text: "Я&nbsp;брал тариф без&nbsp;живых уроков, чисто платформу и&nbsp;тренажёр. И&nbsp;это уже дало +41&nbsp;балл. На&nbsp;следующий год пойду на&nbsp;Минигруппу — хочу 95+.",
+          },
+          {
+            num: "08",
+            name: "Ника П.",
+            initials: "НП",
+            start: 57,
+            end: 98,
+            school: "Шк. 152",
+            city: "Москва",
+            tg: "@nika_p",
+            tariff: "VIP · Индивидуально",
+            text: "Готовилась 1&nbsp;на&nbsp;1, занятия 4&nbsp;раза в&nbsp;неделю. Валерий дал мне не&nbsp;только химию, но&nbsp;и&nbsp;план поступления. Сейчас на&nbsp;педиатрическом РНИМУ.",
+          },
+        ];
+
+        cases.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "case-card";
+          div.innerHTML = `
+      <div class="flex items-start justify-between mb-6 font-mono text-[11px]">
+        <span class="text-dim">CASE · ${c.num}</span>
+        <span class="text-acid">[ +${c.end - c.start} БАЛЛОВ ]</span>
+      </div>
+
+      <div class="flex items-start gap-4 mb-6">
+        <div class="w-16 h-16 border border-line relative overflow-hidden shrink-0">
+          <div class="absolute inset-0 hatched"></div>
+          <div class="absolute inset-0 grid place-items-center font-display font-bold text-xl">${c.initials}</div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-display font-bold text-lg leading-tight">${c.name}</div>
+          <div class="font-mono text-[11px] text-dim mt-1">${c.school} · ${c.city}</div>
+          <a href="https://t.me/${c.tg.replace("@", "")}" class="font-mono text-[11px] text-acid hover:underline">tg ${c.tg}</a>
+        </div>
+      </div>
+
+      <div class="flex items-end gap-3 mb-6">
+        <div>
+          <div class="font-mono text-[10px] text-dim uppercase">старт</div>
+          <div class="font-display font-bold text-3xl text-dim">${c.start}</div>
+        </div>
+        <div class="font-mono text-2xl text-dim pb-1">→</div>
+        <div>
+          <div class="font-mono text-[10px] text-acid uppercase">егэ</div>
+          <div class="font-display font-bold text-5xl text-acid">${c.end}</div>
+        </div>
+        <div class="ml-auto font-mono text-[10px] text-dim text-right">тариф<br/><span class="text-paper">${c.tariff}</span></div>
+      </div>
+
+      <p class="text-paper/85 text-sm leading-snug">«${c.text}»</p>
+    `;
+          track.appendChild(div);
+        });
+
+        let idx = 0;
+        const visibleCount = () =>
+          window.innerWidth < 700 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+        const maxIdx = () => Math.max(0, cases.length - visibleCount());
+
+        function update() {
+          if (idx > maxIdx()) idx = maxIdx();
+          const card = track.querySelector(".case-card");
+          if (!card) return;
+          const w = card.offsetWidth + 24;
+          track.style.transform = `translateX(${-idx * w}px)`;
+          counter.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(cases.length).padStart(2, "0")}`;
+        }
+        document.getElementById("prevCase").onclick = () => {
+          idx = Math.max(0, idx - 1);
+          update();
+        };
+        document.getElementById("nextCase").onclick = () => {
+          idx = Math.min(maxIdx(), idx + 1);
+          update();
+        };
+        window.addEventListener("resize", update);
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") {
+            idx = Math.max(0, idx - 1);
+            update();
+          }
+          if (e.key === "ArrowRight") {
+            idx = Math.min(maxIdx(), idx + 1);
+            update();
+          }
+        });
+        // touch swipe
+        let sx = 0;
+        track.addEventListener("touchstart", (e) => {
+          sx = e.touches[0].clientX;
+        });
+        track.addEventListener("touchend", (e) => {
+          const dx = e.changedTouches[0].clientX - sx;
+          if (Math.abs(dx) < 40) return;
+          if (dx < 0) {
+            idx = Math.min(maxIdx(), idx + 1);
+          } else {
+            idx = Math.max(0, idx - 1);
+          }
+          update();
+        });
+        update();
+      });
+
+      // ====================== 13. FAQ ======================
+      __egeIdle(function faq() {
+        const wrap = document.getElementById("faqList");
+        if (!wrap) return;
+        const items = __egeRuntime.faq ?? [];
+        items.forEach((it, i) => {
+          const d = document.createElement("details");
+          d.className = "border-b border-line group";
+          d.innerHTML = `
+      <summary class="flex items-start gap-6 py-6 md:py-8 hover:text-acid transition">
+        <div class="font-mono text-sm text-dim mt-1 w-10 shrink-0">${String(i + 1).padStart(2, "0")}</div>
+        <div class="font-display font-medium text-xl md:text-2xl leading-snug flex-1">${it.q}</div>
+        <div class="faq-plus font-mono text-2xl shrink-0 mt-1">+</div>
+      </summary>
+      <div class="pb-8 pl-16 pr-12 max-w-3xl text-paper/80 leading-relaxed">${it.a}</div>
+    `;
+          wrap.appendChild(d);
+        });
+      });
+
+      // ====================== FORM ======================
+      (function form() {
+        function makeSelector(wrapId) {
+          const w = document.getElementById(wrapId);
+          if (!w) return;
+          const targetName = w.dataset.target;
+          const targetInput = targetName
+            ? document.querySelector(`input[name="${targetName}"]`)
+            : null;
+          w.querySelectorAll(".pickbtn").forEach((b) => {
+            b.addEventListener("click", () => {
+              w.querySelectorAll(".pickbtn").forEach((x) =>
+                x.classList.remove("is-on"),
+              );
+              b.classList.add("is-on");
+              if (targetInput) {
+                targetInput.value = b.dataset.val || b.textContent.trim();
+              }
+            });
+          });
+        }
+        makeSelector("levelChoice");
+        makeSelector("tariffChoice");
+      })();
+
+      // ====================== COUNTDOWN ======================
+      (function countdown() {
+        // Формат «дни ЧЧ:ММ» без секунд: визуально пользователь не успевает
+        // считать секунды, а каждое обновление textContent — это DOM-mutation,
+        // которую видит MutationObserver. С обновлением раз в минуту
+        // вместо раза в секунду нагрузка падает в 60 раз. Это важно для
+        // антивирус-сканнеров (Kaspersky) и аналитики (Yandex Webvisor),
+        // которые иначе считают страницу «постоянно меняющейся» и
+        // переcканируют ассеты на каждом mutation.
+        function formatCountdown(targetDate) {
+          const diff = Math.max(0, targetDate.getTime() - Date.now());
+          const totalMinutes = Math.floor(diff / 60000);
+          const days = Math.floor(totalMinutes / 1440);
+          const hours = Math.floor((totalMinutes % 1440) / 60);
+          const minutes = totalMinutes % 60;
+          const pad = (value) => String(value).padStart(2, "0");
+          return `${days}д ${pad(hours)}:${pad(minutes)}`;
+        }
+
+        const countdownEls = Array.from(document.querySelectorAll("[data-countdown-to]"));
+        if (countdownEls.length) {
+          const tick = () => {
+            countdownEls.forEach((el) => {
+              const next = formatCountdown(new Date(el.dataset.countdownTo));
+              // Защита от no-op mutations: пишем только если значение
+              // действительно поменялось.
+              if (el.textContent !== next) el.textContent = next;
+            });
+          };
+          tick();
+          window.setInterval(tick, 60000);
+        }
+
+        document.querySelectorAll("[data-days-to]").forEach((el) => {
+          const target = new Date(el.dataset.daysTo);
+          const today = new Date();
+          const days = Math.max(
+            0,
+            Math.floor((target - today) / (1000 * 60 * 60 * 24)),
+          );
+          el.textContent = days;
+        });
+      })();
+
+      // ====================== GSAP REVEAL & COUNTERS ======================
+      __egeIdle(function initScrollEffects() {
+        const g = window.gsap;
+        const st = window.ScrollTrigger;
+        if (!g || !st) {
+          // Cap ретраев — без него скрипт ждал бы GSAP бесконечно,
+          // если CDN-скрипт не загрузился (например, заблокирован
+          // расширением или прокси).
+          initScrollEffects._tries = (initScrollEffects._tries || 0) + 1;
+          if (initScrollEffects._tries < 100) {
+            setTimeout(initScrollEffects, 120);
+          }
+          return;
+        }
+        g.registerPlugin(st);
+
+        document.querySelectorAll(".titrate").forEach((el) => {
+          st.create({
+            trigger: el,
+            start: "top 85%",
+            once: true,
+            onEnter: () => el.classList.add("in"),
+          });
+        });
+
+        document.querySelectorAll("[data-counter]").forEach((el) => {
+          const target = parseFloat(el.dataset.counter);
+          const suffix = el.dataset.suffix || "";
+          const decimals = Number(el.dataset.decimals || 0);
+          st.create({
+            trigger: el,
+            start: "top 88%",
+            once: true,
+            onEnter: () => {
+              const obj = { v: 0 };
+              g.to(obj, {
+                v: target,
+                duration: 1.8,
+                ease: "expo.out",
+                onUpdate: () => {
+                  const value = decimals
+                    ? obj.v.toLocaleString("ru-RU", {
+                        minimumFractionDigits: decimals,
+                        maximumFractionDigits: decimals,
+                      })
+                    : Math.round(obj.v).toLocaleString("ru-RU");
+                  el.textContent = value + suffix;
+                },
+              });
+            },
+          });
+        });
+
+        document.querySelectorAll(".cta-pulse .bub").forEach((b, i) => {
+          g.to(b, {
+            opacity: 0.8,
+            y: -30,
+            scale: 1.4,
+            duration: 1.4,
+            repeat: -1,
+            delay: i * 0.4,
+            ease: "sine.out",
+            onRepeat: () => {
+              g.set(b, { y: 0, opacity: 0, scale: 1 });
+            },
+          });
+        });
+      });
+    </script>

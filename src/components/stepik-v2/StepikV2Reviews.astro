@@ -1,0 +1,252 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: {
+    section: string;
+    title: { text: string; marks?: readonly any[] };
+    stats: Array<{ value: string; label: string }>;
+    images: readonly ({ src: string; alt?: string } | string)[];
+    moreHref: string;
+  };
+}
+
+const { data } = Astro.props as Props;
+const images = data.images.map((item) =>
+  typeof item === "string" ? { src: item, alt: "Скриншот отзыва ученика" } : item,
+);
+const row1 = images.slice(0, Math.ceil(images.length / 2));
+const row2 = images.slice(Math.ceil(images.length / 2));
+const counterValue = (value: string) => {
+  const match = value.match(/^(\d+(?:[.,]\d+)?)(.*)$/);
+  if (!match) return null;
+  return {
+    value: match[1].replace(",", "."),
+    suffix: match[2] || "",
+    decimals: match[1].includes(".") || match[1].includes(",") ? "1" : "0",
+  };
+};
+---
+
+<section class="section relative overflow-hidden" id="reviews">
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6 mb-12">
+      <div class="col-span-12 md:col-span-3"><div class="sec-num">{data.section}</div></div>
+      <div class="col-span-12 md:col-span-9"><EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" /></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line mb-10">
+      {data.stats.map((stat, i) => (
+        <div class="bg-ink p-6">
+          <div class:list={["font-display font-bold text-5xl", i === 0 && "text-acid", i === 2 && "text-fuchsia2"]}>
+            {counterValue(stat.value) ? (
+              <>
+                <span
+                  data-counter={counterValue(stat.value)?.value}
+                  data-suffix={counterValue(stat.value)?.suffix}
+                  data-decimals={counterValue(stat.value)?.decimals}
+                >0</span>
+                {stat.value === "4.9" && <span class="star">⭐</span>}
+              </>
+            ) : (
+              stat.value
+            )}
+          </div>
+          <div class="label mt-3">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+
+    {/* Фрейм для ленты отзывов: правило Stepik про 80% — единственный
+        способ верифицировать честность отзывов в маркетплейс-модели.
+        Плюс — позиционирование «70 на 3500+, потому что мы не выжималка». */}
+    <div class="review-note mb-10">
+      <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-3">// почему этим отзывам можно верить</div>
+      <p class="font-mono text-[13px] text-paper leading-snug max-w-4xl">
+        Все отзывы оставлены теми, кто прошёл больше&nbsp;<span class="text-acid font-bold">80% курса</span> —
+        это правило Stepik, оно не зависит от автора. То, что ты увидишь ниже — голоса тех, кто реально
+        дошёл до конца. <span class="text-dim">(80% этого курса — это больше 1000 заданий.)</span>
+      </p>
+      <p class="mt-4 font-mono text-[12px] text-dim leading-snug max-w-4xl">
+        <span class="text-fuchsia2">70 отзывов на 3500+ учеников</span> — это не баг, а свойство платформы:
+        отзыв нельзя оставить, не пройдя курс. Мы делаем качественное обучение, а не сотни &laquo;отзывов&raquo;
+        через 5 минут после покупки.
+      </p>
+    </div>
+  </div>
+
+  {[row1, row2].map((row, rowIndex) => (
+    <div class:list={["overflow-hidden", rowIndex === 1 && "mt-4"]}>
+      <div class:list={["review-strip", rowIndex === 1 && "is-reverse"]}>
+        {/* НЕ оборачивай <img> в <button> с data-* атрибутами на src — это
+            триггерит Kaspersky/Adblock «native-ad gallery» эвристики и
+            ведёт к фоновым fetch() ко всем картинкам подряд.
+            Используем <figure> (пассивная семантика), клик ловим на <img>
+            и читаем src напрямую через event.target — без дублирования URL. */}
+        {[...row, ...row].map((image) => (
+          <figure class="review-shot">
+            {/* Без loading="lazy": с маленькими 260×180 картинками
+                браузер грузит их быстро и кэширует один раз. С lazy браузер
+                мог прерывать загрузку, когда карточка уезжала из viewport,
+                и запускать заново при возврате — Касперский это видел
+                как «фетч-луп» и сканировал каждый цикл. */}
+            <img src={image.src} alt={image.alt || "Скриншот отзыва ученика"} decoding="async" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  ))}
+
+  <div class="gutter mt-10 pb-20 md:pb-28">
+    <a href={data.moreHref} class="inline-flex items-center gap-3 font-mono text-[12px] uppercase tracking-widest text-paper/80 hover:text-acid">
+      смотреть больше отзывов <span>↗</span>
+    </a>
+  </div>
+
+  <div class="review-modal" data-review-modal hidden>
+    <button type="button" class="review-modal__close" data-review-close aria-label="Закрыть отзыв">×</button>
+    <button type="button" class="review-modal__backdrop" data-review-close aria-label="Закрыть отзыв"></button>
+    <img class="review-modal__image" data-review-image alt="" />
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-review-modal]").forEach((modal) => {
+      const image = modal.querySelector("[data-review-image]");
+      const closeButtons = modal.querySelectorAll("[data-review-close]");
+      const section = modal.closest("section");
+      if (!(image instanceof HTMLImageElement) || !section) return;
+
+      const close = () => {
+        modal.setAttribute("hidden", "");
+        image.removeAttribute("src");
+        image.alt = "";
+        document.documentElement.classList.remove("review-modal-open");
+      };
+
+      // Читаем src/alt напрямую с <img> при клике — никаких data-* атрибутов
+      // с URL в DOM, иначе security-scanner'ы (Kaspersky, AdGuard) видят
+      // URL дважды и фоном фетчат каждую картинку.
+      section.querySelectorAll(".review-shot img").forEach((img) => {
+        if (!(img instanceof HTMLImageElement)) return;
+        img.addEventListener("click", () => {
+          image.src = img.src;
+          image.alt = img.alt || "Скриншот отзыва ученика";
+          modal.removeAttribute("hidden");
+          document.documentElement.classList.add("review-modal-open");
+        });
+      });
+
+      closeButtons.forEach((button) => button.addEventListener("click", close));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.hasAttribute("hidden")) close();
+      });
+    });
+  });
+</script>
+
+<style>
+  .review-strip {
+    display: flex;
+    width: max-content;
+    gap: 16px;
+    /* GPU-композит-слой — выносим анимацию из main-thread,
+       чтобы security-scanner'ы (Kaspersky) не видели DOM как
+       «постоянно меняющийся» и не передёргивали fetch на ассеты. */
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    animation: review-marquee 70s linear infinite;
+  }
+  .review-strip.is-reverse { animation-name: review-marquee-reverse; animation-duration: 78s; }
+  .review-shot {
+    /* Раньше было min(760px, 86vw) — гигантские карточки + lazy = браузер
+       прерывал загрузку при выезде из viewport и запускал заново при
+       возврате; Касперский видел это как «фетч-луп». Сжимаем до старых
+       пропорций: тогда картинка успевает загрузиться + кэшироваться
+       до того, как marquee её сдвинет. */
+    flex: 0 0 auto;
+    width: 260px;
+    height: 180px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    transition: transform .18s ease;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .review-shot:hover { transform: translateY(-2px); }
+  .review-shot img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    cursor: zoom-in;
+  }
+  @media (max-width: 600px) {
+    .review-shot {
+      width: 200px;
+      height: 140px;
+    }
+  }
+  .review-note {
+    border: 1px solid var(--line);
+    background: var(--ink);
+    padding: 20px;
+  }
+  .review-modal[hidden] { display: none; }
+  .review-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: clamp(16px, 4vw, 48px);
+  }
+  .review-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 10, .86);
+    backdrop-filter: blur(4px);
+  }
+  .review-modal__image {
+    position: relative;
+    z-index: 1;
+    max-width: min(1180px, 94vw);
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .review-modal__close {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--paper);
+    background: var(--ink);
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 30px;
+    line-height: 1;
+  }
+  .review-modal__close:hover {
+    background: var(--acid);
+    color: var(--ink);
+    border-color: var(--acid);
+  }
+  :global(.review-modal-open) { overflow: hidden; }
+  @keyframes review-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+  @keyframes review-marquee-reverse {
+    from { transform: translate3d(-50%, 0, 0); }
+    to   { transform: translate3d(0, 0, 0); }
+  }
+</style>

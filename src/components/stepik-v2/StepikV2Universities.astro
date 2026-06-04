@@ -1,0 +1,46 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: {
+    section: string;
+    title: { text: string; marks?: readonly any[] };
+    items: string[];
+    stats?: Array<{ value: string; label: string }>;
+  };
+}
+
+const { data } = Astro.props as Props;
+const items = [...data.items, ...data.items];
+const hasStats = Array.isArray(data.stats) && data.stats.length > 0;
+---
+
+<section class="section relative">
+  <div class="gutter pt-24 pb-10 md:pt-32 md:pb-12">
+    <div class="grid grid-cols-12 gap-6 mb-10">
+      <div class="col-span-12 md:col-span-3"><div class="sec-num">{data.section}</div></div>
+      <div class="col-span-12 md:col-span-9"><EgeH2 text={data.title.text} marks={data.title.marks} class="text-[clamp(34px,5vw,72px)] titrate" /></div>
+    </div>
+  </div>
+  <div class="border-y border-line py-6 overflow-hidden">
+    <div class="marquee font-display font-bold text-[clamp(28px,4vw,56px)] tracking-tight whitespace-nowrap">
+      <div class="flex items-center gap-10">
+        {items.map((item, i) => <Fragment><span>{item}</span><span class={i % 2 ? "text-fuchsia2" : "text-acid"}>●</span></Fragment>)}
+      </div>
+    </div>
+  </div>
+  {hasStats ? (
+    <div class="gutter pt-10 pb-24 md:pb-32">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
+        {data.stats!.map((stat, i) => (
+          <div class="bg-ink p-6">
+            <div class:list={["font-display font-bold text-3xl md:text-4xl", i === 0 && "text-acid", i === 2 && "text-fuchsia2"]}>{stat.value}</div>
+            <div class="label mt-2">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div class="pb-24 md:pb-32" aria-hidden="true"></div>
+  )}
+</section>

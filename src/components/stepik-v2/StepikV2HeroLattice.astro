@@ -1,0 +1,186 @@
+---
+/*
+  Ионная решётка NaCl: 3×3×3 куб из чередующихся ионов.
+  - Бесконечное вращение по Y (CSS keyframes)
+  - Mousemove-параллакс: наклон по X и Y от позиции курсора
+  - 3D через transform-style: preserve-3d + perspective на родителе
+  - Шар с radial-gradient + box-shadow → видимый объём
+*/
+
+// 3×3×3 = 27 ионов; шахматная раскраска по чётности суммы координат:
+// (x+y+z) чётное → Na⁺ (acid), нечётное → Cl⁻ (fuchsia).
+const ions = Array.from({ length: 27 }, (_, i) => {
+  const x = (i % 3) - 1;
+  const y = (Math.floor(i / 3) % 3) - 1;
+  const z = Math.floor(i / 9) - 1;
+  const type = ((x + y + z) % 2 + 2) % 2 === 0 ? "na" : "cl";
+  const step = 82;
+  return {
+    tx: `${x * step}px`,
+    ty: `${y * step}px`,
+    tz: `${z * step}px`,
+    type,
+  };
+});
+
+const step = 82;
+const bonds: Array<{ tx: string; ty: string; tz: string; axis: "x" | "y" | "z" }> = [];
+for (let z = -1; z <= 1; z += 1) {
+  for (let y = -1; y <= 1; y += 1) {
+    for (let x = -1; x <= 1; x += 1) {
+      if (x < 1) {
+        bonds.push({ tx: `${(x + 0.5) * step}px`, ty: `${y * step}px`, tz: `${z * step}px`, axis: "x" });
+      }
+      if (y < 1) {
+        bonds.push({ tx: `${x * step}px`, ty: `${(y + 0.5) * step}px`, tz: `${z * step}px`, axis: "y" });
+      }
+      if (z < 1) {
+        bonds.push({ tx: `${x * step}px`, ty: `${y * step}px`, tz: `${(z + 0.5) * step}px`, axis: "z" });
+      }
+    }
+  }
+}
+---
+
+<div class="lattice-stage" id="latticeStage">
+  <div class="lattice-orbit">
+    <div class="lattice-tilt">
+      {bonds.map((bond) => (
+        <span
+          class="bond"
+          data-axis={bond.axis}
+          style={`--tx:${bond.tx}; --ty:${bond.ty}; --tz:${bond.tz};`}
+        />
+      ))}
+      {ions.map((ion) => (
+        <span
+          class="ion"
+          data-type={ion.type}
+          style={`--tx:${ion.tx}; --ty:${ion.ty}; --tz:${ion.tz};`}
+        >
+          <span>{ion.type === "na" ? "Na+" : "Cl-"}</span>
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const stage = document.getElementById("latticeStage");
+    if (!stage) return;
+    const tilt = stage.querySelector(".lattice-tilt");
+    if (!tilt) return;
+
+    let raf = 0;
+    function onMove(e) {
+      const rect = stage.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        tilt.style.setProperty("--ty", String(x * 24));
+        tilt.style.setProperty("--tx", String(-y * 24));
+      });
+    }
+    function onLeave() {
+      tilt.style.setProperty("--ty", "0");
+      tilt.style.setProperty("--tx", "0");
+    }
+    stage.addEventListener("mousemove", onMove);
+    stage.addEventListener("mouseleave", onLeave);
+  })();
+</script>
+
+<style>
+  .lattice-stage {
+    position: absolute;
+    inset: 0;
+    perspective: 760px;
+    transform-style: preserve-3d;
+    cursor: grab;
+  }
+  .lattice-orbit {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    animation: latticeSpin 26s linear infinite;
+  }
+  .lattice-tilt {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(calc(var(--tx, -8) * 1deg))
+               rotateY(calc(var(--ty, 16) * 1deg));
+    transition: transform 220ms ease-out;
+  }
+  .ion {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14%;
+    height: 14%;
+    margin: -7% 0 0 -7%;
+    border-radius: 50%;
+    transform: translate3d(var(--tx), var(--ty), var(--tz));
+    background: radial-gradient(circle at 32% 28%, var(--c1), var(--c2) 72%);
+    box-shadow:
+      0 0 10px var(--glow),
+      inset 0 0 8px rgba(0, 0, 0, 0.4);
+    display: grid;
+    place-items: center;
+    color: var(--label);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(8px, 1.3vw, 12px);
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  }
+  .ion span {
+    transform: translateZ(12px);
+  }
+  .ion[data-type="na"] {
+    --c1: #ddff55;
+    --c2: #5e7a00;
+    --glow: rgba(204, 255, 0, 0.55);
+    --label: #101400;
+  }
+  .ion[data-type="cl"] {
+    --c1: #ff5a8e;
+    --c2: #66072b;
+    --glow: rgba(255, 27, 107, 0.45);
+    --label: #fff3f8;
+  }
+  .bond {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 82px;
+    height: 1px;
+    margin-left: -41px;
+    background: linear-gradient(90deg, transparent, rgba(244, 239, 223, 0.34), transparent);
+    box-shadow: 0 0 8px rgba(204, 255, 0, 0.12);
+    transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--rz, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    pointer-events: none;
+  }
+  .bond[data-axis="y"] {
+    --rz: 90deg;
+  }
+  .bond[data-axis="z"] {
+    --ry: 90deg;
+  }
+  @keyframes latticeSpin {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lattice-orbit {
+      animation: none;
+    }
+  }
+</style>

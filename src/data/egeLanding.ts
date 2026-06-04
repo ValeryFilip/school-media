@@ -4,7 +4,7 @@ export const egeLandingData = {
     logoSrc: "/images/technical/egehim(kursi).webp",
     logoAlt: "ЕГЭХИМ — курсы",
     brand: "",
-    meta: "/ ЕГЭ · 2026",
+    meta: "/ ЕГЭ · 2027",
     siteLinks: [
       { href: "/", label: "Главная" },
       {
@@ -85,12 +85,12 @@ export const egeLandingData = {
     },
   },
   hero: {
-    label: "[01] / Hero · набор 2026 открыт",
+    label: "[01] / Hero · набор 2027 открыт",
     visual: "chaos",
     titleLines: ["ЕГЭ.", "ХИМИЯ."],
     highlightedTitle: "95+&nbsp;БАЛЛОВ",
     description:
-      "Авторский онлайн-курс Валерия&nbsp;Филипенко. Минигруппы&nbsp;по&nbsp;6&nbsp;человек, личный куратор, разбор каждой ошибки.",
+      "Авторский онлайн-курс Валерия&nbsp;Филипенко. Минигруппы&nbsp;по&nbsp;6&nbsp;человек, постоянная поддержка от&nbsp;автора, разбор каждой ошибки.",
     cta: { href: "#form", label: "Записаться на пробный", arrow: "→" },
     ctaNote: "БЕСПЛАТНО · 60 МИН · ДИАГНОСТИКА",
     moleculeMeta: {
@@ -100,10 +100,10 @@ export const egeLandingData = {
       status: "[ACTIVE]",
     },
     marquee: [
-      "H₂SO₄ + Cu → CuSO₄ + SO₂ + H₂O",
+      "Cu + 2H₂SO₄ → CuSO₄ + SO₂ + 2H₂O",
       "CH₃COOH ⇌ CH₃COO⁻ + H⁺",
       "2KMnO₄ + 16HCl → 2KCl + 2MnCl₂ + 5Cl₂ + 8H₂O",
-      "C₂H₅OH + O₂ → CO₂ + H₂O",
+      "C₂H₅OH + 3O₂ → 2CO₂ + 3H₂O",
     ],
   },
   outcomes: {
@@ -112,15 +112,25 @@ export const egeLandingData = {
     mutedTitle:
       "которые не&nbsp;стыдно показывать <span class=\"ul\">родителям</span>.",
     stats: [
-      { value: 87, label: "Средний балл", accent: "acid" },
-      { value: 94, suffix: "%", label: "Сдают 80+" },
-      { value: 312, label: "Выпускников" },
-      { value: 42, label: "100-балльников" },
-      { value: 2104, label: "Задач в базе", accent: "fuchsia2" },
-      { value: 6, label: "Чел. в группе · max" },
+      {
+        value: 81.5,
+        suffix: "",
+        label: "Средний балл",
+        accent: "acid",
+        decimals: 1,
+        note: "Средний балл учеников, которые выполнили 80+% домашних работ и посетили все занятия.",
+      },
+      { valueText: "каждый 3-й", label: "Сдаёт на 80+" },
+      {
+        value: 2000,
+        suffix: "+",
+        label: "Выпускников",
+        note: "Ученики на платформе Stepik, очных курсах и индивидуальных занятиях.",
+      },
+      { value: 300, label: "100-балльников" },
     ],
     note:
-      "* Данные по&nbsp;выпускам 2021–2025. Все ученики верифицированы по&nbsp;скриншоту личного кабинета ФИПИ.",
+      "* Данные по&nbsp;выпускам 2016–2026. Все ученики верифицированы по&nbsp;скриншоту личного кабинета ФИПИ.",
   },
   howTo: {
     section: "[04] / ПОДГОТОВКА",
@@ -142,32 +152,32 @@ export const egeLandingData = {
       "Что ты&nbsp;получаешь, когда нажимаешь <span class=\"ul\">«Оплатить»</span>.",
   },
   pricing: {
-    section: "[10] / ТАРИФЫ · 2026",
+    section: "[10] / ТАРИФЫ · 2027",
     title: "Три концентрации.",
     mutedTitle:
-      "До&nbsp;1&nbsp;июня — <span class=\"ul-fuchsia\">скидка&nbsp;30%</span>.",
+      "До&nbsp;1&nbsp;августа — <span class=\"ul-fuchsia\">скидка&nbsp;30%</span>.",
     badgePrefix: "ОСТАЛОСЬ",
-    badgeCounter: 47,
-    badgeText: 'МЕСТ · НАБОР 2026 ЗАКРЫВАЕТСЯ <span data-days-to="2026-06-01">—</span> ДНЕЙ',
+    badgeCounter: null,
+    badgeText: '<span data-countdown-to="2026-08-01T00:00:00+03:00">—</span> ДО КОНЦА СКИДКИ',
     ribbonLeft: "★ выбирают 7 из 10 учеников · флагман курса",
     ribbonRight: "SCROLL ↓ · РАЗВЕРНИ ВСЕ ПОДАРКИ",
     featured: {
       metaLeft: "[ GROUP · 68% ]",
-      metaRight: "2026.MAIN",
+      metaRight: "2027.MAIN",
       title: "Минигруппа",
       subtitle: "// рабочая концентрация · до&nbsp;6&nbsp;человек в&nbsp;группе",
-      oldPrice: "14&nbsp;200 ₽",
+      oldPrice: "17&nbsp;200 ₽",
       discount: "−30%",
-      price: "9&nbsp;900&nbsp;₽",
+      price: "12&nbsp;000&nbsp;₽",
       period: "/ мес",
-      installment: "или 825&nbsp;₽/мес в&nbsp;рассрочку на&nbsp;12&nbsp;мес · 0%",
+      installment: "примерно 1&nbsp;000&nbsp;₽ за&nbsp;занятие · 2 урока в&nbsp;неделю по&nbsp;90&nbsp;мин",
       placesLabel: "// МЕСТ ОСТАЛОСЬ",
       placesCurrent: "12",
       placesTotal: "/ 48",
       placesWidth: "75%",
       placesNote:
-        'Набор 2026 закрывается через <span data-days-to="2026-06-01" class="text-paper">—</span> дней',
-      cta: "Записаться · сэкономить&nbsp;4&nbsp;300&nbsp;₽ →",
+        'Набор 2027 закрывается 1&nbsp;сентября. До&nbsp;конца скидки <span data-countdown-to="2026-08-01T00:00:00+03:00" class="text-paper">—</span>',
+      cta: "Записаться · сэкономить&nbsp;5&nbsp;200&nbsp;₽ →",
       note: "пробный урок &mdash; бесплатно · 60 мин · с автором курса",
     },
   },

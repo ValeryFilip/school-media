@@ -1,0 +1,122 @@
+---
+/*
+  «Цветовой каскад» — 5 пробирок с качественными реакциями.
+  Форма пробирки — SVG-path с округлым дном и узким горлом,
+  жидкость — внутренний rect, обрезанный по силуэту пробирки.
+  Уровень жидкости анимируется через CSS-transform на rect.
+*/
+
+const tubes = [
+  { id: "fe",  ion: "Fe³⁺ + SCN⁻", color: "#C8112C", glow: "#FF3855" },
+  { id: "cu",  ion: "Cu²⁺ + NH₃",  color: "#1B5BFF", glow: "#3D88FF" },
+  { id: "mn",  ion: "MnO₄⁻",        color: "#7A1FA2", glow: "#B85CD8" },
+  { id: "ag",  ion: "Ag⁺ + Cl⁻",   color: "#E5E2D8", glow: "#FFFFFF" },
+  { id: "pb",  ion: "Pb²⁺ + I⁻",   color: "#F4D03F", glow: "#FFEE66" },
+];
+
+// SVG viewBox: 40 wide × 130 high (узкая пропорция пробирки)
+// Силуэт: горло 4–14 (ширина 24, центрировано),
+// тело 14–110 (ширина 32 от 4 до 36),
+// дно — полуокружность радиуса 16 в точке (20, 110).
+const tubePath = "M 8 4 L 8 14 L 4 14 L 4 110 A 16 16 0 0 0 36 110 L 36 14 L 32 14 L 32 4 Z";
+---
+
+<div class="cascade-stage">
+  {tubes.map((t, i) => (
+    <div class="tube-col" style={`--color:${t.color}; --glow:${t.glow}; --delay:${i * 1.2}s`}>
+      <svg class="tube-svg" viewBox="0 0 40 138" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+        <defs>
+          <clipPath id={`tubeClip-${t.id}`}>
+            <path d={tubePath} />
+          </clipPath>
+        </defs>
+        {/* Кромка (lip) */}
+        <line x1="2" y1="3" x2="38" y2="3"
+              stroke="rgba(232,231,224,0.55)" stroke-width="1.5" stroke-linecap="round" />
+        {/* Сам силуэт пробирки (обводка) */}
+        <path d={tubePath}
+              fill="rgba(232,231,224,0.04)"
+              stroke="rgba(232,231,224,0.4)"
+              stroke-width="1.2"
+              stroke-linejoin="round" />
+        {/* Жидкость: rect, обрезанный по силуэту пробирки.
+            Полная высота rect = 126 (от 4 до 130).
+            CSS-анимация двигает его translateY от 130 (скрыт) до ~48 (виден ~65%). */}
+        <g clip-path={`url(#tubeClip-${t.id})`}>
+          <rect class="tube-liquid" x="0" y="4" width="40" height="126"
+                fill="var(--color)" />
+        </g>
+        {/* Меник (тонкая блик-линия на поверхности жидкости) */}
+        <g clip-path={`url(#tubeClip-${t.id})`}>
+          <line class="tube-meniscus" x1="0" y1="4" x2="40" y2="4"
+                stroke="rgba(255,255,255,0.45)" stroke-width="1" />
+        </g>
+      </svg>
+      <div class="tube-label">{t.ion}</div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .cascade-stage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4%;
+    padding: 12% 6% 6%;
+  }
+  .tube-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .tube-svg {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 0 10px var(--glow));
+  }
+  .tube-svg .tube-liquid {
+    transform: translateY(126px); /* скрыт ниже силуэта */
+    transform-origin: 0 130px;
+    transform-box: view-box;
+    animation: cascadeFill 10s ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+  .tube-svg .tube-meniscus {
+    transform: translateY(126px);
+    transform-origin: 0 130px;
+    transform-box: view-box;
+    animation: cascadeFill 10s ease-in-out infinite;
+    animation-delay: var(--delay);
+    opacity: 0.7;
+  }
+  @keyframes cascadeFill {
+    0%, 12%  { transform: translateY(126px); }
+    25%, 50% { transform: translateY(44px); }
+    63%, 100% { transform: translateY(126px); }
+  }
+  .tube-label {
+    margin-top: 8px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(9px, 0.95vw, 11px);
+    line-height: 1.2;
+    color: rgba(232, 231, 224, 0.65);
+    text-align: center;
+    width: 100%;
+    /* На узких экранах разрешаем перенос — лучше двухстрочный лейбл,
+       чем «Fe³⁺ +…» с многоточием. */
+    word-break: break-word;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tube-svg .tube-liquid,
+    .tube-svg .tube-meniscus {
+      animation: none;
+      transform: translateY(70px);
+    }
+  }
+</style>

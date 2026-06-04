@@ -1,0 +1,203 @@
+---
+/*
+  Перенос электронов: восстановитель → окислитель.
+  Слева Fe²⁺ (восст.) → Fe³⁺, справа MnO₄⁻ (окисл.) → Mn²⁺.
+  Между ними летят 5 e⁻ с задержкой → стробоскоп переноса.
+  Чистый CSS, без JS.
+*/
+
+const electrons = Array.from({ length: 5 }, (_, i) => i);
+---
+
+<div class="ovr-stage">
+  <div class="ovr-species ovr-reductant">
+    <div class="species-tag">// в-ль</div>
+    <div class="species-formula">Fe<sup>2+</sup></div>
+    <div class="species-arrow">→ Fe<sup>3+</sup></div>
+    <div class="species-glow"></div>
+  </div>
+
+  <div class="ovr-flow">
+    <div class="flow-track"></div>
+    {electrons.map((i) => (
+      <span class="electron" style={`--d:${i * 0.45}s`}>e<sup>−</sup></span>
+    ))}
+    <div class="flow-arrow">→</div>
+  </div>
+
+  <div class="ovr-species ovr-oxidant">
+    <div class="species-tag">// ок-ль</div>
+    <div class="species-formula">MnO<sub>4</sub><sup>−</sup></div>
+    <div class="species-arrow">→ Mn<sup>2+</sup></div>
+    <div class="species-glow"></div>
+  </div>
+
+  <div class="ovr-counter">
+    <span class="counter-label">передано:</span>
+    <span class="counter-value">5 e⁻</span>
+    <span class="counter-sub">за цикл</span>
+  </div>
+</div>
+
+<style>
+  .ovr-stage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1.12fr 0.86fr 1.12fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "red flow ox"
+      "counter counter counter";
+    align-items: center;
+    padding: 8% 4.5%;
+    gap: 3.2%;
+  }
+  .ovr-species {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14% 5%;
+    border: 1px solid var(--line);
+    background: rgba(10, 10, 10, 0.65);
+    min-width: 0;
+  }
+  .ovr-reductant {
+    grid-area: red;
+    border-color: rgba(204, 255, 0, 0.4);
+  }
+  .ovr-oxidant {
+    grid-area: ox;
+    border-color: rgba(255, 27, 107, 0.4);
+  }
+  .species-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(7px, 0.62vw, 8px);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  .ovr-reductant .species-tag { color: #CCFF00; }
+  .ovr-oxidant   .species-tag { color: #FF1B6B; }
+  .species-formula {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px, 2.6vw, 38px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .species-arrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(9px, 0.92vw, 12px);
+    opacity: 0.7;
+  }
+  /* Браузерное vertical-align: super/sub справляется лучше всего,
+     если оставить шрифт меньшего размера и не трогать остальное. */
+  .species-formula sup,
+  .species-formula sub,
+  .species-arrow sup,
+  .species-arrow sub,
+  .electron sup {
+    font-size: 0.55em;
+    font-weight: 700;
+  }
+  .species-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+  .ovr-reductant .species-glow {
+    box-shadow: inset 0 0 50px rgba(204, 255, 0, 0.25);
+  }
+  .ovr-oxidant .species-glow {
+    box-shadow: inset 0 0 50px rgba(255, 27, 107, 0.25);
+    animation-delay: 1.5s;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  .ovr-flow {
+    grid-area: flow;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flow-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(204, 255, 0, 0.4) 12%,
+      rgba(255, 27, 107, 0.4) 88%,
+      transparent
+    );
+    transform: translateY(-50%);
+  }
+  .flow-arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(14px, 1.4vw, 20px);
+    color: rgba(232, 231, 224, 0.4);
+  }
+  .electron {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(11px, 1.1vw, 14px);
+    color: #CCFF00;
+    text-shadow: 0 0 8px rgba(204, 255, 0, 0.8);
+    opacity: 0;
+    animation: flyEl 2.5s linear infinite;
+    animation-delay: var(--d);
+  }
+  @keyframes flyEl {
+    0%   { left: 0%;   opacity: 0; color: #CCFF00; }
+    10%  { opacity: 1; }
+    50%  { left: 50%; color: #FFA63C; }
+    90%  { opacity: 1; color: #FF1B6B; text-shadow: 0 0 8px rgba(255, 27, 107, 0.8); }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  .ovr-counter {
+    grid-area: counter;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.6ch;
+    margin-top: 8%;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(11px, 1vw, 13px);
+  }
+  .counter-label { color: rgba(232, 231, 224, 0.55); }
+  .counter-value {
+    color: #CCFF00;
+    font-weight: 700;
+    font-size: clamp(14px, 1.4vw, 18px);
+  }
+  .counter-sub { color: rgba(232, 231, 224, 0.4); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .electron,
+    .species-glow {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  id: string;
+  section: string;
+  title: { text: string; marks?: readonly any[] };
+  mode?: "dark" | "paper";
+  items: Array<[string, string, string]>;
+  hero?: { label: string; title: string; text: string };
+}
+
+const { id, section, title, mode = "dark", items, hero } = Astro.props as Props;
+const isSkillGrid = items.some((item) => item[0].startsWith("//"));
+const isPaperCards = mode === "paper" && isSkillGrid;
+const gridClass = isPaperCards
+  ? "grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line"
+  : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line";
+---
+
+<section class:list={["section relative", mode === "paper" && "paper-section"]} id={id}>
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3"><div class="sec-num">{section}</div></div>
+      <div class="col-span-12 md:col-span-9"><EgeH2 text={title.text} marks={title.marks} class="titrate" /></div>
+    </div>
+
+    {hero && (
+      <div class="border border-acid bg-ink p-8 md:p-12 mb-px flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div>
+          <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-3">{hero.label}</div>
+          <div class="font-display font-bold text-[clamp(48px,7vw,108px)] leading-[0.9] tracking-tight whitespace-pre-line">
+            <span class="text-acid">{hero.title.split("\n")[0]}</span>{hero.title.includes("\n") && <br />}{hero.title.split("\n").slice(1).join("\n")}
+          </div>
+        </div>
+        <div class="font-mono text-[12px] text-dim max-w-xs leading-snug">{hero.text}</div>
+      </div>
+    )}
+
+    <div class:list={[gridClass, hero && "mt-px"]}>
+      {items.map((item, i) => (
+        <div class={isPaperCards ? "paper-card p-8 md:p-10" : isSkillGrid ? "skill-tile" : "feat-cell"}>
+          {item[0].startsWith("//") ? (
+            <>
+              {!isPaperCards && <div class="skill-mark">{String(i + 1).padStart(2, "0")}</div>}
+              <div class:list={[isPaperCards ? "font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-5" : "font-mono text-[10px] uppercase tracking-wider mb-3", !isPaperCards && (i === 4 ? "text-fuchsia2" : "text-acid")]}>{item[0]}</div>
+              {isPaperCards ? (
+                <>
+                  <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-4">{item[1]}</h3>
+                  <p class="text-paper/80 leading-snug">{item[2]}</p>
+                </>
+              ) : (
+                <>
+                  <h3 class="font-display font-bold text-xl md:text-2xl leading-tight m-0">{item[1]}</h3>
+                  <div class="font-mono text-[12px] text-dim mt-4 leading-snug">{item[2]}</div>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div
+                class:list={[
+                  "font-display font-bold text-5xl mb-4",
+                  // На paper-фоне acid (#CCFF00) почти не виден — заменяем на фуксию
+                  i % 4 === 0 && (mode === "paper" ? "text-fuchsia2" : "text-acid"),
+                  i % 4 === 2 && "text-fuchsia2",
+                ]}
+              >
+                {item[0]}
+              </div>
+              <div class="font-display font-bold text-xl mb-2 leading-tight">{item[1]}</div>
+              <p class="font-mono text-[12px] text-paper/70 leading-snug">{item[2]}</p>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .skill-tile {
+    border: 1px solid var(--line);
+    padding: 24px;
+    background: var(--ink);
+    transition: background 180ms ease, border-color 180ms ease;
+    position: relative;
+    overflow: hidden;
+    /* Без фикс. min-height — высота подстраивается под содержимое.
+       В grid соседние ячейки одного ряда выравниваются по самой высокой. */
+  }
+  .skill-tile:hover { background: var(--coal); border-color: var(--paper); }
+  .skill-mark {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .paper-section { background: #E8E6DF; color: var(--ink); }
+  .paper-section .feat-cell p { color: rgba(10,10,10,.68); }
+  .paper-section .skill-tile {
+    background: var(--paper);
+    border-color: var(--ink);
+  }
+  .paper-section .skill-tile:hover { background: var(--acid); border-color: var(--ink); }
+</style>

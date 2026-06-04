@@ -1,0 +1,57 @@
+<div id="trailWrap" aria-hidden="true"></div>
+
+<script is:inline>
+  (() => {
+    if (window.matchMedia("(hover: none)").matches) return;
+    const wrap = document.getElementById("trailWrap");
+    if (!wrap || wrap.dataset.ready === "true") return;
+    wrap.dataset.ready = "true";
+
+    const formulas = [
+      "H₂O",
+      "CO₂",
+      "O₂",
+      "NH₃",
+      "HCl",
+      "CH₄",
+      "NaOH",
+      "H⁺",
+      "OH⁻",
+      "e⁻",
+      "C₂H₅OH",
+    ];
+    let last = 0;
+
+    document.addEventListener("mousemove", (event) => {
+      const now = performance.now();
+      if (now - last < 90) return;
+      last = now;
+
+      const node = document.createElement("div");
+      node.className = "trail";
+      node.textContent = formulas[Math.floor(Math.random() * formulas.length)];
+      node.style.left = event.clientX + "px";
+      node.style.top = event.clientY + "px";
+      wrap.appendChild(node);
+
+      const g = window.gsap;
+      if (!g) {
+        node.remove();
+        return;
+      }
+
+      g.fromTo(
+        node,
+        { opacity: 0.9, y: 0, scale: 1 },
+        {
+          opacity: 0,
+          y: -40,
+          scale: 0.7,
+          duration: 1.2,
+          ease: "power1.out",
+          onComplete: () => node.remove(),
+        },
+      );
+    });
+  })();
+</script>

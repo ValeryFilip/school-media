@@ -1,0 +1,213 @@
+---
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+import StepikV2HeroLattice from "./StepikV2HeroLattice.astro";
+import StepikV2HeroCascade from "./StepikV2HeroCascade.astro";
+import StepikV2HeroElectrons from "./StepikV2HeroElectrons.astro";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface MoleculeLabels {
+  topRight?: string;
+  bottomLeft?: string;
+  bottomRight?: string;
+}
+
+type HeroVisual = "molecule" | "lattice" | "cascade" | "electrons";
+
+interface Props {
+  data: {
+    labels?: string[];
+    label: string;
+    kicker: string;
+    titleHtml: string;
+    descriptionHtml: string;
+    primaryCta: { href: string; label: string };
+    secondaryCta: { href: string; label: string };
+    stats: Array<{ value: string; label: string }>;
+    formulas: string[];
+    marquee: string[];
+    moleculeLabels?: MoleculeLabels;
+    heroVisual?: HeroVisual;
+  };
+  breadcrumbs?: readonly Crumb[];
+}
+
+const { data, breadcrumbs } = Astro.props as Props;
+const heroVisual: HeroVisual = data.heroVisual ?? "molecule";
+const moleculeTopRight    = data.moleculeLabels?.topRight    ?? "[3D · ARENE]";
+const moleculeBottomLeft  = data.moleculeLabels?.bottomLeft  ?? "фенол · C₆H₅OH";
+const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/моль";
+---
+
+<section class="relative overflow-hidden pt-14">
+  <div class="absolute inset-0 pt-grid opacity-[0.35] pointer-events-none" aria-hidden="true">
+    {Array.from({ length: 90 }).map(() => <div></div>)}
+  </div>
+  <div class="absolute inset-0 pointer-events-none formula-field" aria-hidden="true">
+    {data.formulas.map((formula, i) => (
+      <span class="formula-particle" style={`--x:${(i * 17) % 96}%;--y:${(i * 31) % 92}%;--d:${8 + (i % 7)}s;--dx:${(i % 2 ? 1 : -1) * (18 + i)}px;--dy:${(i % 3 ? 1 : -1) * (12 + i)}px;`}>
+        {formula}
+      </span>
+    ))}
+  </div>
+
+  <div class="relative gutter pt-16 md:pt-20 pb-16">
+    {breadcrumbs?.length ? (
+      <nav aria-label="Breadcrumb" class="flex items-center flex-wrap gap-2 font-mono text-[11px] text-dim tracking-widest uppercase mb-6">
+        {breadcrumbs.map((c, i) => (
+          <>
+            {c.href ? (
+              <a href={c.href} class="hover:text-acid transition">{c.label}</a>
+            ) : (
+              <span class="text-paper">{c.label}</span>
+            )}
+            {i < breadcrumbs.length - 1 && <span aria-hidden="true">/</span>}
+          </>
+        ))}
+      </nav>
+    ) : null}
+    {data.labels?.length ? (
+      <div class="flex flex-wrap items-center gap-2 mb-6" role="group" aria-label="Категории курса">
+        {data.labels.map((label) => (
+          <span class="font-mono text-[11px] uppercase tracking-[0.16em] border border-line px-3 py-2 text-paper/80 bg-ink/80">
+            {label}
+          </span>
+        ))}
+      </div>
+    ) : (
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-2 h-2 bg-acid"></span>
+        <span class="label">{data.label}</span>
+      </div>
+    )}
+
+    <div class="grid grid-cols-12 gap-10 items-start">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="font-mono text-[12px] text-fuchsia2 uppercase tracking-widest mb-5">{data.kicker}</div>
+        <h1
+          class="font-display font-bold tracking-[-0.035em] leading-[0.88] text-[clamp(44px,7.8vw,124px)] break-words [overflow-wrap:anywhere]"
+          set:html={data.titleHtml}
+        />
+        <p
+          class="mt-8 max-w-2xl text-paper/80 text-lg md:text-xl leading-snug"
+          set:html={data.descriptionHtml}
+        />
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+          <EgeAcidButton href={data.primaryCta.href} label={data.primaryCta.label} arrow="→" class="px-7 py-5 text-[16px]" />
+          <a href={data.secondaryCta.href} class="font-mono text-[12px] uppercase tracking-wider text-paper/80 hover:text-acid transition px-4 py-5">
+            {data.secondaryCta.label}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-4">
+        {/* Hero-визуал: molecule (бензол, через EgeScripts) | lattice | cascade | electrons.
+            На мобильных капается размером (max-w-[280px] mx-auto), чтобы декор-квадрат
+            не отъедал пол-экрана. На lg+ — без ограничений. */}
+        <div
+          class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none"
+          id={heroVisual === "molecule" ? "moleculeStage" : undefined}
+        >
+          {heroVisual === "lattice"   && <StepikV2HeroLattice />}
+          {heroVisual === "cascade"   && <StepikV2HeroCascade />}
+          {heroVisual === "electrons" && <StepikV2HeroElectrons />}
+
+          <div class="absolute inset-0 pointer-events-none z-10">
+            <div
+              class="absolute top-3 left-3 font-mono text-[10px] text-dim"
+              id={heroVisual === "molecule" ? "moleculeX" : undefined}
+            >
+              {heroVisual === "molecule" ? "X: 0.00" : ""}
+            </div>
+            <div
+              class="absolute top-3 right-3 font-mono text-[10px] text-acid"
+              id={heroVisual === "molecule" ? "moleculeY" : undefined}
+            >
+              {moleculeTopRight}
+            </div>
+            <div
+              class="absolute bottom-3 left-3 font-mono text-[10px] text-dim"
+            >
+              {moleculeBottomLeft}
+            </div>
+            <div
+              class="absolute bottom-3 right-3 font-mono text-[10px] text-dim"
+            >
+              {moleculeBottomRight}
+            </div>
+          </div>
+          {heroVisual === "molecule" && (
+            <div class="absolute inset-8 molecule" id="molecule"></div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
+      {data.stats.map((stat) => {
+        const counterMatch = stat.value.match(/^\+?(\d+)(\+)?$/);
+        const isRating = stat.value === "5" || stat.value === "4.9";
+        return (
+        <div class="bg-ink p-6">
+          {
+            stat.value.startsWith("+") && counterMatch ? (
+              <div class="font-display font-bold text-4xl md:text-5xl">
+                +<span data-counter={counterMatch[1]}>0</span>
+              </div>
+            ) : counterMatch && !isRating ? (
+              <div class="font-display font-bold text-4xl md:text-5xl" data-counter={counterMatch[1]} data-suffix={counterMatch[2] || ""}>0</div>
+            ) : (
+              <div class:list={["font-display font-bold text-4xl md:text-5xl", stat.value === "∞" && "text-acid", isRating && "text-fuchsia2"]}>
+                {stat.value}{isRating && <span class="star">⭐</span>}
+              </div>
+            )
+          }
+          <div class="label mt-2">{stat.label}</div>
+        </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <div class="relative border-t border-line py-4 overflow-hidden">
+    <div class="marquee font-mono text-sm text-dim whitespace-nowrap">
+      <div class="flex items-center gap-12">
+        {data.marquee.map((item, i) => (
+          <Fragment><span>{item}</span><span class={i % 2 ? "text-fuchsia2" : "text-acid"}>●</span></Fragment>
+        ))}
+      </div>
+      <div class="flex items-center gap-12" aria-hidden="true">
+        {data.marquee.map((item, i) => (
+          <Fragment><span>{item}</span><span class={i % 2 ? "text-fuchsia2" : "text-acid"}>●</span></Fragment>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .formula-particle {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    color: var(--dim);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    opacity: .28;
+    animation: drift var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(var(--dx), var(--dy)); }
+  }
+  .benz-group {
+    transform-origin: 150px 150px;
+    animation: benz 18s linear infinite;
+  }
+  @keyframes benz {
+    to { transform: translate(150px, 150px) rotate(360deg); }
+  }
+</style>

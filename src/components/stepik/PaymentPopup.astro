@@ -4,6 +4,8 @@ interface PaymentPopupProps {
   stepikUrl: string;
   title?: string;
   closeText?: string;
+  theme?: "light" | "dark";
+  settleMs?: number;
 }
 
 const {
@@ -11,6 +13,8 @@ const {
   stepikUrl,
   title = "Оплата курса",
   closeText = "Закрыть",
+  theme = "light",
+  settleMs = 4200,
 } = Astro.props as PaymentPopupProps;
 ---
 
@@ -18,6 +22,9 @@ const {
   id={id}
   class="payment-popup"
   data-payment-popup
+  data-payment-theme={theme}
+  data-payment-state="loading"
+  data-payment-settle-ms={settleMs}
   role="dialog"
   aria-modal="true"
   aria-hidden="true"
@@ -26,54 +33,120 @@ const {
   <div class="payment-popup__overlay" data-payment-close></div>
 
   <div class="payment-popup__container">
+    <div class="payment-popup__head">
+      <div>
+        <div class="payment-popup__eyebrow">[ STEPIK ] / PAYMENT</div>
+        <h2 class="payment-popup__title">{title}</h2>
+      </div>
+      <div class="payment-popup__status" data-payment-status>loading</div>
+    </div>
+
     <button
       type="button"
       class="payment-popup__close"
       data-payment-close
-      aria-label="Закрыть окно оплаты">×</button
+      aria-label={closeText}>×</button
     >
+
     <div class="payment-popup__content">
-      <!-- Прелоадер -->
       <div class="payment-popup__loader" id="payment-loader">
         <div class="loader-spinner"></div>
-        <p class="loader-text">Загружаем страницу оплаты...</p>
+        <p class="loader-text">Готовим форму оплаты...</p>
+        <p class="loader-subtext" data-payment-loader-phrase>Собираем промокод, чек и кнопку в одну колбу.</p>
       </div>
 
-      <!-- Iframe -->
       <iframe
         src={stepikUrl}
         class="payment-popup__iframe"
         title="Оплата курса на Stepik"
         loading="lazy"
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation"
-        allow="payment; fullscreen"
-        style="display: none;"></iframe>
+        allow="payment; fullscreen"></iframe>
     </div>
   </div>
 </div>
 
 <script is:inline>
-  // Функция открытия попапа — объявляем сразу, чтобы была доступна для inline onclick
+  var paymentReadyTimer = null;
+  var paymentFallbackTimer = null;
+  var paymentPhraseTimer = null;
+  var paymentOpenToken = 0;
+  var paymentPhrases = [
+    "Собираем промокод, чек и кнопку в одну колбу.",
+    "Проверяем, чтобы скидка не выпала в осадок.",
+    "Разгоняем Stepik до состояния оплаты без лишней воды.",
+    "Дожидаемся формы, а не красивой имитации формы.",
+  ];
+
+  function stopPaymentPhrases() {
+    clearInterval(paymentPhraseTimer);
+    paymentPhraseTimer = null;
+  }
+
+  function startPaymentPhrases(popup) {
+    stopPaymentPhrases();
+    var phrase = popup && popup.querySelector("[data-payment-loader-phrase]");
+    if (!phrase) return;
+    var index = 0;
+    phrase.textContent = paymentPhrases[index];
+    paymentPhraseTimer = setInterval(function () {
+      index = (index + 1) % paymentPhrases.length;
+      phrase.textContent = paymentPhrases[index];
+    }, 1800);
+  }
+
+  function setPaymentState(popup, state) {
+    if (!popup) return;
+    popup.dataset.paymentState = state;
+    var status = popup.querySelector("[data-payment-status]");
+    if (status) status.textContent = state === "ready" ? "ready" : "loading";
+  }
+
+  function revealPaymentFrame(popup, iframe, loader) {
+    if (!popup || !iframe) return;
+    setPaymentState(popup, "ready");
+    stopPaymentPhrases();
+    iframe.classList.add("is-ready");
+    if (loader) loader.classList.add("is-hidden");
+  }
+
+  function queuePaymentReveal(popup, iframe, loader, token) {
+    clearTimeout(paymentReadyTimer);
+    var baseDelay = Number(popup.dataset.paymentSettleMs || 4200);
+    var delay = window.innerWidth <= 768 ? Math.max(baseDelay, 5600) : baseDelay;
+
+    paymentReadyTimer = setTimeout(function () {
+      if (token !== paymentOpenToken) return;
+      revealPaymentFrame(popup, iframe, loader);
+    }, delay);
+  }
+
   window.openPaymentPopup = function (url) {
     var popup = document.querySelector("[data-payment-popup]");
     if (!popup) return;
+
     var iframe = popup.querySelector(".payment-popup__iframe");
     var loader = popup.querySelector("#payment-loader");
+    paymentOpenToken += 1;
+    var token = paymentOpenToken;
+
+    clearTimeout(paymentReadyTimer);
+    clearTimeout(paymentFallbackTimer);
+    startPaymentPhrases(popup);
+    setPaymentState(popup, "loading");
+
     if (url && iframe) {
-      if (loader) loader.style.display = "flex";
-      iframe.style.display = "none";
+      if (loader) loader.classList.remove("is-hidden");
+      iframe.classList.remove("is-ready");
+      iframe.dataset.pendingPaymentUrl = url;
       iframe.src = url;
-      setTimeout(function () {
-        if (loader) loader.style.display = "none";
-        if (iframe) iframe.style.display = "block";
-      }, 2000);
-      if (window.innerWidth <= 768) {
-        setTimeout(function () {
-          if (loader) loader.style.display = "none";
-          if (iframe) iframe.style.display = "block";
-        }, 3000);
-      }
+
+      paymentFallbackTimer = setTimeout(function () {
+        if (token !== paymentOpenToken) return;
+        revealPaymentFrame(popup, iframe, loader);
+      }, window.innerWidth <= 768 ? 16000 : 13000);
     }
+
     popup.setAttribute("aria-hidden", "false");
     popup.style.display = "flex";
     document.body.style.overflow = "hidden";
@@ -81,18 +154,30 @@ const {
 
   document.addEventListener("DOMContentLoaded", function () {
     var popup = document.querySelector("[data-payment-popup]");
-    var closeButtons = document.querySelectorAll("[data-payment-close]");
-    var iframe = popup && popup.querySelector(".payment-popup__iframe");
-    var loader = popup && popup.querySelector("#payment-loader");
-
     if (!popup) return;
 
+    var closeButtons = document.querySelectorAll("[data-payment-close]");
+    var iframe = popup.querySelector(".payment-popup__iframe");
+    var loader = popup.querySelector("#payment-loader");
+
+    if (iframe) {
+      iframe.addEventListener("load", function () {
+        if (popup.getAttribute("aria-hidden") !== "false") return;
+        queuePaymentReveal(popup, iframe, loader, paymentOpenToken);
+      });
+    }
+
     var closePopup = function () {
+      paymentOpenToken += 1;
+      clearTimeout(paymentReadyTimer);
+      clearTimeout(paymentFallbackTimer);
+      stopPaymentPhrases();
       popup.setAttribute("aria-hidden", "true");
       popup.style.display = "none";
       document.body.style.overflow = "";
-      if (loader) loader.style.display = "flex";
-      if (iframe) iframe.style.display = "none";
+      setPaymentState(popup, "loading");
+      if (loader) loader.classList.remove("is-hidden");
+      if (iframe) iframe.classList.remove("is-ready");
     };
 
     closeButtons.forEach(function (btn) {
@@ -111,7 +196,6 @@ const {
       }
     });
 
-    // Клики по кнопкам с data-payment-url (надёжнее inline onclick)
     document.body.addEventListener("click", function (e) {
       var el = e.target.closest("[data-payment-url]");
       if (el && el.getAttribute("data-payment-url")) {
@@ -124,66 +208,145 @@ const {
 
 <style>
   .payment-popup {
+    --payment-ink: var(--ink, #15120d);
+    --payment-paper: var(--paper, #f4efdf);
+    --payment-line: var(--line, rgba(244, 239, 223, 0.22));
+    --payment-acid: var(--acid, #a7ff4a);
+    --payment-fuchsia: var(--fuchsia2, #ff4fd8);
+    --payment-dim: var(--dim, rgba(244, 239, 223, 0.62));
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     z-index: 9999;
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     box-sizing: border-box;
+  }
+
+  .payment-popup[data-payment-theme="light"] {
+    --payment-ink: #111111;
+    --payment-paper: #ffffff;
+    --payment-line: #e5e7eb;
+    --payment-acid: var(--coral, #ff725e);
+    --payment-fuchsia: var(--coral, #ff725e);
+    --payment-dim: #6b7280;
   }
 
   .payment-popup__overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--overlay);
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(167, 255, 74, 0.08), transparent 34%),
+      rgba(4, 3, 2, 0.82);
+    backdrop-filter: blur(8px);
+  }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__overlay {
+    background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
   }
 
   .payment-popup__container {
     position: relative;
-    background: var(--white);
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 900px;
-    max-height: 90vh;
+    max-width: min(1120px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
     overflow: hidden;
+    background: var(--payment-ink);
+    border: 1px solid var(--payment-line);
+    color: var(--payment-paper);
+    box-shadow: 0 0 0 1px rgba(167, 255, 74, 0.18);
+  }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__container {
+    border-radius: 16px;
+    background: var(--payment-paper);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .payment-popup__head {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 72px 16px 20px;
+    border-bottom: 1px solid var(--payment-line);
+    background:
+      linear-gradient(90deg, rgba(167, 255, 74, 0.12), transparent 38%),
+      var(--payment-ink);
+  }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__head {
+    background: var(--payment-paper);
+  }
+
+  .payment-popup__eyebrow,
+  .payment-popup__status {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--payment-acid);
+  }
+
+  .payment-popup__title {
+    margin: 7px 0 0;
+    font-family: var(--font-display, inherit);
+    font-size: clamp(22px, 3.2vw, 42px);
+    line-height: 0.94;
+    font-weight: 800;
+    color: var(--payment-paper);
+  }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__title {
+    color: var(--payment-ink);
+  }
+
+  .payment-popup__status {
+    color: var(--payment-dim);
+  }
+
+  .payment-popup[data-payment-state="ready"] .payment-popup__status {
+    color: var(--payment-acid);
   }
 
   .payment-popup__close {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 15px;
+    right: 15px;
     z-index: 20;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 50%;
-    background: var(--border);
-    font-size: 24px;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--payment-line);
+    background: transparent;
+    font-size: 26px;
     line-height: 1;
     cursor: pointer;
-    color: var(--black);
+    color: var(--payment-paper);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
   }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__close {
+    color: var(--payment-ink);
+  }
+
   .payment-popup__close:hover {
-    background: var(--border);
+    background: var(--payment-acid);
+    border-color: var(--payment-acid);
+    color: var(--payment-ink);
   }
 
   .payment-popup__content {
     width: 100%;
-    height: 80vh;
+    height: min(78vh, 760px);
     position: relative;
+    background: var(--payment-ink);
   }
 
   .payment-popup__iframe {
@@ -191,37 +354,81 @@ const {
     height: 100%;
     border: none;
     display: block;
+    opacity: 0;
+    visibility: hidden;
+    background: #ffffff;
+    transition: opacity 220ms ease;
   }
 
-  /* Прелоадер */
+  .payment-popup__iframe.is-ready {
+    opacity: 1;
+    visibility: visible;
+  }
+
   .payment-popup__loader {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--white);
+    gap: 14px;
+    background:
+      linear-gradient(90deg, transparent 0 49%, rgba(244, 239, 223, 0.08) 49% 50%, transparent 50%),
+      linear-gradient(0deg, transparent 0 49%, rgba(244, 239, 223, 0.08) 49% 50%, transparent 50%),
+      var(--payment-ink);
+    background-size: 44px 44px;
     z-index: 10;
+    color: var(--payment-paper);
+    transition: opacity 180ms ease, visibility 180ms ease;
+  }
+
+  .payment-popup[data-payment-theme="light"] .payment-popup__loader {
+    background: var(--payment-paper);
+    color: var(--payment-ink);
+  }
+
+  .payment-popup__loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .loader-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--border);
-    border-top: 4px solid var(--coral);
-    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--payment-line);
+    border-top-color: var(--payment-acid);
+    border-right-color: var(--payment-fuchsia);
     animation: spin 1s linear infinite;
-    margin-bottom: 20px;
+    margin-bottom: 4px;
+    box-shadow: inset 0 0 0 10px var(--payment-ink);
+  }
+
+  .payment-popup[data-payment-theme="light"] .loader-spinner {
+    box-shadow: inset 0 0 0 10px var(--payment-paper);
   }
 
   .loader-text {
-    font-size: 16px;
-    color: var(--gray);
+    font-family: var(--font-display, inherit);
+    font-size: clamp(22px, 3vw, 38px);
+    line-height: 1;
+    font-weight: 800;
+    color: currentColor;
     margin: 0;
+    text-align: center;
+  }
+
+  .loader-subtext {
+    max-width: 420px;
+    margin: 0;
+    padding: 0 18px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--payment-dim);
     text-align: center;
   }
 
@@ -234,23 +441,31 @@ const {
     }
   }
 
-  /* Адаптивность */
   @media (max-width: 768px) {
     .payment-popup {
       padding: 5px;
     }
 
     .payment-popup__container {
-      max-height: 98vh;
+      max-width: calc(100vw - 10px);
+      max-height: calc(100vh - 10px);
+    }
+
+    .payment-popup[data-payment-theme="light"] .payment-popup__container {
       border-radius: 12px;
     }
 
+    .payment-popup__head {
+      min-height: 64px;
+      padding: 12px 60px 12px 14px;
+    }
+
     .payment-popup__content {
-      height: 90vh;
+      height: calc(100vh - 84px);
     }
 
     .payment-popup__iframe {
-      min-height: 90vh;
+      min-height: calc(100vh - 84px);
     }
 
     .loader-spinner {
@@ -259,7 +474,7 @@ const {
     }
 
     .loader-text {
-      font-size: 14px;
+      font-size: 24px;
     }
   }
 
@@ -269,18 +484,21 @@ const {
     }
 
     .payment-popup__container {
-      border-radius: 0;
       max-height: 100vh;
       width: 100vw;
       max-width: 100vw;
     }
 
+    .payment-popup[data-payment-theme="light"] .payment-popup__container {
+      border-radius: 0;
+    }
+
     .payment-popup__content {
-      height: 100vh;
+      height: calc(100vh - 64px);
     }
 
     .payment-popup__iframe {
-      min-height: 100vh;
+      min-height: calc(100vh - 64px);
     }
 
     .loader-spinner {
@@ -289,7 +507,11 @@ const {
     }
 
     .loader-text {
-      font-size: 13px;
+      font-size: 21px;
+    }
+
+    .loader-subtext {
+      font-size: 10px;
     }
   }
 </style>

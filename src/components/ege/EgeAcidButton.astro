@@ -1,0 +1,68 @@
+---
+interface Props {
+  as?: "a" | "button";
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  label?: string;
+  arrow?: string;
+  html?: string;
+  class?: string;
+  bubblePreset?: "left" | "center";
+  popupId?: string;
+  source?: string;
+  variant?: string;
+  campaign?: string;
+}
+
+const {
+  as = "a",
+  href = "#form",
+  type = "button",
+  label = "",
+  arrow = "",
+  html,
+  class: className = "",
+  bubblePreset = "left",
+  popupId,
+  source,
+  variant,
+  campaign,
+} = Astro.props as Props;
+
+const baseClass =
+  "cta-pulse relative inline-flex items-center justify-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight hover:bg-paper transition overflow-hidden";
+const classes = `${baseClass} ${className}`.trim();
+const bubbles =
+  bubblePreset === "center"
+    ? [
+        "width: 6px; height: 6px; left: 30%; bottom: 10px",
+        "width: 4px; height: 4px; left: 60%; bottom: 14px",
+      ]
+    : [
+        "width: 6px; height: 6px; left: 14px; bottom: 8px",
+        "width: 4px; height: 4px; left: 30px; bottom: 14px",
+      ];
+
+const popupAttrs = popupId
+  ? {
+      "data-popup-id": popupId,
+      "data-source": source,
+      "data-variant": variant,
+      "data-campaign": campaign,
+    }
+  : {};
+---
+
+{as === "button" ? (
+  <button type={type} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs}>
+    {bubbles.map((style) => <span class="bub" style={style}></span>)}
+    {html ? <Fragment set:html={html} /> : label}
+    {arrow && <span class="font-mono">{arrow}</span>}
+  </button>
+) : (
+  <a href={href} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs}>
+    {bubbles.map((style) => <span class="bub" style={style}></span>)}
+    {html ? <Fragment set:html={html} /> : label}
+    {arrow && <span class="font-mono">{arrow}</span>}
+  </a>
+)}

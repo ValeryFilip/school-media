@@ -1,0 +1,99 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Card {
+  kicker: string;
+  color: "acid" | "fuchsia";
+  title: string;
+  text: string;
+}
+interface Props {
+  data: {
+    section: string;
+    title: { text: string; marks?: readonly any[] };
+    lead: { kicker: string; text: string };
+    principle: { kicker: string; titleHtml: string; textHtml: string; footnote: string };
+    cards: readonly Card[];
+    contrast: {
+      label: string;
+      bad: { head: string; text: string };
+      good: { head: string; text: string };
+    };
+    footnote: string;
+  };
+}
+
+const { data } = Astro.props as Props;
+---
+
+<section class="section relative" id="selfpaced">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{data.section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-px bg-line border border-line">
+      <div class="col-span-12 md:col-span-7 bg-ink p-8 md:p-12">
+        <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-5">{data.lead.kicker}</div>
+        <p class="font-display text-2xl md:text-3xl leading-snug">
+          {data.lead.text}
+        </p>
+      </div>
+
+      <div class="col-span-12 md:col-span-5 bg-ink relative">
+        <div class="absolute inset-0 selfpaced-grid">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="relative p-8 md:p-12 h-full flex flex-col justify-center gap-4">
+          <div class="font-mono text-[11px] uppercase tracking-widest text-acid">{data.principle.kicker}</div>
+          <h3 class="font-display font-bold text-[clamp(26px,3.2vw,40px)] leading-tight m-0" set:html={data.principle.titleHtml} />
+          <p class="text-paper/80 leading-snug" set:html={data.principle.textHtml} />
+          <div class="font-mono text-[11px] text-dim leading-snug">{data.principle.footnote}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-px bg-line border-x border-b border-line">
+      {data.cards.map((card) => (
+        <div class="bg-ink p-6 md:p-8">
+          <div class:list={["font-mono text-[11px] uppercase tracking-widest mb-4", card.color === "acid" ? "text-acid" : "text-fuchsia2"]}>{card.kicker}</div>
+          <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-3 m-0">{card.title}</h3>
+          <p class="text-paper/70 text-sm leading-snug">{card.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line">
+      <div class="bg-ink p-6 md:p-8">
+        <div class="font-mono text-[11px] uppercase tracking-widest text-dim mb-4">// «{data.contrast.bad.head}»</div>
+        <p class="font-display text-xl leading-snug text-paper/60 line-through decoration-line">{data.contrast.bad.text}</p>
+      </div>
+      <div class="bg-ink p-6 md:p-8 border-l-2 border-acid">
+        <div class="font-mono text-[11px] uppercase tracking-widest text-acid mb-4">// {data.contrast.good.head}</div>
+        <p class="font-display text-xl leading-snug">{data.contrast.good.text}</p>
+      </div>
+    </div>
+
+    <div class="mt-10 max-w-2xl font-mono text-[12px] text-dim leading-snug">
+      <span class="text-acid">★</span> {data.footnote}
+    </div>
+  </div>
+</section>
+
+<style>
+  .selfpaced-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .selfpaced-grid span {
+    border: 1px solid var(--line);
+  }
+</style>

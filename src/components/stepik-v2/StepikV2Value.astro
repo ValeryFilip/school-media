@@ -1,0 +1,41 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+
+interface Props {
+  data: {
+    section: string;
+    title: { text: string; marks?: readonly any[] };
+    tutor: { label: string; price: string; text: string; note: string };
+    course: { label: string; price: string; text: string; note: string };
+    cta: { href: string; label: string };
+  };
+}
+
+const { data } = Astro.props as Props;
+---
+
+<section class="section relative overflow-hidden">
+  <div class="pt-grid absolute inset-0 opacity-[0.18] pointer-events-none" aria-hidden="true">
+    {Array.from({ length: 90 }).map(() => <div></div>)}
+  </div>
+  <div class="relative gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3"><div class="sec-num">{data.section}</div></div>
+      <div class="col-span-12 md:col-span-9"><EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" /></div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-line border border-line">
+      {[data.tutor, data.course].map((item, i) => (
+        <div class="bg-ink p-8 md:p-12 relative overflow-hidden">
+          <div class:list={["font-mono text-[11px] uppercase tracking-widest mb-5", i === 0 ? "text-fuchsia2" : "text-acid"]}>{item.label}</div>
+          <div class:list={["font-display font-bold text-[clamp(40px,7vw,96px)] leading-[0.9]", i === 0 ? "text-paper/40 line-through decoration-fuchsia2 decoration-[4px]" : "text-acid"]}>{item.price}</div>
+          <p class="mt-8 text-paper/80 text-lg leading-snug max-w-md">{item.text}</p>
+          <div class:list={["mt-8 font-mono text-[11px] uppercase tracking-wider", i === 0 ? "text-dim" : "text-acid"]}>{item.note}</div>
+        </div>
+      ))}
+    </div>
+    <div class="mt-10 text-center">
+      <EgeAcidButton href={data.cta.href} label={data.cta.label} arrow="→" class="px-10 py-6 text-[18px]" bubblePreset="center" />
+    </div>
+  </div>
+</section>
