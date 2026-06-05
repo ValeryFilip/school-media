@@ -1,0 +1,346 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import AcademyBreadcrumbs from "../components/academy/AcademyBreadcrumbs.astro";
+import AcademyCard from "../components/academy/AcademyCard.astro";
+import { articleCard, fmtFull, toDate, readMins } from "../lib/academyArticles";
+import {
+  ACADEMY_BASE_PATH,
+  academyArticlePath,
+  academyCategoryPath,
+  academyPath,
+  academyTagPath,
+} from "../lib/academyPaths";
+import { slugify } from "../lib/slugify";
+import { ORGANIZATION_DATA } from "../lib/seoData";
+
+interface Props {
+  fm: CollectionEntry<"articles">["data"] & {
+    toc?: boolean;
+    tocManual?: { id?: string; text: string }[];
+    updated?: string | Date;
+  };
+  slug: string;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+
+const { fm, slug, headings = [] } = Astro.props as Props;
+
+const categorySlug = slugify(String(fm.category || ""));
+const currentPath = academyArticlePath(String(fm.category || ""), slug);
+const articleUrl = `${Astro.url.origin}${currentPath}`;
+
+const dateObj = toDate(fm.date);
+const updatedObj = fm.updated ? toDate(fm.updated) : null;
+const showUpdated = updatedObj && updatedObj.getTime() !== dateObj.getTime();
+const readingTime = fm.readingTime ?? 8;
+
+const tocItems =
+  fm.tocManual && fm.tocManual.length > 0
+    ? fm.tocManual.map((item) => ({
+        id: slugify(item.id || item.text),
+        text: item.text,
+        depth: 2,
+      }))
+    : headings
+        .filter((h) => h.depth === 2 || h.depth === 3)
+        .map((h) => ({
+          id: slugify(h.text),
+          text: h.text,
+          depth: h.depth,
+        }));
+
+const allArticles = (
+  await getCollection("articles", ({ data }) => data.visible !== false)
+).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
+
+const currentIndex = allArticles.findIndex((post) => post.slug === slug);
+const nextArticle = currentIndex > 0 ? allArticles[currentIndex - 1] : null;
+const prevArticle =
+  currentIndex >= 0 && currentIndex < allArticles.length - 1
+    ? allArticles[currentIndex + 1]
+    : null;
+
+const related = allArticles
+  .filter(
+    (post) =>
+      post.slug !== slug &&
+      String(post.data.category || "") === String(fm.category || ""),
+  )
+  .slice(0, 4)
+  .map((post) => articleCard(post, ACADEMY_BASE_PATH));
+
+const tagItems = Array.isArray(fm.tags) ? fm.tags.map(String) : [];
+
+const breadcrumbs = [
+  { label: "Академия", href: academyPath() },
+  { label: String(fm.category), href: academyCategoryPath(String(fm.category || "")) },
+  { label: fm.title },
+];
+
+const author = ORGANIZATION_DATA.defaultAuthor;
+---
+
+<div class="reading-progress" aria-hidden="true">
+  <div id="academyReadingProgress" class="reading-progress__bar"></div>
+</div>
+
+<article class="academy-article">
+  <header class="academy-article-hero section">
+    <div class="gutter py-14 md:py-20">
+      <AcademyBreadcrumbs items={breadcrumbs} class="mb-10" />
+
+      <div class="grid grid-cols-12 gap-x-6 gap-y-8 items-start">
+        <div class="col-span-12">
+          <div class="academy-article-kicker">
+            <a href={academyCategoryPath(String(fm.category || ""))}>[ {fm.category} ]</a>
+            <time datetime={dateObj.toISOString().slice(0, 10)}>опубликовано {fmtFull(dateObj)}</time>
+            {showUpdated && <span>обновлено {fmtFull(updatedObj!)}</span>}
+            <span>{readingTime}&nbsp;мин</span>
+          </div>
+          <h1 id="article-title" class="academy-article-title">{fm.title}</h1>
+        </div>
+
+        <div class="col-span-12 lg:col-span-8">
+          {fm.description && <p class="academy-article-lead">{fm.description}</p>}
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="gutter py-12 md:py-16">
+      <div class="academy-article-grid">
+        <main class="academy-article-main" aria-labelledby="article-title">
+          <div class="academy-article-body">
+          {
+            fm.toc !== false && tocItems.length > 0 && (
+              <details class="toc-inline" open>
+                <summary>
+                  <span>
+                    <span class="toc-kicker">// навигация</span>
+                    <span class="toc-title">Содержание статьи</span>
+                  </span>
+                  <span class="toc-plus">↓</span>
+                </summary>
+                <div class="toc-inline-body">
+                  <ol>
+                    {tocItems.map((item) => (
+                      <li class={item.depth === 3 ? "is-sub" : ""}>
+                        <a href={`${currentPath}#${item.id}`} data-target={item.id}>
+                          {item.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </details>
+            )
+          }
+
+          <div class="academy-prose">
+            <slot />
+          </div>
+
+          <footer class="academy-article-after">
+            {
+              tagItems.length > 0 && (
+                <div class="academy-article-tags">
+                  <div class="academy-article-small-title">// теги</div>
+                  <div class="flex flex-wrap gap-2">
+                    {tagItems.map((tag) => (
+                      <a class="tag-pill" href={academyTagPath(tag)}>
+                        <span>#{tag}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+
+            <div class="academy-article-author">
+              <img src={author.photo} alt={author.name} loading="lazy" decoding="async" />
+              <div>
+                <div class="academy-article-small-title">// автор материала</div>
+                <h2>{author.name}</h2>
+                <p>{author.role}</p>
+                <a href={author.url} target="_blank" rel="noopener">Связаться с автором →</a>
+              </div>
+            </div>
+
+            <div class="academy-article-share" aria-label="Поделиться статьей">
+              <span>поделиться</span>
+              <a href={`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(fm.title)}`} target="_blank" rel="noopener">Telegram</a>
+              <a href={`https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}`} target="_blank" rel="noopener">VK</a>
+              <a href={`https://wa.me/?text=${encodeURIComponent(`${fm.title} ${articleUrl}`)}`} target="_blank" rel="noopener">WhatsApp</a>
+              <button type="button" data-copy-article-link>Скопировать</button>
+            </div>
+          </footer>
+          </div>
+        </main>
+
+        <aside class="article__sidebar academy-article-sidebar" aria-label="Дополнительно">
+          <div class="article__sidebar-sticky-wrapper academy-article-sticky">
+            <div class="sidebar-promo">
+              <div class="sidebar-promo__meta">// курс ЕГЭХИМ</div>
+              <h2>
+                Минигруппа<br />
+                <span>до&nbsp;6&nbsp;человек.</span>
+              </h2>
+              <p>
+                Живые вебинары, проверка ДЗ и&nbsp;личная траектория подготовки
+                к&nbsp;ЕГЭ по&nbsp;химии.
+              </p>
+              <div class="sidebar-promo__price">9&nbsp;900&nbsp;₽ <small>/ мес</small></div>
+              <a href="/ege/">Записаться на пробное →</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</article>
+
+{
+  (prevArticle || nextArticle) && (
+    <section class="section bg-apaper2">
+      <div class="gutter py-12">
+        <nav class="academy-article-nav" aria-label="Навигация по статьям">
+          {prevArticle && (
+            <a href={academyArticlePath(String(prevArticle.data.category), prevArticle.slug)}>
+              <span>← предыдущий материал</span>
+              <small>{prevArticle.data.category}</small>
+              <strong>{prevArticle.data.title}</strong>
+            </a>
+          )}
+          {nextArticle && (
+            <a href={academyArticlePath(String(nextArticle.data.category), nextArticle.slug)} class="is-next">
+              <span>следующий материал →</span>
+              <small>{nextArticle.data.category}</small>
+              <strong>{nextArticle.data.title}</strong>
+            </a>
+          )}
+        </nav>
+      </div>
+    </section>
+  )
+}
+
+{
+  related.length > 0 && (
+    <section class="section">
+      <div class="gutter py-16 md:py-24">
+        <div class="grid grid-cols-12 gap-6 mb-10 items-start">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[04] / ЧИТАТЬ ДАЛЬШЕ</div>
+          </div>
+          <div class="col-span-12 md:col-span-6">
+            <h2 class="font-display font-bold text-[clamp(32px,4.5vw,64px)] leading-[0.95] tracking-[-0.02em] titrate">
+              Подобрали под&nbsp;твою траекторию.
+            </h2>
+          </div>
+          <div class="col-span-12 md:col-span-3 md:text-right">
+            <a href={academyPath()} class="font-mono text-[12px] uppercase tracking-wider hover:text-rust transition">
+              в&nbsp;академию →
+            </a>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {related.map((item) => <AcademyCard {...item} />)}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  (function () {
+    const map = {
+      а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh",
+      з: "z", и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o",
+      п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "c",
+      ч: "ch", ш: "sh", щ: "sch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+    };
+    const slugify = (input) =>
+      (input || "")
+        .toLowerCase()
+        .replace(/[а-яё]/g, (ch) => map[ch] || ch)
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    const content = document.querySelector(".academy-prose");
+    if (content) {
+      content.querySelectorAll("h2, h3").forEach((heading, index) => {
+        if (!heading.id) heading.id = slugify(heading.textContent || "");
+        if (heading.tagName === "H2") {
+          heading.setAttribute("data-num", `// раздел ${String(index + 1).padStart(2, "0")}`);
+        }
+      });
+    }
+
+    const progress = document.getElementById("academyReadingProgress");
+    const updateProgress = () => {
+      if (!progress) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+      progress.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    };
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress, { passive: true });
+    updateProgress();
+
+    const links = Array.from(document.querySelectorAll("[data-target]"));
+    const sections = links
+      .map((link) => document.getElementById(link.getAttribute("data-target") || ""))
+      .filter(Boolean);
+    const updateCurrent = () => {
+      const y = window.scrollY + 120;
+      let current = "";
+      sections.forEach((section) => {
+        if (section.offsetTop <= y) current = section.id;
+      });
+      links.forEach((link) => {
+        link.classList.toggle("is-current", link.getAttribute("data-target") === current);
+      });
+    };
+    window.addEventListener("scroll", updateCurrent, { passive: true });
+    updateCurrent();
+
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const root = button.closest(".tabs");
+        const target = button.getAttribute("data-tab");
+        if (!root || !target) return;
+        root.querySelectorAll(".tab-btn").forEach((item) => item.classList.remove("is-active"));
+        root.querySelectorAll(".tab-panel").forEach((item) => item.classList.remove("is-active"));
+        button.classList.add("is-active");
+        root.querySelector(`#${target}`)?.classList.add("is-active");
+      });
+    });
+
+    document.querySelectorAll(".practice-show").forEach((button) => {
+      button.addEventListener("click", () => {
+        const practice = button.closest(".practice");
+        const answer = practice?.querySelector(".practice-answer");
+        if (!answer) return;
+        answer.classList.toggle("is-shown");
+        button.textContent = answer.classList.contains("is-shown")
+          ? "Скрыть решение ↑"
+          : "Показать решение →";
+      });
+    });
+
+    document.querySelector("[data-copy-article-link]")?.addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        button.textContent = "Скопировано";
+        setTimeout(() => (button.textContent = "Скопировать"), 1600);
+      } catch {
+        button.textContent = "Не скопировалось";
+        setTimeout(() => (button.textContent = "Скопировать"), 1600);
+      }
+    });
+  })();
+</script>

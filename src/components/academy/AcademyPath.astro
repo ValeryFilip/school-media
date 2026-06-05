@@ -1,0 +1,53 @@
+---
+interface Step {
+  href: string;
+  title: string;
+  mins: number;
+  description?: string;
+}
+const { steps = [] } = Astro.props as { steps: Step[] };
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+---
+
+{
+  steps.length > 0 && (
+    <section class="section">
+      <div class="gutter py-16 md:py-24">
+        <div class="grid grid-cols-12 gap-6 mb-12">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[04] / ПОРЯДОК</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2 class="font-display font-bold text-[clamp(32px,4.5vw,64px)] leading-[0.95] tracking-[-0.02em] titrate">
+              В&nbsp;каком порядке читать{" "}
+              <span class="text-adim">— рекомендованный маршрут.</span>
+            </h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-aline border border-aline">
+          {steps.map((s, i) => (
+            <a href={s.href} class="block bg-amilk p-6 group transition hover:bg-apaper">
+              <div class="flex items-start justify-between mb-6">
+                <span class="font-mono text-[11px] text-rust">// шаг {pad(i)}</span>
+                <span class="font-mono text-[10px] text-adim">{s.mins}&nbsp;мин</span>
+              </div>
+              <div class="font-display font-bold text-[40px] leading-none mb-4">{pad(i)}</div>
+              <div
+                class="font-display font-semibold text-lg leading-tight mb-3 group-hover:text-rust transition"
+                set:html={s.title}
+              />
+              {s.description && (
+                <p class="font-mono text-[12px] text-ainkSoft leading-snug" set:html={s.description} />
+              )}
+              <div class="mt-5 pt-4 border-t border-aline font-mono text-[11px] text-adim flex items-center justify-between">
+                <span>читать материал</span>
+                <span class="text-base group-hover:translate-x-1 transition">→</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,77 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+  accent?: boolean;
+}
+interface Props {
+  courseHref?: string;
+  priceNote?: string;
+  stats?: Stat[];
+}
+const {
+  courseHref = "/allcourses/",
+  priceNote = "самостоятельные и групповые форматы",
+  stats = [
+    { value: "100", label: "баллов&nbsp;· свой ЕГЭ", accent: true },
+    { value: "10", label: "лет в&nbsp;подготовке" },
+    { value: "2000+", label: "выпускников" },
+    { value: "8", label: "курсов на&nbsp;Stepik", accent: true },
+  ] as Stat[],
+} = Astro.props as Props;
+---
+
+<section class="ink-section" id="courses">
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6 items-center">
+      <div class="col-span-12 md:col-span-7">
+        <div
+          class="font-mono text-[12px] uppercase tracking-widest text-ochre mb-6"
+        >
+          [07] / Курсы ЕГЭХИМ
+        </div>
+        <h2
+          class="font-display font-bold text-[clamp(38px,5.5vw,84px)] leading-[0.92] tracking-[-0.02em] titrate"
+        >
+          Прочитал статью —<br />
+          <span class="text-ochre">приходи готовиться</span><br />
+          к&nbsp;экзамену.
+        </h2>
+        <p class="body-serif text-apaper/85 mt-8 max-w-xl">
+          Академия — это бесплатная база знаний. Когда устанешь учиться сам,
+          можешь прийти на&nbsp;один из&nbsp;курсов: самостоятельные на&nbsp;Stepik
+          или групповые с&nbsp;живыми вебинарами и&nbsp;проверкой ДЗ.
+        </p>
+        <div class="mt-10 flex flex-wrap items-center gap-5">
+          <a
+            href={courseHref}
+            class="bg-apaper text-aink font-display font-bold uppercase tracking-tight px-7 py-5 hover:bg-ochre transition inline-flex items-center gap-3"
+          >
+            Смотреть курсы
+            <span class="font-mono">→</span>
+          </a>
+          <div class="font-mono text-xs text-apaper/60">{priceNote}</div>
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-5">
+        <div class="grid grid-cols-2 gap-px bg-apaper/15 border border-apaper/20">
+          {
+            stats.map((s) => (
+              <div class="p-6 md:p-7" style="background: var(--ink)">
+                <div
+                  class={`font-display font-bold text-5xl ${s.accent ? "text-ochre" : ""}`}
+                >
+                  {s.value}
+                </div>
+                <div
+                  class="font-mono text-[11px] text-apaper/60 mt-2 uppercase tracking-wider"
+                  set:html={s.label}
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

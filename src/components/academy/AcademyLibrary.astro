@@ -1,0 +1,129 @@
+---
+import { academyArticlesPath } from "../../lib/academyPaths";
+
+// 6 переиспользуемых SVG-иллюстраций для карточек
+const ILLOS: ((a: number) => string)[] = [
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <defs><pattern id="h${a}1" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(135)"><line x1="0" y1="0" x2="0" y2="9" stroke="#B23A14" stroke-width="0.8"/></pattern></defs>
+      <rect x="0" y="0" width="400" height="225" fill="#EFE9DA"/>
+      <rect x="40" y="30" width="180" height="180" fill="url(#h${a}1)" opacity="0.4"/>
+      <text x="40" y="120" font-family="Space Grotesk" font-weight="700" font-size="72" fill="#1A1410" letter-spacing="-3">H₂SO₄</text>
+      <text x="40" y="180" font-family="JetBrains Mono" font-size="14" fill="#8A7F70">96% · conc.</text>
+      <line x1="280" y1="60" x2="360" y2="60" stroke="#1A1410" stroke-width="1.5"/>
+      <circle cx="320" cy="60" r="4" fill="#B23A14"/>
+    </svg>`,
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <rect width="400" height="225" fill="#E6DFCC"/>
+      ${[0, 1, 2, 3].map((r) => [0, 1, 2, 3, 4, 5, 6, 7].map((c) => `<rect x="${40 + c * 40}" y="${30 + r * 40}" width="40" height="40" fill="none" stroke="#C9BFAC" stroke-width="1"/>`).join("")).join("")}
+      <rect x="120" y="70" width="40" height="40" fill="#B23A14"/>
+      <text x="140" y="98" font-family="Space Grotesk" font-weight="700" font-size="18" fill="#EFE9DA" text-anchor="middle">Fe</text>
+      <text x="40" y="200" font-family="JetBrains Mono" font-size="13" fill="#8A7F70">// период · 4</text>
+    </svg>`,
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <rect width="400" height="225" fill="#EFE9DA"/>
+      <g transform="translate(200, 113)">
+        ${[0, 1, 2, 3, 4, 5].map((i) => { const ang = (i * Math.PI) / 3 - Math.PI / 2; const x = Math.cos(ang) * 50; const y = Math.sin(ang) * 50; const ang2 = ((i + 1) * Math.PI) / 3 - Math.PI / 2; const x2 = Math.cos(ang2) * 50; const y2 = Math.sin(ang2) * 50; return `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#1A1410" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="14" fill="#EFE9DA" stroke="#1A1410" stroke-width="1.5"/><text x="${x}" y="${y + 4}" font-family="JetBrains Mono" font-weight="700" font-size="11" fill="#1A1410" text-anchor="middle">C</text>`; }).join("")}
+        <circle cx="0" cy="-50" r="14" fill="#B23A14" stroke="#1A1410" stroke-width="1.5"/>
+        <text x="0" y="-46" font-family="JetBrains Mono" font-weight="700" font-size="10" fill="#EFE9DA" text-anchor="middle">OH</text>
+      </g>
+      <text x="20" y="200" font-family="JetBrains Mono" font-size="13" fill="#8A7F70">C₆H₅OH · phenol</text>
+    </svg>`,
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <rect width="400" height="225" fill="#EFE9DA"/>
+      <defs><pattern id="liq${a}" patternUnits="userSpaceOnUse" width="6" height="6"><line x1="0" y1="3" x2="6" y2="3" stroke="#1A3556" stroke-width="0.8"/></pattern></defs>
+      <g transform="translate(200, 40)">
+        <path d="M -30 0 L -30 40 L -70 160 L 70 160 L 30 40 L 30 0 Z" fill="none" stroke="#1A1410" stroke-width="2"/>
+        <path d="M -70 160 L -55 115 L 55 115 L 70 160 Z" fill="url(#liq${a})"/>
+        <line x1="-30" y1="0" x2="30" y2="0" stroke="#1A1410" stroke-width="2"/>
+      </g>
+      <text x="20" y="205" font-family="JetBrains Mono" font-size="13" fill="#8A7F70">250 mL · Erlenmeyer</text>
+      <text x="290" y="205" font-family="JetBrains Mono" font-size="13" fill="#B23A14" text-anchor="end">pH 2.4</text>
+    </svg>`,
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <rect width="400" height="225" fill="#E6DFCC"/>
+      <text x="200" y="80" font-family="Space Grotesk" font-weight="700" font-size="40" fill="#1A1410" text-anchor="middle">2H₂ + O₂</text>
+      <line x1="120" y1="110" x2="280" y2="110" stroke="#B23A14" stroke-width="2"/>
+      <line x1="280" y1="110" x2="265" y2="100" stroke="#B23A14" stroke-width="2"/>
+      <line x1="280" y1="110" x2="265" y2="120" stroke="#B23A14" stroke-width="2"/>
+      <text x="200" y="170" font-family="Space Grotesk" font-weight="700" font-size="40" fill="#B23A14" text-anchor="middle">2H₂O</text>
+      <text x="20" y="210" font-family="JetBrains Mono" font-size="12" fill="#8A7F70">ΔH = −572 kJ/mol</text>
+    </svg>`,
+  (a) => `
+    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+      <rect width="400" height="225" fill="#EFE9DA"/>
+      <g transform="translate(200, 113)">
+        <circle r="90" fill="none" stroke="#C9BFAC" stroke-width="1"/>
+        <circle r="60" fill="none" stroke="#C9BFAC" stroke-width="1"/>
+        <circle r="30" fill="none" stroke="#1A1410" stroke-width="1.5"/>
+        <circle r="8" fill="#B23A14"/>
+        ${[0, 90, 180, 270].map((d) => { const x = Math.cos((d * Math.PI) / 180) * 60; const y = Math.sin((d * Math.PI) / 180) * 60; return `<circle cx="${x}" cy="${y}" r="4" fill="#1A1410"/>`; }).join("")}
+        <text y="4" font-family="Space Grotesk" font-weight="700" font-size="11" fill="#EFE9DA" text-anchor="middle">8</text>
+      </g>
+      <text x="20" y="205" font-family="JetBrains Mono" font-size="13" fill="#8A7F70">O · oxygen · 2,6</text>
+    </svg>`,
+];
+
+import AcademyCard from "./AcademyCard.astro";
+
+interface Art {
+  href: string;
+  category: string;
+  date: string;
+  mins: number;
+  title: string;
+  description: string;
+  image?: string;
+  illoIndex?: number;
+}
+const {
+  articles = [],
+  total = 0,
+  allHref = academyArticlesPath(),
+} = Astro.props as { articles: Art[]; total: number; allHref: string };
+---
+
+<section class="section relative bg-apaper2">
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6 mb-12 items-end">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">[05] / БИБЛИОТЕКА</div>
+      </div>
+      <div class="col-span-12 md:col-span-6">
+        <h2
+          class="font-display font-bold text-[clamp(34px,5vw,72px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          Последние {articles.length} материалов.
+        </h2>
+      </div>
+      <div class="col-span-12 md:col-span-3 md:text-right">
+        <a
+          href={allHref}
+          class="font-mono text-[12px] uppercase tracking-wider hover:text-rust transition"
+          >все {total} материалов →</a
+        >
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {
+        articles.map((a, i) => (
+          <AcademyCard
+            href={a.href}
+            category={a.category}
+            date={a.date}
+            mins={a.mins}
+            title={a.title}
+            description={a.description}
+            image={a.image}
+            fallbackSvg={ILLOS[(a.illoIndex ?? i) % ILLOS.length](i)}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

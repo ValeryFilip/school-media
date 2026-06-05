@@ -1,0 +1,205 @@
+---
+import AcademyLayout from "../../../layouts/AcademyLayout.astro";
+import AcademyListHero from "../../../components/academy/AcademyListHero.astro";
+import AcademyArticleGrid from "../../../components/academy/AcademyArticleGrid.astro";
+import AcademyCategoryDescription from "../../../components/academy/AcademyCategoryDescription.astro";
+import AcademyPath from "../../../components/academy/AcademyPath.astro";
+import AcademyFaq from "../../../components/academy/AcademyFaq.astro";
+import AcademyRelated from "../../../components/academy/AcademyRelated.astro";
+import AcademyNewsletter from "../../../components/academy/AcademyNewsletter.astro";
+import config, { categoryDescriptions } from "../../../config.ts";
+import { getCollection } from "astro:content";
+import { slugify } from "../../../lib/slugify.ts";
+import { catSym, CAT_META } from "../../../data/academyMeta.ts";
+import { articleCard, toDate, fmtFull, readMins } from "../../../lib/academyArticles.ts";
+import {
+  ACADEMY_BASE_PATH,
+  academyArticlePath,
+  academyCategoryPath,
+  academyPath,
+  academyTagPath,
+} from "../../../lib/academyPaths.ts";
+import { buildFAQJsonLd } from "../../../lib/seoData.ts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    "articles",
+    ({ data }) => data.visible !== false,
+  );
+  const names = [
+    ...new Set(posts.map((p) => String(p.data.category || "").trim())),
+  ].filter(Boolean);
+  return names.map((name) => ({
+    params: { category: slugify(name) },
+    props: { categoryName: name },
+  }));
+}
+
+const { categoryName } = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const allPosts = (
+  await getCollection("articles", ({ data }) => data.visible !== false)
+).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
+
+// Глобальный список категорий (для номеров и соседних)
+const catCounts = new Map<string, number>();
+for (const p of allPosts) {
+  const c = String(p.data.category || "").trim();
+  if (c) catCounts.set(c, (catCounts.get(c) || 0) + 1);
+}
+const catList = [...catCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .map(([name, count], i) => ({
+    name,
+    count,
+    num: pad(i + 1),
+    sym: catSym(name),
+    slug: slugify(name),
+    href: academyCategoryPath(name),
+  }));
+const totalCats = catList.length;
+const me = catList.find((c) => c.name === categoryName)!;
+
+// Статьи категории
+const catPosts = allPosts.filter(
+  (p) => String(p.data.category || "").trim() === categoryName,
+);
+const count = catPosts.length;
+const totalMins = catPosts.reduce((s, p) => s + readMins(p), 0);
+const updated = catPosts[0] ? fmtFull(toDate(catPosts[0].data.date)) : "";
+
+const featured = catPosts[0] ? articleCard(catPosts[0], ACADEMY_BASE_PATH) : null;
+const gridArticles = catPosts.map((post) => articleCard(post, ACADEMY_BASE_PATH));
+
+// Маршрут — от старых к новым, первые 4
+const pathSteps = [...catPosts]
+  .sort((a, b) => toDate(a.data.date).getTime() - toDate(b.data.date).getTime())
+  .slice(0, 4)
+  .map((p) => ({
+    href: academyArticlePath(String(p.data.category), p.slug),
+    title: p.data.title,
+    mins: readMins(p),
+    description: p.data.description ?? "",
+  }));
+
+// Теги внутри категории
+const tagCounts = new Map<string, number>();
+for (const p of catPosts)
+  for (const t of p.data.tags ?? []) {
+    const k = String(t).trim();
+    if (k) tagCounts.set(k, (tagCounts.get(k) || 0) + 1);
+  }
+const catTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+const topTags = catTags.slice(0, 6).map(([name]) => name);
+const heroTags = [
+  { name: "все", count, href: academyCategoryPath(categoryName), active: true },
+  ...catTags.slice(0, 8).map(([name, c]) => ({
+    name,
+    count: c,
+    href: academyTagPath(name),
+  })),
+];
+
+// Соседние категории
+const related = catList.filter((c) => c.name !== categoryName).slice(0, 3);
+
+// SEO-описание (шаблон или кураторское)
+const meta = CAT_META[me.slug] ?? {};
+const proseDefault = `
+  <p><strong>${categoryName}</strong>&nbsp;— раздел Академии ЕГЭХИМ. Здесь собраны разборы, формулы и&nbsp;задачи с&nbsp;подробным выведением: ${count}&nbsp;материалов, общее время чтения около ${totalMins}&nbsp;минут.</p>
+  ${
+    topTags.length
+      ? `<h3>Что внутри</h3><ul>${topTags.map((t) => `<li>${t}</li>`).join("")}</ul>`
+      : ""
+  }
+  <p>Материалы ориентированы на&nbsp;подготовку к&nbsp;ЕГЭ и&nbsp;ОГЭ по&nbsp;химии и&nbsp;кодификатор ФИПИ. Если только начинаешь&nbsp;— загляни на&nbsp;<a href="${academyPath()}">главную Академии</a> и&nbsp;выбери траекторию.</p>
+`;
+const prose = meta.introHtml ?? proseDefault;
+const faq = meta.faq ?? [
+  {
+    q: `С&nbsp;чего начать изучение раздела «${categoryName}»?`,
+    a: `Выше есть рекомендованный маршрут&nbsp;— иди по&nbsp;нему сверху вниз. Если стартовый уровень низкий, сначала закрой общую химию и&nbsp;неорганику.`,
+  },
+  {
+    q: `Сколько материалов в&nbsp;разделе?`,
+    a: `Сейчас ${count}&nbsp;материалов, общее время чтения&nbsp;— около ${totalMins}&nbsp;минут. Раздел пополняется.`,
+  },
+  {
+    q: `Подходит ли это для&nbsp;подготовки к&nbsp;ЕГЭ?`,
+    a: `Да. Все разборы ориентированы на&nbsp;формат ЕГЭ и&nbsp;ОГЭ по&nbsp;химии и&nbsp;кодификатор ФИПИ.`,
+  },
+];
+
+const facts = [
+  { value: String(count), unit: "материалов", label: "в&nbsp;разделе", accent: "rust" as const },
+  { value: String(totalMins), unit: "мин", label: "общее время чтения" },
+  { value: String(topTags.length || catTags.length), unit: "тем", label: "внутри категории", accent: "inkBlue" as const },
+];
+
+const stats = [
+  { value: count, label: "материалов", accent: "rust" as const },
+  { value: totalMins, label: "мин чтения" },
+  { value: catTags.length, label: "тем", accent: "inkBlue" as const },
+  { value: related.length + 1, label: "соседних разделов" },
+];
+
+const marquee = [
+  `// категория · ${categoryName.toLowerCase()}`,
+  `${count} материалов · ${totalMins} мин чтения`,
+  "обновляется регулярно",
+];
+
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const oldSeo = categoryDescriptions[String(categoryName || "").toLowerCase()] ?? null;
+const seoTitle =
+  oldSeo?.title || `Все статьи в категории «${categoryName}» — Академия ЕГЭХИМ`;
+const seoDescription =
+  oldSeo?.shortDesc ||
+  `Все статьи в категории «${categoryName}»: понятные объяснения, примеры, советы и подборки материалов по теме.`;
+const pageUrl = `${siteUrl}${academyCategoryPath(categoryName)}`;
+const faqJsonLd = oldSeo?.faq?.length ? buildFAQJsonLd(oldSeo.faq) : null;
+---
+
+<AcademyLayout
+  title={seoTitle}
+  description={seoDescription}
+  addSiteSuffix={false}
+  url={pageUrl}
+  image={catPosts[0]?.data?.image || "/images/technical/og-home.png"}
+  index={false}
+  breadcrumbs={[{ name: categoryName, href: pageUrl }]}
+  showBreadcrumbs={true}
+  faqJsonLd={faqJsonLd}
+>
+  <AcademyListHero
+    breadcrumb={[
+      { label: "Академия", href: academyPath() },
+      { label: "Категории", href: academyPath("/#categories") },
+      { label: categoryName },
+    ]}
+    label={`[ ${me.num} ] · категория${updated ? ` · обновлено ${updated}` : ""}`}
+    elMark={{ symbol: me.sym, n: me.num, mass: String(count) }}
+    titleTop={categoryName}
+    description=""
+    stats={stats}
+    featured={featured}
+    tags={heroTags}
+    marquee={marquee}
+  />
+  <AcademyArticleGrid
+    secNum="[02] / СПИСОК"
+    title={`Все ${count} материалов`}
+    articles={gridArticles}
+  />
+  <AcademyCategoryDescription
+    title={`Что такое «${categoryName}» <span class="text-adim">и зачем это нужно.</span>`}
+    prose={prose}
+    facts={facts}
+  />
+  <AcademyPath steps={pathSteps} />
+  <AcademyFaq titleAccent={`про&nbsp;«${categoryName.toLowerCase()}».`} items={faq} />
+  <AcademyRelated categories={related} total={totalCats} allHref={academyPath("/#categories")} />
+  <AcademyNewsletter />
+</AcademyLayout>

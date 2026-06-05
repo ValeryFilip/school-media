@@ -1,0 +1,87 @@
+---
+const {
+  stats = [
+    { value: "4&nbsp;700", label: "подписчиков" },
+    { value: "68%", label: "open rate" },
+    { value: "0", label: "писем в&nbsp;год спам" },
+  ],
+} = Astro.props;
+---
+
+<section class="section relative" id="newsletter">
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-5">
+        <div class="sec-num mb-6">[08] / РАССЫЛКА</div>
+        <h2
+          class="font-display font-bold text-[clamp(36px,5vw,72px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          Один разбор —<br />
+          <span class="ul-r">в&nbsp;четверг утром.</span>
+        </h2>
+        <p class="body-serif mt-8 max-w-md">
+          Раз в&nbsp;неделю — одна задача ЕГЭ или одна тема, разобранная вручную.
+          Никакого мусора, никаких автоматизированных&nbsp;«дайджестов».
+        </p>
+        <div class="mt-8 grid grid-cols-3 gap-px bg-aline border border-aline max-w-md">
+          {
+            stats.map((s) => (
+              <div class="bg-amilk p-4">
+                <div class="font-display font-bold text-2xl" set:html={s.value} />
+                <div
+                  class="font-mono text-[10px] text-adim mt-1 uppercase"
+                  set:html={s.label}
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="col-span-12 md:col-span-7 md:pl-10">
+        <form
+          class="border border-aink bg-amilk p-6 md:p-10 relative"
+          onsubmit="this.querySelector('button').textContent='✓ Подписался · смотри почту'; event.preventDefault();"
+        >
+          <div class="font-mono text-[10px] text-adim absolute top-4 right-4">
+            // FORM_ID: 2026.NEWS
+          </div>
+          <div
+            class="font-mono text-[11px] text-rust uppercase tracking-widest mb-6 pt-2"
+          >
+            // подпишись · отпишешься в&nbsp;один клик
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label
+                class="font-mono text-[11px] text-ainkSoft uppercase tracking-widest block mb-2"
+              >
+                <span class="text-rust">[01]</span> Имя
+              </label>
+              <input type="text" placeholder="как тебя зовут" required class="news-input" />
+            </div>
+            <div>
+              <label
+                class="font-mono text-[11px] text-ainkSoft uppercase tracking-widest block mb-2"
+              >
+                <span class="text-rust">[02]</span> Email <span class="text-rust">*</span>
+              </label>
+              <div class="flex">
+                <input type="email" placeholder="your@email.com" required class="news-input border-r-0" />
+                <button
+                  type="submit"
+                  class="cta-ink font-display font-bold uppercase tracking-tight px-6 whitespace-nowrap"
+                  >подписаться&nbsp;→</button
+                >
+              </div>
+            </div>
+          </div>
+          <p class="font-mono text-[10px] text-adim mt-6">
+            Подписываясь, ты&nbsp;соглашаешься получать раз в&nbsp;неделю один
+            разбор. Никаких&nbsp;«срочных предложений».
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

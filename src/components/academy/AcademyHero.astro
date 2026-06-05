@@ -1,0 +1,134 @@
+---
+import AcademyBreadcrumbs from "./AcademyBreadcrumbs.astro";
+import AcademyArticleSearch from "./AcademyArticleSearch.astro";
+import { academyPath } from "../../lib/academyPaths";
+const {
+  articlesCount = 0,
+  categoriesCount = 0,
+  tagsCount = 0,
+  updated = "",
+  latest = { title: "", date: "" },
+  quickTags = [],
+  searchArticles = [],
+} = Astro.props;
+---
+
+<section class="relative overflow-visible z-10">
+  <div
+    class="absolute inset-0 pt-grid opacity-[0.6] pointer-events-none"
+    id="ptBg"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative z-30 gutter pt-16 md:pt-20 pb-16 md:pb-24">
+    <AcademyBreadcrumbs
+      class="mb-10"
+      items={[
+        { label: "ЕГЭХИМ", href: "/" },
+        { label: "Академия" },
+      ]}
+    />
+
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 lg:col-span-9">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-2 h-2 bg-rust"></span>
+          <span class="label"
+            >[ 01 ] · База знаний по&nbsp;химии · {articlesCount} материалов</span
+          >
+        </div>
+
+        <h1
+          class="font-display font-bold tracking-[-0.035em] leading-[0.92] text-[clamp(48px,9vw,144px)]"
+        >
+          Академия<br />
+          <span class="text-rust">ЕГЭ</span>ХИМ<span class="text-rust">_</span>
+        </h1>
+
+        <p class="body-serif mt-8 max-w-2xl">
+          Разборы заданий ЕГЭ, формулы и&nbsp;реакции с&nbsp;выведением, конспекты
+          тем кодификатора, тактика подготовки. Пишет Валерий&nbsp;Филипенко
+          — тот&nbsp;же автор, что и&nbsp;курсы. Одна методика на&nbsp;статьи
+          и&nbsp;подготовку.
+        </p>
+      </div>
+    </div>
+
+    <AcademyArticleSearch articles={searchArticles} />
+
+    {
+      quickTags.length > 0 && (
+        <div class="mt-6 flex flex-wrap items-center gap-2 font-mono text-[12px]">
+          <span class="text-adim mr-2">часто ищут →</span>
+          {quickTags.map((t: any) => (
+            <a href={t.href} class="tag-pill">
+              {t.name}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <div class="relative z-0 border-t border-aline">
+    <div class="gutter">
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 gap-px bg-aline border-x border-aline -mx-px"
+      >
+        <div class="bg-apaper p-6">
+          <div
+            class="font-display font-bold text-3xl md:text-4xl text-rust"
+            data-counter={String(articlesCount)}
+          >
+            0
+          </div>
+          <div class="label mt-2">статей в&nbsp;базе</div>
+        </div>
+        <div class="bg-apaper p-6">
+          <div
+            class="font-display font-bold text-3xl md:text-4xl"
+            data-counter={String(categoriesCount)}
+          >
+            0
+          </div>
+          <div class="label mt-2">категорий</div>
+        </div>
+        <div class="bg-apaper p-6">
+          <div
+            class="font-display font-bold text-3xl md:text-4xl text-inkBlue"
+            data-counter={String(tagsCount)}
+          >
+            0
+          </div>
+          <div class="label mt-2">тегов</div>
+        </div>
+        <div class="bg-apaper p-6">
+          <div class="font-display font-bold text-2xl md:text-3xl">
+            {updated || "—"}
+          </div>
+          <div class="label mt-2">обновлено</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative z-0 border-t border-aline py-3 overflow-hidden">
+    <div class="marquee font-mono text-sm text-adim whitespace-nowrap">
+      {
+        [0, 1].map((dup) => (
+          <div class="flex items-center gap-12" aria-hidden={dup === 1}>
+            <span>// последний материал{latest.date ? ` · ${latest.date}` : ""}</span>
+            <span class="text-rust">●</span>
+            {latest.title && <span set:html={`«${latest.title}»`} />}
+            <span class="text-inkBlue">●</span>
+            <span>
+              {articlesCount} статей · {categoriesCount} категорий · {tagsCount} тегов
+            </span>
+            <span class="text-rust">●</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

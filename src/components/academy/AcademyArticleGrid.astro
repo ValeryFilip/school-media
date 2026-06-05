@@ -1,0 +1,225 @@
+---
+import AcademyCard from "./AcademyCard.astro";
+import type { AcademyArticle } from "../../lib/academyArticles";
+
+interface Props {
+  secNum?: string;
+  title?: string;
+  articles?: AcademyArticle[];
+  cols?: string;
+  perPage?: number;
+  filters?: boolean; // показать панель фильтров (сортировка/категория/тег/поиск)
+  categories?: string[];
+  tags?: string[];
+}
+const {
+  secNum = "[02] / СПИСОК",
+  title = "",
+  articles = [],
+  cols = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  perPage = 12,
+  filters = false,
+  categories = [],
+  tags = [],
+} = Astro.props as Props;
+
+const total = articles.length;
+// Подвал (счётчик + пагинация) нужен только если есть фильтры или статей больше страницы
+const showFoot = filters || total > perPage;
+---
+
+<section class="section">
+  <div class="gutter py-14 md:py-20">
+    {
+      (title || filters) && (
+        <div class="flex flex-wrap items-end justify-between gap-6 mb-10">
+          <div>
+            {secNum && <div class="sec-num mb-3">{secNum}</div>}
+            {title && (
+              <h2
+                class="font-display font-bold text-[clamp(28px,4vw,56px)] leading-[0.95] tracking-[-0.02em] titrate"
+                set:html={title}
+              />
+            )}
+          </div>
+
+          {filters && (
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="select-wrap">
+                <select class="ag-sort" aria-label="Сортировка">
+                  <option value="new">сначала свежее</option>
+                  <option value="old">сначала старые</option>
+                </select>
+              </div>
+              <div class="select-wrap">
+                <select class="ag-category" aria-label="Категория">
+                  <option value="">все категории</option>
+                  {categories.map((c) => (
+                    <option value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div class="select-wrap">
+                <select class="ag-tag" aria-label="Тег">
+                  <option value="">все теги</option>
+                  {tags.map((t) => (
+                    <option value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[12px] text-adim">
+                  ⌕
+                </span>
+                <input
+                  type="search"
+                  class="ag-search bg-amilk border border-aline py-[10px] pl-8 pr-3 font-mono text-[12px] text-aink focus:outline-none focus:border-rust uppercase tracking-[0.08em] min-w-[200px]"
+                  placeholder="поиск…"
+                  aria-label="Поиск"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    {
+      total === 0 ? (
+        <p class="font-mono text-sm text-adim">
+          Пока нет материалов в&nbsp;этом разделе.
+        </p>
+      ) : (
+        <div class="ag-root" data-per-page={String(perPage)} data-filterable={String(filters)}>
+          <div class={`ag-grid grid ${cols} gap-6`}>
+            {articles.map((a) => (
+              <div
+                class="ag-item"
+                data-category={a.category}
+                data-tags={(a.tags || []).join("|").toLowerCase()}
+                data-date={a.dateISO}
+                data-search={`${a.title} ${a.description} ${a.category} ${(a.tags || []).join(" ")}`.toLowerCase()}
+              >
+                <AcademyCard
+                  href={a.href}
+                  category={a.category}
+                  date={a.date}
+                  mins={a.mins}
+                  title={a.title}
+                  description={a.description}
+                  image={a.image}
+                />
+              </div>
+            ))}
+          </div>
+
+          <p class="ag-empty font-mono text-sm text-adim hidden mt-4">
+            Ничего не&nbsp;нашлось — измени фильтры или запрос.
+          </p>
+
+          {showFoot && (
+            <div class="ag-foot mt-14 flex flex-wrap items-center justify-between gap-6">
+              <div class="font-mono text-[11px] text-adim uppercase tracking-wider">
+                показано <span class="ag-shown text-aink">0</span> из&nbsp;
+                <span class="ag-total text-aink">{total}</span>
+              </div>
+              <div class="ag-pager flex items-center gap-2" />
+            </div>
+          )}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll(".ag-root").forEach((root) => {
+    const grid = root.querySelector(".ag-grid") as HTMLElement | null;
+    if (!grid) return;
+    const items = Array.from(root.querySelectorAll(".ag-item")) as HTMLElement[];
+    const perPage = Number((root as HTMLElement).dataset.perPage) || 12;
+    const filterable = (root as HTMLElement).dataset.filterable === "true";
+
+    const sortEl = root.querySelector(".ag-sort") as HTMLSelectElement | null;
+    const catEl = root.querySelector(".ag-category") as HTMLSelectElement | null;
+    const tagEl = root.querySelector(".ag-tag") as HTMLSelectElement | null;
+    const searchEl = root.querySelector(".ag-search") as HTMLInputElement | null;
+    const pager = root.querySelector(".ag-pager") as HTMLElement | null;
+    const shownEl = root.querySelector(".ag-shown") as HTMLElement | null;
+    const totalEl = root.querySelector(".ag-total") as HTMLElement | null;
+    const emptyEl = root.querySelector(".ag-empty") as HTMLElement | null;
+
+    const norm = (s: string) => (s || "").toLowerCase();
+    let matched: HTMLElement[] = items.slice();
+    let page = 1;
+
+    function applyFilters() {
+      if (filterable) {
+        const cat = catEl ? catEl.value : "";
+        const tag = tagEl ? norm(tagEl.value) : "";
+        const q = searchEl ? norm(searchEl.value.trim()) : "";
+        matched = items.filter((it) => {
+          const okCat = !cat || it.dataset.category === cat;
+          const okTag = !tag || (it.dataset.tags || "").split("|").includes(tag);
+          const okSearch = !q || (it.dataset.search || "").includes(q);
+          return okCat && okTag && okSearch;
+        });
+        const sort = sortEl ? sortEl.value : "new";
+        matched.sort((a, b) => {
+          const da = new Date(a.dataset.date || "").getTime() || 0;
+          const db = new Date(b.dataset.date || "").getTime() || 0;
+          return sort === "old" ? da - db : db - da;
+        });
+        matched.forEach((it) => grid!.appendChild(it));
+      } else {
+        matched = items.slice();
+      }
+      page = 1;
+      render();
+    }
+
+    function render() {
+      const totalPages = Math.max(1, Math.ceil(matched.length / perPage));
+      if (page > totalPages) page = totalPages;
+      const start = (page - 1) * perPage;
+      const slice = matched.slice(start, start + perPage);
+
+      items.forEach((it) => (it.style.display = "none"));
+      slice.forEach((it) => (it.style.display = ""));
+
+      if (shownEl) shownEl.textContent = String(slice.length);
+      if (totalEl) totalEl.textContent = String(matched.length);
+      if (emptyEl) emptyEl.classList.toggle("hidden", matched.length !== 0);
+      renderPager(totalPages);
+    }
+
+    function renderPager(totalPages: number) {
+      if (!pager) return;
+      if (totalPages <= 1) {
+        pager.innerHTML = "";
+        return;
+      }
+      const mk = (label: string, p: number, cls = "") =>
+        `<a class="page-btn ${cls}" data-page="${p}" href="#">${label}</a>`;
+      let html = page > 1 ? mk("←", page - 1) : "";
+      for (let n = 1; n <= totalPages; n++)
+        html += mk(String(n).padStart(2, "0"), n, n === page ? "is-current" : "");
+      html += page < totalPages ? mk("→", page + 1) : "";
+      pager.innerHTML = html;
+      pager.querySelectorAll("a").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          page = Number((a as HTMLElement).dataset.page) || 1;
+          render();
+          (root as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
+        }),
+      );
+    }
+
+    [sortEl, catEl, tagEl].forEach(
+      (el) => el && el.addEventListener("change", applyFilters),
+    );
+    searchEl && searchEl.addEventListener("input", applyFilters);
+    applyFilters();
+  });
+</script>

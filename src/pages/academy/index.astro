@@ -1,731 +1,163 @@
 ---
-// src/pages/academy/index.astro
-import MainLayout from "../../layouts/MainLayout.astro";
-import config from "../../config.ts";
+import AcademyLayout from "../../layouts/AcademyLayout.astro";
+import AcademyHero from "../../components/academy/AcademyHero.astro";
+import AcademyCategories from "../../components/academy/AcademyCategories.astro";
+import AcademyLatest from "../../components/academy/AcademyLatest.astro";
+import AcademyLibrary from "../../components/academy/AcademyLibrary.astro";
+import AcademyTags from "../../components/academy/AcademyTags.astro";
+import AcademyCoursePromo from "../../components/academy/AcademyCoursePromo.astro";
 import { getCollection } from "astro:content";
-import { getCategoryHex } from "../../lib/categoryColors.ts";
-import { slugify } from "../../lib/slugify.ts";
-import CardNew from "../../components/cards/cardNew.astro";
-import CardHorizontal from "../../components/cards/CardHorizontal.astro";
-import LeadCapture from "../../components/mainpage/LeadCapture.astro";
-import AdFreeBanner from "../../components/mainpage/AdFreeBanner.astro";
-import SideCategoryScroller from "../../components/SideCategoryScroller.astro";
+import {
+  academyArticlePath,
+  academyArticlesPath,
+  academyCategoryPath,
+  academyPath,
+  academyTagPath,
+} from "../../lib/academyPaths";
 
-// Получаем все видимые статьи и сортируем по дате (от новых к старым)
 const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
-const allPostsRaw = (
-  await getCollection("articles", ({ data }) => {
-    return data.visible !== false;
-  })
+const allPosts = (
+  await getCollection("articles", ({ data }) => data.visible !== false)
 ).sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime());
 
-const allPosts = allPostsRaw;
+const total = allPosts.length;
 
-// Функция для фильтрации по категории
-const filterByCategory = (category: string) =>
-  allPosts.filter(
-    (p) =>
-      String(p.data.category || "").toLowerCase() === category.toLowerCase(),
-  );
+// --- helpers ---
+const pad = (n: number) => String(n).padStart(2, "0");
+const fmtFull = (d: Date) =>
+  `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+const fmtShort = (d: Date) => `${pad(d.getDate())}.${pad(d.getMonth() + 1)}`;
+const articleHref = (p: any) =>
+  academyArticlePath(String(p.data.category), p.slug);
+const mins = (p: any) => p.data.readingTime ?? 8;
 
-// Категории для сайдбара — порядок как у секций на странице (чтобы подсветка шла по порядку при скролле)
-const categoriesList = [
-  { id: "school", label: "Школьникам", slug: "Школьникам" },
-  { id: "news", label: "Новости", slug: "Новости" },
-  { id: "parents", label: "Родителям", slug: "Родителям" },
-  { id: "zadachi", label: "Задачи в химии", slug: "Задачи в химии" },
-  { id: "ege", label: "Экзамен ЕГЭ", slug: "Экзамен ЕГЭ" },
-  { id: "vuz", label: "Поступление в ВУЗ", slug: "Поступление в ВУЗ" },
-  { id: "org", label: "Органическая химия", slug: "Органическая химия" },
-  {
-    id: "ege-zadaniya",
-    label: "Задания из ЕГЭ по химии",
-    slug: "Задания из ЕГЭ по химии",
-  },
-  { id: "neorg", label: "Неорганическая химия", slug: "Неорганическая химия" },
-  { id: "obshaya", label: "Общая химия", slug: "Общая химия" },
-];
-const categories = categoriesList
-  .filter((cat) => filterByCategory(cat.slug).length > 0)
-  .map((c) => ({ ...c, color: getCategoryHex(c.label) }));
-
-// Секции главной — РАЗНАЯ вёрстка по секциям (как было в медиа)
-// Секция 1: 8 карточек в 2 ряда по 4 (Школьникам)
-const section1Posts = filterByCategory("Школьникам");
-const section1Cards = section1Posts.slice(0, 8);
-
-// Секция 2: home-grid-2 — 1 большая + 8 горизонтальных (Новости)
-const section2Posts = filterByCategory("Новости");
-const section2Main = section2Posts.slice(0, 1);
-const section2Horizontal = section2Posts.slice(1, 8);
-
-// Секция 3: home-grid-3 — 2 вертикальных + 6 горизонтальных (Родителям)
-const section3Posts = filterByCategory("Родителям");
-const section3Vertical = section3Posts.slice(0, 2);
-const section3Horizontal = section3Posts.slice(2, 8);
-
-// Секция 4: home-grid-4 — только вертикальные карточки (Задачи в химии)
-const section4Posts = filterByCategory("Задачи в химии");
-const section4Vertical = section4Posts.slice(0, 8);
-
-// Секция 5: home-grid-5 — 2 вертикальных + остальные (Экзамен ЕГЭ)
-const section5Posts = filterByCategory("Экзамен ЕГЭ");
-const section5Vertical = section5Posts.slice(0, 6);
-
-// Секция 6: home-grid-5 — 6 вертикальных (Поступление в ВУЗ)
-const section6Posts = filterByCategory("Поступление в ВУЗ");
-const section6Vertical = section6Posts.slice(0, 6);
-
-// Секция 7: home-grid-5 — 6 вертикальных (Органическая химия)
-const section7Posts = filterByCategory("Органическая химия");
-const section7Vertical = section7Posts.slice(0, 6);
-
-// Секция 8: home-grid-5 — 6 вертикальных (Задания из ЕГЭ по химии)
-const section8Posts = filterByCategory("Задания из ЕГЭ по химии");
-const section8Vertical = section8Posts.slice(0, 6);
-
-// Секция 9: home-grid-5 — 6 вертикальных (Неорганическая химия)
-const section9Posts = filterByCategory("Неорганическая химия");
-const section9Vertical = section9Posts.slice(0, 6);
-
-// Секция 10: home-grid-5 — 6 вертикальных (Общая химия)
-const section10Posts = filterByCategory("Общая химия");
-const section10Vertical = section10Posts.slice(0, 6);
-
-// SEO (приоритет — Astro.site из astro.config)
-const site = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageTitle = "Академия ЕГЭХИМ";
-const pageDesc =
-  "Академия ЕГЭХИМ — статьи и материалы по химии, ЕГЭ и ОГЭ, подготовка к экзаменам.";
-
-// Пропсы для рекламного баннера
-const adFreeProps = {
-  id: "ad-free",
-  title: "Забирай бесплатные курсы по подготовке к ЕГЭ по химии 2026",
-  lead: "Два курса, которые дадут тебе +30 баллов на экзамене. Забирай по кнопкам ниже",
-  ctaText: "Забрать оба курса",
-  ctaHref:
-    "https://t.me/chemistry_examBot?start=s=3272321-utm_source=cite-utm_content=main",
-  image: {
-    src: "/images/mainpage/adfree.webp",
-    width: 400,
-    height: 300,
-    alt: "Превью бесплатного курса",
-  },
+// --- категории (по реальным статьям) ---
+const SYM: Record<string, string> = {
+  "Школьникам": "Шк",
+  "Новости": "Нв",
+  "Родителям": "Рд",
+  "Задачи в химии": "34",
+  "Экзамен ЕГЭ": "ЕГ",
+  "Поступление в ВУЗ": "Вз",
+  "Органическая химия": "Ог",
+  "Задания из ЕГЭ по химии": "Зэ",
+  "Неорганическая химия": "Нг",
+  "Общая химия": "Об",
 };
+const catCounts = new Map<string, number>();
+for (const p of allPosts) {
+  const c = String(p.data.category || "").trim();
+  if (!c) continue;
+  catCounts.set(c, (catCounts.get(c) || 0) + 1);
+}
+const catsSorted = [...catCounts.entries()].sort((a, b) => b[1] - a[1]);
+const categories = catsSorted.map(([name, count], i) => ({
+  num: pad(i + 1),
+  sym: SYM[name] ?? name.slice(0, 2),
+  name,
+  count,
+  href: academyCategoryPath(name),
+  highlight: i < 2,
+}));
 
-// Пропсы для лид-формы
-const leadProps = {
-  id: "lead-capture",
-  imageSrc: "/images/girl-lead1.webp",
-  imageAlt: "Ученица на уроке",
-  title: "Начни подготовку с пробного бесплатного занятия",
-  subtitle: "Ответим на вопросы, расскажем про форматы и цены",
-  showSteps: true,
-  stepsText: [
-    "Познакомим с онлайн-школой",
-    "Расскажем, как проходят занятия",
-    "Запишем на бесплатный урок",
-  ],
-  formAction:
-    "/api/lead.php",
-  utmSource: "academy-page",
-  utmMedium: "organic",
-  utmCampaign: "academy-lead",
+// --- свежая статья ---
+const latestPost = allPosts[0];
+const latest = latestPost
+  ? {
+      href: articleHref(latestPost),
+      category: latestPost.data.category,
+      mins: mins(latestPost),
+      title: latestPost.data.title,
+      description: latestPost.data.description ?? "",
+      date: fmtFull(toDate(latestPost.data.date)),
+      image: latestPost.data.image ?? "",
+    }
+  : null;
+
+// --- последние 8 (исключая свежую) ---
+const libraryPosts = allPosts.slice(1, 9);
+const library = libraryPosts.map((p, i) => ({
+  href: articleHref(p),
+  category: p.data.category,
+  date: fmtShort(toDate(p.data.date)),
+  mins: mins(p),
+  title: p.data.title,
+  description: p.data.description ?? "",
+  image: p.data.image ?? "",
+  illoIndex: i,
+}));
+
+// --- облако тегов ---
+const tagCounts = new Map<string, number>();
+for (const p of allPosts) {
+  for (const t of p.data.tags ?? []) {
+    const k = String(t).trim();
+    if (!k) continue;
+    tagCounts.set(k, (tagCounts.get(k) || 0) + 1);
+  }
+}
+const tagsSorted = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+const tags = tagsSorted.slice(0, 20).map(([name, count]) => ({
+  name,
+  count,
+  href: academyTagPath(name),
+}));
+const quickTags = tags.slice(0, 6).map((t) => ({ name: t.name, href: t.href }));
+
+const updated = latestPost ? fmtFull(toDate(latestPost.data.date)) : "";
+
+const pageTitle = "Академия ЕГЭХИМ — статьи и разборы по химии для ЕГЭ и ОГЭ";
+const pageDesc = `Архив из ${total} материалов: разборы заданий ЕГЭ и ОГЭ, формулы и реакции с выведением, конспекты тем ФИПИ. Пишет Валерий Филипенко — автор курсов с собственным ЕГЭ на 100 баллов.`;
+
+const siteUrl = (Astro.url.origin).replace(/\/$/, "");
+const pageUrl = `${siteUrl}${academyPath()}`;
+
+// CollectionPage JSON-LD: помогает Google понять, что это listing-страница
+// со списком статей. mainEntity → ItemList из верхних 10 материалов.
+const collectionPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${pageUrl}#collection`,
+  url: pageUrl,
+  name: pageTitle,
+  description: pageDesc,
+  inLanguage: "ru",
+  isPartOf: { "@id": `${siteUrl}/#website` },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: total,
+    itemListElement: allPosts.slice(0, 10).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${siteUrl}${articleHref(p)}`,
+      name: p.data.title,
+    })),
+  },
 };
 ---
 
-<MainLayout
+<AcademyLayout
   title={pageTitle}
   description={pageDesc}
-  url={`${site}/academy/`}
-  seoType="website"
-  showBreadcrumbs={false}
+  url={pageUrl}
   addSiteSuffix={false}
   index={true}
+  breadcrumbs={[{ name: "Академия", href: pageUrl }]}
+  showBreadcrumbs={true}
+  jsonLd={[collectionPageJsonLd]}
 >
-  <SideCategoryScroller categories={categories} />
-
-  <!-- Секция 1: 8 карточек в 2 ряда (Школьникам) -->
-  {
-    section1Cards.length > 0 && (
-      <section id="school">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Школьникам")}/`}
-              class="category-title-link"
-            >
-              Школьникам
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-first container">
-          {section1Cards.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 2: home-grid-2 (1 CardNew + 8 CardHorizontal) — Новости -->
-  {
-    section2Main.length > 0 && (
-      <section id="news">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Новости")}/`}
-              class="category-title-link"
-            >
-              Новости
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-2 container">
-          {section2Main.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-          {section2Horizontal.map((post) => (
-            <div class="ad-media__card">
-              <CardHorizontal post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <AdFreeBanner {...adFreeProps} />
-
-  <!-- Секция 3: home-grid-3 (2 CardNew + 6 CardHorizontal) — Родителям -->
-  {
-    section3Vertical.length > 0 && (
-      <section id="parents">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Родителям")}/`}
-              class="category-title-link"
-            >
-              Родителям
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-3 container">
-          {section3Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-          {section3Horizontal.map((post) => (
-            <div class="ad-media__card">
-              <CardHorizontal post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 4: home-grid-4 (только вертикальные карточки) — Задачи в химии -->
-  {
-    section4Vertical.length > 0 && (
-      <section id="zadachi">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Задачи в химии")}/`}
-              class="category-title-link"
-            >
-              Задачи в химии
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-4 container">
-          {section4Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 5: home-grid-5 — Экзамен ЕГЭ -->
-  {
-    section5Vertical.length > 0 && (
-      <section id="ege">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Экзамен ЕГЭ")}/`}
-              class="category-title-link"
-            >
-              Экзамен ЕГЭ
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section5Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 6: home-grid-5 — Поступление в ВУЗ -->
-  {
-    section6Vertical.length > 0 && (
-      <section id="vuz">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Поступление в ВУЗ")}/`}
-              class="category-title-link"
-            >
-              Поступление в ВУЗ
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section6Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 7: home-grid-5 — Органическая химия -->
-  {
-    section7Vertical.length > 0 && (
-      <section id="org">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Органическая химия")}/`}
-              class="category-title-link"
-            >
-              Органическая химия
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section7Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 8: home-grid-5 — Задания из ЕГЭ по химии -->
-  {
-    section8Vertical.length > 0 && (
-      <section id="ege-zadaniya">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Задания из ЕГЭ по химии")}/`}
-              class="category-title-link"
-            >
-              Задания из ЕГЭ по химии
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section8Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 9: home-grid-5 — Неорганическая химия -->
-  {
-    section9Vertical.length > 0 && (
-      <section id="neorg">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Неорганическая химия")}/`}
-              class="category-title-link"
-            >
-              Неорганическая химия
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section9Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Секция 10: home-grid-5 — Общая химия -->
-  {
-    section10Vertical.length > 0 && (
-      <section id="obshaya">
-        <div class="grid1__title container">
-          <h2 class="grid1__title">
-            <a
-              href={`/academy/${slugify("Общая химия")}/`}
-              class="category-title-link"
-            >
-              Общая химия
-            </a>
-          </h2>
-          <div class="grid__arrow">
-            <img
-              class="arrow"
-              src="/images/mycollection/001-down-arrow.png"
-              alt=""
-              width="42"
-              height="42"
-            />
-          </div>
-        </div>
-        <div class="home-grid-5 container">
-          {section10Vertical.map((post) => (
-            <div class="ad-media__card">
-              <CardNew post={post} basePath="/academy" />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Форма лид-захвата -->
-  <LeadCapture {...leadProps} />
-</MainLayout>
-
-<style>
-  .grid1__title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 50px;
-    gap: 30px;
-  }
-  .grid1__title h2 {
-    font-weight: 700;
-    margin: 0;
-  }
-
-  /* Стили для кликабельных заголовков категорий */
-  .category-title-link {
-    color: inherit;
-    text-decoration: none;
-    transition:
-      color 0.2s ease,
-      opacity 0.2s ease;
-    display: inline-block;
-    position: relative;
-  }
-
-  .category-title-link:hover {
-    opacity: 0.7;
-  }
-
-  .category-title-link::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: currentColor;
-    transition: width 0.3s ease;
-  }
-
-  .category-title-link:hover::after {
-    width: 100%;
-  }
-
-  .arrow {
-    transition: all 0.3s ease;
-    transform: rotate(270deg);
-  }
-  .grid1__title:hover .arrow {
-    transform: rotate(225deg);
-  }
-
-  /* Первый экран: 8 карточек в 2 ряда по 4 */
-  :global(.home-grid-first) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 30px;
-  }
-  @media (max-width: 1000px) {
-    :global(.home-grid-first) {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid-first) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  :global(.home-grid) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 30px;
-  }
-
-  /* первая карточка тянется на 2 колонки */
-  :global(.home-grid > *:nth-child(1)) {
-    grid-row: 1 / span 4;
-    grid-column: 2 / span 2;
-  }
-  @media (max-width: 1000px) {
-    :global(.home-grid) {
-      grid-template-columns: 1fr 1fr;
-    }
-    :global(.home-grid > *:nth-child(1)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid) {
-      grid-template-columns: 1fr;
-    }
-    :global(.home-grid > *:nth-child(1)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-  }
-
-  :global(.home-grid-2) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 30px;
-  }
-  :global(.home-grid-2 > *:nth-child(1)) {
-    grid-row: 1 / span 4;
-    grid-column: 1 / span 2;
-  }
-  @media (max-width: 1000px) {
-    :global(.home-grid-2) {
-      grid-template-columns: 1fr 1fr;
-    }
-    :global(.home-grid-2 > *:nth-child(1)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid-2) {
-      grid-template-columns: 1fr;
-    }
-    :global(.home-grid-2 > *:nth-child(1)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-  }
-
-  :global(.home-grid-3) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 30px;
-  }
-  :global(.home-grid-3 > :nth-child(1)) {
-    grid-row: 1 / span 3;
-    grid-column: 1 / span 1;
-  }
-  :global(.home-grid-3 > :nth-child(2)) {
-    grid-row: 1 / span 3;
-    grid-column: 2 / span 1;
-  }
-
-  @media (max-width: 1000px) {
-    :global(.home-grid-3) {
-      grid-template-columns: 1fr 1fr;
-    }
-    :global(.home-grid-3 > *:nth-child(1)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-    :global(.home-grid-3 > *:nth-child(2)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid-3) {
-      grid-template-columns: 1fr;
-    }
-    :global(.home-grid-3 > *:nth-child(1)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-    :global(.home-grid-3 > *:nth-child(2)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-  }
-  :global(.home-grid-4) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 30px;
-    margin-bottom: 50px;
-  }
-  @media (max-width: 1000px) {
-    :global(.home-grid-4) {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid-4) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  :global(.home-grid-5) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 30px;
-  }
-  :global(.home-grid-5 > :nth-child(1)) {
-    grid-row: 1 / span 1;
-    grid-column: 1 / span 2;
-  }
-  :global(.home-grid-5 > :nth-child(2)) {
-    grid-row: 1 / span 1;
-    grid-column: 3 / span 2;
-  }
-
-  @media (max-width: 1000px) {
-    :global(.home-grid-5) {
-      grid-template-columns: 1fr 1fr;
-    }
-    :global(.home-grid-5 > *:nth-child(1)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-    :global(.home-grid-5 > *:nth-child(2)) {
-      grid-row: 1 / span 3;
-      grid-column: 1 / span 1;
-    }
-  }
-  @media (max-width: 600px) {
-    :global(.home-grid-5) {
-      grid-template-columns: 1fr;
-    }
-    :global(.home-grid-5 > *:nth-child(1)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-    :global(.home-grid-5 > *:nth-child(2)) {
-      grid-row: 1 / span 1;
-      grid-column: 1 / span 1;
-    }
-    .ad-media__card {
-      display: flex;
-      align-items: flex-start;
-    }
-  }
-</style>
+  <AcademyHero
+    articlesCount={total}
+    categoriesCount={categories.length}
+    tagsCount={tags.length}
+    updated={updated}
+    latest={latest ? { title: latest.title, date: latest.date } : { title: "", date: "" }}
+    quickTags={quickTags}
+    searchArticles={allPosts}
+  />
+  <AcademyCategories categories={categories} total={total} />
+  {latest && <AcademyLatest {...latest} />}
+  <AcademyLibrary articles={library} total={total} allHref={academyArticlesPath()} />
+  <AcademyTags tags={tags} />
+  <AcademyCoursePromo />
+</AcademyLayout>

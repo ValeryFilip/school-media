@@ -1,0 +1,67 @@
+---
+import { academyCategoryPath } from "../../lib/academyPaths";
+
+interface Props {
+  href: string;
+  category: string;
+  date: string;
+  mins: number;
+  title: string;
+  description?: string;
+  image?: string;
+  fallbackSvg?: string;
+}
+
+const {
+  href,
+  category,
+  date,
+  mins,
+  title,
+  description = "",
+  image,
+  fallbackSvg = "",
+} = Astro.props as Props;
+
+const categoryHref = academyCategoryPath(category);
+---
+
+<article class="art-card group">
+  <a href={href} class="art-illo" aria-label={title}>
+    {
+      image ? (
+        <img
+          src={image}
+          alt={title}
+          class="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <Fragment set:html={fallbackSvg} />
+      )
+    }
+  </a>
+
+  <div class="p-5 flex-1 flex flex-col">
+    <div class="flex items-center justify-between mb-3 font-mono text-[10px]">
+      <a
+        href={categoryHref}
+        class="text-rust uppercase tracking-wider hover:text-aink transition"
+      >
+        {category}
+      </a>
+      <span class="text-adim">{date} · {mins}&nbsp;мин</span>
+    </div>
+
+    <h3 class="flex-1 mb-3">
+      <a
+        href={href}
+        class="art-title font-display font-bold text-lg leading-[1.2] tracking-tight transition-colors"
+        set:html={title}
+      />
+    </h3>
+
+    <p class="font-mono text-[12px] text-ainkSoft leading-snug" set:html={description} />
+  </div>
+</article>

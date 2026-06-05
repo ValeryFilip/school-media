@@ -1,0 +1,150 @@
+---
+import AcademyLayout from "../../../layouts/AcademyLayout.astro";
+import AcademyArticleLayout from "../../../layouts/AcademyArticleLayout.astro";
+import AcademyCoursePromo from "../../../components/academy/AcademyCoursePromo.astro";
+import AcademyNewsletter from "../../../components/academy/AcademyNewsletter.astro";
+import config from "../../../config.ts";
+import { getCollection, getEntryBySlug } from "astro:content";
+import { slugify } from "../../../lib/slugify";
+import { academyArticlePath, academyCategoryPath } from "../../../lib/academyPaths";
+import {
+  buildArticleJsonLd,
+  buildFAQJsonLd,
+  buildVideoJsonLd,
+  getSiteName,
+} from "../../../lib/seoData";
+import { fmtFull, toDate } from "../../../lib/academyArticles";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("articles", ({ data }) => data.visible !== false);
+  return posts.map((post) => ({
+    params: {
+      category: slugify(String(post.data.category)),
+      slug: post.slug,
+    },
+  }));
+}
+
+const { category: categorySlug, slug } = Astro.params;
+
+const entry = await getEntryBySlug("articles", slug!);
+if (!entry) throw new Error(`Статья "${slug}" не найдена`);
+
+if (slugify(String(entry.data.category)) !== categorySlug) {
+  return Astro.redirect("/404");
+}
+
+if (entry.data.visible === false) {
+  return Astro.redirect("/404");
+}
+
+const fm = {
+  ...entry.data,
+  readingTime: entry.data.readingTime,
+  tocManual: entry.data.tocManual
+    ? entry.data.tocManual.map((item) => ({
+        id: item.id || slugify(item.text),
+        text: item.text,
+      }))
+    : undefined,
+};
+
+const { Content, headings } = await entry.render();
+
+const allPosts = await getCollection("articles", ({ data }) => data.visible !== false);
+
+const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
+const pageUrl = `${siteUrl}${academyArticlePath(String(entry.data.category), slug!)}`;
+const siteName = getSiteName("Академия ЕГЭХИМ", config.siteName);
+
+function stripMdxToText(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[*_~#>-]+/g, " ")
+    .replace(/\{[^}]+\}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractFaqItemsFromMdx(source: string) {
+  const matches = source.matchAll(
+    /<FAQ\s+question=(?:"([^"]+)"|'([^']+)')[^>]*>([\s\S]*?)<\/FAQ>/g,
+  );
+
+  return [...matches]
+    .map((match) => {
+      const question = (match[1] || match[2] || "").trim();
+      const answer = stripMdxToText(match[3] || "");
+      return question && answer ? { q: question, a: answer } : null;
+    })
+    .filter(Boolean) as Array<{ q: string; a: string }>;
+}
+
+const breadcrumbs = [
+  {
+    name: `${fm.category}`,
+    href: `${siteUrl}${academyCategoryPath(String(fm.category))}`,
+  },
+  { name: fm.title },
+];
+
+const publishedISO = toDate(fm.date).toISOString();
+const modifiedISO = fm.updated ? toDate(fm.updated).toISOString() : publishedISO;
+
+const videoJsonLd =
+  (fm as any).videoUrl &&
+  buildVideoJsonLd({
+    origin: siteUrl,
+    pageUrl,
+    name: fm.title,
+    description: (fm.description || "").slice(0, 300),
+    embedUrl: (fm as any).videoUrl,
+    uploadDate: publishedISO,
+    thumbnailUrl: fm.image,
+  });
+
+const faqItems = extractFaqItemsFromMdx(entry.body || "");
+const faqJsonLd = faqItems.length > 0 ? buildFAQJsonLd(faqItems) : null;
+
+const articleJsonLd = buildArticleJsonLd({
+  origin: siteUrl,
+  url: pageUrl,
+  headline: fm.title,
+  description: fm.description,
+  image: fm.image,
+  datePublished: publishedISO,
+  dateModified: modifiedISO,
+  keywords: fm.tags?.length ? fm.tags : undefined,
+  articleSection: fm.category,
+  videoJson: videoJsonLd,
+});
+
+const updated = allPosts.length
+  ? fmtFull(toDate([...allPosts].sort((a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime())[0].data.date))
+  : "";
+---
+
+<AcademyLayout
+  title={fm.title}
+  description={fm.description}
+  image={fm.image}
+  url={pageUrl}
+  seoType="article"
+  siteName={siteName}
+  datePublished={publishedISO}
+  dateModified={modifiedISO}
+  breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
+  articleJsonLd={articleJsonLd}
+  videoJsonLd={videoJsonLd}
+  faqJsonLd={faqJsonLd}
+>
+  <AcademyArticleLayout fm={fm} slug={slug!} headings={headings}>
+    <Content />
+  </AcademyArticleLayout>
+  <AcademyCoursePromo />
+  <AcademyNewsletter />
+</AcademyLayout>

@@ -1,0 +1,59 @@
+---
+interface Fact {
+  value: string;
+  unit?: string;
+  label: string;
+  accent?: "rust" | "inkBlue" | null;
+}
+interface Props {
+  title: string;
+  prose: string; // HTML
+  facts?: Fact[];
+}
+const { title, prose, facts = [] } = Astro.props as Props;
+---
+
+<section class="section bg-apaper2">
+  <div class="gutter py-16 md:py-24">
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">[03] / О КАТЕГОРИИ</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(32px,4.5vw,64px)] leading-[0.95] tracking-[-0.02em] titrate mb-8"
+          set:html={title}
+        />
+        <div class="grid grid-cols-12 gap-8">
+          <div class="col-span-12 md:col-span-7 desc-prose" set:html={prose} />
+          {
+            facts.length > 0 && (
+              <aside class="col-span-12 md:col-span-5">
+                <div class="border border-aink bg-amilk p-6 md:p-7">
+                  <div class="font-mono text-[11px] text-rust mb-5 uppercase tracking-widest">
+                    // ключевые цифры
+                  </div>
+                  <div class="space-y-5">
+                    {facts.map((f, i) => (
+                      <div class={i > 0 ? "pt-4 border-t border-aline" : ""}>
+                        <div class="flex items-baseline gap-2">
+                          <span
+                            class={`font-display font-bold text-4xl ${f.accent === "rust" ? "text-rust" : f.accent === "inkBlue" ? "text-inkBlue" : ""}`}
+                          >
+                            {f.value}
+                          </span>
+                          {f.unit && <span class="font-mono text-xs text-adim">{f.unit}</span>}
+                        </div>
+                        <div class="font-mono text-xs text-ainkSoft mt-1" set:html={f.label} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

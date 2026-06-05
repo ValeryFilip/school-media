@@ -1,0 +1,108 @@
+---
+const {
+  href = "#",
+  category = "Материал",
+  mins = 8,
+  readers = "",
+  title = "",
+  description = "",
+  date = "",
+  image = "",
+  author = { name: "Валерий Филипенко", initials: "ВФ" },
+} = Astro.props;
+---
+
+<section class="section relative" id="latest">
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6 mb-12 items-end">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">[03] / СВЕЖЕЕ</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(34px,5vw,72px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          На&nbsp;этой неделе.
+        </h2>
+      </div>
+    </div>
+
+    <a
+      href={href}
+      class="featured-card grid grid-cols-12 gap-px bg-aline border border-aline group cursor-pointer"
+    >
+      <div
+        class="col-span-12 md:col-span-7 relative aspect-[16/9] md:aspect-auto overflow-hidden bg-amilk"
+      >
+        {
+          image ? (
+            <img
+              src={image}
+              alt={title}
+              class="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <svg viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 w-full h-full">
+              <defs>
+                <pattern id="diag" patternUnits="userSpaceOnUse" width="16" height="16" patternTransform="rotate(135)">
+                  <line x1="0" y1="0" x2="0" y2="16" stroke="#C9882B" stroke-width="1" />
+                </pattern>
+              </defs>
+              <rect x="60" y="80" width="380" height="560" fill="url(#diag)" opacity="0.35" />
+              <text x="80" y="240" font-family="Space Grotesk" font-weight="700" font-size="130" fill="#1A1410" letter-spacing="-4">3CuO</text>
+              <text x="80" y="400" font-family="Space Grotesk" font-weight="700" font-size="130" fill="#B23A14" letter-spacing="-4">+ 2NH₃</text>
+              <text x="80" y="560" font-family="Space Grotesk" font-weight="700" font-size="130" fill="#1A3556" letter-spacing="-4">→ 3Cu</text>
+              <text x="80" y="680" font-family="JetBrains Mono" font-size="14" fill="#8A7F70">// fig. 01</text>
+            </svg>
+          )
+        }
+        <div
+          class="absolute top-5 left-5 inline-flex items-center gap-2 bg-rust text-apaper font-mono text-[11px] tracking-widest uppercase px-3 py-1.5"
+        >
+          <span>★ свежее</span>
+          {date && <span class="opacity-70">{date}</span>}
+        </div>
+      </div>
+
+      <div
+        class="col-span-12 md:col-span-5 bg-amilk p-7 md:p-10 flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex items-center flex-wrap gap-3 mb-5 font-mono text-[11px]">
+            <span class="text-rust uppercase tracking-wider">{category}</span>
+            <span class="text-adim">·</span>
+            <span class="text-adim">{mins}&nbsp;мин чтения</span>
+            {
+              readers && (
+                <>
+                  <span class="text-adim">·</span>
+                  <span class="text-adim">{readers}</span>
+                </>
+              )
+            }
+          </div>
+          <h3
+            class="featured-title font-display font-bold text-[clamp(26px,2.6vw,40px)] leading-[1.08] tracking-[-0.015em] mb-5 transition-colors"
+            set:html={title}
+          />
+          <p class="body-serif text-[16px] text-ainkSoft" set:html={description} />
+        </div>
+
+        <div class="mt-8 pt-8 border-t border-aline">
+          <div class="author-chip mb-6">
+            <div class="author-dot">{author.initials}</div>
+            <span>{author.name}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="font-display font-bold text-lg group-hover:text-rust transition"
+              >Читать материал</span
+            >
+            <span class="font-mono text-lg group-hover:translate-x-1 transition">→</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
