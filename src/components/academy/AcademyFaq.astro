@@ -25,7 +25,9 @@ const {
 } = Astro.props as Props;
 
 const pad = (n: number) => String(n + 1).padStart(2, "0");
-const listClass = `border-t border-aline max-w-4xl${alignList ? " md:ml-[25%]" : ""}`;
+// max-w-4xl убрал — раньше FAQ сжимался ~896px и выглядел «съехавшим»
+// относительно заголовка из EgeH2 (academy-variant занимает 9 из 12 колонок)
+const listClass = `border-t border-aline${alignList ? " md:ml-[25%]" : ""}`;
 ---
 
 {

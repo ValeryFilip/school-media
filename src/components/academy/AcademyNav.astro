@@ -143,8 +143,8 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
     </div>
 
     <details class="academy-nav__mobile">
-      <summary aria-label="Открыть меню"><span></span><span></span><span></span></summary>
-      <div class="academy-nav__panel">
+      <summary aria-label="Открыть меню" aria-controls="academy-mobile-panel"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></summary>
+      <div class="academy-nav__panel" id="academy-mobile-panel" role="dialog" aria-modal="true" aria-label="Меню">
         <div class="academy-nav__panel-body">
           <div class="academy-nav__panel-search">
             <AcademyArticleSearch
@@ -744,9 +744,11 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
 
     menus.forEach(function (d) {
       var header = d.closest(".academy-nav");
+      var summary = d.querySelector(":scope > summary");
       d.addEventListener("toggle", function () {
         lock(d.open);
         if (header) header.classList.toggle("is-menu-open", d.open);
+        if (summary) summary.setAttribute("aria-label", d.open ? "Закрыть меню" : "Открыть меню");
       });
       d.querySelectorAll(".academy-nav__panel a").forEach(function (a) {
         a.addEventListener("click", function () {

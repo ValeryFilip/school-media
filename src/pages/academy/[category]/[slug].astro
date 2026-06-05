@@ -1,20 +1,21 @@
 ---
-// src/pages/academy/[category]/[slug].astro — статья по URL /academy/КАТЕГОРИЯ/СЛАГ
-import MainLayout from "../../../layouts/MainLayout.astro";
-import ArticleLayoutNew from "../../../layouts/ArticleLayoutNew.astro";
+import AcademyLayout from "../../../layouts/AcademyLayout.astro";
+import AcademyArticleLayout from "../../../layouts/AcademyArticleLayout.astro";
+import AcademyCoursePromo from "../../../components/academy/AcademyCoursePromo.astro";
 import config from "../../../config.ts";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { slugify } from "../../../lib/slugify";
+import { academyArticlePath, academyCategoryPath } from "../../../lib/academyPaths";
 import {
   buildArticleJsonLd,
   buildFAQJsonLd,
   buildVideoJsonLd,
+  getSiteName,
 } from "../../../lib/seoData";
+import { toDate } from "../../../lib/academyArticles";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("articles", ({ data }) => {
-    return data.visible !== false;
-  });
+  const posts = await getCollection("articles", ({ data }) => data.visible !== false);
   return posts.map((post) => ({
     params: {
       category: slugify(String(post.data.category)),
@@ -28,12 +29,10 @@ const { category: categorySlug, slug } = Astro.params;
 const entry = await getEntryBySlug("articles", slug!);
 if (!entry) throw new Error(`Статья "${slug}" не найдена`);
 
-// Проверка: slug категории в URL должен совпадать с категорией статьи
 if (slugify(String(entry.data.category)) !== categorySlug) {
   return Astro.redirect("/404");
 }
 
-// Проверка видимости статьи
 if (entry.data.visible === false) {
   return Astro.redirect("/404");
 }
@@ -51,21 +50,9 @@ const fm = {
 
 const { Content, headings } = await entry.render();
 
-// Рекомендации (только видимые статьи)
-const all = await getCollection("articles", ({ data }) => {
-  return data.visible !== false;
-});
-const byTag = all.filter(
-  (p) => p.slug !== slug && p.data.tags?.some((t) => fm.tags?.includes(t)),
-);
-const byCategory = all.filter(
-  (p) =>
-    p.slug !== slug && p.data.category === fm.category && !byTag.includes(p),
-);
-const recommendations = [...byTag, ...byCategory].slice(0, 4);
-
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const pageUrl = `${siteUrl}/academy/${categorySlug}/${slug}/`;
+const pageUrl = `${siteUrl}${academyArticlePath(String(entry.data.category), slug!)}`;
+const siteName = getSiteName("Академия ЕГЭХИМ", config.siteName);
 
 function stripMdxToText(value: string): string {
   return value
@@ -96,12 +83,17 @@ function extractFaqItemsFromMdx(source: string) {
 const breadcrumbs = [
   {
     name: `${fm.category}`,
-    href: `${siteUrl}/academy/${slugify(fm.category)}/`,
+    href: `${siteUrl}${academyCategoryPath(String(fm.category))}`,
   },
-  { name: fm.title },
+  // href: pageUrl — иначе buildBreadcrumbsJsonLd берёт URL из
+  // Astro.url.pathname (последний crumb без href). Явная привязка
+  // к canonical pageUrl страхует JSON-LD от рассинхрона.
+  { name: fm.title, href: pageUrl },
 ];
 
-// VideoObject JSON-LD — если в статье указано видео (YouTube/Rutube/VK)
+const publishedISO = toDate(fm.date).toISOString();
+const modifiedISO = fm.updated ? toDate(fm.updated).toISOString() : publishedISO;
+
 const videoJsonLd =
   (fm as any).videoUrl &&
   buildVideoJsonLd({
@@ -110,7 +102,7 @@ const videoJsonLd =
     name: fm.title,
     description: (fm.description || "").slice(0, 300),
     embedUrl: (fm as any).videoUrl,
-    uploadDate: new Date(fm.date as any).toISOString(),
+    uploadDate: publishedISO,
     thumbnailUrl: fm.image,
   });
 
@@ -123,33 +115,31 @@ const articleJsonLd = buildArticleJsonLd({
   headline: fm.title,
   description: fm.description,
   image: fm.image,
-  datePublished: new Date(fm.date as any).toISOString(),
-  dateModified: fm.updated
-    ? new Date(fm.updated).toISOString()
-    : new Date(fm.date as any).toISOString(),
+  datePublished: publishedISO,
+  dateModified: modifiedISO,
   keywords: fm.tags?.length ? fm.tags : undefined,
   articleSection: fm.category,
   videoJson: videoJsonLd,
 });
 ---
 
-<MainLayout
+<AcademyLayout
   title={fm.title}
-  siteName="Академия ЕГЭХИМ"
   description={fm.description}
   image={fm.image}
   url={pageUrl}
   seoType="article"
-  datePublished={new Date(fm.date as any).toISOString()}
-  dateModified={fm.updated
-    ? new Date(fm.updated).toISOString()
-    : new Date(fm.date as any).toISOString()}
+  siteName={siteName}
+  datePublished={publishedISO}
+  dateModified={modifiedISO}
   breadcrumbs={breadcrumbs}
+  showBreadcrumbs={true}
   articleJsonLd={articleJsonLd}
   videoJsonLd={videoJsonLd}
   faqJsonLd={faqJsonLd}
 >
-  <ArticleLayoutNew fm={fm} slug={slug!} headings={headings}>
+  <AcademyArticleLayout fm={fm} slug={slug!} headings={headings}>
     <Content />
-  </ArticleLayoutNew>
-</MainLayout>
+  </AcademyArticleLayout>
+  <AcademyCoursePromo />
+</AcademyLayout>

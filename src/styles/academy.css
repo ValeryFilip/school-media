@@ -699,7 +699,8 @@ details.faq .faq-body a {
 .reading-progress {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 1000;
+  /* выше .academy-nav (z-index: 2000), иначе шапка перекрывает бар */
+  z-index: 2500;
   height: 3px;
   background: rgba(26, 20, 16, 0.08);
   pointer-events: none;
@@ -1018,7 +1019,10 @@ details.faq .faq-body a {
   color: var(--dim);
   letter-spacing: 0.04em;
 }
-.academy-prose blockquote {
+/* Только базовые markdown-цитаты (>) — стиль с rust-бордером слева.
+   MDX-компонент <Quote class="quote"> собирает свой собственный
+   контейнер (header-bar + body + footer) и нашим пресетом ломается. */
+.academy-prose blockquote:not(.quote) {
   margin: 2.4em 0;
   padding: 30px 0 30px 36px;
   border-left: 4px solid var(--rust);
@@ -1045,7 +1049,11 @@ details.faq .faq-body a {
   font-size: 14px;
   line-height: 1.55;
 }
-.academy-prose img {
+/* Стиль для inline-markdown картинок (![alt](src) → <p><img>).
+   MDX-компоненты (Quote, MessengerContactsLite, ArticleImage и т.д.)
+   используют <img> внутри своих обёрток и не должны получать
+   prose-бордер/паттерн-фон/100% ширину. */
+.academy-prose > p > img {
   width: 100%;
   height: auto;
   border: 1px solid var(--line);

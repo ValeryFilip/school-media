@@ -127,8 +127,7 @@ const indexData = posts.map((p) => ({
       list.innerHTML = items
         .slice(0, 20)
         .map((p) => {
-          // Ссылка на статью: /academy/КАТЕГОРИЯ/СЛАГ (base /academy/ задаётся в layout)
-          const href = `${p.categorySlug}/${p.slug}/`;
+          const href = `/academy/${p.categorySlug}/${p.slug}/`;
           const img = p.image || FALLBACK_IMG;
           return `
           <li class="result">

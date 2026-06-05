@@ -1,7 +1,6 @@
 ---
 import AcademyBreadcrumbs from "./AcademyBreadcrumbs.astro";
 import AcademyArticleSearch from "./AcademyArticleSearch.astro";
-import { academyPath } from "../../lib/academyPaths";
 const {
   articlesCount = 0,
   categoriesCount = 0,
@@ -80,6 +79,7 @@ const {
           <div
             class="font-display font-bold text-3xl md:text-4xl text-rust"
             data-counter={String(articlesCount)}
+            aria-label={String(articlesCount)}
           >
             0
           </div>
@@ -89,6 +89,7 @@ const {
           <div
             class="font-display font-bold text-3xl md:text-4xl"
             data-counter={String(categoriesCount)}
+            aria-label={String(categoriesCount)}
           >
             0
           </div>
@@ -98,6 +99,7 @@ const {
           <div
             class="font-display font-bold text-3xl md:text-4xl text-inkBlue"
             data-counter={String(tagsCount)}
+            aria-label={String(tagsCount)}
           >
             0
           </div>

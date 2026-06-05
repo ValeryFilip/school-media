@@ -157,7 +157,9 @@ const html = buildHtml(text, collectedMarks);
 const headingClass =
   variant === "academy"
     ? [
-        "font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] text-aink",
+        // Канон академии: 34-72px (как Latest/Library/Categories на главной).
+        // Раньше было 36-84 — выглядело крупнее соседних секций.
+        "font-display font-bold text-[clamp(34px,5vw,72px)] leading-[0.95] tracking-[-0.02em] text-aink",
         extraClass,
       ]
     : [

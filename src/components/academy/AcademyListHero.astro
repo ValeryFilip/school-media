@@ -82,12 +82,21 @@ const leftCol = featured ? "lg:col-span-7" : "lg:col-span-9";
 
         {
           stats.length > 0 && (
-            <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-px bg-aline border border-aline">
+            <div
+              class:list={[
+                "mt-10 grid grid-cols-2 gap-px bg-aline border border-aline",
+                stats.length === 3 && "md:grid-cols-3",
+                stats.length === 4 && "md:grid-cols-4",
+                stats.length >= 5 && "md:grid-cols-4",
+                stats.length === 2 && "md:grid-cols-2",
+              ]}
+            >
               {stats.map((s) => (
                 <div class="bg-amilk p-5">
                   <div
                     class={`font-display font-bold text-3xl ${s.accent === "rust" ? "text-rust" : s.accent === "inkBlue" ? "text-inkBlue" : ""}`}
                     data-counter={typeof s.value === "number" ? String(s.value) : undefined}
+                    aria-label={typeof s.value === "number" ? String(s.value) : undefined}
                   >
                     {typeof s.value === "number" ? 0 : s.value}
                   </div>

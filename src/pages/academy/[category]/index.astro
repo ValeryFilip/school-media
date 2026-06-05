@@ -6,7 +6,6 @@ import AcademyCategoryDescription from "../../../components/academy/AcademyCateg
 import AcademyPath from "../../../components/academy/AcademyPath.astro";
 import AcademyFaq from "../../../components/academy/AcademyFaq.astro";
 import AcademyRelated from "../../../components/academy/AcademyRelated.astro";
-import AcademyNewsletter from "../../../components/academy/AcademyNewsletter.astro";
 import config, { categoryDescriptions } from "../../../config.ts";
 import { getCollection } from "astro:content";
 import { slugify } from "../../../lib/slugify.ts";
@@ -105,19 +104,35 @@ const heroTags = [
 // Соседние категории
 const related = catList.filter((c) => c.name !== categoryName).slice(0, 3);
 
-// SEO-описание (шаблон или кураторское)
+// SEO-описание (шаблон или кураторское из CAT_META)
 const meta = CAT_META[me.slug] ?? {};
+const lowerName = categoryName.toLowerCase();
+const tagsListHtml = topTags.length
+  ? `<ul>${topTags.map((t) => `<li><strong>${t}</strong>&nbsp;— разборы и&nbsp;задания по&nbsp;теме «${t.toLowerCase()}»</li>`).join("")}</ul>`
+  : `<ul><li>теория с&nbsp;разбором ключевых понятий</li><li>задания ЕГЭ и&nbsp;ОГЭ по&nbsp;кодификатору ФИПИ</li><li>формулы, реакции, алгоритмы решения</li></ul>`;
 const proseDefault = `
-  <p><strong>${categoryName}</strong>&nbsp;— раздел Академии ЕГЭХИМ. Здесь собраны разборы, формулы и&nbsp;задачи с&nbsp;подробным выведением: ${count}&nbsp;материалов, общее время чтения около ${totalMins}&nbsp;минут.</p>
-  ${
-    topTags.length
-      ? `<h3>Что внутри</h3><ul>${topTags.map((t) => `<li>${t}</li>`).join("")}</ul>`
-      : ""
-  }
-  <p>Материалы ориентированы на&nbsp;подготовку к&nbsp;ЕГЭ и&nbsp;ОГЭ по&nbsp;химии и&nbsp;кодификатор ФИПИ. Если только начинаешь&nbsp;— загляни на&nbsp;<a href="${academyPath()}">главную Академии</a> и&nbsp;выбери траекторию.</p>
+  <p><strong>${categoryName}</strong>&nbsp;— один из&nbsp;разделов Академии ЕГЭХИМ, посвящённый теме «${lowerName}» в&nbsp;школьной химии. Здесь собраны материалы для&nbsp;подготовки к&nbsp;ЕГЭ и&nbsp;ОГЭ по&nbsp;химии: разборы теории, задания из&nbsp;кодификатора ФИПИ, формулы и&nbsp;реакции с&nbsp;подробным выведением, типовые ошибки и&nbsp;ловушки. На&nbsp;текущий момент в&nbsp;разделе ${count}&nbsp;материалов, общее время чтения&nbsp;— около ${totalMins}&nbsp;минут.</p>
+
+  <h3>Что покрывают материалы по&nbsp;теме «${lowerName}»</h3>
+  <p>Подборка ориентирована на&nbsp;актуальный кодификатор ФИПИ по&nbsp;химии и&nbsp;формат заданий ЕГЭ/ОГЭ&nbsp;${new Date().getFullYear() + 1}. Внутри ты&nbsp;найдёшь:</p>
+  ${tagsListHtml}
+
+  <h3>Кому подойдёт раздел</h3>
+  <p>Школьникам 9–11&nbsp;классов, которые готовятся к&nbsp;экзаменам по&nbsp;химии&nbsp;— с&nbsp;нуля или для&nbsp;точечной проработки слабых мест. Если только начинаешь, иди по&nbsp;рекомендованному маршруту сверху вниз: материалы выстроены от&nbsp;простого к&nbsp;сложному. Если нужна точечная проработка&nbsp;— открывай нужную статью через тег или из&nbsp;общего списка.</p>
+
+  <h3>Кто автор</h3>
+  <p>Все материалы пишет Валерий&nbsp;Филипенко&nbsp;— автор курсов на&nbsp;Stepik, набравший на&nbsp;ЕГЭ по&nbsp;химии 100&nbsp;баллов и&nbsp;готовящий школьников к&nbsp;экзамену с&nbsp;2016&nbsp;года. Один автор, одна методика&nbsp;— статьи Академии и&nbsp;курсы складываются в&nbsp;единую систему подготовки.</p>
+
+  <p>Хочешь больше? <a href="${academyPath()}">Главная Академии ЕГЭХИМ</a>&nbsp;— все категории, теги и&nbsp;поиск. Или сразу к&nbsp;<a href="/allcourses/">курсам по&nbsp;химии</a>, когда устанешь учиться сам.</p>
 `;
 const prose = meta.introHtml ?? proseDefault;
-const faq = meta.faq ?? [
+// FAQ — единый источник для рендера и JSON-LD:
+// 1) кураторский CAT_META.faq (v2, основной путь)
+// 2) старый categoryDescriptions.faq (legacy fallback из config)
+// 3) автогенерируемый шаблон (если ничего не задано)
+const faq = meta.faq
+  ?? oldSeo?.faq
+  ?? [
   {
     q: `С&nbsp;чего начать изучение раздела «${categoryName}»?`,
     a: `Выше есть рекомендованный маршрут&nbsp;— иди по&nbsp;нему сверху вниз. Если стартовый уровень низкий, сначала закрой общую химию и&nbsp;неорганику.`,
@@ -159,7 +174,9 @@ const seoDescription =
   oldSeo?.shortDesc ||
   `Все статьи в категории «${categoryName}»: понятные объяснения, примеры, советы и подборки материалов по теме.`;
 const pageUrl = `${siteUrl}${academyCategoryPath(categoryName)}`;
-const faqJsonLd = oldSeo?.faq?.length ? buildFAQJsonLd(oldSeo.faq) : null;
+// JSON-LD строится из того же массива faq, что и рендер.
+// Иначе видимый FAQ и индексируемая разметка могут разойтись.
+const faqJsonLd = faq.length ? buildFAQJsonLd(faq) : null;
 ---
 
 <AcademyLayout
@@ -184,7 +201,6 @@ const faqJsonLd = oldSeo?.faq?.length ? buildFAQJsonLd(oldSeo.faq) : null;
     titleTop={categoryName}
     description=""
     stats={stats}
-    featured={featured}
     tags={heroTags}
     marquee={marquee}
   />
@@ -196,10 +212,8 @@ const faqJsonLd = oldSeo?.faq?.length ? buildFAQJsonLd(oldSeo.faq) : null;
   <AcademyCategoryDescription
     title={`Что такое «${categoryName}» <span class="text-adim">и зачем это нужно.</span>`}
     prose={prose}
-    facts={facts}
   />
   <AcademyPath steps={pathSteps} />
   <AcademyFaq titleAccent={`про&nbsp;«${categoryName.toLowerCase()}».`} items={faq} />
   <AcademyRelated categories={related} total={totalCats} allHref={academyPath("/#categories")} />
-  <AcademyNewsletter />
 </AcademyLayout>
