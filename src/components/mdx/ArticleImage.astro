@@ -30,16 +30,17 @@ const modalId = `modal-${Math.random().toString(36).slice(2, 9)}`;
   </div>
 </dialog>
 
-<script>
-  const setupModals = () => {
-    const triggers = document.querySelectorAll(".zoomable-image");
+<!-- is:inline + plain JS — без TS-аннотаций (as HTMLElement и т.д.) -->
+<script is:inline>
+  var setupModals = function () {
+    var triggers = document.querySelectorAll(".zoomable-image");
 
-    triggers.forEach((trigger) => {
-      trigger.addEventListener("click", (e) => {
-        const targetId = (e.currentTarget as HTMLElement).dataset.modalTarget;
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener("click", function (e) {
+        var targetId = e.currentTarget.dataset.modalTarget;
         if (!targetId) return;
 
-        const modal = document.getElementById(targetId) as HTMLDialogElement;
+        var modal = document.getElementById(targetId);
         if (modal) {
           modal.showModal();
           document.body.style.overflow = "hidden";
@@ -47,18 +48,19 @@ const modalId = `modal-${Math.random().toString(36).slice(2, 9)}`;
       });
     });
 
-    const modals = document.querySelectorAll(".image-modal");
-    modals.forEach((modalElement) => {
-      const modal = modalElement as HTMLDialogElement;
-      const closeBtn = modal.querySelector(".close-modal");
+    var modals = document.querySelectorAll(".image-modal");
+    modals.forEach(function (modal) {
+      var closeBtn = modal.querySelector(".close-modal");
 
-      closeBtn?.addEventListener("click", () => {
-        modal.close();
-        document.body.style.overflow = "";
-      });
+      if (closeBtn) {
+        closeBtn.addEventListener("click", function () {
+          modal.close();
+          document.body.style.overflow = "";
+        });
+      }
 
-      modal.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
+      modal.addEventListener("click", function (e) {
+        var target = e.target;
         if (target === modal || target.classList.contains("modal-content")) {
           modal.close();
           document.body.style.overflow = "";

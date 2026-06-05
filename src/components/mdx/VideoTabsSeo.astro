@@ -5,7 +5,15 @@ interface Props {
   rutubeHref?: string;
 }
 
-const { youtubeHref, vkHref, rutubeHref } = Astro.props as Props;
+const { youtubeHref: youtubeRaw, vkHref, rutubeHref } = Astro.props as Props;
+
+// youtube.com → youtube-nocookie.com: YouTube не ставит маркетинговые
+// cookies, пока пользователь не нажал play. PageSpeed/Cookie audit
+// перестаёт ругаться на 4 сторонних cookie от YouTube.
+const youtubeHref = youtubeRaw?.replace(
+  /\/\/(www\.)?youtube\.com\//,
+  "//www.youtube-nocookie.com/",
+);
 
 const videoSources = [
   {

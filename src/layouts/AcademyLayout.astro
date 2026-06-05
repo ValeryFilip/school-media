@@ -177,7 +177,14 @@ const footerUpdated = academyNavArticles[0]
     <CookieConsent />
     <ExternalScripts />
 
-    <script>
+    <!--
+      is:inline — иначе Astro hoist'ит этот блок в отдельный модуль и
+      склеивает с другими hoisted скриптами через import, создавая
+      цепочку критического пути (PageSpeed: «дерево зависимостей»).
+      TS-аннотации убраны: с is:inline скрипт идёт в HTML как есть, без
+      компиляции.
+    -->
+    <script is:inline>
       // PT-grid фон в hero
       (function () {
         const grid = document.getElementById("ptBg");
@@ -188,43 +195,43 @@ const footerUpdated = academyNavArticles[0]
       })();
 
       // GSAP reveal + счётчики
-      const runAcademyIdle = (fn: () => void) => {
+      var runAcademyIdle = function (fn) {
         if ("requestIdleCallback" in window) {
-          (window as any).requestIdleCallback(fn, { timeout: 1200 });
+          window.requestIdleCallback(fn, { timeout: 1200 });
         } else {
           setTimeout(fn, 1);
         }
       };
 
       runAcademyIdle(function initAcademyScrollEffects() {
-        const g = (window as any).gsap;
-        const ST = (window as any).ScrollTrigger;
+        var g = window.gsap;
+        var ST = window.ScrollTrigger;
         if (!g || !ST) {
           setTimeout(initAcademyScrollEffects, 120);
           return;
         }
         g.registerPlugin(ST);
-        document.querySelectorAll(".titrate").forEach((el) => {
+        document.querySelectorAll(".titrate").forEach(function (el) {
           ST.create({
             trigger: el,
             start: "top 85%",
             once: true,
-            onEnter: () => el.classList.add("in"),
+            onEnter: function () { el.classList.add("in"); },
           });
         });
-        document.querySelectorAll("[data-counter]").forEach((el) => {
-          const target = parseInt((el as HTMLElement).dataset.counter || "0", 10);
+        document.querySelectorAll("[data-counter]").forEach(function (el) {
+          var target = parseInt(el.dataset.counter || "0", 10);
           ST.create({
             trigger: el,
             start: "top 88%",
             once: true,
-            onEnter: () => {
-              const obj = { v: 0 };
+            onEnter: function () {
+              var obj = { v: 0 };
               g.to(obj, {
                 v: target,
                 duration: 1.8,
                 ease: "expo.out",
-                onUpdate: () => {
+                onUpdate: function () {
                   el.textContent =
                     target >= 1000
                       ? Math.round(obj.v).toLocaleString("ru-RU")

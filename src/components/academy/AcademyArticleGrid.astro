@@ -132,45 +132,51 @@ const showFoot = filters || total > perPage;
   </div>
 </section>
 
-<script>
-  document.querySelectorAll(".ag-root").forEach((root) => {
-    const grid = root.querySelector(".ag-grid") as HTMLElement | null;
+<!--
+  is:inline — иначе Astro выносит блок в отдельный hoisted-модуль и тот
+  через import тянет другие компонентные модули. PageSpeed ругается на
+  «дерево зависимостей в сети» (критический путь). Inline убирает один
+  fetch + один import-link.
+-->
+<script is:inline>
+  document.querySelectorAll(".ag-root").forEach(function (root) {
+    var grid = root.querySelector(".ag-grid");
     if (!grid) return;
-    const items = Array.from(root.querySelectorAll(".ag-item")) as HTMLElement[];
-    const perPage = Number((root as HTMLElement).dataset.perPage) || 12;
-    const filterable = (root as HTMLElement).dataset.filterable === "true";
+    var items = Array.from(root.querySelectorAll(".ag-item"));
+    var perPage = Number(root.dataset.perPage) || 12;
+    var filterable = root.dataset.filterable === "true";
 
-    const sortEl = root.querySelector(".ag-sort") as HTMLSelectElement | null;
-    const catEl = root.querySelector(".ag-category") as HTMLSelectElement | null;
-    const tagEl = root.querySelector(".ag-tag") as HTMLSelectElement | null;
-    const searchEl = root.querySelector(".ag-search") as HTMLInputElement | null;
-    const pager = root.querySelector(".ag-pager") as HTMLElement | null;
-    const shownEl = root.querySelector(".ag-shown") as HTMLElement | null;
-    const totalEl = root.querySelector(".ag-total") as HTMLElement | null;
-    const emptyEl = root.querySelector(".ag-empty") as HTMLElement | null;
+    var sortEl = root.querySelector(".ag-sort");
+    var catEl = root.querySelector(".ag-category");
+    var tagEl = root.querySelector(".ag-tag");
+    var searchEl = root.querySelector(".ag-search");
+    var pager = root.querySelector(".ag-pager");
+    var shownEl = root.querySelector(".ag-shown");
+    var totalEl = root.querySelector(".ag-total");
+    var emptyEl = root.querySelector(".ag-empty");
 
-    const norm = (s: string) => (s || "").toLowerCase();
-    let matched: HTMLElement[] = items.slice();
-    let page = 1;
+    var norm = function (s) { return (s || "").toLowerCase(); };
+    var matched = items.slice();
+    var page = 1;
 
     function applyFilters() {
       if (filterable) {
-        const cat = catEl ? catEl.value : "";
-        const tag = tagEl ? norm(tagEl.value) : "";
-        const q = searchEl ? norm(searchEl.value.trim()) : "";
-        matched = items.filter((it) => {
-          const okCat = !cat || it.dataset.category === cat;
-          const okTag = !tag || (it.dataset.tags || "").split("|").includes(tag);
-          const okSearch = !q || (it.dataset.search || "").includes(q);
+        var cat = catEl ? catEl.value : "";
+        var tag = tagEl ? norm(tagEl.value) : "";
+        var q = searchEl ? norm(searchEl.value.trim()) : "";
+        matched = items.filter(function (it) {
+          var okCat = !cat || it.dataset.category === cat;
+          var okTag = !tag || (it.dataset.tags || "").split("|").includes(tag);
+          var okSearch = !q || (it.dataset.search || "").includes(q);
           return okCat && okTag && okSearch;
         });
-        const sort = sortEl ? sortEl.value : "new";
-        matched.sort((a, b) => {
-          const da = new Date(a.dataset.date || "").getTime() || 0;
-          const db = new Date(b.dataset.date || "").getTime() || 0;
+        var sort = sortEl ? sortEl.value : "new";
+        matched.sort(function (a, b) {
+          var da = new Date(a.dataset.date || "").getTime() || 0;
+          var db = new Date(b.dataset.date || "").getTime() || 0;
           return sort === "old" ? da - db : db - da;
         });
-        matched.forEach((it) => grid!.appendChild(it));
+        matched.forEach(function (it) { grid.appendChild(it); });
       } else {
         matched = items.slice();
       }
@@ -179,13 +185,13 @@ const showFoot = filters || total > perPage;
     }
 
     function render() {
-      const totalPages = Math.max(1, Math.ceil(matched.length / perPage));
+      var totalPages = Math.max(1, Math.ceil(matched.length / perPage));
       if (page > totalPages) page = totalPages;
-      const start = (page - 1) * perPage;
-      const slice = matched.slice(start, start + perPage);
+      var start = (page - 1) * perPage;
+      var slice = matched.slice(start, start + perPage);
 
-      items.forEach((it) => (it.style.display = "none"));
-      slice.forEach((it) => (it.style.display = ""));
+      items.forEach(function (it) { it.style.display = "none"; });
+      slice.forEach(function (it) { it.style.display = ""; });
 
       if (shownEl) shownEl.textContent = String(slice.length);
       if (totalEl) totalEl.textContent = String(matched.length);
@@ -193,33 +199,34 @@ const showFoot = filters || total > perPage;
       renderPager(totalPages);
     }
 
-    function renderPager(totalPages: number) {
+    function renderPager(totalPages) {
       if (!pager) return;
       if (totalPages <= 1) {
         pager.innerHTML = "";
         return;
       }
-      const mk = (label: string, p: number, cls = "") =>
-        `<a class="page-btn ${cls}" data-page="${p}" href="#">${label}</a>`;
-      let html = page > 1 ? mk("←", page - 1) : "";
-      for (let n = 1; n <= totalPages; n++)
+      var mk = function (label, p, cls) {
+        return '<a class="page-btn ' + (cls || "") + '" data-page="' + p + '" href="#">' + label + "</a>";
+      };
+      var html = page > 1 ? mk("←", page - 1, "") : "";
+      for (var n = 1; n <= totalPages; n++)
         html += mk(String(n).padStart(2, "0"), n, n === page ? "is-current" : "");
-      html += page < totalPages ? mk("→", page + 1) : "";
+      html += page < totalPages ? mk("→", page + 1, "") : "";
       pager.innerHTML = html;
-      pager.querySelectorAll("a").forEach((a) =>
-        a.addEventListener("click", (e) => {
+      pager.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function (e) {
           e.preventDefault();
-          page = Number((a as HTMLElement).dataset.page) || 1;
+          page = Number(a.dataset.page) || 1;
           render();
-          (root as HTMLElement).scrollIntoView({ behavior: "smooth", block: "start" });
-        }),
-      );
+          root.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
     }
 
-    [sortEl, catEl, tagEl].forEach(
-      (el) => el && el.addEventListener("change", applyFilters),
-    );
-    searchEl && searchEl.addEventListener("input", applyFilters);
+    [sortEl, catEl, tagEl].forEach(function (el) {
+      if (el) el.addEventListener("change", applyFilters);
+    });
+    if (searchEl) searchEl.addEventListener("input", applyFilters);
     applyFilters();
   });
 </script>

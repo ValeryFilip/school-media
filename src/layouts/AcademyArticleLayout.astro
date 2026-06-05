@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import AcademyBreadcrumbs from "../components/academy/AcademyBreadcrumbs.astro";
 import AcademyCard from "../components/academy/AcademyCard.astro";
-import { articleCard, fmtFull, toDate, readMins } from "../lib/academyArticles";
+import { articleCard, fmtFull, toDate } from "../lib/academyArticles";
 import {
   ACADEMY_BASE_PATH,
   academyArticlePath,
@@ -26,7 +26,6 @@ interface Props {
 
 const { fm, slug, headings = [] } = Astro.props as Props;
 
-const categorySlug = slugify(String(fm.category || ""));
 const currentPath = academyArticlePath(String(fm.category || ""), slug);
 const articleUrl = `${Astro.url.origin}${currentPath}`;
 
@@ -253,7 +252,11 @@ const author = ORGANIZATION_DATA.defaultAuthor;
   )
 }
 
-<script>
+<!-- is:inline — иначе Astro выносит блок в отдельный hoisted-модуль
+     и склеивает с другими через import. Cтраница статьи тяжелее
+     категории/тега (этот скрипт+ArticleImage), поэтому inline даёт
+     максимальный выигрыш на critical path. -->
+<script is:inline>
   (function () {
     const map = {
       а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh",
@@ -293,22 +296,35 @@ const author = ORGANIZATION_DATA.defaultAuthor;
     window.addEventListener("resize", updateProgress, { passive: true });
     updateProgress();
 
+    // TOC scroll-spy через IntersectionObserver — раньше на каждый
+    // scroll читали offsetTop у всех секций, что вызывало forced layout
+    // (~180ms в Lighthouse). Observer стреляет только когда секция
+    // реально входит/выходит в зону у верха viewport.
     const links = Array.from(document.querySelectorAll("[data-target]"));
     const sections = links
       .map((link) => document.getElementById(link.getAttribute("data-target") || ""))
       .filter(Boolean);
-    const updateCurrent = () => {
-      const y = window.scrollY + 120;
-      let current = "";
-      sections.forEach((section) => {
-        if (section.offsetTop <= y) current = section.id;
-      });
-      links.forEach((link) => {
-        link.classList.toggle("is-current", link.getAttribute("data-target") === current);
-      });
-    };
-    window.addEventListener("scroll", updateCurrent, { passive: true });
-    updateCurrent();
+    if (sections.length > 0 && "IntersectionObserver" in window) {
+      const visibleIds = new Set();
+      const setCurrent = (id) => {
+        links.forEach((link) => {
+          link.classList.toggle("is-current", link.getAttribute("data-target") === id);
+        });
+      };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visibleIds.add(entry.target.id);
+          else visibleIds.delete(entry.target.id);
+        });
+        // первый видимый в порядке документа = topmost = current
+        let current = "";
+        for (const section of sections) {
+          if (visibleIds.has(section.id)) { current = section.id; break; }
+        }
+        setCurrent(current);
+      }, { rootMargin: "-120px 0px -60% 0px" });
+      sections.forEach((s) => observer.observe(s));
+    }
 
     document.querySelectorAll(".tab-btn").forEach((button) => {
       button.addEventListener("click", () => {
