@@ -70,7 +70,10 @@ const meta = toneMeta[tone];
     align-items: center;
     gap: 10px;
     min-height: 38px;
-    padding: 0 14px;
+    /* Вертикальный паддинг: на узких экранах лейбл "// ВАЖНО" вплотную
+       к верхнему/нижнему краю плашки, выглядит сжато. min-height сам
+       по себе не даёт air, нужен явный padding-block. */
+    padding: 8px 14px;
     border-bottom: 1px solid #1a1410;
     background: var(--accent-color);
     color: #efe9da;

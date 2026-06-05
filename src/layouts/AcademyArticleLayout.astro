@@ -271,7 +271,11 @@ const author = ORGANIZATION_DATA.defaultAuthor;
     const content = document.querySelector(".academy-prose");
     if (content) {
       content.querySelectorAll("h2, h3").forEach((heading, index) => {
-        if (!heading.id) heading.id = slugify(heading.textContent || "");
+        // ВСЕГДА перезаписываем id транслитерированным slug'ом, иначе
+        // MDX-автогенерация оставляет кириллические id (что-такое-...),
+        // а TOC ссылается на транслит (chto-takoe-...) — якоря не сходятся
+        // и клики по содержанию не работают.
+        heading.id = slugify(heading.textContent || "");
         if (heading.tagName === "H2") {
           heading.setAttribute("data-num", `// раздел ${String(index + 1).padStart(2, "0")}`);
         }
