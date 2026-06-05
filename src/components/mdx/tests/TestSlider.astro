@@ -16,27 +16,25 @@ interface Props {
   questions: Question[];
 }
 
-const { questions } = Astro.props;
+const { questions } = Astro.props as Props;
 
 import TestComponent from "../../mdx/tests/TestComponent.astro";
 import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 ---
 
 <div class="slider" data-total={questions.length}>
-  <div class="slider__counter" aria-live="polite">
-    Вопрос 1 из {questions.length}
+  <div class="slider__head">
+    <span class="slider__label">[ quiz ]</span>
+    <div class="slider__counter" aria-live="polite">Вопрос 1 из {questions.length}</div>
   </div>
   <div class="slider__wrapper">
     <div class="slider__track">
-      {
-        questions.map((question, index) => (
-          <div class="slider__slide" data-index={index} hidden={index != 0}>
-            <TestComponent questions={[question]} />
-          </div>
-        ))
-      }
+      {questions.map((question, index) => (
+        <div class="slider__slide" data-index={index} hidden={index !== 0}>
+          <TestComponent questions={[{ ...question, mode: "slider" }]} />
+        </div>
+      ))}
 
-      <!-- Промо-слайд -->
       <div class="slider__slide slider__slide--promo" hidden>
         <PicButtonText />
       </div>
@@ -46,153 +44,130 @@ import PicButtonText from "../../mdx/ADbanners/PicButtonText.astro";
 
 <style>
   .slider {
+    position: relative;
     width: 100%;
     max-width: 100%;
-    margin: 0 auto;
-    overflow: hidden; /* viewport */
-    position: relative;
+    margin: 32px 0;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    overflow: hidden;
+  }
+
+  .slider__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 16px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
 
   .slider__counter {
-    position: absolute;
-    top: 10px;
-    left: 4%;
-    z-index: 2;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gray);
-    pointer-events: none;
+    color: var(--ochre);
   }
 
-  .slider__wrapper {
+  .slider__wrapper,
+  .slider__track,
+  .slider__slide {
     width: 100%;
   }
 
   .slider__track {
     display: flex;
-    width: 100%; /* базово */
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s ease;
     will-change: transform;
   }
 
   .slider__slide {
-    flex: 0 0 100%; /* ключевая строка */
-    width: 100%;
+    flex: 0 0 100%;
     box-sizing: border-box;
+  }
+
+  .slider__slide :global(.test-section) {
+    margin: 0;
+  }
+
+  .slider__slide :global(.test__wrapper) {
+    border: 0;
   }
 
   .slider__slide--promo {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
-  /* Скрываем содержимое слайда, когда родитель имеет hidden */
-  .slider__slide[hidden] {
-    display: none !important;
+  .slider__slide--promo :global(.article-ad) {
+    width: 100%;
+    margin: 0;
+    border: 0;
   }
 
-  .slider__slide[hidden] .section {
-    display: none !important;
-  }
-
+  .slider__slide[hidden],
+  .slider__slide[hidden] .section,
   .slider__counter[hidden] {
     display: none !important;
   }
 
   @media (max-width: 600px) {
-    .slider {
-      border-radius: 8px;
+    .slider__head {
+      align-items: flex-start;
+      flex-direction: column;
     }
   }
 </style>
 
 <script is:inline>
   (function () {
-    const slider = document.querySelector(".slider");
-    const promoSlide = slider.querySelector(".slider__slide--promo");
-    const counterEl = slider.querySelector(".slider__counter");
-    const total = parseInt(slider.dataset.total || "0", 10);
+    document.querySelectorAll(".slider").forEach(function (slider) {
+      const promoSlide = slider.querySelector(".slider__slide--promo");
+      const counterEl = slider.querySelector(".slider__counter");
+      const total = parseInt(slider.dataset.total || "0", 10);
+      const steps = Array.from(slider.querySelectorAll(".slider__slide"));
+      const questionCount = promoSlide ? steps.length - 1 : steps.length;
+      let currentIndex = 0;
 
-    if (!slider) return;
-
-    const steps = Array.from(slider.querySelectorAll(".slider__slide"));
-    const questionCount = promoSlide ? steps.length - 1 : steps.length;
-    let currentIndex = 0;
-
-    function updateCounter() {
-      if (!counterEl) return;
-      if (currentIndex >= questionCount) {
-        counterEl.hidden = true;
-        return;
+      function updateCounter() {
+        if (!counterEl) return;
+        if (currentIndex >= questionCount) {
+          counterEl.hidden = true;
+          return;
+        }
+        counterEl.hidden = false;
+        counterEl.textContent = "Вопрос " + (currentIndex + 1) + " из " + (total || questionCount);
       }
-      counterEl.hidden = false;
-      counterEl.textContent =
-        "Вопрос " + (currentIndex + 1) + " из " + (total || questionCount);
-    }
 
-    function showStep(index) {
-      if (index < 0 || index >= steps.length) return;
+      function showStep(index) {
+        if (index < 0 || index >= steps.length) return;
+        currentIndex = index;
+        steps.forEach((step) => {
+          step.hidden = true;
+        });
+        if (promoSlide) {
+          promoSlide.hidden = true;
+        }
+        if (steps[index]) {
+          steps[index].hidden = false;
+        }
+        updateCounter();
+      }
 
-      currentIndex = index;
+      showStep(0);
 
-      // Скрываем все слайды
-      steps.forEach((step) => {
-        step.hidden = true;
+      slider.addEventListener("test:next", (e) => {
+        const sourceSlide = e.target.closest(".slider__slide");
+        if (!sourceSlide) return;
+        const sourceIndex = steps.indexOf(sourceSlide);
+        if (sourceIndex !== currentIndex || currentIndex >= steps.length - 1) return;
+        showStep(currentIndex + 1);
       });
-
-      if (promoSlide) {
-        promoSlide.hidden = true;
-      }
-
-      // Показываем нужный слайд
-      if (steps[index]) {
-        steps[index].hidden = false;
-      }
-
-      updateCounter();
-    }
-    // Инициализация: показываем первый слайд
-    showStep(0);
-
-    slider.addEventListener("test:next", (e) => {
-      const sourceSlide = e.target.closest(".slider__slide");
-      if (!sourceSlide) return;
-
-      const sourceIndex = steps.indexOf(sourceSlide);
-      if (sourceIndex !== currentIndex) return;
-
-      if (currentIndex >= steps.length - 1) return;
-
-      showStep(currentIndex + 1);
     });
-
-    // let isProcessing = false;
-
-    // // // Слушаем событие от testComponent
-    // slider.addEventListener("test:correct", (element) => {
-    //   // Находим слайд, от которого пришло событие
-    //   const sourceSlide = element.target.closest(".slider__slide");
-    //   if (!sourceSlide) return;
-
-    //   //   // Проверяем, что это текущий активный слайд
-    //   const sourceIndex = steps.indexOf(sourceSlide);
-    //   if (sourceIndex !== currentIndex) {
-    //     return;
-    //   }
-
-    //   //   // Защита от множественных срабатываний
-    //   if (isProcessing) return;
-    //   if (currentIndex >= steps.length - 1) return;
-
-    //   isProcessing = true;
-    //   currentIndex++;
-    //   showStep(currentIndex);
-
-    //   //   // Сбрасываем флаг через небольшую задержку
-    //   setTimeout(() => {
-    //     isProcessing = false;
-    //   }, 300);
-    // });
   })();
 </script>

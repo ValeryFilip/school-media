@@ -101,7 +101,7 @@ const sectionClass = [
 ].filter(Boolean).join(" ");
 ---
 
-<section class={sectionClass}>
+<section class={sectionClass} style={`--mdx-image-fit:${imageFit}`}>
   {hasImage && (
     <div class="mdx-lead__media">
       <img src={imageSrc} alt={imageAlt} loading="lazy" decoding="async" />
@@ -109,7 +109,8 @@ const sectionClass = [
   )}
 
   <div class="mdx-lead__body">
-    <div class="mdx-lead__copy">
+    <div class="mdx-lead__head">
+      <span class="mdx-lead__eyebrow">[ форма ] / 40 секунд</span>
       <h3 class="mdx-lead__title">{title}</h3>
       {subtitle && <p class="mdx-lead__subtitle">{subtitle}</p>}
     </div>
@@ -129,9 +130,9 @@ const sectionClass = [
         novalidate
       >
         <div class={`mdx-lead__fields ${fields.length <= 2 ? "mdx-lead__fields--compact" : ""}`}>
-          {fields.map((field) => (
+          {fields.map((field, index) => (
             <label class={`mdx-lead__field ${field.type === "textarea" ? "mdx-lead__field--full" : ""}`}>
-              <span class="mdx-lead__label">{field.label}</span>
+              <span class="mdx-lead__label">[{String(index + 1).padStart(2, "0")}] {field.label}</span>
               {field.type === "textarea" ? (
                 <textarea
                   class="mdx-lead__input mdx-lead__textarea"
@@ -174,7 +175,7 @@ const sectionClass = [
         </div>
 
         <div class="mdx-lead__actions">
-          <button class="mdx-lead__submit" type="submit">{submitText}</button>
+          <button class="mdx-lead__submit" type="submit">{submitText}<span aria-hidden="true"> -></span></button>
           <div class="mdx-lead__status" data-form-status hidden></div>
           <pre class="mdx-lead__debug" data-form-debug hidden></pre>
         </div>
@@ -189,7 +190,7 @@ const sectionClass = [
           data-variant={popupVariant}
           data-campaign={popupCampaign}
         >
-          {buttonText}
+          {buttonText}<span aria-hidden="true"> -></span>
         </button>
       </div>
     )}
@@ -198,38 +199,37 @@ const sectionClass = [
 
 <style>
   .mdx-lead {
-    --mdx-lead-bg: linear-gradient(135deg, #0f5ee0 0%, #2b7cff 55%, #8fc2ff 100%);
-    --mdx-lead-card: rgba(255, 255, 255, 0.14);
-    --mdx-lead-border: rgba(255, 255, 255, 0.22);
-    --mdx-lead-text: #fff;
-    --mdx-lead-muted: rgba(255, 255, 255, 0.86);
-    --mdx-lead-input-bg: rgba(255, 255, 255, 0.96);
-    --mdx-lead-input-text: #10233f;
-    --mdx-lead-button-bg: #ffffff;
-    --mdx-lead-button-text: #114ec9;
+    --mdx-lead-bg: var(--ink);
+    --mdx-lead-card: color-mix(in oklab, var(--paper) 8%, transparent);
+    --mdx-lead-border: color-mix(in oklab, var(--paper) 24%, transparent);
+    --mdx-lead-text: var(--paper);
+    --mdx-lead-muted: color-mix(in oklab, var(--paper) 72%, transparent);
+    --mdx-lead-input-bg: var(--paper);
+    --mdx-lead-input-text: var(--ink);
+    --mdx-lead-button-bg: var(--rust);
+    --mdx-lead-button-text: var(--paper);
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 24px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     margin: 28px 0;
-    padding: 26px;
-    border-radius: 28px;
+    border: 1px solid var(--mdx-lead-border);
     background: var(--mdx-lead-bg);
     color: var(--mdx-lead-text);
-    box-shadow: 0 24px 50px rgba(15, 58, 140, 0.16);
     overflow: hidden;
   }
 
   .mdx-lead--light {
-    --mdx-lead-bg: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
-    --mdx-lead-card: #ffffff;
-    --mdx-lead-border: rgba(16, 35, 63, 0.08);
-    --mdx-lead-text: #10233f;
-    --mdx-lead-muted: #4d6281;
-    --mdx-lead-input-bg: #ffffff;
-    --mdx-lead-input-text: #10233f;
-    --mdx-lead-button-bg: #1263eb;
-    --mdx-lead-button-text: #ffffff;
-    box-shadow: 0 18px 40px rgba(16, 35, 63, 0.08);
+    --mdx-lead-bg: var(--milk);
+    --mdx-lead-card: var(--paper);
+    --mdx-lead-border: var(--line);
+    --mdx-lead-text: var(--ink);
+    --mdx-lead-muted: var(--dim);
+    --mdx-lead-input-bg: var(--paper);
+    --mdx-lead-input-text: var(--ink);
+    --mdx-lead-button-bg: var(--ink);
+    --mdx-lead-button-text: var(--paper);
   }
 
   .mdx-lead--no-image {
@@ -242,62 +242,97 @@ const sectionClass = [
 
   .mdx-lead__media {
     min-height: 100%;
-    border-radius: 22px;
-    overflow: hidden;
+    border-right: 1px solid var(--mdx-lead-border);
     background: var(--mdx-lead-card);
-    border: 1px solid var(--mdx-lead-border);
-    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+
+  .mdx-lead--image-left .mdx-lead__media {
+    border-right: 0;
+    border-left: 1px solid var(--mdx-lead-border);
   }
 
   .mdx-lead__media img {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
+    min-height: 320px;
     object-fit: var(--mdx-image-fit, cover);
   }
 
   .mdx-lead__body {
     display: grid;
-    gap: 18px;
     align-content: center;
+    gap: 20px;
+    min-width: 0;
+    padding: clamp(22px, 4vw, 38px);
   }
 
-  .mdx-lead__copy {
+  .mdx-lead__head {
     display: grid;
-    gap: 10px;
+    gap: 12px;
+  }
+
+  .mdx-lead__eyebrow,
+  .mdx-lead__label {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .mdx-lead__eyebrow {
+    color: var(--mdx-lead-muted);
   }
 
   .mdx-lead__title {
     margin: 0;
-    font-size: clamp(24px, 3.1vw, 34px);
-    line-height: 1.05;
-    font-weight: 800;
-    letter-spacing: -0.02em;
     color: var(--mdx-lead-text);
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-card-title);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0;
   }
 
   .mdx-lead__subtitle {
+    max-width: 62ch;
     margin: 0;
-    font-size: 16px;
-    line-height: 1.55;
     color: var(--mdx-lead-muted);
-    max-width: 60ch;
+    font-family: var(--academy-font-body);
+    font-size: var(--academy-prose);
+    line-height: 1.55;
+  }
+
+  .mdx-lead__form,
+  .mdx-lead__fields,
+  .mdx-lead__field,
+  .mdx-lead__consents,
+  .mdx-lead__actions {
+    display: grid;
   }
 
   .mdx-lead__form {
-    display: grid;
-    gap: 16px;
-  }
-
-  .mdx-lead__fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
   }
 
+  .mdx-lead__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--mdx-lead-border);
+    border: 1px solid var(--mdx-lead-border);
+  }
+
   .mdx-lead__field {
-    display: grid;
-    gap: 6px;
+    gap: 8px;
+    min-width: 0;
+    padding: 14px;
+    background: var(--mdx-lead-bg);
+  }
+
+  .mdx-lead--light .mdx-lead__field {
+    background: var(--milk);
   }
 
   .mdx-lead__field--full {
@@ -305,73 +340,70 @@ const sectionClass = [
   }
 
   .mdx-lead__label {
-    font-size: 13px;
-    font-weight: 600;
     color: var(--mdx-lead-muted);
   }
 
   .mdx-lead__input {
+    width: 100%;
     min-height: 52px;
-    padding: 14px 16px;
-    border: 1px solid rgba(16, 35, 63, 0.12);
-    border-radius: 16px;
+    box-sizing: border-box;
+    border: 1px solid var(--mdx-lead-border);
+    border-radius: 0;
     background: var(--mdx-lead-input-bg);
     color: var(--mdx-lead-input-text);
-    font-size: 16px;
-    line-height: 1.3;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-    box-sizing: border-box;
+    padding: 14px 16px;
+    font-family: var(--academy-font-display);
+    font-size: var(--academy-action);
+    line-height: 1.25;
   }
 
   .mdx-lead__input:focus {
-    outline: none;
-    border-color: #5d99ff;
-    box-shadow: 0 0 0 4px rgba(93, 153, 255, 0.18);
-    transform: translateY(-1px);
+    outline: 2px solid var(--rust);
+    outline-offset: 2px;
   }
 
   .mdx-lead__input::placeholder {
-    color: #7a8da9;
+    color: var(--dim);
   }
 
   .mdx-lead__textarea {
     min-height: 120px;
     resize: vertical;
-    font-family: inherit;
+    font-family: var(--academy-font-body);
   }
 
   .mdx-lead__consents {
-    display: grid;
     gap: 10px;
-    padding: 14px 16px;
-    border-radius: 18px;
-    background: var(--mdx-lead-card);
     border: 1px solid var(--mdx-lead-border);
-    backdrop-filter: blur(10px);
+    background: var(--mdx-lead-card);
+    padding: 14px 16px;
   }
 
   .mdx-lead__consent {
     display: grid;
-    grid-template-columns: 18px 1fr;
-    gap: 10px;
+    grid-template-columns: 18px minmax(0, 1fr);
     align-items: start;
-    font-size: 13px;
-    line-height: 1.45;
+    gap: 10px;
     color: var(--mdx-lead-muted);
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    line-height: 1.45;
   }
 
   .mdx-lead__checkbox {
-    margin: 2px 0 0;
+    width: 16px;
+    height: 16px;
+    margin: 1px 0 0;
+    accent-color: var(--rust);
   }
 
   .mdx-lead__consent :global(a) {
     color: inherit;
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 3px;
   }
 
   .mdx-lead__actions {
-    display: grid;
     gap: 10px;
     align-items: start;
   }
@@ -382,25 +414,26 @@ const sectionClass = [
 
   .mdx-lead__submit {
     appearance: none;
-    border: 0;
-    border-radius: 16px;
-    min-height: 54px;
-    padding: 0 22px;
-    background: var(--mdx-lead-button-bg);
-    color: var(--mdx-lead-button-text);
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-    box-shadow: 0 10px 24px rgba(9, 38, 102, 0.14);
     width: fit-content;
     max-width: 100%;
+    min-height: 54px;
+    border: 1px solid var(--mdx-lead-button-bg);
+    border-radius: 0;
+    background: var(--mdx-lead-button-bg);
+    color: var(--mdx-lead-button-text);
+    padding: 0 24px;
+    cursor: pointer;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-control);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.15;
+    text-transform: uppercase;
   }
 
   .mdx-lead__submit:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 16px 30px rgba(9, 38, 102, 0.18);
+    background: var(--mdx-lead-button-text);
+    color: var(--mdx-lead-button-bg);
   }
 
   .mdx-lead__submit:disabled {
@@ -409,35 +442,31 @@ const sectionClass = [
   }
 
   .mdx-lead__status {
-    font-size: 14px;
-    font-weight: 600;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-control);
+    font-weight: 700;
   }
 
-  .mdx-lead__status.ok {
-    color: #dcffe8;
-  }
-
+  .mdx-lead__status.ok,
   .mdx-lead--light .mdx-lead__status.ok {
-    color: #0e8d48;
+    color: var(--ochre);
   }
 
-  .mdx-lead__status.err {
-    color: #ffe0e0;
-  }
-
+  .mdx-lead__status.err,
   .mdx-lead--light .mdx-lead__status.err {
-    color: #c92a2a;
+    color: var(--rust);
   }
 
   .mdx-lead__debug {
-    margin: 0;
     max-width: 100%;
+    margin: 0;
     overflow: auto;
+    border: 1px solid var(--mdx-lead-border);
+    background: var(--ink);
+    color: var(--paper);
     padding: 12px;
-    border-radius: 14px;
-    background: rgba(7, 17, 34, 0.88);
-    color: #f6f8fb;
-    font-size: 12px;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
     line-height: 1.45;
   }
 
@@ -447,17 +476,25 @@ const sectionClass = [
       grid-template-columns: 1fr;
     }
 
-    .mdx-lead__media {
+    .mdx-lead__media,
+    .mdx-lead--image-left .mdx-lead__media {
+      border-right: 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--mdx-lead-border);
+    }
+
+    .mdx-lead__media img {
       min-height: 240px;
     }
   }
 
   @media (max-width: 640px) {
     .mdx-lead {
-      padding: 20px;
       margin: 22px 0;
-      border-radius: 22px;
-      gap: 18px;
+    }
+
+    .mdx-lead__body {
+      padding: 20px;
     }
 
     .mdx-lead__fields {

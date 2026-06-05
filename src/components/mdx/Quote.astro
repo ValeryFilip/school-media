@@ -1,41 +1,42 @@
 ---
-/**
- * Цитата для статей
- * Использование в MDX:
- * <Quote author="Альберт Эйнштейн" role="Физик">
- *   Воображение важнее знания
- * </Quote>
- */
 interface Props {
   author?: string;
   role?: string;
-  image?: string; // аватар автора
+  image?: string;
 }
 
-const { author, role, image } = Astro.props;
+const { author, role, image } = Astro.props as Props;
 ---
 
 <blockquote class="quote">
-  <div class="quote-mark" aria-hidden="true">"</div>
-  <div class="quote-content">
-    <slot />
+  <div class="quote__head">
+    <span class="quote__label">// quote</span>
+    <span class="quote__index">№ 01</span>
+  </div>
+  <div class="quote__body">
+    <div class="quote__mark" aria-hidden="true">“</div>
+    <div class="quote__content">
+      <slot />
+    </div>
   </div>
   {
     (author || role || image) && (
-      <footer class="quote-footer">
-        {image && (
+      <footer class="quote__footer">
+        {image ? (
           <img
-            class="quote-avatar"
+            class="quote__avatar"
             src={image}
             alt={author || "Автор"}
-            width="48"
-            height="48"
+            width="56"
+            height="56"
             loading="lazy"
           />
+        ) : (
+          <span class="quote__avatar quote__avatar--empty" aria-hidden="true" />
         )}
-        <div class="quote-author">
-          {author && <cite class="quote-name">{author}</cite>}
-          {role && <span class="quote-role">{role}</span>}
+        <div class="quote__author">
+          {author && <cite class="quote__name">// {author}</cite>}
+          {role && <span class="quote__role">{role}</span>}
         </div>
       </footer>
     )
@@ -43,92 +44,126 @@ const { author, role, image } = Astro.props;
 </blockquote>
 
 <style>
+  /* Внешний контейнер — без bg, чтобы не плодить «подложку»
+     между header/body/footer и краем рамки. Каждый внутренний блок
+     рисует свой фон сам. */
   .quote {
-    position: relative;
     margin: clamp(1rem, 3vw, 2rem) 0;
-    padding: clamp(16px, 2vw, 24px) clamp(20px, 2.5vw, 28px)
-      clamp(16px, 2vw, 24px) clamp(44px, 5vw, 60px);
-    border-left: 4px solid var(--blue);
-    background: linear-gradient(135deg, #f0f7ff 0%, var(--white) 100%);
-    border-radius: clamp(8px, 1vw, 12px);
-    box-shadow: 0 4px 12px rgba(54, 110, 240, 0.08);
+    border: 1px solid #1a1410;
+    color: #1a1410;
+    overflow: hidden;
   }
 
-  .quote-mark {
-    position: absolute;
-    left: clamp(10px, 2vw, 20px);
-    top: clamp(12px, 2vw, 20px);
-    font-size: clamp(24spx, 4vw, 48px);
+  .quote__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-bottom: 1px solid #1a1410;
+    background: #1a1410;
+    color: #efe9da;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--blue);
-    opacity: 0.3;
-    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
-  .quote-content {
-    font-size: clamp(8px, 1.8vw, 18px);
-    line-height: 1.7;
-    color: var(--black);
+  .quote__body {
+    position: relative;
+    padding: clamp(20px, 2.8vw, 30px);
+    padding-left: clamp(54px, 7vw, 86px);
+    background:
+      linear-gradient(135deg, rgba(178, 58, 20, 0.08) 25%, transparent 25%) 0 0 / 12px 12px,
+      #f7f2e4;
+  }
+
+  .quote__mark {
+    position: absolute;
+    left: clamp(14px, 2.2vw, 24px);
+    top: clamp(10px, 1.8vw, 18px);
+    color: #b23a14;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: clamp(54px, 8vw, 92px);
+    font-weight: 700;
+    line-height: 0.8;
+  }
+
+  .quote__content {
+    position: relative;
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: clamp(16px, 1.9vw, 20px);
+    line-height: 1.65;
+    color: #2e2620;
     font-style: italic;
-    margin-bottom: clamp(12px, 1.5vw, 16px);
   }
 
-  .quote-content :global(p:first-child) {
+  .quote__content :global(p:first-child) {
     margin-top: 0;
   }
 
-  .quote-content :global(p:last-child) {
+  .quote__content :global(p:last-child) {
     margin-bottom: 0;
   }
 
-  .quote-footer {
+  .quote__footer {
     display: flex;
     align-items: center;
-    gap: clamp(8px, 1vw, 12px);
-    margin-top: clamp(12px, 1.5vw, 16px);
-    padding-top: clamp(12px, 1.5vw, 16px);
-    border-top: 1px solid rgba(54, 110, 240, 0.15);
+    gap: 14px;
+    padding: 14px;
+    border-top: 1px solid #1a1410;
+    background: #efe9da;
   }
 
-  .quote-avatar {
-    width: clamp(40px, 5vw, 48px);
-    height: clamp(40px, 5vw, 48px);
-    border-radius: 50%;
+  .quote__avatar {
+    width: 56px;
+    height: 56px;
+    border: 1px solid #1a1410;
     object-fit: cover;
-    border: 2px solid var(--white);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #f7f2e4;
   }
 
-  .quote-author {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  .quote__avatar--empty {
+    background:
+      linear-gradient(135deg, #1a1410 8%, transparent 8%, transparent 50%, #1a1410 50%, #1a1410 58%, transparent 58%) 0 0 / 10px 10px,
+      #efe9da;
   }
 
-  .quote-name {
+  .quote__author {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .quote__name,
+  .quote__role {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .quote__name {
+    color: #1a1410;
     font-style: normal;
-    font-weight: 600;
-    font-size: clamp(10px, 1.5vw, 15px);
-    color: var(--black);
+    font-weight: 700;
   }
 
-  .quote-role {
-    font-size: clamp(8px, 1.3vw, 13px);
-    color: var(--gray);
+  .quote__role {
+    color: #8a7f70;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   @media (max-width: 600px) {
-    .quote {
-      padding: 16px 16px 16px 44px;
+    .quote__body {
+      padding: 18px;
+      padding-left: 54px;
     }
 
-    .quote-mark {
-      left: 10px;
-      top: 12px;
-    }
-    .quote-avatar {
-      width: 40px;
-      height: 40px;
+    .quote__footer {
+      align-items: flex-start;
     }
   }
 </style>

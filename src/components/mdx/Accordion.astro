@@ -10,76 +10,111 @@ const { title, note, id } = Astro.props;
 
 <details class="accordion" {...(id ? { id } : {})}>
   <summary class="accordion__summary">
+    <span class="accordion__marker" aria-hidden="true">[ + ]</span>
     <span class="accordion__title">{title}</span>
+    <span class="accordion__meta" aria-hidden="true">open</span>
   </summary>
   <div class="accordion__content">
     <slot />
-    {note && <p class="accordion__note">{note}</p>}
+    {note && <p class="accordion__note">// {note}</p>}
   </div>
 </details>
+
 <style>
   .accordion {
     margin: clamp(16px, 2vw, 24px) 0;
-    border: 1px solid var(--border);
-    border-radius: clamp(8px, 1vw, 12px);
-    background: var(--white);
+    border: 1px solid #c9bfac;
+    border-radius: 0;
+    background: #efe9da;
     overflow: hidden;
   }
 
-  /* SUMMARY */
+  .accordion:hover,
+  .accordion[open] {
+    border-color: #1a1410;
+  }
+
   .accordion__summary {
-    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
+    min-height: 48px;
+    padding: 0 clamp(14px, 2vw, 18px);
     cursor: pointer;
     user-select: none;
     list-style: none;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 8px;
-
-    font-weight: 600;
-    font-size: clamp(15px, 1.4vw, 17px);
-    color: var(--black);
-
-    background: #f9fafb;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s ease;
+    gap: 12px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 700;
+    font-size: clamp(12px, 1.35vw, 14px);
+    color: #1a1410;
+    background: #f7f2e4;
+    border-bottom: 1px solid #c9bfac;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background 0.16s ease, color 0.16s ease;
   }
 
-  /* убираем стандартный маркер */
   .accordion__summary::-webkit-details-marker {
     display: none;
   }
 
-  /* плюс справа */
-  .accordion__summary::after {
-    content: "+";
-    margin-left: auto;
-    font-size: 34px;
-    font-weight: 400;
-    line-height: 1;
-    opacity: 1;
-    transition: opacity 0.2s ease;
-  }
-
-  /* hover */
   .accordion__summary:hover {
-    background: #f3f4f6;
+    background: #1a1410;
+    color: #efe9da;
   }
 
-  /* OPEN STATE */
-  .accordion[open] > .accordion__summary::after {
-    content: "−";
-    opacity: 1;
+  .accordion__marker {
+    display: inline-flex;
+    color: #b23a14;
   }
 
-  /* CONTENT */
+  .accordion__summary:hover .accordion__marker {
+    color: currentColor;
+  }
+
+  .accordion[open] > .accordion__summary .accordion__marker {
+    font-size: 0;
+  }
+
+  .accordion[open] > .accordion__summary .accordion__marker::before {
+    content: "[ - ]";
+    font-size: clamp(12px, 1.35vw, 14px);
+  }
+
+  .accordion__title {
+    min-width: 0;
+  }
+
+  .accordion__meta {
+    color: #8a7f70;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .accordion__summary:hover .accordion__meta {
+    color: currentColor;
+  }
+
   .accordion__content {
-    padding: clamp(16px, 2vw, 20px);
+    padding: clamp(16px, 2vw, 22px);
+    color: #2e2620;
+  }
+
+  .accordion__content :global(> :first-child) {
+    margin-top: 0;
+  }
+
+  .accordion__content :global(> :last-child) {
+    margin-bottom: 0;
   }
 
   .accordion__note {
-    margin-top: 12px;
-    font-size: 14px;
-    color: var(--gray);
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #c9bfac;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: #8a7f70;
   }
 </style>

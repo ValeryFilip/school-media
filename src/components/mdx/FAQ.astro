@@ -1,40 +1,20 @@
 ---
-/**
- * FAQ (Вопрос-ответ) с аккордеоном
- * Использование в MDX:
- * <FAQ question="Как подготовиться к ЕГЭ?">
- *   Начните с изучения кодификатора...
- * </FAQ>
- */
 interface Props {
   question: string;
-  open?: boolean; // открыт по умолчанию
+  open?: boolean;
 }
 
 const { question, open = false } = Astro.props;
-const id = `faq-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <details class="faq-item" open={open}>
   <summary class="faq-question">
-    <span class="faq-icon" aria-hidden="true">?</span>
+    <span class="faq-index" aria-hidden="true">Q:</span>
     <span class="faq-text">{question}</span>
-    <svg
-      class="faq-arrow"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-    >
-      <path
-        d="M4 6l4 4 4-4"
-        stroke="currentColor"
-        stroke-width="2"
-        fill="none"
-        stroke-linecap="round"></path>
-    </svg>
+    <span class="faq-toggle" aria-hidden="true">[ + ]</span>
   </summary>
   <div class="faq-answer">
+    <span class="faq-answer__label" aria-hidden="true">A:</span>
     <slot />
   </div>
 </details>
@@ -42,51 +22,50 @@ const id = `faq-${Math.random().toString(36).substr(2, 9)}`;
 <style>
   .faq-item {
     margin: clamp(1rem, 2vw, 1.5rem) 0;
-    border: 1px solid var(--border);
-    border-radius: clamp(6px, 0.8vw, 8px);
-    background: var(--white);
+    border: 1px solid #c9bfac;
+    border-radius: 0;
+    background: #efe9da;
     overflow: hidden;
-    transition: box-shadow 0.2s ease;
   }
 
   .faq-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #1a1410;
   }
 
   .faq-question {
     display: flex;
     align-items: center;
     gap: clamp(8px, 1.2vw, 12px);
-    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
+    min-height: 48px;
+    padding: 0 clamp(14px, 2vw, 18px);
     cursor: pointer;
     user-select: none;
     list-style: none;
-    font-weight: 600;
-    font-size: clamp(14px, 1.6vw, 16px);
-    color: var(--black);
-    background: #f9f9f9;
-    transition: background 0.2s ease;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 700;
+    font-size: clamp(12px, 1.35vw, 14px);
+    color: #1a1410;
+    background: #f7f2e4;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background 0.16s ease, color 0.16s ease;
   }
 
   .faq-question:hover {
-    background: #f0f7ff;
+    background: #1a1410;
+    color: #efe9da;
   }
 
   .faq-question::-webkit-details-marker {
     display: none;
   }
 
-  .faq-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: clamp(24px, 2.8vw, 28px);
-    height: clamp(24px, 2.8vw, 28px);
-    border-radius: 50%;
-    background: var(--blue);
-    color: var(--white);
-    font-size: clamp(14px, 1.6vw, 16px);
-    font-weight: 700;
+  .faq-index {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 28px;
+    border: 1px solid currentColor;
     flex-shrink: 0;
   }
 
@@ -95,23 +74,47 @@ const id = `faq-${Math.random().toString(36).substr(2, 9)}`;
     min-width: 0;
   }
 
-  .faq-arrow {
+  .faq-toggle {
     flex-shrink: 0;
-    width: clamp(14px, 1.6vw, 16px);
-    height: clamp(14px, 1.6vw, 16px);
-    transition: transform 0.2s ease;
+    color: #b23a14;
   }
 
-  .faq-item[open] .faq-arrow {
-    transform: rotate(180deg);
+  .faq-question:hover .faq-toggle {
+    color: currentColor;
+  }
+
+  .faq-item[open] .faq-toggle {
+    font-size: 0;
+  }
+
+  .faq-item[open] .faq-toggle::before {
+    content: "[ - ]";
+    font-size: clamp(12px, 1.35vw, 14px);
   }
 
   .faq-answer {
+    position: relative;
     padding: clamp(16px, 2vw, 20px);
-    color: var(--gray);
+    padding-left: clamp(52px, 6vw, 68px);
+    color: #2e2620;
     line-height: 1.7;
     font-size: clamp(14px, 1.5vw, 15px);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #c9bfac;
+  }
+
+  .faq-answer__label {
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 28px;
+    border: 1px solid #c9bfac;
+    color: #b23a14;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .faq-answer :global(p:first-child) {
@@ -124,24 +127,14 @@ const id = `faq-${Math.random().toString(36).substr(2, 9)}`;
 
   @media (max-width: 600px) {
     .faq-question {
-      padding: 12px 16px;
+      padding: 0 12px;
       gap: 8px;
-      font-size: 14px;
-    }
-
-    .faq-icon {
-      width: 24px;
-      height: 24px;
-      font-size: 14px;
-    }
-
-    .faq-arrow {
-      width: 14px;
-      height: 14px;
+      font-size: 12px;
     }
 
     .faq-answer {
       padding: 16px;
+      padding-left: 52px;
       font-size: 14px;
     }
   }

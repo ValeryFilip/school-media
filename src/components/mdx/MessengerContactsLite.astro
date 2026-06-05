@@ -39,117 +39,160 @@ const {
 ---
 
 <section class="messenger-lite">
-  <div class="messenger-lite__inner">
+  <div class="messenger-lite__head">
+    <span>// связь</span>
+    <span>[ {messengers.length} канала ]</span>
+  </div>
+  <div class="messenger-lite__intro">
     <h3 class="messenger-lite__title">{title}</h3>
     <p class="messenger-lite__subtitle">{subtitle}</p>
+  </div>
 
-    <div class="messenger-lite__list">
-      {messengers.map((item) => (
-        <a
-          class="messenger-lite__link"
-          href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Написать мне в ${item.label}`}
-          title={item.label}
-        >
+  <div class="messenger-lite__list">
+    {messengers.map((item) => (
+      <a
+        class="messenger-lite__link"
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Написать мне в ${item.label}`}
+        title={item.label}
+      >
+        <span class="messenger-lite__icon">
           <img
             src={item.icon}
-            alt={item.label}
+            alt=""
             width={item.size ?? 72}
             height={item.size ?? 72}
             loading="lazy"
             decoding="async"
           />
-        </a>
-      ))}
-    </div>
+        </span>
+        <span class="messenger-lite__label">{item.label}</span>
+        <span class="messenger-lite__arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
   </div>
 </section>
 
 <style>
   .messenger-lite {
     margin: 28px 0;
+    border: 1px solid #1a1410;
+    background: #efe9da;
   }
 
-  .messenger-lite__inner {
-    padding: 34px 28px;
-    border-radius: 28px;
-    background: linear-gradient(180deg, #f7f8fb 0%, #f2f4f8 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    text-align: center;
+  .messenger-lite__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 40px;
+    padding: 0 14px;
+    align-items: center;
+    border-bottom: 1px solid #1a1410;
+    background: #1a1410;
+    color: #efe9da;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .messenger-lite__intro {
+    padding: clamp(18px, 2.5vw, 28px);
+    border-bottom: 1px solid #c9bfac;
   }
 
   .messenger-lite__title {
     margin: 0;
-    font-size: clamp(22px, 3vw, 32px);
-    line-height: 1.12;
-    font-weight: 800;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.05;
+    font-weight: 700;
     letter-spacing: -0.02em;
-    color: #1a2230;
+    color: #1a1410;
   }
 
   .messenger-lite__subtitle {
-    margin: 14px auto 0;
-    max-width: 42ch;
-    font-size: clamp(15px, 1.9vw, 20px);
-    line-height: 1.4;
-    color: #4d5b72;
+    margin: 12px 0 0;
+    max-width: 48ch;
+    font-size: clamp(15px, 1.7vw, 18px);
+    line-height: 1.45;
+    color: #2e2620;
   }
 
   .messenger-lite__list {
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    margin-top: 30px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: #c9bfac;
   }
 
   .messenger-lite__link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 72px;
-    height: 72px;
-    border-radius: 20px;
-    background: #fff;
-    box-shadow: 0 10px 24px rgba(28, 44, 76, 0.08);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    min-height: 132px;
+    padding: 16px;
+    background: #f7f2e4;
+    color: #1a1410;
+    text-decoration: none;
+    transition: background 0.16s ease, color 0.16s ease;
   }
 
   .messenger-lite__link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 30px rgba(28, 44, 76, 0.12);
+    background: #1a1410;
+    color: #efe9da;
+    text-decoration: none;
   }
 
-  .messenger-lite__link img {
+  .messenger-lite__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .messenger-lite__icon img {
     display: block;
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     margin: 0;
-    border-radius: 14px;
+    object-fit: contain;
+  }
+
+  .messenger-lite__label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .messenger-lite__arrow {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    color: #b23a14;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 20px;
+  }
+
+  .messenger-lite__link:hover .messenger-lite__arrow {
+    color: currentColor;
   }
 
   @media (max-width: 640px) {
-    .messenger-lite__inner {
-      padding: 26px 18px;
-      border-radius: 22px;
-    }
-
-    .messenger-lite__subtitle {
-      font-size: 16px;
+    .messenger-lite__list {
+      grid-template-columns: 1fr;
     }
 
     .messenger-lite__link {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-    }
-
-    .messenger-lite__link img {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      min-height: 96px;
+      grid-template-columns: auto 1fr;
+      align-items: center;
     }
   }
 </style>

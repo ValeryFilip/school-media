@@ -5,7 +5,7 @@ interface Props {
   rutubeHref?: string;
 }
 
-const { youtubeHref, vkHref, rutubeHref } = Astro.props;
+const { youtubeHref, vkHref, rutubeHref } = Astro.props as Props;
 
 const videoSources = [
   {
@@ -42,124 +42,143 @@ const videoSources = [
 ].filter((source) => source.href);
 ---
 
-{
-  videoSources.length > 0 && (
-    <section class="tabs" aria-label="Видео: выбор источника">
+{videoSources.length > 0 && (
+  <section class="tabs" aria-label="Видео: выбор источника">
+    <div class="tabs__head">
+      <span class="tabs__eyebrow">[ video ] / source</span>
       <div class="tab-headers" role="tablist" aria-label="Источник видео">
-        {
-          videoSources.map((source, index) => (
-            <div
-              class={`tab-header ${index === 0 ? "active" : ""}`}
-              role="tab"
-              id={`tab-${source.id}`}
-              aria-selected={index === 0 ? "true" : "false"}
-              aria-controls={`panel-${source.id}`}
-              tabindex={index === 0 ? "0" : "-1"}
-              data-tab={source.id}
-            >
-              {source.label}
-            </div>
-          ))
-        }
+        {videoSources.map((source, index) => (
+          <button
+            class={`tab-header ${index === 0 ? "active" : ""}`}
+            type="button"
+            role="tab"
+            id={`tab-${source.id}`}
+            aria-selected={index === 0 ? "true" : "false"}
+            aria-controls={`panel-${source.id}`}
+            tabindex={index === 0 ? "0" : "-1"}
+            data-tab={source.id}
+          >
+            {source.label}
+          </button>
+        ))}
       </div>
-      <div class="tab-contents">
-        {
-          videoSources.map((source, index) => (
-            <div
-              class="tab-content"
-              role="tabpanel"
-              id={`panel-${source.id}`}
-              aria-labelledby={`tab-${source.id}`}
-              aria-hidden={index === 0 ? "false" : "true"}
-              data-tab={source.id}
-              hidden={index !== 0}
-            >
-              <iframe
-                width={source.width}
-                height={source.height}
-                src={index === 0 ? source.href : undefined}
-                data-src={index === 0 ? undefined : source.href}
-                title={source.title}
-                allow={source.allow}
-                referrerpolicy={source.referrerPolicy}
-                style={source.style}
-                allowfullscreen
-                loading={index === 0 ? "eager" : "lazy"}></iframe>
-            </div>
-          ))
-        }
-      </div>
-    </section>
-  )
-}
+    </div>
+    <div class="tab-contents">
+      {videoSources.map((source, index) => (
+        <div
+          class="tab-content"
+          role="tabpanel"
+          id={`panel-${source.id}`}
+          aria-labelledby={`tab-${source.id}`}
+          aria-hidden={index === 0 ? "false" : "true"}
+          data-tab={source.id}
+          hidden={index !== 0}
+        >
+          <iframe
+            width={source.width}
+            height={source.height}
+            src={index === 0 ? source.href : undefined}
+            data-src={index === 0 ? undefined : source.href}
+            title={source.title}
+            allow={source.allow}
+            referrerpolicy={source.referrerPolicy}
+            style={source.style}
+            allowfullscreen
+            loading={index === 0 ? "eager" : "lazy"}></iframe>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
 
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  section {
-    margin: 0 auto;
-    max-width: 1200px;
-  }
-  iframe {
-    border-radius: 10px;
-    max-width: 100%;
+  .tabs {
     width: 100%;
-    aspect-ratio: 16 / 9;
-    height: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 32px 0;
+    border: 1px solid var(--ink);
+    background: var(--paper);
   }
+
+  .tabs__head {
+    display: grid;
+    gap: 12px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 16px 0;
+  }
+
+  .tabs__eyebrow {
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
   .tab-headers {
     display: flex;
-    gap: 10px;
-    padding: 0;
+    flex-wrap: wrap;
+    gap: 0;
   }
+
   .tab-header {
-    padding: 10px 20px;
-    border-radius: 5px 5px 0 0;
+    min-height: 42px;
+    border: 1px solid var(--paper);
+    border-bottom: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--paper);
+    padding: 0 18px;
     cursor: pointer;
-    border: 1px solid var(--border);
-    border-bottom: none;
-    background-color: #f9f9f9;
-    transition:
-      background-color 0.3s,
-      color 0.3s;
+    font-family: var(--academy-font-mono);
+    font-size: var(--academy-caption);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .tab-header.active {
-    background-color: #f9f9f9;
-    color: var(--black);
-    font-weight: bold;
-    border: 1px solid var(--border);
-    border-bottom: none;
-    z-index: 2;
+
+  .tab-header.active,
+  .tab-header:hover {
+    background: var(--paper);
+    color: var(--ink);
   }
+
+  .tab-contents {
+    background: var(--line);
+  }
+
   .tab-content {
-    padding: 20px;
-    border: 1px solid var(--border);
-    background-color: #f9f9f9;
-    border-radius: 0 5px 5px 5px;
     position: relative;
-    top: -1px;
-    z-index: 1;
+    padding: clamp(12px, 2vw, 20px);
+    background: var(--milk);
   }
+
+  .tab-content[hidden] {
+    display: none;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--ink);
+  }
+
   @media (max-width: 600px) {
-    .tab-headers {
-      flex-direction: column;
-      gap: 0;
+    .tabs__head {
+      padding: 14px 14px 0;
     }
-    .tab-header:nth-child(2) {
-      border-radius: 0;
-    }
-    .tab-header:nth-child(3) {
-      border-radius: 0;
-    }
+
+    .tab-headers,
     .tab-header {
       width: 100%;
-      text-align: center;
-    }
-    .tab-content {
-      border-radius: 0 0 5px 5px;
     }
   }
 </style>
@@ -174,22 +193,14 @@ const videoSources = [
       }
     }
 
-    const sections = document.querySelectorAll(".tabs");
-    sections.forEach(function (section) {
+    document.querySelectorAll(".tabs").forEach(function (section) {
       const tabButtons = section.querySelectorAll(".tab-header");
       const tabContents = section.querySelectorAll(".tab-content");
 
-      tabContents.forEach(function (panel) {
-        panel.setAttribute("aria-hidden", panel.hidden ? "true" : "false");
-      });
-
       tabButtons.forEach(function (tabButton) {
         tabButton.addEventListener("click", function () {
-          var tabButtonType = tabButton.dataset.tab;
-          var tabContent = section.querySelector(
-            ".tab-content[data-tab=\"" + tabButtonType + "\"]",
-          );
-
+          const tabButtonType = tabButton.dataset.tab;
+          const tabContent = section.querySelector(".tab-content[data-tab=\"" + tabButtonType + "\"]");
           if (!tabContent) return;
 
           tabContent.hidden = false;

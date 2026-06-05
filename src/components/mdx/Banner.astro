@@ -1,12 +1,4 @@
 ---
-/**
- * Баннер/Алерт для важной информации
- * Использование в MDX:
- * <Banner type="info">Важная информация!</Banner>
- * <Banner type="warning">Внимание!</Banner>
- * <Banner type="success">Отлично!</Banner>
- * <Banner type="danger">Ошибка!</Banner>
- */
 interface Props {
   type?: "info" | "warning" | "success" | "danger";
   title?: string;
@@ -15,33 +7,13 @@ interface Props {
 const { type = "info", title } = Astro.props;
 
 const config = {
-  info: {
-    icon: "ℹ️",
-    color: "#366ef0",
-    bg: "#e6f2ff",
-    border: "#b3d9ff",
-  },
-  warning: {
-    icon: "⚠️",
-    color: "#f09936",
-    bg: "#fff3e6",
-    border: "#ffe0b3",
-  },
-  success: {
-    icon: "✓",
-    color: "#2aa5a1",
-    bg: "#e6f9f8",
-    border: "#b3eceb",
-  },
-  danger: {
-    icon: "✕",
-    color: "#c05b66",
-    bg: "#ffe6e9",
-    border: "#ffb3bd",
-  },
+  info: { icon: "i", label: "INFO", color: "#1a3556" },
+  warning: { icon: "!", label: "ВАЖНО", color: "#c9882b" },
+  success: { icon: "✓", label: "ВЫВОД", color: "#2f7d5b" },
+  danger: { icon: "×", label: "СТОП", color: "#b23a14" },
 };
 
-const { icon, color, bg, border } = config[type];
+const { icon, label, color } = config[type];
 const bannerTitleId = title
   ? `banner-title-${type}-${Math.random().toString(36).slice(2, 10)}`
   : null;
@@ -49,12 +21,13 @@ const bannerTitleId = title
 
 <div
   class="banner"
-  style={`--banner-color: ${color}; --banner-bg: ${bg}; --banner-border: ${border};`}
+  style={`--banner-color: ${color};`}
   role="alert"
   {...bannerTitleId ? { "aria-labelledby": bannerTitleId } : {}}
 >
-  <div class="banner-icon" aria-hidden="true">{icon}</div>
-  <div class="banner-content">
+  <div class="banner-head">
+    <span class="banner-icon" aria-hidden="true">{icon}</span>
+    <span class="banner-kicker">[ {label} ]</span>
     {
       title && bannerTitleId && (
         <div id={bannerTitleId} class="banner-title">
@@ -62,44 +35,62 @@ const bannerTitleId = title
         </div>
       )
     }
-    <div class="banner-text">
-      <slot />
-    </div>
+  </div>
+  <div class="banner-text">
+    <slot />
   </div>
 </div>
 
 <style>
   .banner {
-    display: flex;
-    gap: clamp(10px, 1.4vw, 14px);
     margin: clamp(1rem, 2vw, 1.5rem) 0;
-    padding: clamp(12px, 1.6vw, 16px) clamp(16px, 2vw, 20px);
-    border-left: 4px solid var(--banner-color);
-    border-radius: clamp(6px, 0.8vw, 8px);
-    background: var(--banner-bg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--banner-color);
+    border-radius: 0;
+    background: #efe9da;
+    color: #1a1410;
+    overflow: hidden;
+  }
+
+  .banner-head {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 14px;
+    border-bottom: 1px solid #1a1410;
+    background: var(--banner-color);
+    color: #efe9da;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   .banner-icon {
-    font-size: clamp(20px, 2.4vw, 24px);
-    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid currentColor;
+    font-size: 14px;
+    font-weight: 700;
     line-height: 1;
   }
 
-  .banner-content {
-    flex: 1;
-    min-width: 0;
+  .banner-kicker,
+  .banner-title {
+    font-size: 11px;
+    font-weight: 700;
   }
 
   .banner-title {
-    font-weight: 700;
-    font-size: clamp(14px, 1.6vw, 16px);
-    color: var(--banner-color);
-    margin-bottom: clamp(4px, 0.6vw, 6px);
+    color: inherit;
+    text-align: right;
   }
 
   .banner-text {
-    color: var(--black);
+    padding: clamp(14px, 1.8vw, 18px) clamp(16px, 2vw, 22px);
+    color: #1a1410;
     line-height: 1.6;
     font-size: clamp(14px, 1.5vw, 15px);
   }
@@ -115,23 +106,23 @@ const bannerTitleId = title
   .banner-text :global(a) {
     color: var(--banner-color);
     text-decoration: underline;
+    text-decoration-thickness: 1px;
   }
 
   @media (max-width: 600px) {
-    .banner {
-      padding: 12px 16px;
-      gap: 10px;
-    }
-
-    .banner-icon {
-      font-size: 20px;
+    .banner-head {
+      grid-template-columns: auto 1fr;
+      padding: 0 12px;
     }
 
     .banner-title {
-      font-size: 14px;
+      grid-column: 1 / -1;
+      padding-bottom: 10px;
+      text-align: left;
     }
 
     .banner-text {
+      padding: 14px;
       font-size: 14px;
     }
   }

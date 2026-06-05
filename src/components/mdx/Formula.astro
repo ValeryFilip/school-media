@@ -7,20 +7,23 @@ const { compact = false } = Astro.props;
 ---
 
 <div class="formula" data-compact={compact ? "true" : "false"}>
-  <slot />
+  <div class="formula__label" aria-hidden="true">// формула</div>
+  <div class="formula__body">
+    <slot />
+  </div>
 </div>
 
 <style>
   .formula {
+    position: relative;
     display: block;
     max-width: 100%;
     overflow-x: auto;
     margin: clamp(8px, 1.4vw, 12px) 0;
-    padding: clamp(8px, 1.3vw, 12px) clamp(12px, 1.7vw, 16px);
-    border: 1px solid rgba(54, 110, 240, 0.18);
-    border-radius: 8px;
-    background: #f8fbff;
-    color: var(--black, #111);
+    border: 1px solid #c9bfac;
+    border-radius: 0;
+    background: #f7f2e4;
+    color: #1a1410;
     font-family: "Times New Roman", "Cambria Math", "STIX Two Math", serif;
     font-size: clamp(16px, 1.45vw, 18px);
     line-height: 1.45;
@@ -30,10 +33,62 @@ const { compact = false } = Astro.props;
     word-break: normal;
   }
 
+  .formula::before,
+  .formula::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: #b23a14;
+    pointer-events: none;
+  }
+
+  .formula::before {
+    left: 6px;
+    top: 6px;
+    border-left: 1px solid;
+    border-top: 1px solid;
+  }
+
+  .formula::after {
+    right: 6px;
+    bottom: 6px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+  }
+
+  .formula__label {
+    position: sticky;
+    left: 0;
+    display: block;
+    padding: 8px 12px;
+    border-bottom: 1px solid #c9bfac;
+    background: #efe9da;
+    color: #b23a14;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .formula__body {
+    padding: clamp(10px, 1.5vw, 14px) clamp(14px, 2vw, 20px);
+  }
+
   .formula[data-compact="true"] {
     margin: clamp(8px, 1.4vw, 12px) 0;
-    padding: clamp(8px, 1.3vw, 12px) clamp(12px, 1.7vw, 16px);
     font-size: clamp(16px, 1.45vw, 18px);
+  }
+
+  .formula[data-compact="true"] .formula__label {
+    padding-block: 6px;
+  }
+
+  .formula[data-compact="true"] .formula__body {
+    padding: clamp(8px, 1.3vw, 12px) clamp(12px, 1.7vw, 16px);
   }
 
   .formula :global(.formula-line) {
@@ -53,6 +108,7 @@ const { compact = false } = Astro.props;
     overflow-wrap: normal;
     word-break: normal;
   }
+
   .formula :global(.formula-line + .formula-line) {
     margin-top: 0.55em;
   }
