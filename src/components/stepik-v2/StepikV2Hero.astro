@@ -111,40 +111,30 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
         {/* Hero-визуал: molecule (бензол, через EgeScripts) | lattice | cascade | electrons.
             На мобильных капается размером (max-w-[280px] mx-auto), чтобы декор-квадрат
             не отъедал пол-экрана. На lg+ — без ограничений.
-            overflow-hidden — чтобы 3D-проекции lattice/molecule не вырисовывались
-            за пределами стейджа и не пушили horizontal scroll. */}
+            Без overflow-hidden — у cascade/electrons есть glow/drop-shadow, который
+            рисуется за границей стейджа; обрезать его — терять весь визуал.
+            Защита от horizontal scroll — overflow-hidden на самой <section> в самом верху. */}
         <div
-          class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none overflow-hidden"
+          class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none"
           id={heroVisual === "molecule" ? "moleculeStage" : undefined}
         >
           {heroVisual === "lattice"   && <StepikV2HeroLattice />}
           {heroVisual === "cascade"   && <StepikV2HeroCascade />}
           {heroVisual === "electrons" && <StepikV2HeroElectrons />}
 
-          <div class="absolute inset-0 pointer-events-none z-10">
-            <div
-              class="absolute top-3 left-3 font-mono text-[10px] text-dim"
-              id={heroVisual === "molecule" ? "moleculeX" : undefined}
-            >
-              {heroVisual === "molecule" ? "X: 0.00" : ""}
+          {/* Угловые overlay-лейблы (X: 0.00, [3D · ARENE], фенол · C₆H₅OH,
+              M = 94.11 г/моль) спроектированы под 3D-сцену бензола.
+              На cascade/lattice/electrons они садятся прямо поверх визуала
+              и сливаются с tube-labels — выглядит как «6-я пробирка с подписью».
+              Показываем только для molecule. */}
+          {heroVisual === "molecule" && (
+            <div class="absolute inset-0 pointer-events-none z-10">
+              <div class="absolute top-3 left-3 font-mono text-[10px] text-dim" id="moleculeX">X: 0.00</div>
+              <div class="absolute top-3 right-3 font-mono text-[10px] text-acid" id="moleculeY">{moleculeTopRight}</div>
+              <div class="absolute bottom-3 left-3 font-mono text-[10px] text-dim">{moleculeBottomLeft}</div>
+              <div class="absolute bottom-3 right-3 font-mono text-[10px] text-dim">{moleculeBottomRight}</div>
             </div>
-            <div
-              class="absolute top-3 right-3 font-mono text-[10px] text-acid"
-              id={heroVisual === "molecule" ? "moleculeY" : undefined}
-            >
-              {moleculeTopRight}
-            </div>
-            <div
-              class="absolute bottom-3 left-3 font-mono text-[10px] text-dim"
-            >
-              {moleculeBottomLeft}
-            </div>
-            <div
-              class="absolute bottom-3 right-3 font-mono text-[10px] text-dim"
-            >
-              {moleculeBottomRight}
-            </div>
-          </div>
+          )}
           {heroVisual === "molecule" && (
             <div class="absolute inset-8 molecule" id="molecule"></div>
           )}
