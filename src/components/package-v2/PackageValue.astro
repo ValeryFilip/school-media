@@ -1,0 +1,164 @@
+---
+import type { PackageData } from "../../data/packageLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: PackageData["value"];
+}
+
+const { data: d } = Astro.props;
+---
+
+<section
+  class="section relative"
+  id="value"
+  style="background: var(--paperWarm); color: var(--ink);"
+>
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div
+          class="font-mono text-[12px] uppercase tracking-widest text-fuchsia2"
+        >
+          {d.secNum}
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+      </div>
+    </div>
+
+    <!-- Comparison: separately vs bundle -->
+    <div
+      class="grid grid-cols-12 gap-px border-2"
+      style="border-color: var(--ink); background: var(--ink);"
+    >
+      <!-- Separately (paper) -->
+      <div
+        class="col-span-12 md:col-span-6 p-8 md:p-12"
+        style="background: var(--paper);"
+      >
+        <div
+          class="font-mono text-[11px] uppercase tracking-widest mb-6"
+          style="color: rgba(10,10,10,0.5);"
+        >
+          {d.separately.kicker}
+        </div>
+        <div class="space-y-3 mb-8">
+          {
+            d.separately.rows.map((r) => (
+              <div
+                class="flex items-center justify-between font-mono text-sm pb-3 border-b"
+                style="border-color: rgba(10,10,10,0.15);"
+              >
+                <span>{r.label}</span>
+                <span class="font-bold">{r.price}</span>
+              </div>
+            ))
+          }
+        </div>
+        <div
+          class="font-display font-bold text-[clamp(40px,6vw,80px)] leading-none tracking-tight line-through"
+          style="text-decoration-color: var(--fuchsia2); text-decoration-thickness: 4px;"
+        >
+          {d.separately.total}
+        </div>
+        <div
+          class="font-mono text-[11px] mt-4"
+          style="color: rgba(10,10,10,0.5);"
+        >
+          {d.separately.footnote}
+        </div>
+      </div>
+
+      <!-- Bundle (ink) -->
+      <div
+        class="col-span-12 md:col-span-6 p-8 md:p-12 relative"
+        style="background: var(--ink); color: var(--paper);"
+      >
+        <div
+          class="absolute top-6 right-6 font-mono text-[10px] bg-fuchsia2 text-ink px-3 py-1.5 font-bold tracking-widest"
+        >
+          {d.bundle.badge}
+        </div>
+        <div
+          class="font-mono text-[11px] uppercase tracking-widest mb-6 text-acid"
+        >
+          {d.bundle.kicker}
+        </div>
+        <div class="space-y-3 mb-8">
+          {
+            d.bundle.rows.map((r) => (
+              <div class="flex items-center justify-between font-mono text-sm pb-3 border-b border-line">
+                <span class="text-paper/80">{r.label}</span>
+                <span class="text-acid font-bold">{r.value}</span>
+              </div>
+            ))
+          }
+        </div>
+        <div
+          class="font-display font-bold text-[clamp(40px,6vw,80px)] leading-none tracking-tight text-acid"
+        >
+          {d.bundle.total}
+        </div>
+        <div
+          class="font-mono text-[11px] mt-4 text-dim"
+          set:html={d.bundle.footnote.html}
+        />
+      </div>
+    </div>
+
+    <!-- 3 savings callouts -->
+    <div
+      class="mt-px grid grid-cols-1 md:grid-cols-3 gap-px border-2 border-t-0"
+      style="border-color: var(--ink); background: var(--ink);"
+    >
+      {
+        d.callouts.map((c) => {
+          const bg =
+            c.kind === "fuchsia"
+              ? "background: var(--fuchsia2);"
+              : "background: var(--paper);";
+          const labelColor =
+            c.kind === "fuchsia"
+              ? "color: rgba(10,10,10,0.7);"
+              : "color: rgba(10,10,10,0.5);";
+          return (
+            <div
+              class="min-w-0 min-h-[210px] p-7 md:p-9 flex flex-col justify-between"
+              style={bg}
+            >
+              {typeof c.value === "string" ? (
+                <div class="font-display font-bold text-[clamp(42px,5vw,72px)] leading-[0.92] tracking-tight text-balance break-words">
+                  {c.value}
+                </div>
+              ) : (
+                <div
+                  class="font-display font-bold text-[clamp(42px,5vw,72px)] leading-[0.92] tracking-tight text-balance break-words"
+                  set:html={c.value.html}
+                />
+              )}
+              <div
+                class="font-mono text-[11px] uppercase tracking-widest mt-4"
+                style={labelColor}
+              >
+                {c.label}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div class="mt-10 text-center">
+      <a
+        href={d.cta.href}
+        class="cta-pulse relative inline-flex items-center gap-3 font-display font-bold uppercase tracking-tight text-[18px] px-10 py-6"
+        style="background: var(--ink); color: var(--acid);"
+      >
+        {d.cta.label}
+        <span class="font-mono">→</span>
+      </a>
+    </div>
+  </div>
+</section>

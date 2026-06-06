@@ -28,14 +28,9 @@
     "ym",
   );
 
-  // webvisor отключён — session replay тяжёлый по перфомансу
-  // и в этом проекте не используется.
-  // clickmap + trackLinks включены — это лёгкие аналитические функции
-  // (тепловая карта кликов и трекинг внешних ссылок), они не делают
-  // фоновых fetch к ассетам.
   ym(104058532, "init", {
     ssr: true,
-    webvisor: false,
+    webvisor: true,
     clickmap: true,
     trackLinks: true,
     ecommerce: "dataLayer",

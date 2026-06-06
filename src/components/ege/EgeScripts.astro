@@ -1233,7 +1233,7 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
       // ====================== 13. FAQ ======================
       __egeIdle(function faq() {
         const wrap = document.getElementById("faqList");
-        if (!wrap) return;
+        if (!wrap || wrap.childElementCount > 0) return;
         const items = __egeRuntime.faq ?? [];
         items.forEach((it, i) => {
           const d = document.createElement("details");

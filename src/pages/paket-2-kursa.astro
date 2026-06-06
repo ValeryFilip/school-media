@@ -1,0 +1,89 @@
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import { egeLandingData } from "../data/egeLanding";
+
+import PackageHero from "../components/package-v2/PackageHero.astro";
+import PackageInside from "../components/package-v2/PackageInside.astro";
+import PackageValue from "../components/package-v2/PackageValue.astro";
+import PackageWhy from "../components/package-v2/PackageWhy.astro";
+import PackageHowTo from "../components/package-v2/PackageHowTo.astro";
+import PackagePricing from "../components/package-v2/PackagePricing.astro";
+import PackageFinalCta from "../components/package-v2/PackageFinalCta.astro";
+
+import EgeAuthor from "../components/ege/EgeAuthor.astro";
+import EgeMarquee from "../components/ege/EgeMarquee.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import EgeScripts from "../components/ege/EgeScripts.astro";
+import PaymentPopup from "../components/stepik/PaymentPopup.astro";
+import StepikV2Selfpaced from "../components/stepik-v2/StepikV2Selfpaced.astro";
+
+import { pack2, stepikUrls } from "../data/packageLanding";
+import { buildPackageLandingSeo } from "../lib/packageLandingSeo";
+
+const data = pack2;
+
+const pkgNav = {
+  ...egeLandingData.nav,
+  meta: data.nav.meta,
+  landingLinks: data.nav.landingLinks,
+  cta: data.nav.cta,
+};
+
+const seo = buildPackageLandingSeo(data);
+---
+
+<EgeLandingLayout
+  title={data.seo.title}
+  description={data.seo.description}
+  image={data.seo.image}
+  imageAlt={data.seo.imageAlt}
+  url={data.seo.url}
+  nav={pkgNav}
+  footer={egeLandingData.footer}
+  floatingActions={egeLandingData.floatingActions}
+  popupForm={egeLandingData.popupForm}
+  breadcrumbs={seo.breadcrumbs}
+  showBreadcrumbs={true}
+  courseJsonLd={seo.courseJsonLd}
+  webPageJsonLd={seo.webPageJsonLd}
+  productJsonLd={seo.productJsonLd}
+  faqJsonLd={seo.faqJsonLd}
+>
+  <PackageHero data={data.hero} />
+  <EgeMarquee items={data.heroMarquee} />
+  <PackageInside data={data.inside} />
+  <StepikV2Selfpaced data={data.selfpaced} />
+  <EgeAuthor
+    section="[04] / АВТОР"
+    cta={{
+      href: "#price",
+      html: "Посмотреть пакет",
+      note: "2 КУРСА · 1650 ЗАДАНИЙ · ДОСТУП НАВСЕГДА",
+    }}
+  />
+  <PackageValue data={data.value} />
+  <PackageWhy data={data.why} />
+  <PackageHowTo data={data.afterPayment} />
+  <PackagePricing data={data.pricing} />
+  <EgeFaq
+    section={data.faq.secNum}
+    title={data.faq.title}
+    items={data.faq.items}
+    supportCta={{
+      source: "package-faq",
+      campaign: "package",
+      lead: "Подскажем, какой пакет или отдельный курс выбрать под твой уровень, цель и сроки. Разберём оплату, доступ к Stepik и состав материалов.",
+    }}
+  />
+  <PackageFinalCta data={data.finalCta} bgId="ptBg-final" />
+
+  <Fragment slot="after-footer">
+    <EgeScripts data={{ faq: data.faq.items }} />
+    <PaymentPopup
+      stepikUrl={stepikUrls(data.pricing.featured.stepik).pay}
+      title="Оплата пакета со скидкой"
+      theme="dark"
+      settleMs={5200}
+    />
+  </Fragment>
+</EgeLandingLayout>

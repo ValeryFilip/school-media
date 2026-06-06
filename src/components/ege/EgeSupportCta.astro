@@ -1,0 +1,91 @@
+---
+interface ContactRow {
+  label: string;
+  value: string;
+  href?: string;
+}
+
+interface Props {
+  kicker?: string;
+  titleHtml?: string;
+  lead?: string;
+  contacts?: ContactRow[];
+  ctaLabel?: string;
+  popupId?: string;
+  source?: string;
+  variant?: string;
+  campaign?: string;
+}
+
+const {
+  kicker = "// помощь с выбором",
+  titleHtml = `Не&nbsp;нашёл ответ? <span class="text-acid">Оставь заявку.</span>`,
+  lead = "Подскажем, какой курс или пакет подойдёт под твой уровень, цель и сроки. Разберём оплату, доступ к платформе и формат обучения.",
+  contacts = [
+    { label: "// telegram", value: "@valery_chemistry", href: "https://t.me/valery_chemistry" },
+    { label: "// email", value: "info@egehim.ru", href: "mailto:info@egehim.ru" },
+    { label: "// часы", value: "пн-пт · 10-20 мск" },
+  ],
+  ctaLabel = "Оставить заявку",
+  popupId = "lead-popup",
+  source = "course-support",
+  variant = "support",
+  campaign = "stepik",
+} = Astro.props as Props;
+---
+
+<div class="mt-12 border border-line bg-coal grid grid-cols-12 gap-px overflow-hidden">
+  <div class="col-span-12 md:col-span-7 p-8 md:p-10 bg-coal">
+    <div class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-4">
+      {kicker}
+    </div>
+    <div
+      class="font-display font-bold text-[clamp(32px,4vw,56px)] leading-[1.0] tracking-[-0.015em] mb-4"
+      set:html={titleHtml}
+    />
+    <p class="text-paper/75 text-lg leading-snug max-w-xl">{lead}</p>
+  </div>
+
+  <div
+    class="col-span-12 md:col-span-5 p-8 md:p-10 bg-ink border-t md:border-t-0 md:border-l border-line flex flex-col justify-between gap-6"
+  >
+    <div class="space-y-4 font-mono text-[13px]">
+      {
+        contacts.map((contact, index) => (
+          <div
+            class:list={[
+              "flex items-center justify-between gap-4",
+              index < contacts.length - 1 && "pb-3 border-b border-line",
+            ]}
+          >
+            <span class="text-dim">{contact.label}</span>
+            {contact.href ? (
+              <a
+                href={contact.href}
+                target={contact.href.startsWith("http") ? "_blank" : undefined}
+                rel={contact.href.startsWith("http") ? "noopener" : undefined}
+                class="text-paper hover:text-acid transition"
+              >
+                {contact.value}
+              </a>
+            ) : (
+              <span class="text-paper">{contact.value}</span>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <button
+      type="button"
+      class="popup-btn inline-flex items-center justify-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight text-[15px] px-6 py-4 hover:bg-paper transition"
+      data-popup-id={popupId}
+      data-source={source}
+      data-variant={variant}
+      data-campaign={campaign}
+    >
+      {ctaLabel}
+      <span class="font-mono">→</span>
+    </button>
+  </div>
+</div>

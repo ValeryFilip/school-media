@@ -6,7 +6,8 @@ export const stepikOvrLanding = {
     title: "Курс по ОВР для ЕГЭ 2027 — Валерий Филипенко | ЕГЭХИМ",
     description:
       "Самостоятельный курс по ОВР: 5 часов теории, 125 заданий с автопроверкой, тренажёры заданий 19 и 29. Доступ навсегда.",
-    image: "/images/technical/og-home.png",
+    image: "/images/new-design/ovr.webp",
+    imageAlt: "Самостоятельный курс ЕГЭХИМ по ОВР для ЕГЭ 2027",
     keywords: [
       "ОВР ЕГЭ",
       "окислительно-восстановительные реакции",
@@ -369,26 +370,26 @@ export const stepikOvrLanding = {
     packages: [
       {
         href: "/paket-3-kursa/",
-        label: "[ PACK ×3 · 68% ЕГЭ ]",
-        side: "−26% при покупке пакета →",
+        label: "[ PACK ×3 · ≈95% ЕГЭ ]",
+        side: "−19% при покупке пакета →",
         title: "Орг + Неорг + Общая",
         subtitle: "// почти вся химия ЕГЭ за один платеж",
-        price: "11 700 ₽",
-        oldPrice: "15 500 ₽",
-        discount: "−26%",
+        price: "11 300 ₽",
+        oldPrice: "13 970 ₽",
+        discount: "−19%",
         text: "3 курса: органика + неорганика + общая химия. Чат поддержки на все три. Доступ — навсегда.",
         paymentUrl:
           "https://stepik.org/a/238138/pay?promo=90c9f6c96cad6e37&utm_source=cite&utm_medium=ovr&utm_campaign=%25",
       },
       {
         href: "/paket-2-kursa/",
-        label: "[ PACK ×2 · 28% ЕГЭ ]",
-        side: "−25% при покупке пакета →",
+        label: "[ PACK ×2 · ≈65% ЕГЭ ]",
+        side: "−15% при покупке пакета →",
         title: "Общая + Неорганика",
         subtitle: "// базовый пакет из двух курсов",
         price: "6 990 ₽",
-        oldPrice: "10 000 ₽",
-        discount: "−25%",
+        oldPrice: "8 180 ₽",
+        discount: "−15%",
         text: "2 курса: общая + неорганическая химия. Чат поддержки на оба. Доступ — навсегда.",
         paymentUrl:
           "https://stepik.org/a/238136/pay?promo=ee3fee815d6fc976&utm_source=cite&utm_medium=ovr&utm_campaign=5%25",

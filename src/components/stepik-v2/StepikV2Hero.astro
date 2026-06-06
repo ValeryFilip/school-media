@@ -117,6 +117,7 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
         <div
           class="aspect-square relative molecule-stage max-w-[280px] mx-auto lg:max-w-none"
           id={heroVisual === "molecule" ? "moleculeStage" : undefined}
+          aria-hidden="true"
         >
           {heroVisual === "lattice"   && <StepikV2HeroLattice />}
           {heroVisual === "cascade"   && <StepikV2HeroCascade />}
@@ -150,11 +151,11 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
         <div class="bg-ink p-6">
           {
             stat.value.startsWith("+") && counterMatch ? (
-              <div class="font-display font-bold text-4xl md:text-5xl">
-                +<span data-counter={counterMatch[1]}>0</span>
+              <div class="font-display font-bold text-4xl md:text-5xl" aria-label={stat.value}>
+                <span aria-hidden="true">+<span data-counter={counterMatch[1]}>0</span></span>
               </div>
             ) : counterMatch && !isRating ? (
-              <div class="font-display font-bold text-4xl md:text-5xl" data-counter={counterMatch[1]} data-suffix={counterMatch[2] || ""}>0</div>
+              <div class="font-display font-bold text-4xl md:text-5xl" data-counter={counterMatch[1]} data-suffix={counterMatch[2] || ""} aria-label={stat.value}>0</div>
             ) : (
               <div class:list={["font-display font-bold text-4xl md:text-5xl", stat.value === "∞" && "text-acid", isRating && "text-fuchsia2"]}>
                 {stat.value}{isRating && <span class="star">⭐</span>}

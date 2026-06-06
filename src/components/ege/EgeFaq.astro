@@ -1,6 +1,18 @@
 ---
 import EgeH2 from "./EgeH2.astro";
 import type { Mark } from "./EgeH2.astro";
+import EgeSupportCta from "./EgeSupportCta.astro";
+
+interface SupportCta {
+  kicker?: string;
+  titleHtml?: string;
+  lead?: string;
+  ctaLabel?: string;
+  popupId?: string;
+  source?: string;
+  variant?: string;
+  campaign?: string;
+}
 
 interface Props {
   section?: string;
@@ -8,13 +20,21 @@ interface Props {
   title?: { text: string; marks?: readonly Mark[] };
   /** Старый формат (обратная совместимость): сырое HTML. */
   titleHtml?: string;
+  /** Серверный рендер FAQ для индексации; без items сохраняется старый JS-контур. */
+  items?: ReadonlyArray<{ q: string; a: string }>;
+  /** Опциональный миниблок поддержки внутри FAQ-секции. */
+  supportCta?: boolean | SupportCta;
 }
 
 const {
   section = "[13] / FAQ",
   title,
   titleHtml = 'Вопросы, <span class="text-dim">которые ты&nbsp;задаёшь себе в&nbsp;3&nbsp;часа ночи</span> перед&nbsp;тем, как&nbsp;записаться.',
+  items = [],
+  supportCta = false,
 } = Astro.props as Props;
+
+const supportCtaProps = supportCta === true ? {} : supportCta || null;
 ---
 
 <section class="section relative" id="faq">
@@ -36,6 +56,27 @@ const {
       </div>
     </div>
 
-    <div class="border-t border-line" id="faqList"></div>
+    <div class="border-t border-line" id="faqList">
+      {
+        items.map((item, index) => (
+          <details class="border-b border-line group">
+            <summary class="flex items-start gap-6 py-6 md:py-8 hover:text-acid transition">
+              <div class="font-mono text-sm text-dim mt-1 w-10 shrink-0">
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              <div class="font-display font-medium text-xl md:text-2xl leading-snug flex-1">
+                {item.q}
+              </div>
+              <div class="faq-plus font-mono text-2xl shrink-0 mt-1">+</div>
+            </summary>
+            <div class="pb-8 pl-16 pr-12 max-w-3xl text-paper/80 leading-relaxed">
+              {item.a}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+
+    {supportCtaProps && <EgeSupportCta {...supportCtaProps} />}
   </div>
 </section>

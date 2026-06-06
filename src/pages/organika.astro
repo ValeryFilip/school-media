@@ -19,16 +19,18 @@ import {
   buildCourseJsonLd,
   buildFAQJsonLd,
   buildProductJsonLd,
+  buildWebPageJsonLd,
   buildVideoJsonLd,
   pageUrlFromPath,
 } from "../lib/seoData";
 
 const origin = Astro.url.origin;
 const url = pageUrlFromPath(origin, Astro.url.pathname);
+const courseName = "Курс по органической химии для ЕГЭ 2027";
 const courseJsonLd = buildCourseJsonLd({
   origin,
   url,
-  name: "Курс по органической химии для ЕГЭ 2027",
+  name: courseName,
   description: page.seo.description,
   ratingValue: 5.0,
   reviewCount: 100,
@@ -37,7 +39,7 @@ const courseJsonLd = buildCourseJsonLd({
 const productJsonLd = buildProductJsonLd({
   origin,
   url,
-  name: "Курс по органической химии для ЕГЭ 2027",
+  name: courseName,
   description: page.seo.description,
   image: page.seo.image,
   price: "5790",
@@ -48,11 +50,18 @@ const videoJsonLd = videoSlide
   ? buildVideoJsonLd({
       origin,
       pageUrl: url,
-      name: videoSlide.title,
+      name: `${courseName}: как устроено обучение на Stepik`,
       description: videoSlide.text,
       contentUrl: videoSlide.media.src,
     })
   : null;
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url,
+  name: page.seo.title,
+  siteName: "ЕГЭХИМ",
+  about: courseName,
+});
 const faqJsonLd = buildFAQJsonLd(page.faq.items);
 const faqTitle = {
   text: "Часто задаваемые вопросы.",
@@ -64,22 +73,28 @@ const faqTitle = {
   title={page.seo.title}
   description={page.seo.description}
   image={page.seo.image}
+  imageAlt={page.seo.imageAlt}
   url={url}
   nav={page.nav}
   footer={page.footer}
   floatingActions={page.floatingActions}
   popupForm={page.popupForm}
-  breadcrumbs={[{ name: "Курс по органической химии для ЕГЭ" }]}
+  breadcrumbs={[
+    { name: "Все курсы", href: "/allcourses/" },
+    { name: "Курс по органической химии для ЕГЭ" },
+  ]}
   showBreadcrumbs={true}
   courseJsonLd={courseJsonLd}
   productJsonLd={productJsonLd}
   videoJsonLd={videoJsonLd}
   faqJsonLd={faqJsonLd}
+  webPageJsonLd={webPageJsonLd}
 >
   <StepikV2Hero
     data={page.hero}
     breadcrumbs={[
       { label: "Главная", href: "/" },
+      { label: "Все курсы", href: "/allcourses/" },
       { label: "Курс по органической химии для ЕГЭ" },
     ]}
   />
@@ -95,7 +110,7 @@ const faqTitle = {
   <StepikV2HowTo />
   <StepikV2Pricing data={page.pricing} />
   <StepikV2Universities data={page.universities} />
-  <EgeFaq section={page.faq.section} title={faqTitle} />
+  <EgeFaq section={page.faq.section} title={faqTitle} supportCta={{ source: "stepik-course-faq", campaign: "stepik-course" }} />
 
   <Fragment slot="after-footer">
     <EgeScripts data={{ faq: page.faq.items }} />

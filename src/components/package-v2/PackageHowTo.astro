@@ -1,0 +1,89 @@
+---
+/*
+  PackageHowTo — секция «Что будет после оплаты» для пакетных лендингов.
+  Отличается от соло-варианта (StepikV2HowTo): акцент не на маршруте
+  Stepik, а на том, что в личном кабинете появляются ВСЕ N курсов сразу
+  и проходить их можно в любом удобном порядке.
+
+  Контент берётся из data.afterPayment в packageLanding.ts.
+*/
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Step {
+  code: string;
+  tag: string;
+  title: string;
+  text: string;
+}
+
+interface Props {
+  data: {
+    secNum: string;
+    title: { text: string; marks?: ReadonlyArray<{ text: string; color?: string; underline?: string }> };
+    intro?: string;
+    steps: Step[];
+  };
+}
+
+const { data } = Astro.props as Props;
+---
+
+<section class="section relative" id="how-to">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{data.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" />
+        {data.intro && (
+          <p class="mt-6 max-w-2xl font-mono text-[12px] text-dim leading-snug">
+            {data.intro}
+          </p>
+        )}
+      </div>
+    </div>
+
+    <div class="howto-grid">
+      {data.steps.map((s) => (
+        <div class="bg-ink p-8 md:p-10 relative howto-card">
+          <div class="absolute top-4 right-5 font-mono text-[10px] text-dim">[{s.code}]</div>
+          <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-5">{s.tag}</div>
+          <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-3 m-0">{s.title}</h3>
+          <p class="text-paper/75 text-sm leading-snug">{s.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Desktop: 3-col grid. Mobile: горизонтальный scroll-snap со
+     свайпом пальцем (тот же паттерн, что в StepikV2HowTo). */
+  .howto-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 768px) {
+    .howto-grid {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 1px;
+      margin-inline: calc(var(--gutter, 16px) * -1);
+      padding-inline: var(--gutter, 16px);
+      scrollbar-width: none;
+    }
+    .howto-grid::-webkit-scrollbar { display: none; }
+    .howto-card {
+      flex: 0 0 85%;
+      scroll-snap-align: start;
+    }
+  }
+</style>

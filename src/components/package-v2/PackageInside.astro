@@ -1,0 +1,99 @@
+---
+import type { PackageData } from "../../data/packageLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: PackageData["inside"];
+}
+
+const { data: d } = Astro.props;
+
+/** Адаптивная колоночность: 2/3/4 модуля → разные сетки. */
+const cols = d.modules.length;
+const gridColsClass =
+  cols === 2
+    ? "md:grid-cols-2"
+    : cols === 4
+      ? "md:grid-cols-2 lg:grid-cols-4"
+      : "md:grid-cols-3";
+---
+
+<section class="section relative" id="inside">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+        <p class="mt-6 max-w-2xl text-lg leading-snug text-paper/80">
+          {d.lead}
+        </p>
+      </div>
+    </div>
+
+    <!-- Module cards -->
+    <div class:list={["grid grid-cols-1 gap-px bg-line border border-line", gridColsClass]}>
+      {
+        d.modules.map((m) => {
+          const isExternal = Boolean(m.href?.startsWith("http"));
+
+          return (
+            <div class="mod-card p-7 md:p-8 flex flex-col">
+              <div class="flex items-start justify-between mb-6">
+                <span class="font-mono text-[10px] text-acid uppercase tracking-widest">
+                  {m.idx}
+                </span>
+                <span class="pill text-acid">{m.pill}</span>
+              </div>
+              <h3 class="font-display font-bold text-[clamp(32px,4vw,52px)] leading-none tracking-tight">
+                {m.name}
+              </h3>
+              <div class="font-mono text-[11px] text-dim mt-3 mb-6">
+                {m.meta}
+              </div>
+              <ul class="space-y-2.5 font-mono text-[12px] text-paper/75 leading-relaxed flex-1">
+                {m.bullets.map((b) => (
+                  <li class="flex gap-3">
+                    <span class="text-acid shrink-0">→</span> {b}
+                  </li>
+                ))}
+              </ul>
+              <div class="mt-6 pt-5 border-t border-line font-mono text-[11px] text-dim">
+                отдельно ·{" "}
+                <span class="text-paper line-through">{m.priceSeparately}</span>
+              </div>
+              {m.href && (
+                <a
+                  href={m.href}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  class="mt-4 inline-flex items-center justify-center gap-2 border border-line px-4 py-3 font-mono text-[11px] uppercase tracking-widest text-paper hover:bg-paper hover:text-ink transition-colors"
+                >
+                  {isExternal ? "Смотреть на Stepik" : "Подробнее о курсе"}
+                  <span class="text-acid">↗</span>
+                </a>
+              )}
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <!-- Commonalities row -->
+    <div
+      class="mt-px grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line border-t-0"
+    >
+      {
+        d.commonalities.map((c) => (
+          <div class="bg-ink p-6">
+            <div class="font-display font-bold text-xl mb-1">{c.title}</div>
+            <div class="font-mono text-[11px] text-dim leading-relaxed">
+              {c.text}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

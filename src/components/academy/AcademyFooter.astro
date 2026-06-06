@@ -43,7 +43,7 @@ const bottomLinks = footer.bottomLinks ?? [];
 
   <div class="gutter pb-10">
     <div class="grid grid-cols-12 gap-px bg-aline border border-aline mb-10">
-      <div class="col-span-12 lg:col-span-4 bg-apaper p-6 md:p-8">
+      <div class="col-span-12 lg:col-span-3 bg-apaper p-6 md:p-8">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-7 h-7 border border-aink grid place-items-center">
             <span class="font-mono text-[10px]">Ch</span>
@@ -73,7 +73,7 @@ const bottomLinks = footer.bottomLinks ?? [];
       </div>
 
       {columns.slice(0, 2).map((column) => (
-        <div class="col-span-12 sm:col-span-6 lg:col-span-2 bg-apaper p-6 md:p-8">
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-apaper p-6 md:p-8">
           <div class="label mb-3">{column.title}</div>
           <ul class="font-mono text-sm space-y-2 text-ainkSoft">
             {column.links?.map((link) => (
@@ -92,7 +92,7 @@ const bottomLinks = footer.bottomLinks ?? [];
         </div>
       ))}
 
-      <div class="col-span-12 lg:col-span-4 bg-apaper p-6 md:p-8">
+      <div class="col-span-12 lg:col-span-3 bg-apaper p-6 md:p-8">
         <button
           type="button"
           class="popup-btn relative w-full inline-flex items-center justify-center gap-3 border-0 bg-rust text-apaper font-display font-bold uppercase tracking-tight px-5 py-5 hover:bg-aink transition cursor-pointer"

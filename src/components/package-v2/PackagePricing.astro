@@ -1,0 +1,258 @@
+---
+import type { PackageData } from "../../data/packageLanding";
+import { stepikUrls } from "../../data/packageLanding";
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+
+interface Props {
+  data: PackageData["pricing"];
+}
+
+const { data: d } = Astro.props;
+const f = d.featured;
+const urls = stepikUrls(f.stepik);
+---
+
+<section class="pkg-pricing relative" id="price">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-12">
+      <div class="col-span-12 md:col-span-3">
+        <div
+          class="font-mono text-[12px] tracking-wider uppercase text-ink/70"
+        >
+          {d.secNum}
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(40px,7vw,128px)] leading-[0.88] tracking-[-0.025em]"
+          set:html={d.title.html}
+        />
+        <div
+          class="mt-6 inline-flex items-center gap-3 bg-ink text-paper px-4 py-2 font-mono text-xs"
+        >
+          <span class="w-2 h-2 bg-acid"></span>
+          <span set:html={d.badge.html} />
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURED CARD ============================= -->
+    <div class="border-2 border-ink relative bg-ink text-paper">
+      <div
+        class="bg-acid text-ink font-mono text-[11px] tracking-widest py-2 px-5 uppercase font-bold flex flex-wrap items-center justify-between gap-2"
+      >
+        <span>{f.topStripeLeft}</span>
+        <span class="hidden md:inline">{f.topStripeRight}</span>
+      </div>
+
+      <div class="grid grid-cols-12">
+        <!-- LEFT: title + price -->
+        <div
+          class="col-span-12 lg:col-span-5 p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-line"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-mono text-[12px] text-acid">{f.code}</div>
+            <div class="font-mono text-[11px] text-dim">{f.skuId}</div>
+          </div>
+          <h3
+            class="font-display font-bold text-[clamp(40px,4.8vw,68px)] leading-[0.9] tracking-[-0.025em] break-words"
+            set:html={f.title.html}
+          />
+          <div class="font-mono text-sm text-dim mt-3 mb-8">{f.spec}</div>
+
+          <!-- Crossed price -->
+          <div class="relative mb-2">
+            <div class="font-mono text-base text-dim line-through inline-block">
+              {f.priceOld}
+            </div>
+            <span
+              class="inline-block ml-3 bg-fuchsia2 text-ink font-mono text-[10px] px-2 py-1 align-middle font-bold tracking-widest"
+            >
+              {f.priceOldBadge}
+            </span>
+          </div>
+          <div class="flex items-baseline gap-3 mb-2">
+            <div
+              class="font-display font-bold text-[clamp(48px,7vw,96px)] leading-none text-acid"
+              set:html={f.priceCurrent.html}
+            />
+            <div class="font-mono text-sm text-dim">{f.perpetualSuffix}</div>
+          </div>
+          <div class="font-mono text-xs text-dim mb-8">
+            {f.installmentNote}
+          </div>
+
+          <!-- Savings highlight -->
+          <div class="border border-fuchsia2 p-4 mb-6">
+            <div class="flex items-center justify-between font-mono text-[11px] mb-2">
+              <span class="text-fuchsia2">{f.savingHighlight.kicker}</span>
+              <span set:html={f.savingHighlight.sum.html} />
+            </div>
+            <div class="h-1.5 bg-line relative overflow-hidden">
+              <div
+                class="absolute inset-y-0 left-0 bg-fuchsia2"
+                style={`width:${f.savingHighlight.barPercent}%`}
+              >
+              </div>
+            </div>
+            <div
+              class="font-mono text-[10px] text-dim mt-2"
+              set:html={f.savingHighlight.foot.html}
+            />
+          </div>
+
+          <!-- Главная CTA: открывает iframe-попап Stepik с промокодом -->
+          <EgeAcidButton
+            as="button"
+            paymentUrl={urls.pay}
+            label={f.purchase.payLabel}
+            arrow="→"
+            ariaLabel={f.purchase.payLabel}
+            class="w-full py-5 text-lg"
+          />
+
+          <!-- Вторая CTA: внешняя ссылка на витрину курса -->
+          <a
+            href={urls.view}
+            target="_blank"
+            rel="noopener"
+            class="block w-full text-center mt-3 border border-paper text-paper py-4 font-mono text-[12px] uppercase tracking-widest hover:bg-paper hover:text-ink transition"
+            aria-label={f.purchase.viewLabel}
+          >
+            {f.purchase.viewLabel} <span>↗</span>
+          </a>
+
+          <div class="font-mono text-[10px] text-acid mt-3 text-center">
+            {f.purchase.note}
+          </div>
+          <div class="font-mono text-[10px] text-dim mt-1 text-center">
+            {f.ctaFootnote}
+          </div>
+        </div>
+
+        <!-- RIGHT: bonus tiles + features -->
+        <div class="col-span-12 lg:col-span-7">
+          <div class="grid grid-cols-2 gap-px bg-line border-b border-line">
+            {
+              f.bonuses.map((b) => (
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">
+                    {b.idx}
+                  </div>
+                  <div class="font-display font-bold text-xl leading-tight">
+                    {b.title}
+                  </div>
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug">
+                    {b.text}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="p-8 md:p-10">
+            <div
+              class="font-mono text-[11px] text-dim uppercase tracking-widest mb-5"
+            >
+              {f.featuresKicker}
+            </div>
+            <ul
+              class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 font-mono text-sm text-paper/90"
+            >
+              {
+                f.features.map((feat) => (
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span>
+                    <span>{feat}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECONDARY OPTIONS =========================== -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {
+        d.secondary.map((s) => (
+          <article
+            class:list={[
+              "bg-ink text-paper p-6 md:p-8 border border-ink transition flex flex-col",
+              s.borderHoverClass,
+            ]}
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class={`font-mono text-[11px] ${s.idxColor === "fuchsia" ? "text-fuchsia2" : "text-paper/70"}`}
+              >
+                {s.idx}
+              </div>
+              <div class="font-mono text-[11px] text-dim">
+                {s.hoverHint}
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-3xl md:text-4xl mb-1 leading-tight">
+              {s.title}
+            </h3>
+            <div class="font-mono text-xs text-dim mb-6">{s.meta}</div>
+            <div class="flex items-baseline gap-3 mb-6">
+              <div class="font-display font-bold text-3xl">{s.priceNew}</div>
+              <div class="font-mono text-[11px] text-dim line-through">
+                {s.priceOld}
+              </div>
+              <div class="font-mono text-[11px] text-acid font-bold">
+                {s.saving}
+              </div>
+            </div>
+
+            {/* Кнопки апсейла — как на соло-курсах: оплата через попап +
+                ссылка на страницу курса/пакета. */}
+            <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {s.paymentUrl && (
+                <a
+                  href="javascript:void(0)"
+                  role="button"
+                  data-payment-url={s.paymentUrl}
+                  class="block w-full text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
+                >
+                  Оплатить со скидкой 5%
+                </a>
+              )}
+              <a
+                href={s.href}
+                target={s.href.startsWith("http") ? "_blank" : undefined}
+                rel={s.href.startsWith("http") ? "noopener" : undefined}
+                class="block w-full text-center border border-line py-3 font-mono uppercase tracking-widest text-[11px] text-paper hover:bg-paper hover:text-ink transition"
+              >
+                Подробнее
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- 3 FACTS ROW =================================== -->
+    <div
+      class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/20"
+    >
+      {
+        d.facts.map((f) => (
+          <div class="bg-paper text-ink p-6 md:p-7 min-h-[190px] flex flex-col">
+            <div class="font-mono text-[11px] text-ink/60 uppercase tracking-wider mb-3">
+              {f.idx}
+            </div>
+            <div class="font-display font-bold text-xl md:text-2xl leading-tight">
+              {f.title}
+            </div>
+            <p class="font-mono text-[12px] text-ink/70 mt-3 leading-snug">
+              {f.text}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,43 @@
+---
+import type { PackageData } from "../../data/packageLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  data: PackageData["why"];
+}
+
+const { data: d } = Astro.props;
+---
+
+<section class="section relative" id="why">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line">
+      {
+        d.reasons.map((r) => (
+          <div class="reason">
+            <div
+              class={`font-mono text-[10px] uppercase tracking-widest mb-5 ${r.kickerColor === "fuchsia" ? "text-fuchsia2" : "text-acid"}`}
+            >
+              {r.kicker}
+            </div>
+            <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-3">
+              {r.title}
+            </h3>
+            <p class="font-mono text-[12px] text-paper/70 leading-relaxed">
+              {r.text}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,55 @@
+---
+import type { PackageData } from "../../data/packageLanding";
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+
+interface Props {
+  data: PackageData["finalCta"];
+  /** Уникальный id для pt-grid фона (если CTA повторяется на странице). */
+  bgId?: string;
+}
+
+const { data: d, bgId = "ptBg2" } = Astro.props;
+---
+
+<section class="section relative overflow-hidden">
+  <div
+    class="absolute inset-0 pt-grid opacity-[0.2] pointer-events-none"
+    id={bgId}
+    aria-hidden="true"
+  >
+  </div>
+  <div class="relative gutter py-24 md:py-32 text-center">
+    <div
+      class="font-mono text-[11px] text-acid uppercase tracking-widest mb-6"
+    >
+      {d.kicker}
+    </div>
+    <h2
+      class="font-display font-bold text-[clamp(48px,9vw,160px)] leading-[0.9] tracking-[-0.03em] max-w-5xl mx-auto"
+      set:html={d.title.html}
+    />
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <EgeAcidButton
+        href={d.ctaPrimary.href}
+        label={d.ctaPrimary.label}
+        arrow="→"
+        class="px-7 py-5 text-[16px]"
+      />
+      <a
+        href={d.ctaSecondary.href}
+        class="font-mono text-[12px] uppercase tracking-wider text-paper/80 hover:text-acid transition px-4 py-5"
+      >
+        {d.ctaSecondary.label}
+      </a>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ bgId }}>
+  (function () {
+    const g = document.getElementById(bgId);
+    if (!g || g.childElementCount) return;
+    for (let i = 0; i < 18 * 5; i++)
+      g.appendChild(document.createElement("div"));
+  })();
+</script>

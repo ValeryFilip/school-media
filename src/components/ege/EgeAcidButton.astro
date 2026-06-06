@@ -12,6 +12,10 @@ interface Props {
   source?: string;
   variant?: string;
   campaign?: string;
+  /** Для пакетных CTA: вешает data-payment-url, который ловит PaymentPopup */
+  paymentUrl?: string;
+  /** Aria-label (если визуальный текст недостаточен или повторяет иконку) */
+  ariaLabel?: string;
 }
 
 const {
@@ -27,6 +31,8 @@ const {
   source,
   variant,
   campaign,
+  paymentUrl,
+  ariaLabel,
 } = Astro.props as Props;
 
 const baseClass =
@@ -51,16 +57,18 @@ const popupAttrs = popupId
       "data-campaign": campaign,
     }
   : {};
+const paymentAttrs = paymentUrl ? { "data-payment-url": paymentUrl } : {};
+const ariaAttrs = ariaLabel ? { "aria-label": ariaLabel } : {};
 ---
 
 {as === "button" ? (
-  <button type={type} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs}>
+  <button type={type} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs}>
     {bubbles.map((style) => <span class="bub" style={style}></span>)}
     {html ? <Fragment set:html={html} /> : label}
     {arrow && <span class="font-mono">{arrow}</span>}
   </button>
 ) : (
-  <a href={href} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs}>
+  <a href={href} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs}>
     {bubbles.map((style) => <span class="bub" style={style}></span>)}
     {html ? <Fragment set:html={html} /> : label}
     {arrow && <span class="font-mono">{arrow}</span>}
