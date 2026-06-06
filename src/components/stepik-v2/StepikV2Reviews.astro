@@ -122,25 +122,51 @@ const counterValue = (value: string) => {
 </section>
 
 <script is:inline>
-  // Marquee едет своим CSS-циклом, не трогаем. По клику двигаем
-  // внешний review-nudge на ±400px относительно его текущей позиции.
-  // Transition в CSS делает движение плавным.
+  // Marquee едет своим CSS-циклом, не трогаем. По клику двигаем внешний
+  // review-nudge на ±STEP px (плавно через CSS-transition). После окончания
+  // transition нормализуем offset по модулю ширины ленты (контент
+  // дублирован → snap к эквивалентной позиции невидим). Без этого
+  // nudge копился бы бесконечно, и через несколько кликов лента
+  // выезжала бы за пределы дубликата → выглядела бы конечной.
   document.addEventListener("DOMContentLoaded", function () {
-    var STEP = 400; // px на одно нажатие
-    var nudgeOffsets = []; // массив cumulative offsets per nudge
+    var STEP = 400;
+    var TRANSITION_MS = 600;
     var nudges = document.querySelectorAll(".review-nudge");
+    var nudgeOffsets = [];
+    var normTimers = [];
     nudges.forEach(function (_, i) { nudgeOffsets[i] = 0; });
+
+    function normalize(nudge, i) {
+      var strip = nudge.querySelector(".review-strip");
+      if (!strip) return;
+      // strip-content дублирован, поэтому ширина одного цикла = scrollWidth / 2
+      var cycleWidth = strip.scrollWidth / 2;
+      if (!cycleWidth || Math.abs(nudgeOffsets[i]) < cycleWidth) return;
+      // Приводим к диапазону (-cycleWidth/2, +cycleWidth/2] —
+      // эквивалентная позиция в дубликате
+      var wrapped = ((nudgeOffsets[i] % cycleWidth) + cycleWidth) % cycleWidth;
+      if (wrapped > cycleWidth / 2) wrapped -= cycleWidth;
+      // Мгновенный snap без transition — содержимое идентично, jump невидим
+      nudge.style.transition = "none";
+      nudge.style.transform = "translate3d(" + wrapped + "px, 0, 0)";
+      nudgeOffsets[i] = wrapped;
+      // Force reflow, чтобы браузер применил transition:none до возврата
+      void nudge.offsetWidth;
+      nudge.style.transition = "";
+    }
 
     document.querySelectorAll("[data-review-boost]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var dir = Number(btn.dataset.reviewBoost) || 1;
         nudges.forEach(function (nudge, i) {
-          // Forward-лента (i=0) едет влево; кнопка → должна визуально
-          // двинуть её ещё левее = transform: negative.
-          // Reverse-лента (i=1) едет вправо; кнопка → двинуть правее = positive.
           var sign = i === 0 ? -1 : 1;
           nudgeOffsets[i] += dir * sign * STEP;
           nudge.style.transform = "translate3d(" + nudgeOffsets[i] + "px, 0, 0)";
+          // После того, как transition отыграет — нормализуем
+          if (normTimers[i]) clearTimeout(normTimers[i]);
+          normTimers[i] = setTimeout(function () {
+            normalize(nudge, i);
+          }, TRANSITION_MS + 50);
         });
       });
     });
