@@ -29,7 +29,7 @@ const counterValue = (value: string) => {
 ---
 
 <section class="section relative overflow-hidden" id="reviews">
-  <div class="gutter py-20 md:py-28">
+  <div class="gutter pt-20 md:pt-28 pb-8 md:pb-10">
     <div class="grid grid-cols-12 gap-6 mb-12">
       <div class="col-span-12 md:col-span-3"><div class="sec-num">{data.section}</div></div>
       <div class="col-span-12 md:col-span-9"><EgeH2 text={data.title.text} marks={data.title.marks} class="titrate" /></div>
@@ -37,7 +37,7 @@ const counterValue = (value: string) => {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line mb-10">
       {data.stats.map((stat, i) => (
         <div class="bg-ink p-6">
-          <div class:list={["font-display font-bold text-5xl", i === 0 && "text-acid", i === 2 && "text-fuchsia2"]}>
+          <div class:list={["font-display font-bold text-5xl", i === 0 && "text-acid", i === 2 && "text-fuchsia2"]} aria-label={stat.value}>
             {counterValue(stat.value) ? (
               <>
                 <span
@@ -45,7 +45,7 @@ const counterValue = (value: string) => {
                   data-suffix={counterValue(stat.value)?.suffix}
                   data-decimals={counterValue(stat.value)?.decimals}
                 >0</span>
-                {stat.value === "4.9" && <span class="star">⭐</span>}
+                {stat.value === "4.9" && <span class="star" aria-hidden="true">⭐</span>}
               </>
             ) : (
               stat.value
@@ -59,7 +59,7 @@ const counterValue = (value: string) => {
     {/* Фрейм для ленты отзывов: правило Stepik про 80% — единственный
         способ верифицировать честность отзывов в маркетплейс-модели.
         Плюс — позиционирование «70 на 3500+, потому что мы не выжималка». */}
-    <div class="review-note mb-10">
+    <div class="review-note">
       <div class="font-mono text-[11px] text-acid uppercase tracking-widest mb-3">// почему этим отзывам можно верить</div>
       <p class="font-mono text-[13px] text-paper leading-snug max-w-4xl">
         Все отзывы оставлены теми, кто прошёл больше&nbsp;<span class="text-acid font-bold">80% курса</span> —
@@ -76,42 +76,76 @@ const counterValue = (value: string) => {
 
   {[row1, row2].map((row, rowIndex) => (
     <div class:list={["overflow-hidden", rowIndex === 1 && "mt-4"]}>
-      <div class:list={["review-strip", rowIndex === 1 && "is-reverse"]}>
-        {/* НЕ оборачивай <img> в <button> с data-* атрибутами на src — это
-            триггерит Kaspersky/Adblock «native-ad gallery» эвристики и
-            ведёт к фоновым fetch() ко всем картинкам подряд.
-            Используем <figure> (пассивная семантика), клик ловим на <img>
-            и читаем src напрямую через event.target — без дублирования URL. */}
-        {[...row, ...row].map((image) => (
-          <figure class="review-shot">
-            {/* Без loading="lazy": с маленькими 260×180 картинками
-                браузер грузит их быстро и кэширует один раз. С lazy браузер
-                мог прерывать загрузку, когда карточка уезжала из viewport,
-                и запускать заново при возврате — Касперский это видел
-                как «фетч-луп» и сканировал каждый цикл. */}
-            <img src={image.src} alt={image.alt || "Скриншот отзыва ученика"} decoding="async" />
-          </figure>
-        ))}
+      {/* Двухслойная обёртка: внешний review-nudge получает inline
+          transform по клику кнопки (с CSS transition) — едет плавно
+          относительно той точки, где сейчас рисует marquee. Внутренний
+          review-strip продолжает свой CSS-цикл, не рестартует. */}
+      <div class:list={["review-nudge", rowIndex === 1 && "is-reverse-nudge"]}>
+        <div class:list={["review-strip", rowIndex === 1 && "is-reverse"]}>
+          {/* НЕ оборачивай <img> в <button> с data-* атрибутами на src —
+              это триггерит Kaspersky/Adblock «native-ad gallery» эвристики. */}
+          {[...row, ...row].map((image) => (
+            <figure class="review-shot">
+              <img src={image.src} alt={image.alt || "Скриншот отзыва ученика"} decoding="async" />
+            </figure>
+          ))}
+        </div>
       </div>
     </div>
   ))}
 
-  <div class="gutter mt-10 pb-20 md:pb-28">
+  <div class="gutter mt-8 pb-20 md:pb-28 flex flex-wrap items-center gap-6 justify-between">
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        class="review-nav"
+        data-review-boost="-1"
+        aria-label="Ускорить ленту назад"
+      >←</button>
+      <button
+        type="button"
+        class="review-nav"
+        data-review-boost="1"
+        aria-label="Ускорить ленту вперёд"
+      >→</button>
+    </div>
     <a href={data.moreHref} class="inline-flex items-center gap-3 font-mono text-[12px] uppercase tracking-widest text-paper/80 hover:text-acid">
       смотреть больше отзывов <span>↗</span>
     </a>
   </div>
 
-  <div class="review-modal" data-review-modal hidden>
+  <div class="review-modal" data-review-modal hidden role="dialog" aria-modal="true" aria-label="Просмотр отзыва">
     <button type="button" class="review-modal__close" data-review-close aria-label="Закрыть отзыв">×</button>
     <button type="button" class="review-modal__backdrop" data-review-close aria-label="Закрыть отзыв"></button>
     <img class="review-modal__image" data-review-image alt="" />
   </div>
 </section>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("[data-review-modal]").forEach((modal) => {
+<script is:inline>
+  // Marquee едет своим CSS-циклом, не трогаем. По клику двигаем
+  // внешний review-nudge на ±400px относительно его текущей позиции.
+  // Transition в CSS делает движение плавным.
+  document.addEventListener("DOMContentLoaded", function () {
+    var STEP = 400; // px на одно нажатие
+    var nudgeOffsets = []; // массив cumulative offsets per nudge
+    var nudges = document.querySelectorAll(".review-nudge");
+    nudges.forEach(function (_, i) { nudgeOffsets[i] = 0; });
+
+    document.querySelectorAll("[data-review-boost]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var dir = Number(btn.dataset.reviewBoost) || 1;
+        nudges.forEach(function (nudge, i) {
+          // Forward-лента (i=0) едет влево; кнопка → должна визуально
+          // двинуть её ещё левее = transform: negative.
+          // Reverse-лента (i=1) едет вправо; кнопка → двинуть правее = positive.
+          var sign = i === 0 ? -1 : 1;
+          nudgeOffsets[i] += dir * sign * STEP;
+          nudge.style.transform = "translate3d(" + nudgeOffsets[i] + "px, 0, 0)";
+        });
+      });
+    });
+
+    document.querySelectorAll("[data-review-modal]").forEach(function (modal) {
       const image = modal.querySelector("[data-review-image]");
       const closeButtons = modal.querySelectorAll("[data-review-close]");
       const section = modal.closest("section");
@@ -146,50 +180,78 @@ const counterValue = (value: string) => {
 </script>
 
 <style>
+  /* Внешний nudge-слой — JS пишет inline transform: translateX(--Npx).
+     Transition делает движение плавным. Marquee внутри не трогается,
+     поэтому CSS-анимация не рестартует. */
+  .review-nudge {
+    transition: transform 600ms cubic-bezier(0.2, 0, 0.2, 1);
+    will-change: transform;
+  }
+
   .review-strip {
     display: flex;
     width: max-content;
     gap: 16px;
-    /* GPU-композит-слой — выносим анимацию из main-thread,
-       чтобы security-scanner'ы (Kaspersky) не видели DOM как
-       «постоянно меняющийся» и не передёргивали fetch на ассеты. */
+    /* GPU-композит-слой — Kaspersky не видит DOM как «постоянно меняющийся». */
     will-change: transform;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
-    animation: review-marquee 70s linear infinite;
+    /* 180s/200s соответствуют новой ширине shot (720px) — px/s остаются
+       прежние, как с шириной 380. */
+    animation: review-marquee 180s linear infinite;
   }
-  .review-strip.is-reverse { animation-name: review-marquee-reverse; animation-duration: 78s; }
+  .review-strip.is-reverse {
+    animation-name: review-marquee-reverse;
+    animation-duration: 200s;
+  }
+
+  .review-nav {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: var(--ink);
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+  .review-nav:hover {
+    background: var(--acid);
+    border-color: var(--acid);
+    color: var(--ink);
+  }
+  .review-nav:focus-visible {
+    outline: 2px solid var(--acid);
+    outline-offset: 2px;
+  }
   .review-shot {
-    /* Раньше было min(760px, 86vw) — гигантские карточки + lazy = браузер
-       прерывал загрузку при выезде из viewport и запускал заново при
-       возврате; Касперский видел это как «фетч-луп». Сжимаем до старых
-       пропорций: тогда картинка успевает загрузиться + кэшироваться
-       до того, как marquee её сдвинет. */
+    /* Реальные скриншоты отзывов — 1800×~300, соотношение ~6:1.
+       Раньше контейнер был 380×260 (1.5:1) → object-fit:contain
+       fit'ил картинку в ширину и оставлял ~75% пустоты сверху-снизу.
+       Делаем контейнер по аспекту контента. */
     flex: 0 0 auto;
-    width: 260px;
-    height: 180px;
+    width: 720px;
+    aspect-ratio: 6 / 1;
     margin: 0;
     padding: 0;
     background: transparent;
     transition: transform .18s ease;
-    display: grid;
-    place-items: center;
     overflow: hidden;
   }
   .review-shot:hover { transform: translateY(-2px); }
   .review-shot img {
     display: block;
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     cursor: zoom-in;
   }
   @media (max-width: 600px) {
     .review-shot {
-      width: 200px;
-      height: 140px;
+      width: 360px;
     }
   }
   .review-note {
