@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2026-06-09 15:42">
+  <shop>
+    <name>ЕГЭХИМ</name>
+    <url>https://egehim.ru/</url>
+    <email>info@egehim.ru</email>
+    <picture>https://egehim.ru/images/technical/logo.png</picture>
+    <description>Онлайн-школа подготовки к ЕГЭ и ОГЭ по химии Валерия Филипенко. Самостоятельные курсы по химии с видеоуроками, заданиями с автопроверкой, поддержкой и бессрочным доступом.</description>
+    <currencies>
+      <currency id="RUR" rate="1"/>
+    </currencies>
+    <sets>
+      <set id="ege-chemistry-self-courses">
+        <name>Самостоятельные курсы по химии для ЕГЭ</name>
+        <url>https://egehim.ru/allcourses/</url>
+      </set>
+    </sets>
+    <categories>
+      <category id="10000">Школьные предметы</category>
+      <category id="10009" parentId="10000">Химия</category>
+    </categories>
+    <offers>
+      <offer id="obschaya-ege-2027">
+        <name>Курс по общей химии для ЕГЭ 2027</name>
+        <url>https://egehim.ru/obschaya/</url>
+        <categoryId>10009</categoryId>
+        <set-ids>ege-chemistry-self-courses</set-ids>
+        <price>3190</price>
+        <currencyId>RUR</currencyId>
+        <param name="Ссылка на контент курса">https://stepik.org/a/117953</param>
+        <param name="Цена по скидке">2390</param>
+        <param name="Цена за подписку">false</param>
+        <param name="Оплата в рассрочку" unit="месяц">4</param>
+        <param name="Продолжительность" unit="час">17</param>
+        <param name="План" order="1" unit="Строение и периодика" hours="4">Строение атома, электронная конфигурация, ионы, возбуждённое состояние атома, ПСХЭ, периодический закон, степень окисления и валентность.</param>
+        <param name="План" order="2" unit="Связи и классы веществ" hours="3">Классификация неорганических веществ, названия веществ и формулы, химические связи, кристаллические решётки, задания 4 и 5 ЕГЭ.</param>
+        <param name="План" order="3" unit="Реакции и кинетика" hours="4">Классификация химических реакций, тепловой эффект, скорость реакции, факторы скорости, химическое равновесие и задачи на равновесие.</param>
+        <param name="План" order="4" unit="Растворы, ОВР и электролиз" hours="4">Электролитическая диссоциация, гидролиз солей, среда раствора, ОВР, электронный баланс, электролиз растворов и расплавов.</param>
+        <param name="План" order="5" unit="Расчётные задачи ЕГЭ" hours="2">Массовая доля, растворы, моль, задачи на примеси и выход реакции, задания 25, 26 и 28 ЕГЭ.</param>
+        <param name="Формат обучения">Самостоятельно</param>
+        <param name="Есть видеоуроки">true</param>
+        <param name="Есть текстовые уроки">true</param>
+        <param name="Есть вебинары">false</param>
+        <param name="Есть домашние работы">true</param>
+        <param name="Есть тренажеры">true</param>
+        <param name="Есть сообщество">true</param>
+        <param name="Сложность">Для новичков</param>
+        <param name="Тип обучения">Курс</param>
+        <param name="Есть бесплатная часть">false</param>
+        <param name="Результат обучения">Сертификат</param>
+        <param name="Часы в неделю">3</param>
+        <param name="Классы">10-11</param>
+        <picture>https://egehim.ru/images/new-design/obschaya.webp</picture>
+        <description>Самостоятельный онлайн-курс по общей химии для ЕГЭ 2027 с видеоуроками, заданиями с автопроверкой, тренажёрами, поддержкой и бессрочным доступом. Курс закрывает задания 1–5, 17–23, 25–28: строение атома, ПСХЭ, химическая связь, кинетика, равновесие, растворы, ОВР, электролиз и расчётные задачи.</description>
+      </offer>
+      <offer id="organika-ege-2027">
+        <name>Курс по органической химии для ЕГЭ 2027</name>
+        <url>https://egehim.ru/organika/</url>
+        <categoryId>10009</categoryId>
+        <set-ids>ege-chemistry-self-courses</set-ids>
+        <price>7490</price>
+        <currencyId>RUR</currencyId>
+        <param name="Ссылка на контент курса">https://stepik.org/a/196367</param>
+        <param name="Цена по скидке">5790</param>
+        <param name="Цена за подписку">false</param>
+        <param name="Оплата в рассрочку" unit="месяц">4</param>
+        <param name="Продолжительность" unit="час">25</param>
+        <param name="План" order="1" unit="Углеводороды" hours="10">Введение в органическую химию, гомологи и изомеры, гибридизация, классификация реакций, алканы, циклоалканы, алкены, алкины, алкадиены, арены и тренажёры.</param>
+        <param name="План" order="2" unit="Кислородсодержащие соединения" hours="8">Номенклатура, спирты, фенолы, альдегиды, кетоны, карбоновые кислоты, сложные эфиры, жиры, углеводы, крахмал и целлюлоза.</param>
+        <param name="План" order="3" unit="Азотсодержащие соединения" hours="3">Амины, анилин, аминокислоты, пептиды, белки, качественные реакции и тренажёр по азотсодержащим органическим веществам.</param>
+        <param name="План" order="4" unit="Задачи 33 ЕГЭ" hours="2">Алгоритм решения задач 33, вывод формулы по массовым долям, продуктам сгорания, плотности и относительной плотности, практика из формата ЕГЭ.</param>
+        <param name="План" order="5" unit="Цепочки 32 ЕГЭ" hours="2">Алгоритм решения цепочек превращений, восстановление пропущенных веществ, многоступенчатые органические цепочки и цепочки на стыке органики и неорганики.</param>
+        <param name="Формат обучения">Самостоятельно</param>
+        <param name="Есть видеоуроки">true</param>
+        <param name="Есть текстовые уроки">true</param>
+        <param name="Есть вебинары">false</param>
+        <param name="Есть домашние работы">true</param>
+        <param name="Есть тренажеры">true</param>
+        <param name="Есть сообщество">true</param>
+        <param name="Сложность">Для новичков</param>
+        <param name="Тип обучения">Курс</param>
+        <param name="Есть бесплатная часть">false</param>
+        <param name="Результат обучения">Сертификат</param>
+        <param name="Часы в неделю">3</param>
+        <param name="Классы">10-11</param>
+        <picture>https://egehim.ru/new-design/org.webp</picture>
+        <description>Самостоятельный онлайн-курс по органической химии для ЕГЭ 2027 с видеоуроками, заданиями с автопроверкой, тренажёрами, поддержкой и бессрочным доступом. Курс закрывает задания 10–16, 24, 32 и 33: реакции органических веществ, номенклатуру, изомерию, цепочки превращений и задачи на вывод формулы.</description>
+      </offer>
+      <offer id="neorganika-ege-2027">
+        <name>Курс по неорганической химии для ЕГЭ 2027</name>
+        <url>https://egehim.ru/neorganika/</url>
+        <categoryId>10009</categoryId>
+        <set-ids>ege-chemistry-self-courses</set-ids>
+        <price>7490</price>
+        <currencyId>RUR</currencyId>
+        <param name="Ссылка на контент курса">https://stepik.org/a/134777</param>
+        <param name="Цена по скидке">5790</param>
+        <param name="Цена за подписку">false</param>
+        <param name="Оплата в рассрочку" unit="месяц">4</param>
+        <param name="Продолжительность" unit="час">26</param>
+        <param name="План" order="1" unit="Классификация и простые вещества" hours="3">Классификация неорганических веществ, названия и формулы, классификация реакций, базовые понятия, химические свойства металлов и неметаллов.</param>
+        <param name="План" order="2" unit="Оксиды, основания, кислоты и соли" hours="8">Химические свойства и получение оксидов, оснований, кислот и солей, амфотерные гидроксиды, кислые, комплексные и основные соли, тренажёры.</param>
+        <param name="План" order="3" unit="Реакции и превращения" hours="5">Неорганические цепочки, качественные реакции, гидролиз, электролитическая диссоциация, РИО, ОВР, электронный баланс, задания 29 и 30.</param>
+        <param name="План" order="4" unit="Химия элементов" hours="8">Водород, галогены, кислород, сера, азот, фосфор, углерод, кремний, щелочные и щелочноземельные металлы, алюминий, цинк, железо, хром, медь и марганец.</param>
+        <param name="План" order="5" unit="Тренажёры ЕГЭ" hours="2">Тренажёры и разборы заданий 6, 7, 8, 9, 24, 29, 30 и 31 по неорганической химии.</param>
+        <param name="Формат обучения">Самостоятельно</param>
+        <param name="Есть видеоуроки">true</param>
+        <param name="Есть текстовые уроки">true</param>
+        <param name="Есть вебинары">false</param>
+        <param name="Есть домашние работы">true</param>
+        <param name="Есть тренажеры">true</param>
+        <param name="Есть сообщество">true</param>
+        <param name="Сложность">Для новичков</param>
+        <param name="Тип обучения">Курс</param>
+        <param name="Есть бесплатная часть">false</param>
+        <param name="Результат обучения">Сертификат</param>
+        <param name="Часы в неделю">3</param>
+        <param name="Классы">10-11</param>
+        <picture>https://egehim.ru/new-design/neorg.webp</picture>
+        <description>Самостоятельный онлайн-курс по неорганической химии для ЕГЭ 2027 с видеоуроками, заданиями с автопроверкой, тренажёрами, поддержкой и бессрочным доступом. Курс закрывает задания 6, 7, 8, 9, 24, 29, 30 и 31: свойства классов веществ, ОВР, РИО, качественные реакции, цепочки и химию элементов.</description>
+      </offer>
+      <offer id="ovr-ege-2027">
+        <name>Курс по ОВР для ЕГЭ 2027</name>
+        <url>https://egehim.ru/ovr/</url>
+        <categoryId>10009</categoryId>
+        <set-ids>ege-chemistry-self-courses</set-ids>
+        <price>1300</price>
+        <currencyId>RUR</currencyId>
+        <param name="Ссылка на контент курса">https://stepik.org/a/183475</param>
+        <param name="Цена по скидке">990</param>
+        <param name="Цена за подписку">false</param>
+        <param name="Оплата в рассрочку" unit="месяц">4</param>
+        <param name="Продолжительность" unit="час">5</param>
+        <param name="План" order="1" unit="Введение в ОВР" hours="1">Понятие ОВР, признаки и классификация окислительно-восстановительных реакций, определение окислителя и восстановителя.</param>
+        <param name="План" order="2" unit="Электронный баланс" hours="1">Базовый и продвинутый алгоритм электронного баланса, подбор коэффициентов и работа со сложными случаями.</param>
+        <param name="План" order="3" unit="Составление ОВР" hours="1">Составление ОВР по схемам, подбор продуктов, тренажёр по составлению уравнений реакций.</param>
+        <param name="План" order="4" unit="Тренажёр задания 19" hours="1">Тестовое задание 19 ЕГЭ, типовые ловушки, переход от тестового формата к развёрнутому заданию.</param>
+        <param name="План" order="5" unit="Задание 29" hours="1">Формат задания 29, полный алгоритм решения, практика развёрнутых заданий ЕГЭ по ОВР.</param>
+        <param name="Формат обучения">Самостоятельно</param>
+        <param name="Есть видеоуроки">true</param>
+        <param name="Есть текстовые уроки">true</param>
+        <param name="Есть вебинары">false</param>
+        <param name="Есть домашние работы">true</param>
+        <param name="Есть тренажеры">true</param>
+        <param name="Есть сообщество">true</param>
+        <param name="Сложность">Для новичков</param>
+        <param name="Тип обучения">Курс</param>
+        <param name="Есть бесплатная часть">false</param>
+        <param name="Результат обучения">Сертификат</param>
+        <param name="Часы в неделю">1</param>
+        <param name="Классы">10-11</param>
+        <picture>https://egehim.ru/new-design/ovr.webp</picture>
+        <description>Самостоятельный мини-курс по окислительно-восстановительным реакциям для ЕГЭ 2027 с видеоуроками, заданиями с автопроверкой, тренажёрами, поддержкой и бессрочным доступом. Курс помогает закрыть задания 19 и 29, а также увереннее решать задание 31 и неорганические цепочки.</description>
+      </offer>
+    </offers>
+  </shop>
+</yml_catalog>
