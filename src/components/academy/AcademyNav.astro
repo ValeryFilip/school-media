@@ -50,6 +50,14 @@ const courseColumns = [
       },
     ],
   },
+  {
+    title: "Пакеты курсов",
+    links: [
+      { href: "/paket-2-kursa/", title: "Пакет «2 курса»", subtitle: "Общая + неорганика" },
+      { href: "/paket-3-kursa/", title: "Пакет «3 курса»", subtitle: "Органика + неорганика + общая · флагман" },
+      { href: "/paket-4-kursa/", title: "Пакет «4 курса»", subtitle: "Всё + авторские варианты" },
+    ],
+  },
 ];
 
 const fallbackCategories = searchArticles
@@ -336,9 +344,9 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
   }
 
   .academy-nav__dropdown--courses {
-    width: min(680px, calc(100vw - 32px));
+    width: min(900px, calc(100vw - 32px));
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
   }
 
