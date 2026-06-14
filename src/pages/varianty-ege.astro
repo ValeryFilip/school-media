@@ -1,0 +1,109 @@
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import EgeAuthor from "../components/ege/EgeAuthor.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import EgeScripts from "../components/ege/EgeScripts.astro";
+import PaymentPopup from "../components/stepik/PaymentPopup.astro";
+import StepikV2Hero from "../components/stepik-v2/StepikV2Hero.astro";
+import StepikV2Tiles from "../components/stepik-v2/StepikV2Tiles.astro";
+import StepikV2Reviews from "../components/stepik-v2/StepikV2Reviews.astro";
+import StepikV2HowTo from "../components/stepik-v2/StepikV2HowTo.astro";
+import StepikV2Pricing from "../components/stepik-v2/StepikV2Pricing.astro";
+import { stepikVariantsLanding as page } from "../data/stepikVariantsLanding";
+import {
+  buildFAQJsonLd,
+  buildProductJsonLd,
+  buildWebPageJsonLd,
+  pageUrlFromPath,
+} from "../lib/seoData";
+
+const origin = Astro.url.origin;
+const url = pageUrlFromPath(origin, Astro.url.pathname);
+const productName = "Авторские варианты ЕГЭ по химии 2027";
+
+const productJsonLd = buildProductJsonLd({
+  origin,
+  url,
+  name: productName,
+  description: page.seo.description,
+  image: page.seo.image,
+  price: "500",
+  priceCurrency: "RUB",
+});
+const webPageJsonLd = buildWebPageJsonLd({
+  origin,
+  url,
+  name: page.seo.title,
+  siteName: "ЕГЭХИМ",
+  about: productName,
+});
+const faqJsonLd = buildFAQJsonLd(page.faq.items);
+---
+
+<EgeLandingLayout
+  title={page.seo.title}
+  description={page.seo.description}
+  image={page.seo.image}
+  imageAlt={page.seo.imageAlt}
+  url={url}
+  nav={page.nav}
+  footer={page.footer}
+  floatingActions={page.floatingActions}
+  popupForm={page.popupForm}
+  breadcrumbs={[
+    { name: "Все курсы", href: "/allcourses/" },
+    { name: "Авторские варианты ЕГЭ" },
+  ]}
+  showBreadcrumbs={true}
+  productJsonLd={productJsonLd}
+  faqJsonLd={faqJsonLd}
+  webPageJsonLd={webPageJsonLd}
+>
+  <StepikV2Hero
+    data={page.hero}
+    breadcrumbs={[
+      { label: "Главная", href: "/" },
+      { label: "Все курсы", href: "/allcourses/" },
+      { label: "Авторские варианты ЕГЭ" },
+    ]}
+  />
+
+  <StepikV2Tiles
+    id="inside"
+    section={page.inside.section}
+    title={page.inside.title}
+    items={page.inside.items}
+  />
+
+  <StepikV2Tiles
+    id="why"
+    section={page.why.section}
+    title={page.why.title}
+    items={page.why.items}
+    mode="paper"
+  />
+
+  <EgeAuthor cta={page.authorCta} />
+
+  <StepikV2Reviews data={page.reviews} />
+
+  <StepikV2HowTo />
+
+  <StepikV2Pricing data={page.pricing} />
+
+  <EgeFaq
+    section={page.faq.section}
+    title={page.faq.title}
+    supportCta={{ source: "stepik-variants-faq", campaign: "stepik-variants" }}
+  />
+
+  <Fragment slot="after-footer">
+    <EgeScripts data={{ faq: page.faq.items }} />
+    <PaymentPopup
+      theme="dark"
+      settleMs={5200}
+      title="Авторские варианты · оплата"
+      stepikUrl={page.stepik.pay}
+    />
+  </Fragment>
+</EgeLandingLayout>

@@ -3,6 +3,7 @@ import EgeAcidButton from "../ege/EgeAcidButton.astro";
 import StepikV2HeroLattice from "./StepikV2HeroLattice.astro";
 import StepikV2HeroCascade from "./StepikV2HeroCascade.astro";
 import StepikV2HeroElectrons from "./StepikV2HeroElectrons.astro";
+import StepikV2HeroKim from "./StepikV2HeroKim.astro";
 
 interface Crumb {
   label: string;
@@ -15,7 +16,7 @@ interface MoleculeLabels {
   bottomRight?: string;
 }
 
-type HeroVisual = "molecule" | "lattice" | "cascade" | "electrons";
+type HeroVisual = "molecule" | "lattice" | "cascade" | "electrons" | "kim";
 
 interface Props {
   data: {
@@ -122,6 +123,7 @@ const moleculeBottomRight = data.moleculeLabels?.bottomRight ?? "M = 94.11 г/м
           {heroVisual === "lattice"   && <StepikV2HeroLattice />}
           {heroVisual === "cascade"   && <StepikV2HeroCascade />}
           {heroVisual === "electrons" && <StepikV2HeroElectrons />}
+          {heroVisual === "kim"       && <StepikV2HeroKim />}
 
           {/* Угловые overlay-лейблы (X: 0.00, [3D · ARENE], фенол · C₆H₅OH,
               M = 94.11 г/моль) спроектированы под 3D-сцену бензола.
