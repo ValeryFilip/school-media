@@ -184,35 +184,6 @@ if (context === "media") {
                         </a>
                       </li>
                     </div>
-                    <div class="menu__sublist-packages">
-                      <li class="menu__subitem">
-                        <a href="/paket-3-kursa/" class="menu__sublink">
-                          Пакеты курсов
-                        </a>
-                      </li>
-                      <li class="menu__subitem">
-                        <a href="/paket-2-kursa/" class="menu__sublink">
-                          <span class="menu__sublink-title">Пакет «2 курса»</span>
-                          <span class="menu__sublink-sub">Общая + неорганика</span>
-                        </a>
-                      </li>
-                      <li class="menu__subitem">
-                        <a href="/paket-3-kursa/" class="menu__sublink">
-                          <span class="menu__sublink-title">Пакет «3 курса»</span>
-                          <span class="menu__sublink-sub">
-                            Органика + неорганика + общая · флагман
-                          </span>
-                        </a>
-                      </li>
-                      <li class="menu__subitem">
-                        <a href="/paket-4-kursa/" class="menu__sublink">
-                          <span class="menu__sublink-title">Пакет «4 курса»</span>
-                          <span class="menu__sublink-sub">
-                            Всё + авторские варианты
-                          </span>
-                        </a>
-                      </li>
-                    </div>
                   </ul>
                 </details>
               </li>
@@ -467,34 +438,6 @@ if (context === "media") {
                       </li>
                     </ul>
                   </div>
-
-                  <div class="mnav__subgroup">
-                    <h4 class="mnav__subtitle">Пакеты курсов</h4>
-                    <ul class="mnav__sublist">
-                      <li class="mnav__subitem">
-                        <a href="/paket-2-kursa/" class="mnav__sublink">
-                          <span class="mnav__sublink-title">Пакет «2 курса»</span>
-                          <span class="mnav__sublink-sub">Общая + неорганика</span>
-                        </a>
-                      </li>
-                      <li class="mnav__subitem">
-                        <a href="/paket-3-kursa/" class="mnav__sublink">
-                          <span class="mnav__sublink-title">Пакет «3 курса»</span>
-                          <span class="mnav__sublink-sub">
-                            Органика + неорганика + общая · флагман
-                          </span>
-                        </a>
-                      </li>
-                      <li class="mnav__subitem">
-                        <a href="/paket-4-kursa/" class="mnav__sublink">
-                          <span class="mnav__sublink-title">Пакет «4 курса»</span>
-                          <span class="mnav__sublink-sub">
-                            Всё + авторские варианты
-                          </span>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
                 </div>
               </details>
             </li>
@@ -691,9 +634,9 @@ if (context === "media") {
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 720px;
+    min-width: 500px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
     background: #f8f9fa;
     border: 1px solid var(--border);
@@ -724,15 +667,13 @@ if (context === "media") {
     transform: rotate(90deg);
   } */
   .menu__sublist-right,
-  .menu__sublist-left,
-  .menu__sublist-packages {
+  .menu__sublist-left {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
   .menu__sublist-right > li:first-child > a,
-  .menu__sublist-left > li:first-child > a,
-  .menu__sublist-packages > li:first-child > a {
+  .menu__sublist-left > li:first-child > a {
     margin: 0 0 24px 0;
     font-weight: 600;
     font-size: 16px;

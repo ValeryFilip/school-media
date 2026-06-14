@@ -63,6 +63,26 @@ export const egeLandingData = {
               },
             ],
           },
+          {
+            title: "Пакеты курсов",
+            links: [
+              {
+                href: "/paket-2-kursa/",
+                label: "Пакет «2 курса»",
+                description: "Общая + неорганика",
+              },
+              {
+                href: "/paket-3-kursa/",
+                label: "Пакет «3 курса»",
+                description: "Органика + неорганика + общая · флагман",
+              },
+              {
+                href: "/paket-4-kursa/",
+                label: "Пакет «4 курса»",
+                description: "Всё + авторские варианты",
+              },
+            ],
+          },
         ],
       },
       { href: "/academy/", label: "Академия" },
