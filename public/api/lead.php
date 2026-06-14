@@ -5,6 +5,8 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
+require_once __DIR__ . '/telegram.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -36,6 +38,8 @@ try {
     $pdo = create_pdo($config['db']);
     insert_lead($pdo, $payload);
 
+    tg_notify($config, build_lead_message($payload));
+
     respond(['ok' => true, 'submission_id' => $payload['submission_id']]);
 } catch (PDOException $error) {
     if ($error->getCode() === '23000') {
@@ -55,6 +59,42 @@ function respond(array $data, int $status = 200): void
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
+}
+
+function build_lead_message(array $p): string
+{
+    $e = 'tg_escape';
+
+    $label = $p['trigger_text'] !== '' ? $p['trigger_text']
+        : ($p['trigger_source'] !== '' ? $p['trigger_source']
+        : ($p['form_id'] !== '' ? $p['form_id'] : $p['form_type']));
+
+    $lines = ['🆕 <b>Новая заявка с сайта</b>' . ($label !== '' ? ' · ' . $e($label) : ''), ''];
+
+    if ($p['name'] !== '')     $lines[] = '👤 <b>Имя:</b> ' . $e($p['name']);
+    if ($p['phone'] !== '')    $lines[] = '📞 <b>Телефон:</b> ' . $e($p['phone']);
+    if ($p['telegram'] !== '') $lines[] = '✈️ <b>Telegram:</b> @' . $e($p['telegram']);
+    if ($p['email'] !== '')    $lines[] = '✉️ <b>Email:</b> ' . $e($p['email']);
+    if ($p['message'] !== '')  $lines[] = '💬 <b>Сообщение:</b> ' . $e($p['message']);
+
+    $context = [];
+    if ($p['page_title'] !== '' || $p['page'] !== '') {
+        $context[] = '📄 ' . $e($p['page_title'] !== '' ? $p['page_title'] : $p['page'])
+            . ($p['page'] !== '' ? ' (' . $e($p['page']) . ')' : '');
+    }
+    $utm = array_filter([$p['lt_source'], $p['lt_medium'], $p['lt_campaign']], static fn($v) => $v !== '');
+    if ($utm) $context[] = '📊 utm: ' . $e(implode(' / ', $utm));
+    if ($p['ref_code'] !== '') $context[] = '🔗 Реф-код: ' . $e($p['ref_code']);
+    $context[] = '🕒 ' . date('d.m.Y H:i');
+
+    if ($context) {
+        $lines[] = '➖➖➖➖➖';
+        foreach ($context as $row) {
+            $lines[] = $row;
+        }
+    }
+
+    return implode("\n", $lines);
 }
 
 function parse_payload(): array

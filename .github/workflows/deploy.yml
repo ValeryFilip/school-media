@@ -25,11 +25,16 @@ jobs:
       - name: Generate lead DB config
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
           python3 - << 'PYEOF'
           import os
           pw = os.environ['DB_PASSWORD'].replace("'", "\\'")
-          config = f"""<?php\n\nreturn [\n    'db' => [\n        'host' => 'localhost',\n        'port' => 3306,\n        'database' => 'cy90253_egehim',\n        'username' => 'cy90253_egehim',\n        'password' => '{pw}',\n        'charset' => 'utf8mb4',\n    ],\n];\n"""
+          tok = os.environ.get('TG_BOT_TOKEN', '').replace("'", "\\'")
+          chat = os.environ.get('TG_CHAT_ID', '').replace("'", "\\'")
+          enabled = 'true' if (tok and chat) else 'false'
+          config = f"""<?php\n\nreturn [\n    'db' => [\n        'host' => 'localhost',\n        'port' => 3306,\n        'database' => 'cy90253_egehim',\n        'username' => 'cy90253_egehim',\n        'password' => '{pw}',\n        'charset' => 'utf8mb4',\n    ],\n    'telegram' => [\n        'enabled' => {enabled},\n        'bot_token' => '{tok}',\n        'chat_id' => '{chat}',\n    ],\n];\n"""
           with open('public/api/lead.config.php', 'w') as f:
               f.write(config)
           PYEOF

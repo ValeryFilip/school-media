@@ -5,6 +5,8 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
+require_once __DIR__ . '/telegram.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -73,6 +75,8 @@ try {
     }
     $stmt->execute();
 
+    tg_notify($config, build_partner_message($data));
+
     respond(['ok' => true]);
 
 } catch (PDOException $e) {
@@ -91,6 +95,22 @@ function respond(array $data, int $status = 200): void
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
+}
+
+function build_partner_message(array $d): string
+{
+    $e = 'tg_escape';
+
+    $lines = ['🤝 <b>Новая заявка в партнёрку</b>', ''];
+
+    $fio = trim((string)($d['name'] ?? '') . ' ' . (string)($d['family'] ?? ''));
+    if ($fio !== '')                     $lines[] = '👤 <b>Имя:</b> ' . $e($fio);
+    if (($d['telegram'] ?? '') !== '')   $lines[] = '✈️ <b>Telegram:</b> @' . $e($d['telegram']);
+    if (($d['phone'] ?? '') !== '')      $lines[] = '📞 <b>Телефон:</b> ' . $e($d['phone']);
+    if (($d['utm'] ?? '') !== '')        $lines[] = '📊 utm: ' . $e($d['utm']);
+    $lines[] = '🕒 ' . date('d.m.Y H:i');
+
+    return implode("\n", $lines);
 }
 
 function parse_body(): array
