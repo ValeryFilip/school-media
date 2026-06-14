@@ -13,7 +13,10 @@ interface Props {
 
 const { articlesCount = 0, searchArticles = [], categories = [] } = Astro.props as Props;
 
-const courseColumns = [
+const courseColumns: {
+  title: string;
+  links: { href: string; title: string; subtitle: string; external?: boolean }[];
+}[] = [
   {
     title: "Годовые курсы",
     links: [
@@ -43,10 +46,9 @@ const courseColumns = [
       { href: "/neorganika/", title: "Курс по неорганической химии", subtitle: "Неорганическая химия" },
       { href: "/ovr/", title: "Курс по ОВР", subtitle: "Окислительно-восстановительные реакции" },
       {
-        href: "https://stepik.org/a/140949?utm_source=cite&utm_medium=menu",
+        href: "/varianty-ege/",
         title: "Авторские варианты ЕГЭ",
-        subtitle: "Практические задания ЕГЭ",
-        external: true,
+        subtitle: "15 КИМов · формат ФИПИ 2027",
       },
     ],
   },
