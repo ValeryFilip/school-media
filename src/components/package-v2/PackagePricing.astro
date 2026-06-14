@@ -105,6 +105,7 @@ const urls = stepikUrls(f.stepik);
           <EgeAcidButton
             as="button"
             paymentUrl={urls.pay}
+            ymGoal="payment_main"
             label={f.purchase.payLabel}
             arrow="→"
             ariaLabel={f.purchase.payLabel}
@@ -116,6 +117,7 @@ const urls = stepikUrls(f.stepik);
             href={urls.view}
             target="_blank"
             rel="noopener"
+            data-ym-goal="stepik_main"
             class="block w-full text-center mt-3 border border-paper text-paper py-4 font-mono text-[12px] uppercase tracking-widest hover:bg-paper hover:text-ink transition"
             aria-label={f.purchase.viewLabel}
           >
@@ -215,6 +217,7 @@ const urls = stepikUrls(f.stepik);
                   href="javascript:void(0)"
                   role="button"
                   data-payment-url={s.paymentUrl}
+                  data-ym-goal="payment_upsell"
                   class="block w-full text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
                 >
                   Оплатить со скидкой 5%
@@ -256,3 +259,16 @@ const urls = stepikUrls(f.stepik);
     </div>
   </div>
 </section>
+
+<script is:inline>
+  (function () {
+    document.addEventListener("click", function (e) {
+      var el = e.target.closest("[data-ym-goal]");
+      if (!el) return;
+      var goal = el.getAttribute("data-ym-goal");
+      if (goal && typeof window.ym === "function") {
+        window.ym(104058532, "reachGoal", goal);
+      }
+    });
+  })();
+</script>

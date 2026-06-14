@@ -16,6 +16,8 @@ interface Props {
   paymentUrl?: string;
   /** Aria-label (если визуальный текст недостаточен или повторяет иконку) */
   ariaLabel?: string;
+  /** Идентификатор цели Яндекс.Метрики (вешает data-ym-goal) */
+  ymGoal?: string;
 }
 
 const {
@@ -33,6 +35,7 @@ const {
   campaign,
   paymentUrl,
   ariaLabel,
+  ymGoal,
 } = Astro.props as Props;
 
 const baseClass =
@@ -59,16 +62,17 @@ const popupAttrs = popupId
   : {};
 const paymentAttrs = paymentUrl ? { "data-payment-url": paymentUrl } : {};
 const ariaAttrs = ariaLabel ? { "aria-label": ariaLabel } : {};
+const ymAttrs = ymGoal ? { "data-ym-goal": ymGoal } : {};
 ---
 
 {as === "button" ? (
-  <button type={type} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs}>
+  <button type={type} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs} {...ymAttrs}>
     {bubbles.map((style) => <span class="bub" style={style}></span>)}
     {html ? <Fragment set:html={html} /> : label}
     {arrow && <span class="font-mono">{arrow}</span>}
   </button>
 ) : (
-  <a href={href} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs}>
+  <a href={href} class:list={[classes, popupId && "popup-btn"]} {...popupAttrs} {...paymentAttrs} {...ariaAttrs} {...ymAttrs}>
     {bubbles.map((style) => <span class="bub" style={style}></span>)}
     {html ? <Fragment set:html={html} /> : label}
     {arrow && <span class="font-mono">{arrow}</span>}
