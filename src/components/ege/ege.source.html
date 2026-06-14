@@ -1,0 +1,3268 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ХИМ.LAB — подготовка к ЕГЭ по химии · 95+ баллов</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: "#0A0A0A",
+              paper: "#F2F2F2",
+              dim: "#8A8A8A",
+              line: "#262626",
+              acid: "#CCFF00",
+              fuchsia2: "#FF2E88",
+            },
+            fontFamily: {
+              display: ['"Space Grotesk"', "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --paper: #f2f2f2;
+        --dim: #8a8a8a;
+        --line: #262626;
+        --line-light: #d6d6d6;
+        --acid: #ccff00;
+        --fuchsia2: #ff2e88;
+      }
+
+      * {
+        -webkit-font-smoothing: antialiased;
+      }
+
+      html,
+      body {
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Space Grotesk", sans-serif;
+        overflow-x: hidden;
+      }
+
+      ::selection {
+        background: var(--acid);
+        color: var(--ink);
+      }
+
+      /* Periodic-table style cell */
+      .cell {
+        position: relative;
+        border: 1px solid var(--line);
+        transition:
+          background 180ms ease,
+          color 180ms ease,
+          border-color 180ms ease;
+      }
+      .cell:hover {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+      .cell:hover .cell-meta {
+        color: var(--ink);
+        opacity: 0.7;
+      }
+      /* If symbol inside was acid-colored — invert it so it stays readable on acid bg */
+      .cell:hover .text-acid {
+        color: var(--ink);
+      }
+      .cell-num {
+        position: absolute;
+        top: 8px;
+        left: 10px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: var(--dim);
+      }
+      .cell-mass {
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--dim);
+      }
+      .cell:hover .cell-num,
+      .cell:hover .cell-mass {
+        color: var(--ink);
+      }
+
+      .section {
+        border-top: 1px solid var(--line);
+      }
+      .gutter {
+        padding-left: clamp(16px, 4vw, 64px);
+        padding-right: clamp(16px, 4vw, 64px);
+      }
+
+      /* Titration reveal — fills from bottom up */
+      .titrate {
+        clip-path: inset(100% 0 0 0);
+        opacity: 0;
+        transition:
+          clip-path 1.1s cubic-bezier(0.6, 0.05, 0.2, 1),
+          opacity 0.6s ease;
+      }
+      .titrate.in {
+        clip-path: inset(0 0 0 0);
+        opacity: 1;
+      }
+
+      @keyframes bubble {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow: 0 0 0 0 rgba(204, 255, 0, 0.45);
+        }
+        50% {
+          transform: translateY(-2px) scale(1.015);
+          box-shadow:
+            0 0 0 8px rgba(204, 255, 0, 0),
+            0 12px 40px -6px rgba(204, 255, 0, 0.4);
+        }
+      }
+      .cta-pulse {
+        animation: bubble 2.4s ease-in-out infinite;
+      }
+      .bub {
+        position: absolute;
+        border: 1px solid currentColor;
+        border-radius: 9999px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Hero molecule */
+      .molecule-stage {
+        perspective: 1200px;
+        transform-style: preserve-3d;
+      }
+      .molecule {
+        position: relative;
+        transform-style: preserve-3d;
+        width: 100%;
+        height: 100%;
+      }
+      .atom {
+        position: absolute;
+        border-radius: 9999px;
+        border: 1px solid var(--paper);
+        background: var(--ink);
+        transform-style: preserve-3d;
+        display: grid;
+        place-items: center;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        color: var(--paper);
+      }
+      .atom.O {
+        background: var(--fuchsia2);
+        color: var(--ink);
+        border-color: var(--fuchsia2);
+      }
+      .atom.N {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+      .bond {
+        position: absolute;
+        background: var(--paper);
+        height: 1px;
+        transform-origin: left center;
+        opacity: 0.9;
+      }
+
+      .formula-particle {
+        position: absolute;
+        font-family: "JetBrains Mono", monospace;
+        color: var(--dim);
+        pointer-events: none;
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      .marquee {
+        display: flex;
+        gap: 4rem;
+        width: max-content;
+        animation: marquee 40s linear infinite;
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      .ul {
+        background: linear-gradient(
+          to top,
+          var(--acid) 0 4px,
+          transparent 4px 100%
+        );
+      }
+      .ul-fuchsia {
+        background: linear-gradient(
+          to top,
+          var(--fuchsia2) 0 4px,
+          transparent 4px 100%
+        );
+      }
+      .label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--dim);
+        text-transform: uppercase;
+      }
+
+      .trail {
+        position: fixed;
+        pointer-events: none;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: var(--acid);
+        mix-blend-mode: difference;
+        opacity: 0;
+        z-index: 60;
+      }
+
+      input,
+      textarea,
+      select {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: var(--paper);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px !important;
+        line-height: 1.5;
+        width: 100%;
+        padding: 18px 20px !important;
+        transition:
+          border-color 150ms ease,
+          background 150ms ease,
+          box-shadow 150ms ease;
+      }
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+      input:hover,
+      textarea:hover,
+      select:hover {
+        border-color: rgba(255, 255, 255, 0.42);
+        background: rgba(255, 255, 255, 0.06);
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--acid);
+        background: rgba(204, 255, 0, 0.04);
+        box-shadow: inset 0 0 0 1px var(--acid);
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(255, 255, 255, 0.28) !important;
+        font-size: 13px !important;
+      }
+
+      /* Form label (more visible than .label) */
+      .field-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        color: var(--paper);
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .field-label .field-num {
+        color: var(--acid);
+        font-weight: 700;
+      }
+      .field-label .field-req {
+        color: var(--fuchsia2);
+        font-size: 10px;
+      }
+
+      /* Selector pill (level / tariff) */
+      .pickbtn {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: var(--paper);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        padding: 16px 12px;
+        transition: all 150ms ease;
+        cursor: pointer;
+      }
+      .pickbtn:hover {
+        border-color: var(--paper);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .pickbtn.is-on {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+
+      /* Pain cards interactive */
+      .pain-card {
+        cursor: pointer;
+        border-left: 4px solid transparent;
+      }
+      .pain-card:hover {
+        background: #161616;
+      }
+      .pain-card:hover .pain-bar {
+        width: 100% !important;
+      }
+      .pain-card.is-selected {
+        background: #1a0d14;
+        border-left-color: var(--fuchsia2);
+      }
+      .pain-card.is-selected .pain-bar {
+        width: 100% !important;
+      }
+      .pain-card.is-selected .pain-check {
+        background: var(--fuchsia2);
+        color: var(--ink);
+        border-color: var(--fuchsia2);
+      }
+      .pain-card.is-selected .pain-label {
+        color: var(--fuchsia2);
+      }
+
+      details summary {
+        list-style: none;
+        cursor: pointer;
+      }
+      details summary::-webkit-details-marker {
+        display: none;
+      }
+      details[open] .faq-plus {
+        transform: rotate(45deg);
+      }
+      .faq-plus {
+        transition: transform 200ms ease;
+        display: inline-block;
+      }
+
+      /* Tariff card */
+      .tariff {
+        border: 1px solid var(--line);
+        background: var(--ink);
+        transition: border-color 180ms ease;
+        position: relative;
+      }
+      .tariff:hover {
+        border-color: var(--paper);
+      }
+      .tariff--featured {
+        border-color: var(--acid);
+      }
+
+      .score-row {
+        transition:
+          background 150ms ease,
+          color 150ms ease;
+      }
+      .score-row:hover {
+        background: var(--acid);
+        color: var(--ink);
+      }
+      .score-row:hover .score-dim {
+        color: var(--ink);
+        opacity: 0.75;
+      }
+
+      .hatched {
+        background-image: repeating-linear-gradient(
+          135deg,
+          var(--line) 0 1px,
+          transparent 1px 8px
+        );
+      }
+      .hatched-light {
+        background-image: repeating-linear-gradient(
+          135deg,
+          var(--line-light) 0 1px,
+          transparent 1px 8px
+        );
+      }
+
+      .sec-num {
+        font-family: "JetBrains Mono", monospace;
+        color: var(--dim);
+        font-size: 12px;
+        letter-spacing: 0.15em;
+      }
+
+      /* PT bg */
+      .pt-grid {
+        display: grid;
+        grid-template-columns: repeat(18, 1fr);
+        grid-auto-rows: 56px;
+        gap: 0;
+      }
+      .pt-grid > div {
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      @media (max-width: 768px) {
+        .pt-grid {
+          grid-template-columns: repeat(9, 1fr);
+        }
+      }
+
+      /* Compare table */
+      .cmp-row {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+      }
+      .cmp-row > div {
+        padding: 22px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .cmp-row > div + div {
+        border-left: 1px solid var(--line);
+      }
+      .cmp-row.head > div {
+        background: transparent;
+      }
+      .cmp-win {
+        background: rgba(204, 255, 0, 0.05);
+      }
+      .cmp-win:hover {
+        background: rgba(204, 255, 0, 0.1);
+      }
+      .mark-yes {
+        color: var(--acid);
+      }
+      .mark-no {
+        color: var(--dim);
+      }
+      .mark-mid {
+        color: #b89a00;
+      }
+
+      @media (max-width: 700px) {
+        .cmp-row {
+          grid-template-columns: 1fr;
+        }
+        .cmp-row > div + div {
+          border-left: none;
+        }
+        .cmp-row > div {
+          padding: 14px 16px;
+        }
+        .cmp-row .cmp-label {
+          font-weight: 700;
+          background: #161616;
+        }
+      }
+
+      /* Cases slider */
+      .cases-track {
+        display: flex;
+        gap: 24px;
+        transition: transform 0.5s cubic-bezier(0.6, 0.05, 0.2, 1);
+        will-change: transform;
+      }
+      .case-card {
+        flex: 0 0 calc((100% - 24px * 2) / 3);
+        border: 1px solid var(--line);
+        background: var(--ink);
+        padding: 28px;
+        transition: border-color 200ms ease;
+      }
+      .case-card:hover {
+        border-color: var(--paper);
+      }
+      @media (max-width: 1024px) {
+        .case-card {
+          flex-basis: calc((100% - 24px) / 2);
+        }
+      }
+      @media (max-width: 700px) {
+        .case-card {
+          flex-basis: 85%;
+        }
+      }
+
+      /* Steps "icons" */
+      .step-icon {
+        width: 88px;
+        height: 88px;
+        border: 1px solid var(--paper);
+        display: grid;
+        place-items: center;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 30px;
+        letter-spacing: -0.02em;
+        position: relative;
+        flex-shrink: 0;
+        background: var(--ink);
+      }
+      .step-icon::before {
+        content: attr(data-num);
+        position: absolute;
+        top: 4px;
+        left: 6px;
+        font-size: 10px;
+        color: var(--dim);
+        letter-spacing: 0;
+      }
+      .step-icon::after {
+        content: attr(data-mass);
+        position: absolute;
+        bottom: 4px;
+        right: 6px;
+        font-size: 9px;
+        color: var(--dim);
+      }
+      .step:hover .step-icon {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+      .step:hover .step-icon::before,
+      .step:hover .step-icon::after {
+        color: var(--ink);
+      }
+
+      /* Paper section (parents) */
+      .paper-section {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .paper-section .border-line\\/0 {
+        border-color: rgba(0, 0, 0, 0.12);
+      }
+
+      /* Program group */
+      .prog-group {
+        border-bottom: 1px solid var(--line);
+      }
+      .prog-group summary {
+        padding: 28px 0;
+      }
+      .prog-group[open] summary {
+        padding-bottom: 18px;
+      }
+      .topic-pill {
+        border: 1px solid var(--line);
+        padding: 14px 16px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        transition: all 150ms ease;
+        position: relative;
+      }
+      .topic-pill:hover {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+      .topic-pill .pill-num {
+        font-size: 10px;
+        color: var(--dim);
+        margin-right: 10px;
+      }
+      .topic-pill:hover .pill-num {
+        color: var(--ink);
+        opacity: 0.7;
+      }
+
+      /* Zigzag include card */
+      .inc-row + .inc-row {
+        border-top: 1px solid var(--line);
+      }
+      .inc-img {
+        position: relative;
+        aspect-ratio: 4/3;
+        background: var(--ink);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .inc-img-ph {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--dim);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+      }
+      .inc-img::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(
+            transparent 0 calc(100% - 1px),
+            var(--line) calc(100% - 1px) 100%
+          ),
+          linear-gradient(
+            90deg,
+            transparent 0 calc(100% - 1px),
+            var(--line) calc(100% - 1px) 100%
+          );
+        background-size: 40px 40px;
+        opacity: 0.25;
+        pointer-events: none;
+      }
+
+      /* Pricing — bright block */
+      .pricing-section {
+        background: var(--acid);
+        color: var(--ink);
+      }
+      .pricing-section .border-line\\/0 {
+        border-color: rgba(0, 0, 0, 0.18);
+      }
+
+      /* Hide trail on touch */
+      @media (hover: none) {
+        .trail {
+          display: none !important;
+        }
+      }
+
+      /* No-scrollbar utility */
+      .no-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-bar {
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body class="bg-ink text-paper">
+    <!-- ============== NAV ============== -->
+    <header
+      class="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-ink/80 border-b border-line"
+    >
+      <div class="gutter h-14 flex items-center justify-between">
+        <a href="#" class="flex items-center gap-3">
+          <div class="w-7 h-7 border border-paper grid place-items-center">
+            <span class="font-mono text-[10px] leading-none">Ch</span>
+          </div>
+          <span class="font-display font-bold tracking-tight text-[15px]"
+            >ХИМ.LAB</span
+          >
+          <span class="font-mono text-[10px] text-dim hidden sm:inline"
+            >/ ЕГЭ · 2026</span
+          >
+        </a>
+        <nav
+          class="hidden md:flex items-center gap-7 font-mono text-[11px] tracking-wider uppercase text-dim"
+        >
+          <a href="#author" class="hover:text-paper transition">Автор</a>
+          <a href="#compare" class="hover:text-paper transition">Сравнение</a>
+          <a href="#program" class="hover:text-paper transition">Программа</a>
+          <a href="#prices" class="hover:text-paper transition">Тарифы</a>
+          <a href="#parents" class="hover:text-paper transition">Родителям</a>
+        </nav>
+        <a
+          href="#form"
+          class="font-mono text-[11px] tracking-wider uppercase border border-paper px-3 py-2 hover:bg-acid hover:text-ink hover:border-acid transition"
+          >Пробный урок →</a
+        >
+      </div>
+    </header>
+
+    <!-- ============== 01. HERO (с автором) ============== -->
+    <section class="relative pt-14 overflow-hidden">
+      <div
+        class="absolute inset-0 pt-grid opacity-[0.35]"
+        id="ptBg"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute inset-0 pointer-events-none"
+        id="formulaField"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative gutter pt-20 pb-24 md:pt-24 md:pb-28">
+        <div class="grid grid-cols-12 gap-6 items-start">
+          <!-- Left: title + author info -->
+          <div class="col-span-12 lg:col-span-7">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="w-2 h-2 bg-acid"></span>
+              <span class="label">[01] / Hero · набор 2026 открыт</span>
+            </div>
+
+            <h1
+              class="font-display font-bold tracking-[-0.03em] leading-[0.92] text-[clamp(48px,9vw,148px)]"
+            >
+              ЕГЭ.<br />
+              ХИМИЯ.<br />
+              <span class="inline-block relative">
+                <span class="ul">95+&nbsp;БАЛЛОВ</span>
+              </span>
+            </h1>
+
+            <p
+              class="mt-10 max-w-xl text-paper/80 text-lg md:text-xl leading-snug"
+            >
+              Авторский онлайн-курс Валерия&nbsp;Филипенко.
+              Минигруппы&nbsp;по&nbsp;6&nbsp;человек, личный куратор, разбор
+              каждой ошибки.
+            </p>
+
+            <div class="mt-10 flex flex-wrap items-center gap-5">
+              <a
+                href="#form"
+                class="cta-pulse relative inline-flex items-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight text-[17px] px-7 py-5"
+              >
+                <span
+                  class="bub"
+                  style="width: 6px; height: 6px; left: 14px; bottom: 8px"
+                ></span>
+                <span
+                  class="bub"
+                  style="width: 4px; height: 4px; left: 30px; bottom: 14px"
+                ></span>
+                Записаться на пробный
+                <span class="font-mono">→</span>
+              </a>
+              <div class="font-mono text-xs text-dim">
+                БЕСПЛАТНО · 60 МИН · ДИАГНОСТИКА
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: molecule -->
+          <div class="col-span-12 lg:col-span-5 relative">
+            <div
+              class="aspect-square relative molecule-stage"
+              id="moleculeStage"
+            >
+              <div class="absolute inset-0 pointer-events-none">
+                <div
+                  class="absolute top-0 left-0 font-mono text-[10px] text-dim"
+                >
+                  X: 0.00
+                </div>
+                <div
+                  class="absolute top-0 right-0 font-mono text-[10px] text-dim"
+                >
+                  Y: 0.00
+                </div>
+                <div
+                  class="absolute bottom-0 left-0 font-mono text-[10px] text-dim"
+                >
+                  C₆H₅OH · phenol
+                </div>
+                <div
+                  class="absolute bottom-0 right-0 font-mono text-[10px] text-acid"
+                >
+                  [ACTIVE]
+                </div>
+              </div>
+              <div class="absolute inset-8 molecule" id="molecule"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marquee -->
+      <div class="relative border-t border-line py-4 overflow-hidden">
+        <div class="marquee font-mono text-sm text-dim whitespace-nowrap">
+          <div class="flex items-center gap-12">
+            <span>H₂SO₄ + Cu → CuSO₄ + SO₂ + H₂O</span>
+            <span class="text-acid">●</span>
+            <span>CH₃COOH ⇌ CH₃COO⁻ + H⁺</span>
+            <span class="text-fuchsia2">●</span>
+            <span>2KMnO₄ + 16HCl → 2KCl + 2MnCl₂ + 5Cl₂ + 8H₂O</span>
+            <span class="text-acid">●</span>
+            <span>C₂H₅OH + O₂ → CO₂ + H₂O</span>
+            <span class="text-fuchsia2">●</span>
+          </div>
+          <div class="flex items-center gap-12" aria-hidden="true">
+            <span>H₂SO₄ + Cu → CuSO₄ + SO₂ + H₂O</span>
+            <span class="text-acid">●</span>
+            <span>CH₃COOH ⇌ CH₃COO⁻ + H⁺</span>
+            <span class="text-fuchsia2">●</span>
+            <span>2KMnO₄ + 16HCl → 2KCl + 2MnCl₂ + 5Cl₂ + 8H₂O</span>
+            <span class="text-acid">●</span>
+            <span>C₂H₅OH + O₂ → CO₂ + H₂O</span>
+            <span class="text-fuchsia2">●</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 02. СТАТИСТИКА ============== -->
+    <section class="section relative">
+      <div class="gutter py-20 md:py-28">
+        <div class="grid grid-cols-12 gap-6 mb-12">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[02] / СТАТИСТИКА</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(34px,5vw,72px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Цифры,
+              <span class="text-dim"
+                >которые не&nbsp;стыдно показывать родителям.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-line border border-line"
+        >
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl text-acid"
+              data-counter="87"
+            >
+              0
+            </div>
+            <div class="label mt-3">Средний балл</div>
+          </div>
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl"
+              data-counter="94"
+              data-suffix="%"
+            >
+              0
+            </div>
+            <div class="label mt-3">Сдают 80+</div>
+          </div>
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl"
+              data-counter="312"
+            >
+              0
+            </div>
+            <div class="label mt-3">Выпускников</div>
+          </div>
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl"
+              data-counter="42"
+            >
+              0
+            </div>
+            <div class="label mt-3">100-балльников</div>
+          </div>
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl text-fuchsia2"
+              data-counter="2104"
+            >
+              0
+            </div>
+            <div class="label mt-3">Задач в базе</div>
+          </div>
+          <div class="bg-ink p-6">
+            <div
+              class="font-display font-bold text-4xl md:text-5xl"
+              data-counter="6"
+            >
+              0
+            </div>
+            <div class="label mt-3">Чел. в группе · max</div>
+          </div>
+        </div>
+
+        <div class="mt-6 font-mono text-xs text-dim">
+          * Данные по&nbsp;выпускам 2021–2025. Все ученики верифицированы
+          по&nbsp;скриншоту личного кабинета ФИПИ.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 03. ТРУДНОСТИ ============== -->
+    <section class="section relative">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-16">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[03] / ТРУДНОСТИ</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              В&nbsp;марте ты&nbsp;поймёшь, что не&nbsp;помнишь даже
+              <span class="ul-fuchsia">валентность хлора</span> в&nbsp;HClO₄.
+            </h2>
+            <div
+              class="mt-6 font-mono text-xs text-acid flex items-center gap-3"
+            >
+              <span class="w-2 h-2 bg-acid"></span>
+              <span class="uppercase tracking-widest"
+                >// потыкай в&nbsp;карточки ниже · шкала тревоги заполнится
+                снизу ↓</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="painGrid"
+          class="grid grid-cols-12 gap-px bg-line border border-line"
+        ></div>
+
+        <!-- Aggregate anxiety meter -->
+        <div class="mt-px border border-line border-t-0 bg-ink">
+          <div class="grid grid-cols-12">
+            <div
+              class="col-span-12 lg:col-span-4 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-line"
+            >
+              <div class="font-mono text-[11px] text-fuchsia2 mb-3">
+                // АГРЕГАТНАЯ ТРЕВОГА
+              </div>
+              <div class="flex items-baseline gap-3">
+                <div
+                  id="anxScore"
+                  class="font-display font-bold text-7xl md:text-8xl leading-none"
+                >
+                  0
+                </div>
+                <div class="font-mono text-sm text-dim">/ 600</div>
+              </div>
+              <div
+                id="anxDiag"
+                class="mt-3 font-mono text-xs text-dim uppercase tracking-wider"
+              >
+                [ выбери симптомы выше ]
+              </div>
+            </div>
+            <div
+              class="col-span-12 lg:col-span-8 p-6 md:p-8 flex flex-col justify-center"
+            >
+              <div
+                class="flex items-center justify-between mb-3 font-mono text-[11px] text-dim"
+              >
+                <span>LO · 0</span>
+                <span id="anxZone">— SAFE ZONE</span>
+                <span>HI · 600</span>
+              </div>
+              <div class="h-4 bg-line relative overflow-hidden">
+                <div
+                  id="anxBar"
+                  class="absolute inset-y-0 left-0 bg-fuchsia2 transition-all duration-500"
+                  style="width: 0%"
+                ></div>
+                <!-- Threshold ticks -->
+                <div
+                  class="absolute top-0 bottom-0 w-px bg-paper/30"
+                  style="left: 33%"
+                ></div>
+                <div
+                  class="absolute top-0 bottom-0 w-px bg-paper/30"
+                  style="left: 66%"
+                ></div>
+              </div>
+              <div
+                class="flex items-center justify-between mt-3 font-mono text-[10px] text-dim uppercase"
+              >
+                <span>норма</span>
+                <span>стандартная паника</span>
+                <span class="text-fuchsia2">красная зона</span>
+              </div>
+              <div
+                id="anxRx"
+                class="mt-6 font-mono text-sm text-paper/90 leading-snug min-h-[3em]"
+              >
+                // потыкай в карточки сверху — посмотрим, что у&nbsp;тебя болит
+                на&nbsp;самом деле.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 grid grid-cols-12 gap-6">
+          <div class="col-span-12 md:col-span-7 md:col-start-6">
+            <p class="font-display text-2xl md:text-3xl leading-snug">
+              Это лечится. Не&nbsp;мотивационными цитатами, а&nbsp;<span
+                class="bg-acid text-ink px-1"
+                >структурой, минигруппой и&nbsp;ежедневной обратной связью</span
+              >.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 04. КАК УСТРОЕНА ПОДГОТОВКА (шаги) ============== -->
+    <section class="section relative" id="howto">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-16">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[04] / ПОДГОТОВКА</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Как устроена подготовка.
+              <span class="text-dim"
+                >6 шагов от&nbsp;«ничего не&nbsp;помню» до&nbsp;90+.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line"
+          id="stepsGrid"
+        ></div>
+
+        <div class="mt-12 font-mono text-xs text-dim max-w-xl">
+          * Шаги идут параллельно. Например, лекции и&nbsp;домашка чередуются
+          с&nbsp;диагностиками каждый месяц.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 05. АВТОР КУРСА ============== -->
+    <section class="section relative" id="author">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[05] / АВТОР</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Валерий&nbsp;Филипенко.
+              <span class="text-dim"
+                >Не&nbsp;«команда из&nbsp;42&nbsp;экспертов». Один автор — одна
+                методика.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-px bg-line border border-line">
+          <!-- Photo + ID card -->
+          <div class="col-span-12 md:col-span-5 bg-ink p-6 md:p-8">
+            <div
+              class="flex items-start justify-between mb-6 font-mono text-[11px]"
+            >
+              <span>ID · 0001</span>
+              <span class="text-dim">[ HEAD OF METHOD ]</span>
+            </div>
+            <div
+              class="aspect-[4/5] border border-line relative overflow-hidden mb-6"
+            >
+              <div class="absolute inset-0 hatched"></div>
+              <div
+                class="absolute inset-0 grid place-items-center font-display font-bold text-[140px] leading-none"
+              >
+                ВФ
+              </div>
+              <div
+                class="absolute bottom-3 left-3 font-mono text-[10px] text-dim"
+              >
+                // photo placeholder · drag any image
+              </div>
+              <div
+                class="absolute top-3 right-3 font-mono text-[10px] text-acid"
+              >
+                ● rec
+              </div>
+            </div>
+            <div class="font-display font-bold text-3xl">Валерий Филипенко</div>
+            <div class="font-mono text-xs text-dim mt-1">
+              МГУ · хим.фак · к.х.н.
+            </div>
+
+            <div class="mt-6 flex gap-3">
+              <a
+                href="#"
+                class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition"
+                >tg @filipenko_ege</a
+              >
+              <a
+                href="#"
+                class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition"
+                >YouTube</a
+              >
+            </div>
+          </div>
+
+          <!-- Right: bio + stats -->
+          <div class="col-span-12 md:col-span-7 bg-ink">
+            <!-- Stats grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 border-b border-line">
+              <div class="p-6 border-r border-line">
+                <div
+                  class="font-display font-bold text-4xl text-acid"
+                  data-counter="98"
+                >
+                  0
+                </div>
+                <div class="label mt-2">Свой ЕГЭ</div>
+              </div>
+              <div class="p-6 border-r border-line">
+                <div class="font-display font-bold text-4xl" data-counter="8">
+                  0
+                </div>
+                <div class="label mt-2">Лет в подготовке</div>
+              </div>
+              <div class="p-6">
+                <div class="font-display font-bold text-4xl" data-counter="312">
+                  0
+                </div>
+                <div class="label mt-2">Выпускников</div>
+              </div>
+              <div class="p-6 border-r border-line border-t md:border-t-0">
+                <div class="font-display font-bold text-4xl" data-counter="42">
+                  0
+                </div>
+                <div class="label mt-2">100-балльников</div>
+              </div>
+              <div class="p-6 border-r border-line border-t md:border-t-0">
+                <div
+                  class="font-display font-bold text-4xl text-fuchsia2"
+                  data-counter="14"
+                >
+                  0
+                </div>
+                <div class="label mt-2">Статей в РИНЦ</div>
+              </div>
+              <div class="p-6 border-t md:border-t-0">
+                <div class="font-display font-bold text-4xl" data-counter="3">
+                  0
+                </div>
+                <div class="label mt-2">Учебника написал</div>
+              </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="p-6 md:p-8 space-y-5 text-paper/90">
+              <p class="font-display text-xl md:text-2xl leading-snug">
+                «Я сдавал ЕГЭ в&nbsp;2014&nbsp;на&nbsp;98 — и&nbsp;помню, как
+                два&nbsp;месяца не&nbsp;мог понять
+                окислительно-восстановительные реакции. С&nbsp;тех пор
+                я&nbsp;собирал методику, в&nbsp;которой ОВР объясняются
+                за&nbsp;один вечер».
+              </p>
+              <ul class="font-mono text-sm space-y-3 text-paper/85 mt-6">
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[01]</span
+                  ><span
+                    >Окончил хим.фак МГУ&nbsp;им.&nbsp;Ломоносова
+                    с&nbsp;красным дипломом. Защитил кандидатскую в&nbsp;2020
+                    по&nbsp;кинетике гетерогенных реакций.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[02]</span
+                  ><span
+                    >С&nbsp;2018&nbsp;года ведёт авторский курс. 8&nbsp;потоков,
+                    312&nbsp;учеников, средний балл выпуска — 87.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[03]</span
+                  ><span
+                    >Автор учебника «Органика без&nbsp;слёз» (МЦНМО, 2022)
+                    и&nbsp;двух методических пособий для&nbsp;учителей.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[04]</span
+                  ><span
+                    >10&nbsp;лет готовит к&nbsp;ЕГЭ по&nbsp;химии и&nbsp;знает
+                    кодификатор изнутри — какие задания будут
+                    и&nbsp;каких ловушек ждать.</span
+                  >
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-acid shrink-0 w-8">[05]</span
+                  ><span
+                    >Ведёт телеграм-канал «Филипенко про&nbsp;химию» —
+                    47&nbsp;000 подписчиков. Каждую неделю — разбор задачи
+                    ЕГЭ.</span
+                  >
+                </li>
+              </ul>
+
+              <!-- Author CTA -->
+              <div
+                class="pt-6 border-t border-line mt-8 flex flex-wrap items-center gap-4"
+              >
+                <a
+                  href="#form"
+                  class="cta-pulse relative inline-flex items-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight px-6 py-4 hover:bg-paper transition"
+                >
+                  <span
+                    class="bub"
+                    style="width: 5px; height: 5px; left: 12px; bottom: 8px"
+                  ></span>
+                  <span
+                    class="bub"
+                    style="width: 4px; height: 4px; left: 24px; bottom: 12px"
+                  ></span>
+                  Записаться на пробный к&nbsp;Валерию
+                  <span class="font-mono">→</span>
+                </a>
+                <div class="font-mono text-[11px] text-dim">
+                  60 МИН · БЕСПЛАТНО · С АВТОРОМ КУРСА
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 06. СРАВНЕНИЕ: МИНИГРУППА vs ОНЛАЙН-ШКОЛА ============== -->
+    <section class="section relative" id="compare">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[06] / СРАВНЕНИЕ</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Минигруппа из&nbsp;6 vs&nbsp;онлайн-школа из&nbsp;800.
+              <span class="text-dim"
+                >Честное сравнение без&nbsp;маркетинга.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <div class="border border-line border-b-0">
+          <!-- Head -->
+          <div class="cmp-row head">
+            <div
+              class="font-mono text-[11px] text-dim uppercase tracking-wider"
+            >
+              Параметр
+            </div>
+            <div class="cmp-win">
+              <div
+                class="font-mono text-[11px] text-acid uppercase tracking-wider mb-1"
+              >
+                [ ХИМ.LAB ]
+              </div>
+              <div class="font-display font-bold text-xl">
+                Минигруппа · 6&nbsp;чел.
+              </div>
+            </div>
+            <div>
+              <div
+                class="font-mono text-[11px] text-dim uppercase tracking-wider mb-1"
+              >
+                [ ТИП.OS ]
+              </div>
+              <div class="font-display font-bold text-xl text-dim">
+                Онлайн-школа · 800+
+              </div>
+            </div>
+          </div>
+
+          <div id="cmpBody"></div>
+        </div>
+
+        <div class="mt-10 grid grid-cols-12 gap-6">
+          <div class="col-span-12 md:col-span-8 md:col-start-3">
+            <p
+              class="font-display text-xl md:text-2xl leading-snug text-center"
+            >
+              В&nbsp;онлайн-школе ты&nbsp;платишь за&nbsp;маркетинг,
+              инфлюенсеров и&nbsp;офис в&nbsp;Москва-Сити. <br />
+              У&nbsp;нас ты&nbsp;платишь за&nbsp;<span
+                class="bg-acid text-ink px-1"
+                >время автора курса лично с&nbsp;тобой</span
+              >.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 07. ПРОГРАММА (раскрывающиеся блоки) ============== -->
+    <section class="section relative" id="program">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[07] / ПРОГРАММА</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              4 больших раздела.
+              <span class="text-dim"
+                >62&nbsp;темы. 36&nbsp;недель. Все темы из&nbsp;кодификатора
+                ФИПИ&nbsp;— и&nbsp;ещё пара сверху.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <!-- Top: 4 element cells for sections -->
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 border border-line mb-0"
+          id="progTop"
+        ></div>
+
+        <!-- Detailed accordion -->
+        <div class="mt-12" id="progAccordion"></div>
+      </div>
+    </section>
+
+    <!-- ============== 08. ЧТО ВХОДИТ В КУРС (зигзаг карточки) ============== -->
+    <section class="section relative" id="includes">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[08] / ВНУТРИ КУРСА</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Что ты&nbsp;получаешь, когда нажимаешь
+              <span class="ul">«Оплатить»</span>.
+            </h2>
+          </div>
+        </div>
+
+        <div class="border border-line" id="includesList"></div>
+      </div>
+    </section>
+
+    <!-- ============== 09. КЕЙСЫ — слайдер ============== -->
+    <section class="section relative" id="cases">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-12 items-end">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[09] / КЕЙСЫ</div>
+          </div>
+          <div class="col-span-12 md:col-span-6">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              312 выпускников.
+              <span class="text-dim"
+                >Восемь из&nbsp;них рассказывают, как было.</span
+              >
+            </h2>
+          </div>
+          <div class="col-span-12 md:col-span-3 flex md:justify-end gap-2">
+            <button
+              id="prevCase"
+              class="w-12 h-12 border border-paper grid place-items-center hover:bg-paper hover:text-ink transition font-mono"
+            >
+              ←
+            </button>
+            <button
+              id="nextCase"
+              class="w-12 h-12 border border-paper grid place-items-center hover:bg-paper hover:text-ink transition font-mono"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-hidden">
+          <div class="cases-track" id="casesTrack"></div>
+        </div>
+
+        <div
+          class="mt-8 flex items-center justify-between font-mono text-xs text-dim"
+        >
+          <div>← / → · стрелки на клавиатуре · свайп на тачскрине</div>
+          <div id="caseCounter">01 / 08</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 10. ТАРИФЫ — продающий ярки блок ============== -->
+    <section class="pricing-section relative" id="prices">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div
+              class="font-mono text-[12px] tracking-wider uppercase text-ink/70"
+            >
+              [10] / ТАРИФЫ · 2026
+            </div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.9] tracking-[-0.025em]"
+            >
+              Три концентрации.
+              <span class="text-ink/60"
+                >До&nbsp;1&nbsp;июня — скидка&nbsp;30%.</span
+              >
+            </h2>
+            <div
+              class="mt-6 inline-flex items-center gap-3 bg-ink text-paper px-4 py-2 font-mono text-xs"
+            >
+              <span class="w-2 h-2 bg-acid"></span>
+              ОСТАЛОСЬ
+              <span class="text-acid font-bold" data-counter="47">0</span> МЕСТ
+              · НАБОР 2026 ЗАКРЫВАЕТСЯ
+              <span data-days-to="2026-06-01">—</span> ДНЕЙ
+            </div>
+          </div>
+        </div>
+
+        <!-- BIG FEATURED: МИНИГРУППА -->
+        <div class="border-2 border-ink relative bg-ink text-paper">
+          <!-- Top ribbon -->
+          <div
+            class="bg-fuchsia2 text-ink font-mono text-[11px] tracking-widest py-2 px-5 uppercase font-bold flex flex-wrap items-center justify-between gap-2"
+          >
+            <span>★ выбирают 7 из 10 учеников · флагман курса</span>
+            <span class="hidden md:inline"
+              >SCROLL ↓ · РАЗВЕРНИ ВСЕ ПОДАРКИ</span
+            >
+          </div>
+
+          <div class="grid grid-cols-12">
+            <!-- Left: title + price -->
+            <div
+              class="col-span-12 lg:col-span-5 p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-line"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <div class="font-mono text-[12px] text-acid">
+                  [ GROUP · 68% ]
+                </div>
+                <div class="font-mono text-[11px] text-dim">2026.MAIN</div>
+              </div>
+              <div
+                class="font-display font-bold text-[clamp(44px,5.2vw,76px)] leading-[0.9] tracking-[-0.025em] break-words"
+              >
+                Минигруппа
+              </div>
+              <div class="font-mono text-sm text-dim mt-3 mb-8">
+                // рабочая концентрация · до&nbsp;6&nbsp;человек в&nbsp;группе
+              </div>
+
+              <!-- Price with crossed out -->
+              <div class="relative mb-2">
+                <div
+                  class="font-mono text-base text-dim line-through inline-block"
+                >
+                  14&nbsp;200 ₽
+                </div>
+                <span
+                  class="inline-block ml-3 bg-fuchsia2 text-ink font-mono text-[10px] px-2 py-1 align-middle font-bold tracking-widest"
+                  >−30%</span
+                >
+              </div>
+              <div class="flex items-baseline gap-3 mb-2">
+                <div
+                  class="font-display font-bold text-[clamp(56px,8vw,108px)] leading-none text-acid"
+                >
+                  9&nbsp;900&nbsp;₽
+                </div>
+                <div class="font-mono text-sm text-dim">/ мес</div>
+              </div>
+              <div class="font-mono text-xs text-dim mb-8">
+                или 825&nbsp;₽/мес в&nbsp;рассрочку на&nbsp;12&nbsp;мес · 0%
+              </div>
+
+              <!-- Places remaining -->
+              <div class="border border-fuchsia2 p-4 mb-6">
+                <div
+                  class="flex items-center justify-between font-mono text-[11px] mb-2"
+                >
+                  <span class="text-fuchsia2">// МЕСТ ОСТАЛОСЬ</span>
+                  <span
+                    ><span class="text-fuchsia2 font-bold">12</span>
+                    <span class="text-dim">/ 48</span></span
+                  >
+                </div>
+                <div class="h-1.5 bg-line relative overflow-hidden">
+                  <div
+                    class="absolute inset-y-0 left-0 bg-fuchsia2"
+                    style="width: 75%"
+                  ></div>
+                </div>
+                <div class="font-mono text-[10px] text-dim mt-2">
+                  Набор 2026 закрывается через
+                  <span data-days-to="2026-06-01" class="text-paper">—</span>
+                  дней
+                </div>
+              </div>
+
+              <a
+                href="#form"
+                class="cta-pulse relative block w-full text-center bg-acid text-ink py-5 font-display font-bold uppercase tracking-tight text-lg hover:bg-paper transition"
+              >
+                <span
+                  class="bub"
+                  style="width: 6px; height: 6px; left: 20px; bottom: 10px"
+                ></span>
+                <span
+                  class="bub"
+                  style="width: 4px; height: 4px; left: 40px; bottom: 16px"
+                ></span>
+                Записаться · сэкономить&nbsp;4&nbsp;300&nbsp;₽ →
+              </a>
+              <div class="font-mono text-[10px] text-dim mt-3 text-center">
+                пробный урок &mdash; бесплатно · 60 мин · с автором курса
+              </div>
+            </div>
+
+            <!-- Right: bundle / hooks / features -->
+            <div class="col-span-12 lg:col-span-7">
+              <!-- 4 hook tiles -->
+              <div class="grid grid-cols-2 gap-px bg-line border-b border-line">
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">
+                    // БОНУС 01
+                  </div>
+                  <div class="font-display font-bold text-xl leading-tight">
+                    Первое занятие — бесплатно
+                  </div>
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug">
+                    Приходи на&nbsp;вебинар без&nbsp;оплаты, посмотри атмосферу
+                    группы и&nbsp;уровень.
+                  </p>
+                </div>
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">
+                    // БОНУС 02
+                  </div>
+                  <div class="font-display font-bold text-xl leading-tight">
+                    Курс по&nbsp;биологии в&nbsp;подарок
+                  </div>
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug">
+                    Идёшь в&nbsp;медицинский? Получаешь полный курс «Биология
+                    ЕГЭ» в&nbsp;подарок (стоит 9&nbsp;900&nbsp;₽).
+                  </p>
+                </div>
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">
+                    // БОНУС 03
+                  </div>
+                  <div class="font-display font-bold text-xl leading-tight">
+                    Рассрочка от&nbsp;825&nbsp;₽ / мес · 0%
+                  </div>
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug">
+                    Через Тинькофф / Сбер. Никаких переплат, можно с&nbsp;карты
+                    родителя.
+                  </p>
+                </div>
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">
+                    // БОНУС 04
+                  </div>
+                  <div class="font-display font-bold text-xl leading-tight">
+                    Сборник «Органика без&nbsp;слёз»
+                  </div>
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug">
+                    Бумажный учебник + рабочая тетрадь Валерия Филипенко
+                    почтой&nbsp;РФ.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Features list -->
+              <div class="p-8 md:p-10">
+                <div
+                  class="font-mono text-[11px] text-dim uppercase tracking-wider mb-5"
+                >
+                  // что входит в&nbsp;тариф
+                </div>
+                <ul
+                  class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 font-mono text-sm text-paper/90"
+                >
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>2 живых вебинара / нед · 90&nbsp;мин</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Минигруппа до&nbsp;6&nbsp;человек</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Проверка ДЗ за&nbsp;24 часа</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Личный куратор · Telegram&nbsp;7/7</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>12 пробных ЕГЭ с&nbsp;разбором</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>База 2&nbsp;100&nbsp;задач + тренажёр</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Видеоуроки и&nbsp;конспекты</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Личный план на&nbsp;36&nbsp;недель</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Антипаника-чат в&nbsp;апреле–мае</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span
+                    ><span>Помощь с&nbsp;поступлением</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TWO SECONDARY TARIFFS -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- VIP -->
+          <a
+            href="vip.html"
+            class="block bg-ink text-paper p-6 md:p-8 border border-ink hover:border-fuchsia2 transition group"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="font-mono text-[11px] text-fuchsia2">
+                [ VIP · 96% ]
+              </div>
+              <div
+                class="font-mono text-[11px] text-dim group-hover:text-fuchsia2 transition"
+              >
+                отдельный лендинг →
+              </div>
+            </div>
+            <div
+              class="font-display font-bold text-3xl md:text-4xl mb-1 leading-tight"
+            >
+              Хочу индивидуально <span class="text-fuchsia2">→</span>
+            </div>
+            <div class="font-mono text-xs text-dim mb-6">
+              // концентрированный · 1&nbsp;на&nbsp;1 с&nbsp;Валерием
+            </div>
+            <div class="flex items-baseline gap-3 mb-4">
+              <div class="font-display font-bold text-3xl">
+                от&nbsp;29&nbsp;900&nbsp;₽
+              </div>
+              <div class="font-mono text-[11px] text-dim">/ мес</div>
+            </div>
+            <div class="font-mono text-xs text-paper/80 leading-snug">
+              4&nbsp;занятия в&nbsp;неделю с&nbsp;автором курса. Гарантия 85+
+              или возврат&nbsp;50%. Помощь с&nbsp;апелляцией
+              и&nbsp;поступлением.
+            </div>
+          </a>
+
+          <!-- Self -->
+          <a
+            href="self.html"
+            class="block bg-ink text-paper p-6 md:p-8 border border-ink hover:border-paper transition group"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="font-mono text-[11px] text-paper/70">
+                [ SELF · 15% ]
+              </div>
+              <div
+                class="font-mono text-[11px] text-dim group-hover:text-paper transition"
+              >
+                отдельный лендинг →
+              </div>
+            </div>
+            <div
+              class="font-display font-bold text-3xl md:text-4xl mb-1 leading-tight"
+            >
+              Хочу самостоятельно <span class="font-mono">→</span>
+            </div>
+            <div class="font-mono text-xs text-dim mb-6">
+              // разбавленный · только платформа
+            </div>
+            <div class="flex items-baseline gap-3 mb-4">
+              <div class="font-display font-bold text-3xl">
+                от&nbsp;4&nbsp;900&nbsp;₽
+              </div>
+              <div class="font-mono text-[11px] text-dim">/ мес</div>
+            </div>
+            <div class="font-mono text-xs text-paper/80 leading-snug">
+              Видеоуроки, конспекты, тренажёр на&nbsp;2&nbsp;100&nbsp;задач.
+              Без&nbsp;вебинаров, без&nbsp;куратора. Для&nbsp;тех, кто учится
+              сам.
+            </div>
+          </a>
+        </div>
+
+        <!-- 3 FACTS ROW -->
+        <div
+          class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/20"
+        >
+          <div class="bg-acid p-6 md:p-7">
+            <div
+              class="font-mono text-[11px] text-ink/60 uppercase tracking-wider mb-3"
+            >
+              // ФАКТ 01
+            </div>
+            <div
+              class="font-display font-bold text-xl md:text-2xl leading-tight"
+            >
+              14 дней — возврат без вопросов
+            </div>
+            <p class="font-mono text-[12px] text-ink/70 mt-3 leading-snug">
+              Не&nbsp;понравится — возвращаем 100% в&nbsp;течение трёх рабочих
+              дней. Без&nbsp;форм, опросов и&nbsp;«а&nbsp;может ещё подумаешь?».
+            </p>
+          </div>
+          <div class="bg-acid p-6 md:p-7">
+            <div
+              class="font-mono text-[11px] text-ink/60 uppercase tracking-wider mb-3"
+            >
+              // ФАКТ 02
+            </div>
+            <div
+              class="font-display font-bold text-xl md:text-2xl leading-tight"
+            >
+              Работаем официально · ИП + чек
+            </div>
+            <p class="font-mono text-[12px] text-ink/70 mt-3 leading-snug">
+              Лицензия №&nbsp;Л035-01298-77. Договор-оферта, кассовый чек,
+              налоговый вычет 13% — всё по&nbsp;закону.
+            </p>
+          </div>
+          <div class="bg-acid p-6 md:p-7">
+            <div
+              class="font-mono text-[11px] text-ink/60 uppercase tracking-wider mb-3"
+            >
+              // ФАКТ 03
+            </div>
+            <div
+              class="font-display font-bold text-xl md:text-2xl leading-tight"
+            >
+              −10% при оплате сразу за&nbsp;курс
+            </div>
+            <p class="font-mono text-[12px] text-ink/70 mt-3 leading-snug">
+              Полная оплата 9&nbsp;месяцев = 80&nbsp;190&nbsp;₽ вместо
+              89&nbsp;100&nbsp;₽. Минус ещё один учебник Валерия в&nbsp;подарок.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 11. ФОРМА ============== -->
+    <section class="section relative" id="form">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6">
+          <div class="col-span-12 md:col-span-5">
+            <div class="sec-num mb-6">[11] / ЗАЯВКА</div>
+            <h2
+              class="font-display font-bold text-[clamp(40px,6vw,96px)] leading-[0.9] tracking-[-0.02em] mb-8 titrate"
+            >
+              Пробный<br />урок.<br />
+              <span class="ul">60&nbsp;минут.</span><br />
+              <span class="text-dim">Бесплатно.</span>
+            </h2>
+            <p class="text-paper/80 text-lg max-w-md mb-8">
+              Ты&nbsp;приходишь — мы&nbsp;даём диагностику текущего уровня,
+              показываем 2&nbsp;темы курса и&nbsp;строим план
+              на&nbsp;36&nbsp;недель. Без&nbsp;продаж в&nbsp;лоб.
+            </p>
+
+            <div class="font-mono text-xs text-dim space-y-2">
+              <div>→ Никаких звонков в&nbsp;9&nbsp;утра</div>
+              <div>→ Куратор пишет в&nbsp;Telegram в&nbsp;удобное время</div>
+              <div>
+                → Если не&nbsp;откликнется в&nbsp;курсе — просто закроешь
+                вкладку
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-12 md:col-span-7 md:col-start-7">
+            <form
+              id="leadForm"
+              class="border border-paper/30 bg-ink p-6 md:p-10 relative"
+            >
+              <div
+                class="absolute top-4 right-4 font-mono text-[10px] text-dim"
+              >
+                // FORM_ID: 2026.CH.01
+              </div>
+
+              <div
+                class="font-mono text-[11px] text-acid mb-6 uppercase tracking-widest pt-2"
+              >
+                // заполни 5 полей · займёт 40 секунд
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label class="field-label mb-2"
+                    ><span class="field-num">[01]</span> Как тебя зовут
+                    <span class="field-req">*</span></label
+                  >
+                  <input type="text" required placeholder="Например — Артём" />
+                </div>
+                <div>
+                  <label class="field-label mb-2"
+                    ><span class="field-num">[02]</span> Класс
+                    <span class="field-req">*</span></label
+                  >
+                  <input
+                    type="text"
+                    required
+                    placeholder="10 / 11 / выпускник"
+                  />
+                </div>
+              </div>
+
+              <div class="mb-5">
+                <label class="field-label mb-2"
+                  ><span class="field-num">[03]</span> Telegram или телефон
+                  <span class="field-req">*</span></label
+                >
+                <input
+                  type="text"
+                  required
+                  placeholder="@username или +7 ___ ___-__-__"
+                />
+              </div>
+
+              <div class="mb-5">
+                <label class="field-label mb-2"
+                  ><span class="field-num">[04]</span> Текущий уровень
+                  (самооценка)</label
+                >
+                <div
+                  class="grid grid-cols-2 md:grid-cols-4 gap-2"
+                  id="levelChoice"
+                >
+                  <button type="button" data-val="0-40" class="pickbtn">
+                    0–40 баллов
+                  </button>
+                  <button type="button" data-val="40-60" class="pickbtn">
+                    40–60 баллов
+                  </button>
+                  <button type="button" data-val="60-80" class="pickbtn">
+                    60–80 баллов
+                  </button>
+                  <button type="button" data-val="80+" class="pickbtn">
+                    80+ баллов
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-5">
+                <label class="field-label mb-2"
+                  ><span class="field-num">[05]</span> Интересует тариф</label
+                >
+                <div
+                  class="grid grid-cols-1 md:grid-cols-3 gap-2"
+                  id="tariffChoice"
+                >
+                  <button type="button" class="pickbtn">Самостоятельный</button>
+                  <button type="button" class="pickbtn">Минигруппа</button>
+                  <button type="button" class="pickbtn">Индивидуально</button>
+                </div>
+              </div>
+
+              <div class="mb-7">
+                <label class="field-label mb-2"
+                  ><span class="field-num">[06]</span> Что больше всего не идёт
+                  <span class="text-dim normal-case font-normal tracking-normal"
+                    >(необязательно)</span
+                  ></label
+                >
+                <textarea
+                  rows="3"
+                  placeholder="органика, окислительно-восст. реакции, задачи 34..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="cta-pulse w-full bg-acid text-ink font-display font-bold uppercase tracking-tight text-lg py-5 hover:bg-paper transition relative overflow-hidden"
+              >
+                <span
+                  class="bub"
+                  style="width: 6px; height: 6px; left: 30%; bottom: 10px"
+                ></span>
+                <span
+                  class="bub"
+                  style="width: 4px; height: 4px; left: 60%; bottom: 14px"
+                ></span>
+                Записаться · Бесплатно
+                <span class="font-mono ml-2">→</span>
+              </button>
+
+              <p class="font-mono text-[10px] text-dim mt-4">
+                Отправляя форму, ты&nbsp;соглашаешься с&nbsp;тем, что
+                мы&nbsp;напишем тебе в&nbsp;Telegram в&nbsp;течение
+                24&nbsp;часов. Никакого спама.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 12. РОДИТЕЛЯМ ============== -->
+    <section class="paper-section" id="parents">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-14">
+          <div class="col-span-12 md:col-span-3">
+            <div
+              class="font-mono text-[12px] tracking-wider uppercase text-ink/50"
+            >
+              [12] / РОДИТЕЛЯМ
+            </div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em]"
+            >
+              Здравствуйте.
+              <span class="text-ink/50"
+                >Это раздел для&nbsp;тех, кто платит за&nbsp;курс,
+                а&nbsp;не&nbsp;учится на&nbsp;нём.</span
+              >
+            </h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-px bg-ink/15 border border-ink/20">
+          <div class="col-span-12 md:col-span-6 bg-paper p-8">
+            <div class="font-mono text-[11px] text-ink/50 mb-4">
+              // ВАШЕ БЕСПОКОЙСТВО — НАШИ ОТВЕТЫ
+            </div>
+            <ul class="space-y-7">
+              <li>
+                <div class="font-display font-bold text-xl mb-1">
+                  «Это очередная инфоцыганщина?»
+                </div>
+                <p class="text-ink/70 leading-snug">
+                  Нет. У&nbsp;нас лицензия №&nbsp;Л035-01298-77, к.х.н.
+                  в&nbsp;команде и&nbsp;312&nbsp;учеников
+                  с&nbsp;верифицированными баллами ФИПИ. Можем&nbsp;показать.
+                </p>
+              </li>
+              <li>
+                <div class="font-display font-bold text-xl mb-1">
+                  «Ребёнок и&nbsp;так перегружен школой».
+                </div>
+                <p class="text-ink/70 leading-snug">
+                  Курс — 6&nbsp;часов в&nbsp;неделю. Это меньше, чем средний
+                  школьник тратит на&nbsp;Reels. Время видно в&nbsp;личном
+                  кабинете родителя.
+                </p>
+              </li>
+              <li>
+                <div class="font-display font-bold text-xl mb-1">
+                  «А если не&nbsp;поможет?»
+                </div>
+                <p class="text-ink/70 leading-snug">
+                  14&nbsp;дней — возврат без&nbsp;вопросов. На&nbsp;VIP —
+                  гарантия 85+ или возвращаем 50% оплаты. Условия гарантии —
+                  в&nbsp;договоре, не&nbsp;в&nbsp;Instagram-сторис.
+                </p>
+              </li>
+              <li>
+                <div class="font-display font-bold text-xl mb-1">
+                  «Можно платить с&nbsp;юр.&nbsp;лица или через материнский
+                  капитал?»
+                </div>
+                <p class="text-ink/70 leading-snug">
+                  Да и&nbsp;да. Делаем налоговый вычет 13% — присылаем все
+                  документы. Принимаем оплату от&nbsp;юр.&nbsp;лиц с&nbsp;НДС.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-span-12 md:col-span-6 bg-paper p-8">
+            <div class="font-mono text-[11px] text-ink/50 mb-4">
+              // ЧТО МЫ ДАЁМ РОДИТЕЛЮ
+            </div>
+
+            <div
+              class="grid grid-cols-2 gap-px bg-ink/15 border border-ink/20 mb-8"
+            >
+              <div class="bg-paper p-5">
+                <div class="font-display font-bold text-3xl">24/7</div>
+                <div class="font-mono text-[11px] text-ink/55 mt-1 uppercase">
+                  Доступ к&nbsp;ЛК
+                </div>
+              </div>
+              <div class="bg-paper p-5">
+                <div class="font-display font-bold text-3xl">1×</div>
+                <div class="font-mono text-[11px] text-ink/55 mt-1 uppercase">
+                  Отчёт в&nbsp;месяц
+                </div>
+              </div>
+              <div class="bg-paper p-5">
+                <div class="font-display font-bold text-3xl">14&nbsp;дн.</div>
+                <div class="font-mono text-[11px] text-ink/55 mt-1 uppercase">
+                  Возврат денег
+                </div>
+              </div>
+              <div class="bg-paper p-5">
+                <div class="font-display font-bold text-3xl">13%</div>
+                <div class="font-mono text-[11px] text-ink/55 mt-1 uppercase">
+                  Налоговый вычет
+                </div>
+              </div>
+            </div>
+
+            <ul class="font-mono text-sm space-y-3 text-ink/85">
+              <li>
+                → Личный кабинет с&nbsp;прогрессом ребёнка по&nbsp;каждой теме
+              </li>
+              <li>
+                → Уведомление, если 3&nbsp;дня подряд не&nbsp;было активности
+              </li>
+              <li>
+                → Прямой контакт с&nbsp;куратором по&nbsp;вопросам ДЗ
+                и&nbsp;посещаемости
+              </li>
+              <li>
+                → Помесячный разбор пробников · видео-отчёт от&nbsp;автора курса
+              </li>
+              <li>→ Помощь с&nbsp;поступлением: вузы, олимпиады, целевое</li>
+            </ul>
+
+            <div class="mt-8 pt-8 border-t border-ink/15">
+              <div class="font-display font-bold text-lg mb-3">
+                Хотите поговорить лично?
+              </div>
+              <a
+                href="#form"
+                class="inline-flex items-center gap-3 bg-ink text-paper px-6 py-4 font-mono text-xs uppercase tracking-wider hover:bg-fuchsia2 hover:text-ink transition"
+              >
+                Связаться с куратором <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== 13. FAQ ============== -->
+    <section class="section relative" id="faq">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-16">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">[13] / FAQ</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              Вопросы,
+              <span class="text-dim"
+                >которые ты&nbsp;задаёшь себе в&nbsp;3&nbsp;часа ночи</span
+              >
+              перед&nbsp;тем, как&nbsp;записаться.
+            </h2>
+          </div>
+        </div>
+
+        <div class="border-t border-line" id="faqList"></div>
+      </div>
+    </section>
+
+    <!-- ============== FOOTER ============== -->
+    <footer class="border-t border-line">
+      <div class="gutter py-12">
+        <div class="grid grid-cols-12 gap-6 mb-10">
+          <div class="col-span-12 md:col-span-4">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-7 h-7 border border-paper grid place-items-center">
+                <span class="font-mono text-[10px]">Ch</span>
+              </div>
+              <span class="font-display font-bold">ХИМ.LAB</span>
+            </div>
+            <p class="font-mono text-xs text-dim max-w-xs">
+              Онлайн-школа подготовки к&nbsp;ЕГЭ по&nbsp;химии. Работаем
+              с&nbsp;2018&nbsp;года. Лицензия №&nbsp;Л035-01298-77.
+            </p>
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <div class="label mb-3">Курс</div>
+            <ul class="font-mono text-sm space-y-2 text-paper/80">
+              <li><a href="#program">Программа</a></li>
+              <li><a href="#prices">Тарифы</a></li>
+              <li><a href="#cases">Кейсы</a></li>
+            </ul>
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <div class="label mb-3">Контакты</div>
+            <ul class="font-mono text-sm space-y-2 text-paper/80">
+              <li>tg @himlab_help</li>
+              <li>
+                <a
+                  href="/cdn-cgi/l/email-protection"
+                  class="__cf_email__"
+                  data-cfemail="6f070a0303002f070602030e0d411d1a"
+                  >[email&#160;protected]</a
+                >
+              </li>
+              <li>+7 (495) 000-00-00</li>
+            </ul>
+          </div>
+          <div class="col-span-12 md:col-span-4">
+            <div class="label mb-3">// СТАТУС</div>
+            <div class="flex items-center gap-3 font-mono text-xs">
+              <span class="w-2 h-2 bg-acid"></span>
+              <span>НАБОР 2026 · ОТКРЫТ · 47 МЕСТ</span>
+            </div>
+            <div class="flex items-center gap-3 font-mono text-xs mt-2">
+              <span class="w-2 h-2 bg-fuchsia2"></span>
+              <span
+                >ДО ЕГЭ 2026:
+                <span data-days-to="2026-05-25">—</span> ДНЕЙ</span
+              >
+            </div>
+          </div>
+        </div>
+        <div
+          class="pt-6 border-t border-line flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] text-dim uppercase tracking-wider"
+        >
+          <div>© 2026 ХИМ.LAB · все права защищены</div>
+          <div>Политика конф. · Договор-оферта · Реквизиты</div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="trailWrap" aria-hidden="true"></div>
+
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
+    <script>
+      // ====================== PT BG ======================
+      (function buildPTBg() {
+        const grid = document.getElementById("ptBg");
+        for (let i = 0; i < 18 * 5; i++)
+          grid.appendChild(document.createElement("div"));
+      })();
+
+      // ====================== MOLECULE ======================
+      (function buildMolecule() {
+        const stage = document.getElementById("molecule");
+        if (!stage) return;
+        const R = 38;
+        const atoms = [];
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+          atoms.push({
+            type: "C",
+            x: 50 + Math.cos(a) * R,
+            y: 50 + Math.sin(a) * R,
+            label: "C",
+          });
+        }
+        for (let i = 0; i < 6; i++) {
+          const a = (Math.PI * 2 * i) / 6 - Math.PI / 2;
+          atoms.push({
+            type: "H",
+            x: 50 + Math.cos(a) * (R + 18),
+            y: 50 + Math.sin(a) * (R + 18),
+            label: "H",
+          });
+        }
+        atoms[6] = { type: "O", x: atoms[6].x, y: atoms[6].y, label: "OH" };
+
+        atoms.forEach((a) => {
+          const el = document.createElement("div");
+          el.className = `atom ${a.type}`;
+          const size = a.type === "C" ? 36 : a.type === "O" ? 38 : 28;
+          el.style.width = el.style.height = size + "px";
+          el.style.left = `calc(${a.x}% - ${size / 2}px)`;
+          el.style.top = `calc(${a.y}% - ${size / 2}px)`;
+          el.style.fontSize = (a.type === "C" ? 14 : 11) + "px";
+          el.textContent = a.label;
+          stage.appendChild(el);
+        });
+
+        function bond(x1, y1, x2, y2, double = false) {
+          const dx = x2 - x1,
+            dy = y2 - y1;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+          const b = document.createElement("div");
+          b.className = "bond";
+          b.style.width = dist + "%";
+          b.style.left = x1 + "%";
+          b.style.top = y1 + "%";
+          b.style.transform = `rotate(${angle}deg)`;
+          stage.appendChild(b);
+          if (double) {
+            const b2 = b.cloneNode();
+            b2.style.top = y1 + 0.8 + "%";
+            stage.appendChild(b2);
+          }
+        }
+        for (let i = 0; i < 6; i++) {
+          const a = atoms[i],
+            b = atoms[(i + 1) % 6];
+          bond(a.x, a.y, b.x, b.y, i % 2 === 0);
+        }
+        for (let i = 0; i < 6; i++)
+          bond(atoms[i].x, atoms[i].y, atoms[i + 6].x, atoms[i + 6].y);
+
+        const moleculeStage = document.getElementById("moleculeStage");
+        let tx = 0,
+          ty = 0,
+          cx = 0,
+          cy = 0;
+        moleculeStage.addEventListener("mousemove", (e) => {
+          const r = moleculeStage.getBoundingClientRect();
+          tx = ((e.clientX - r.left) / r.width - 0.5) * 44;
+          ty = ((e.clientY - r.top) / r.height - 0.5) * -44;
+        });
+        let auto = 0;
+        function loop() {
+          cx += (tx - cx) * 0.08;
+          cy += (ty - cy) * 0.08;
+          auto += 0.15;
+          stage.style.transform = `rotateY(${cx + auto}deg) rotateX(${cy}deg)`;
+          requestAnimationFrame(loop);
+        }
+        loop();
+      })();
+
+      // ====================== FLOATING FORMULAS ======================
+      (function floatingFormulas() {
+        const field = document.getElementById("formulaField");
+        if (!field) return;
+        const formulas = [
+          "H₂O",
+          "NaCl",
+          "CO₂",
+          "HCl",
+          "NH₃",
+          "O₂",
+          "H₂SO₄",
+          "NaOH",
+          "CH₄",
+          "CaCO₃",
+          "KOH",
+          "C₂H₅OH",
+          "Fe₂O₃",
+        ];
+        for (let i = 0; i < 18; i++) {
+          const el = document.createElement("div");
+          el.className = "formula-particle";
+          el.textContent =
+            formulas[Math.floor(Math.random() * formulas.length)];
+          el.style.left = Math.random() * 100 + "%";
+          el.style.top = Math.random() * 100 + "%";
+          el.style.fontSize = 10 + Math.random() * 8 + "px";
+          el.style.opacity = 0.15 + Math.random() * 0.25;
+          field.appendChild(el);
+          gsap.to(el, {
+            x: (Math.random() - 0.5) * 60,
+            y: (Math.random() - 0.5) * 60,
+            duration: 8 + Math.random() * 8,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+          });
+        }
+      })();
+
+      // ====================== 03. PAIN POINTS (interactive) ======================
+      (function buildPain() {
+        const grid = document.getElementById("painGrid");
+        if (!grid) return;
+        const symptoms = [
+          {
+            id: 1,
+            anx: 140,
+            t: "«Школьная учительница объясняет — а я не понимаю».",
+            d: "Программа разбросана, темы повторяются по&nbsp;4&nbsp;раза, на&nbsp;ЕГЭ — другие задачи.",
+          },
+          {
+            id: 2,
+            anx: 220,
+            t: "«Решаю варианты — а в реальном на 60».",
+            d: "Без системы и&nbsp;без обратной связи разбор ошибок превращается в&nbsp;имитацию.",
+          },
+          {
+            id: 3,
+            anx: 180,
+            t: "«Органика — это ад. Кажется, я тупой».",
+            d: "Дело не&nbsp;в&nbsp;тебе. Дело в&nbsp;том, что никто не&nbsp;показал, как читать структурную формулу.",
+          },
+          {
+            id: 4,
+            anx: 200,
+            t: "«До ЕГЭ — 6 месяцев, я ничего не успеваю».",
+            d: "Прокрастинация поверх паники. Нужен внешний дедлайн и&nbsp;человек, который пинает по&nbsp;ДЗ.",
+          },
+          {
+            id: 5,
+            anx: 120,
+            t: "«Репетитор не объясняет, а просто проверяет».",
+            d: "Часовая встреча в&nbsp;неделю — это не&nbsp;подготовка к&nbsp;ЕГЭ, это аудит твоего одиночества.",
+          },
+          {
+            id: 6,
+            anx: 240,
+            t: "«В онлайн-школе я — один из 800 учеников».",
+            d: "Никто не&nbsp;помнит, как тебя зовут. Тебя спишут с&nbsp;ЕГЭ задолго до&nbsp;25&nbsp;мая.",
+          },
+        ];
+
+        symptoms.forEach((s, i) => {
+          const num = String(i + 1).padStart(2, "0");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.dataset.anx = s.anx;
+          btn.dataset.selected = "false";
+          btn.className =
+            "pain-card col-span-12 md:col-span-4 bg-ink p-8 group text-left transition relative border-l-4 border-transparent";
+          btn.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-mono text-xs text-fuchsia2">// СИМПТОМ ${num}</div>
+        <div class="pain-check w-5 h-5 border border-paper/40 grid place-items-center font-mono text-[10px] shrink-0">+</div>
+      </div>
+      <div class="font-display font-bold text-2xl md:text-3xl leading-tight mb-4">${s.t}</div>
+      <p class="text-dim text-sm">${s.d}</p>
+      <div class="mt-8 h-2 bg-line relative overflow-hidden">
+        <div class="pain-bar absolute inset-y-0 left-0 bg-fuchsia2 transition-all duration-500" style="width:${Math.min(100, s.anx / 3)}%"></div>
+      </div>
+      <div class="flex items-center justify-between font-mono text-[10px] mt-2">
+        <span class="pain-label text-dim">У МЕНЯ ТАК?</span>
+        <span class="text-fuchsia2">+${s.anx} ТРЕВОГИ</span>
+      </div>
+    `;
+          btn.addEventListener("click", () => {
+            const on = btn.dataset.selected === "true";
+            btn.dataset.selected = on ? "false" : "true";
+            btn.classList.toggle("is-selected", !on);
+            updateAggregate();
+          });
+          grid.appendChild(btn);
+        });
+
+        const score = document.getElementById("anxScore");
+        const bar = document.getElementById("anxBar");
+        const zone = document.getElementById("anxZone");
+        const diag = document.getElementById("anxDiag");
+        const rx = document.getElementById("anxRx");
+
+        function updateAggregate() {
+          const selected = Array.from(
+            grid.querySelectorAll('[data-selected="true"]'),
+          );
+          const total = selected.reduce((a, b) => a + Number(b.dataset.anx), 0);
+          const max = 600;
+          const pct = (total / max) * 100;
+          const count = selected.length;
+
+          // Animate score
+          const cur = parseInt(score.textContent.replace(/\D/g, "")) || 0;
+          gsap.to(
+            { v: cur },
+            {
+              v: total,
+              duration: 0.6,
+              ease: "expo.out",
+              onUpdate: function () {
+                score.textContent = Math.round(this.targets()[0].v);
+              },
+            },
+          );
+          bar.style.width = pct + "%";
+
+          // Zone classification
+          let zoneText, diagText, rxText, barColor;
+          if (count === 0) {
+            zoneText = "— SAFE ZONE";
+            diagText = "[ выбери симптомы выше ]";
+            rxText =
+              "// потыкай в карточки сверху — посмотрим, что у&nbsp;тебя болит на&nbsp;самом деле.";
+            barColor = "var(--fuchsia2)";
+          } else if (total < 200) {
+            zoneText = "НОРМА · ЗЕЛЁНАЯ ЗОНА";
+            diagText = "[ диагноз: лёгкая тревожность ]";
+            rxText =
+              '// Тебе хватит платформы и&nbsp;тренажёра. <a href="#prices" class="text-acid hover:underline">Тариф «Самостоятельный» →</a>';
+            barColor = "var(--acid)";
+          } else if (total < 400) {
+            zoneText = "СТАНДАРТНАЯ ПАНИКА";
+            diagText = "[ диагноз: типичный одиннадцатиклассник ]";
+            rxText =
+              '// Тебе нужна минигруппа: вебинары, живой куратор и&nbsp;проверка ДЗ. <a href="#prices" class="text-acid hover:underline">Тариф «Минигруппа» →</a>';
+            barColor = "var(--fuchsia2)";
+          } else {
+            zoneText = "🔥 КРАСНАЯ ЗОНА";
+            diagText = "[ диагноз: пора звать Валерия лично ]";
+            rxText =
+              '// Нужен индивидуальный формат — 4&nbsp;занятия в&nbsp;неделю и&nbsp;гарантия 85+. <a href="#prices" class="text-acid hover:underline">Тариф «Индивидуально» →</a>';
+            barColor = "var(--fuchsia2)";
+          }
+          zone.textContent = zoneText;
+          diag.textContent = diagText;
+          rx.innerHTML = rxText;
+          bar.style.background = barColor;
+        }
+      })();
+
+      (function buildSteps() {
+        const grid = document.getElementById("stepsGrid");
+        if (!grid) return;
+        const steps = [
+          {
+            num: "01",
+            sym: "Dg",
+            mass: "60 мин",
+            title: "Диагностика стартового уровня",
+            text: "Первый звонок с&nbsp;автором: пишешь мини-ЕГЭ на&nbsp;20&nbsp;вопросов, разбираем пробелы. Без&nbsp;этого — никакого «универсального плана».",
+          },
+          {
+            num: "02",
+            sym: "Pl",
+            mass: "36 нед",
+            title: "Личный план на&nbsp;36 недель",
+            text: "Получаешь карту из&nbsp;62&nbsp;тем с&nbsp;дедлайнами. Видно, какие недели — органика, какие — задачи, когда первый пробник.",
+          },
+          {
+            num: "03",
+            sym: "Le",
+            mass: "2/нед",
+            title: "Живые вебинары в&nbsp;минигруппе",
+            text: "Два вебинара в&nbsp;неделю по&nbsp;90&nbsp;минут. Группа до&nbsp;6&nbsp;человек — можно перебивать, задавать «глупые» вопросы, спорить.",
+          },
+          {
+            num: "04",
+            sym: "Hw",
+            mass: "24 ч",
+            title: "Домашка с&nbsp;проверкой",
+            text: "Не&nbsp;тесты, а&nbsp;настоящие задачи. Куратор разбирает каждое решение текстом и&nbsp;голосовыми в&nbsp;TG в&nbsp;течение 24&nbsp;часов.",
+          },
+          {
+            num: "05",
+            sym: "Pt",
+            mass: "12 шт",
+            title: "Пробники каждый месяц",
+            text: "12&nbsp;полных вариантов ЕГЭ за&nbsp;курс. После каждого — личный видео-разбор твоих ошибок от&nbsp;автора.",
+          },
+          {
+            num: "06",
+            sym: "Ex",
+            mass: "25.05",
+            title: "Поддержка до&nbsp;и&nbsp;после экзамена",
+            text: "За&nbsp;неделю до&nbsp;ЕГЭ — антипаника-сессия. Если результат низкий — помогаем с&nbsp;апелляцией. Если высокий — с&nbsp;поступлением.",
+          },
+        ];
+        steps.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "step bg-ink p-6 md:p-8 flex gap-6 cursor-default";
+          div.innerHTML = `
+      <div class="step-icon" data-num="${s.num}" data-mass="${s.mass}">${s.sym}</div>
+      <div class="flex-1">
+        <div class="font-mono text-[11px] text-acid mb-2">// ШАГ ${s.num}</div>
+        <div class="font-display font-bold text-2xl leading-tight mb-3">${s.title}</div>
+        <p class="text-paper/80 text-sm leading-snug">${s.text}</p>
+      </div>
+    `;
+          grid.appendChild(div);
+        });
+      })();
+
+      // ====================== 06. COMPARE ======================
+      (function buildCompare() {
+        const wrap = document.getElementById("cmpBody");
+        if (!wrap) return;
+        const rows = [
+          {
+            p: "Человек в группе",
+            a: { v: "до 6", m: "yes" },
+            b: { v: "200–800", m: "no" },
+          },
+          {
+            p: "Проверка домашки",
+            a: { v: "каждая · 24 ч", m: "yes" },
+            b: { v: "автотесты или раз в&nbsp;неделю", m: "no" },
+          },
+          {
+            p: "Личный куратор",
+            a: { v: "да, в&nbsp;Telegram 7/7", m: "yes" },
+            b: { v: "нет / общий чат", m: "no" },
+          },
+          {
+            p: "Кто ведёт занятия",
+            a: { v: "автор курса · к.х.н.", m: "yes" },
+            b: { v: "часто — другой студент", m: "no" },
+          },
+          {
+            p: "Знают тебя по&nbsp;имени",
+            a: { v: "да", m: "yes" },
+            b: { v: "нет", m: "no" },
+          },
+          {
+            p: "Среднее повышение балла",
+            a: { v: "+34 балла", m: "yes" },
+            b: { v: "+12 баллов", m: "mid" },
+          },
+          {
+            p: "Доля сдавших на&nbsp;80+",
+            a: { v: "94%", m: "yes" },
+            b: { v: "27–41%", m: "no" },
+          },
+          {
+            p: "Гарантия возврата",
+            a: { v: "14 дней + 85+ или 50%", m: "yes" },
+            b: { v: "нет / 7 дней", m: "no" },
+          },
+          {
+            p: "Цена за&nbsp;месяц",
+            a: { v: "9 900 ₽", m: "yes" },
+            b: { v: "4 900 – 18 000 ₽", m: "mid" },
+          },
+        ];
+        rows.forEach((r) => {
+          const div = document.createElement("div");
+          div.className = "cmp-row";
+          div.innerHTML = `
+      <div class="cmp-label font-mono text-sm text-paper/90">${r.p}</div>
+      <div class="cmp-win">
+        <div class="flex items-center gap-3">
+          <span class="mark-${r.a.m} font-mono">${r.a.m === "yes" ? "✓" : "·"}</span>
+          <span class="font-display font-medium text-lg">${r.a.v}</span>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-3 text-dim">
+          <span class="mark-${r.b.m} font-mono">${r.b.m === "no" ? "✕" : r.b.m === "mid" ? "~" : "·"}</span>
+          <span class="font-display font-medium text-lg ${r.b.m === "no" ? "line-through decoration-line decoration-1" : ""}">${r.b.v}</span>
+        </div>
+      </div>
+    `;
+          wrap.appendChild(div);
+        });
+      })();
+
+      // ====================== 07. PROGRAM ======================
+      (function buildProgram() {
+        const top = document.getElementById("progTop");
+        const acc = document.getElementById("progAccordion");
+        if (!top || !acc) return;
+
+        const sections = [
+          {
+            sym: "Об",
+            code: "01",
+            name: "Общая химия",
+            topics: 18,
+            weeks: 8,
+            tasks: 8,
+            points: 12,
+            exTasks: "1–7, 23",
+            list: [
+              "Строение атома · квантовые числа",
+              "Периодический закон и&nbsp;ПСХЭ",
+              "Химическая связь · ионная, ковалентная",
+              "Электроотрицательность · полярность",
+              "Скорость хим. реакций · кинетика",
+              "Хим. равновесие · принцип Ле&nbsp;Шателье",
+              "Термохимия · тепловой эффект",
+              "Растворы · концентрация · pH",
+              "Электролитическая диссоциация",
+              "Окислительно-восстановительные реакции",
+              "Электролиз растворов и&nbsp;расплавов",
+              "Гидролиз солей",
+              "Электрохимия · ряд активности",
+              "Классификация неорганических соединений",
+              "Номенклатура · IUPAC",
+              "Расчёты по&nbsp;формулам",
+              "Стехиометрия · уравнения",
+              "Газовые законы",
+            ],
+          },
+          {
+            sym: "Нг",
+            code: "02",
+            name: "Неорганика",
+            topics: 16,
+            weeks: 9,
+            tasks: 11,
+            points: 15,
+            exTasks: "8–13, 22, 24–26",
+            list: [
+              "Водород и&nbsp;его соединения",
+              "Галогены · Cl, Br, I, F",
+              "Халькогены · кислород, сера",
+              "Азот и&nbsp;его соединения",
+              "Углерод · аллотропия",
+              "Кремний · силикаты",
+              "Щелочные металлы · Na, K, Li",
+              "Щёлочноземельные · Mg, Ca",
+              "Алюминий и&nbsp;его соединения",
+              "Железо · Fe, Fe²⁺, Fe³⁺",
+              "Медь, цинк, хром · переходные",
+              "Кислоты · классификация и&nbsp;свойства",
+              "Основания и&nbsp;амфотерные гидроксиды",
+              "Соли · средние, кислые, основные",
+              "Оксиды · кислотные, основные, амфотерные",
+              "Качественные реакции на&nbsp;катионы и&nbsp;анионы",
+            ],
+          },
+          {
+            sym: "Ог",
+            code: "03",
+            name: "Органика",
+            topics: 20,
+            weeks: 14,
+            acid: true,
+            tasks: 12,
+            points: 18,
+            exTasks: "14–21, 32",
+            list: [
+              "Алканы · номенклатура, изомерия",
+              "Алкены · правило Марковникова",
+              "Алкины · реакция Кучерова",
+              "Алкадиены · диеновый синтез",
+              "Циклоалканы и&nbsp;арены",
+              "Бензол · реакции замещения",
+              "Спирты одноатомные и&nbsp;многоатомные",
+              "Фенолы · кислотные свойства",
+              "Альдегиды и&nbsp;кетоны",
+              "Карбоновые кислоты",
+              "Сложные эфиры · гидролиз",
+              "Жиры · омыление",
+              "Углеводы · моно-, ди-, поли-",
+              "Амины первичные, вторичные, третичные",
+              "Аминокислоты · биполярный ион",
+              "Белки · пептидная связь",
+              "Нуклеиновые кислоты",
+              "Высокомолекулярные соединения",
+              "Изомерия · цис-, транс-, оптическая",
+              "Цепочки превращений · мостики между классами",
+            ],
+          },
+          {
+            sym: "34",
+            code: "04",
+            name: "Задачи 33–35",
+            topics: 8,
+            weeks: 5,
+            acid: true,
+            tasks: 3,
+            points: 11,
+            exTasks: "33, 34, 35",
+            list: [
+              "Задача 33 · реакции по&nbsp;цепочке",
+              "Задача 34 · смеси и&nbsp;примеси",
+              "Задача 34 · избыток и&nbsp;недостаток",
+              "Задача 34 · растворы · ω, c, m",
+              "Задача 35 · вывод формулы органики",
+              "Задача 35 · газы и&nbsp;пары",
+              "Задача 35 · кристаллогидраты",
+              "Стратегия времени на&nbsp;ЕГЭ · 90 мин",
+            ],
+          },
+        ];
+
+        // Top cells
+        sections.forEach((s, i) => {
+          const c = document.createElement("div");
+          c.className =
+            "cell aspect-square md:aspect-[5/4] p-4 md:p-5 flex flex-col justify-between cursor-pointer" +
+            (s.acid ? " cell-acid" : "");
+          c.dataset.idx = i;
+          c.innerHTML = `
+      <div class="cell-num">${s.code}</div>
+      <div class="cell-mass">${s.topics} тем · ${s.weeks} нед</div>
+      <div class="flex items-center justify-center flex-1 -mt-2 -mb-2">
+        <div class="text-center">
+          <div class="font-display font-bold text-[clamp(40px,7vw,72px)] leading-none ${s.acid ? "text-acid" : ""}">${s.sym}</div>
+          <div class="font-mono text-xs mt-3 cell-meta text-dim">${s.name}</div>
+        </div>
+      </div>
+    `;
+          c.addEventListener("click", () => {
+            const d = acc.querySelectorAll("details")[i];
+            if (d) {
+              d.open = !d.open;
+              d.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          });
+          top.appendChild(c);
+        });
+
+        // Accordion
+        sections.forEach((s, i) => {
+          const d = document.createElement("details");
+          d.className = "prog-group";
+          if (i === 0) d.open = true;
+          d.innerHTML = `
+      <summary class="flex items-center justify-between gap-6 group">
+        <div class="flex items-center gap-6">
+          <div class="font-mono text-sm text-dim">[${s.code}]</div>
+          <div class="font-display font-bold text-2xl md:text-4xl tracking-tight ${s.acid ? "text-acid" : ""}">${s.name}</div>
+          <div class="font-mono text-xs text-dim hidden md:block">/ ${s.topics} тем · ${s.weeks} нед.</div>
+        </div>
+        <div class="faq-plus font-mono text-3xl shrink-0">+</div>
+      </summary>
+      <div class="pb-8 pt-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+          ${s.list
+            .map(
+              (t, idx) => `
+            <div class="topic-pill bg-ink">
+              <span class="pill-num">${String(idx + 1).padStart(2, "0")}</span>${t}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+
+        <!-- Summary footer: how many tasks + points -->
+        <div class="mt-px grid grid-cols-12 gap-px bg-line border border-line border-t-0">
+          <div class="col-span-12 md:col-span-3 bg-ink p-5">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">// что закроем</div>
+            <div class="font-display font-bold text-base mt-2">Раздел <span class="${s.acid ? "text-acid" : "text-paper"}">«${s.name}»</span></div>
+          </div>
+          <div class="col-span-6 md:col-span-3 bg-ink p-5 group">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">решишь заданий</div>
+            <div class="flex items-baseline gap-2 mt-2">
+              <div class="font-display font-bold text-5xl text-acid">${s.tasks}</div>
+              <div class="font-mono text-xs text-dim">/ 34 в&nbsp;варианте</div>
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-2">№ ${s.exTasks}</div>
+          </div>
+          <div class="col-span-6 md:col-span-3 bg-ink p-5">
+            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">возьмёшь баллов</div>
+            <div class="flex items-baseline gap-2 mt-2">
+              <div class="font-display font-bold text-5xl text-acid">+${s.points}</div>
+              <div class="font-mono text-xs text-dim">/ 56 первичных</div>
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-2">≈ ${Math.round((s.points / 56) * 100)}% теста</div>
+          </div>
+          <div class="col-span-12 md:col-span-3 bg-acid text-ink p-5 flex flex-col justify-between">
+            <div class="font-mono text-[10px] uppercase tracking-wider">// итог по&nbsp;разделу</div>
+            <div class="font-display font-bold text-2xl leading-tight">${s.weeks} недель → +${s.points} баллов</div>
+          </div>
+        </div>
+      </div>
+    `;
+          acc.appendChild(d);
+        });
+      })();
+
+      // ====================== 08. INCLUDES (zigzag) ======================
+      (function buildIncludes() {
+        const wrap = document.getElementById("includesList");
+        if (!wrap) return;
+        const items = [
+          {
+            num: "01",
+            tag: "LIVE",
+            title: "Живые вебинары",
+            desc: "Два&nbsp;раза в&nbsp;неделю по&nbsp;90&nbsp;минут. Группа до&nbsp;6&nbsp;человек — это разговор, а&nbsp;не&nbsp;лекция в&nbsp;пустоту. Можно перебивать, задавать вопросы, спорить с&nbsp;автором.",
+            bullets: [
+              "Расписание подстраивается под&nbsp;группу",
+              "Запись + конспект через 2&nbsp;часа",
+              "Можно пропустить — догонишь по&nbsp;записи",
+            ],
+            ph: "screen · zoom + whiteboard",
+          },
+          {
+            num: "02",
+            tag: "HW",
+            title: "Домашка с&nbsp;проверкой",
+            desc: "Не&nbsp;тесты, которые робот проверяет за&nbsp;три секунды. Настоящие задачи&nbsp;34–35 с&nbsp;разбором каждого решения от&nbsp;живого куратора в&nbsp;Telegram.",
+            bullets: [
+              "Куратор отвечает в&nbsp;течение 24&nbsp;часов",
+              "Голосовые сообщения с&nbsp;объяснением",
+              "Можно пересдавать сколько угодно раз",
+            ],
+            ph: "screen · solution review",
+          },
+          {
+            num: "03",
+            tag: "APP",
+            title: "Платформа и&nbsp;тренажёр",
+            desc: "Личный кабинет с&nbsp;твоим прогрессом по&nbsp;62&nbsp;темам. Тренажёр на&nbsp;2&nbsp;100 задач — решаешь по&nbsp;дороге в&nbsp;школу, на&nbsp;перемене, ночью.",
+            bullets: [
+              "Доступ с&nbsp;любого устройства · 24/7",
+              "Адаптивный режим — даёт то, что&nbsp;ты&nbsp;не&nbsp;знаешь",
+              "Карточки для&nbsp;повторения · spaced repetition",
+            ],
+            ph: "screen · LMS dashboard",
+          },
+          {
+            num: "04",
+            tag: "TG",
+            title: "Поддержка и&nbsp;куратор",
+            desc: "Закрытый чат в&nbsp;Telegram, где можно написать «не&nbsp;понимаю задачу 14» в&nbsp;любое время. Куратор не&nbsp;робот, а&nbsp;старшекурсник хим.фака. Знает, как было больно тебе.",
+            bullets: [
+              "Личный куратор на&nbsp;всю группу из&nbsp;6&nbsp;человек",
+              "Отвечает 7/7, кроме ночи · 09–23",
+              "Антипаника-чат в&nbsp;апреле и&nbsp;мае",
+            ],
+            ph: "screen · telegram chat",
+          },
+          {
+            num: "05",
+            tag: "TEST",
+            title: "Пробники и&nbsp;диагностики",
+            desc: "12&nbsp;пробных ЕГЭ за&nbsp;курс — это полный вариант 90&nbsp;минут с&nbsp;тематическими ловушками. Каждый — с&nbsp;индивидуальным видео-разбором от&nbsp;автора.",
+            bullets: [
+              "Имитация условий ЕГЭ · бланки + таймер",
+              "Видео-разбор твоих личных ошибок",
+              "Сравнение с&nbsp;группой и&nbsp;средним по&nbsp;стране",
+            ],
+            ph: "screen · mock exam pdf",
+          },
+        ];
+        items.forEach((it, i) => {
+          const reversed = i % 2 === 1;
+          const div = document.createElement("div");
+          div.className = "inc-row grid grid-cols-12 items-stretch";
+          div.innerHTML = `
+      <div class="col-span-12 md:col-span-7 ${reversed ? "md:order-2" : ""} p-8 md:p-12 flex flex-col justify-center ${reversed ? "md:border-l border-line" : "md:border-r border-line"}">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="font-mono text-[11px] text-acid">[${it.num}]</span>
+          <span class="font-mono text-[11px] text-dim">// ${it.tag}</span>
+        </div>
+        <h3 class="font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.0] mb-5">${it.title}</h3>
+        <p class="text-paper/80 text-base md:text-lg max-w-lg leading-snug mb-6">${it.desc}</p>
+        <ul class="font-mono text-sm space-y-2 text-paper/85">
+          ${it.bullets.map((b) => `<li>→ ${b}</li>`).join("")}
+        </ul>
+      </div>
+      <div class="col-span-12 md:col-span-5 ${reversed ? "md:order-1" : ""} p-6 md:p-10 flex items-center justify-center">
+        <div class="inc-img w-full">
+          <div class="inc-img-ph">// ${it.ph}</div>
+        </div>
+      </div>
+    `;
+          wrap.appendChild(div);
+        });
+      })();
+
+      // ====================== 09. CASES SLIDER ======================
+      (function buildCases() {
+        const track = document.getElementById("casesTrack");
+        const counter = document.getElementById("caseCounter");
+        if (!track) return;
+        const cases = [
+          {
+            num: "01",
+            name: "Артём К.",
+            initials: "АК",
+            start: 52,
+            end: 96,
+            school: "Лицей 1535",
+            city: "Москва",
+            tg: "@artem_chem",
+            tariff: "Минигруппа",
+            text: "Пришёл с&nbsp;52, на&nbsp;ЕГЭ написал 96. До&nbsp;курса считал органику пыткой, а&nbsp;после Маши хотел поступать на&nbsp;хим.фак. Сейчас учусь на&nbsp;первом курсе МГУ.",
+          },
+          {
+            num: "02",
+            name: "Полина М.",
+            initials: "ПМ",
+            start: 48,
+            end: 92,
+            school: "Гимн. 1576",
+            city: "Москва",
+            tg: "@polya_med",
+            tariff: "Минигруппа",
+            text: "Шла на&nbsp;медицинский, химия была кошмаром. За&nbsp;7&nbsp;месяцев — с&nbsp;48&nbsp;до&nbsp;92. Куратор пинал по&nbsp;ДЗ каждый день, без&nbsp;этого я&nbsp;бы&nbsp;не&nbsp;сдала.",
+          },
+          {
+            num: "03",
+            name: "Даня Р.",
+            initials: "ДР",
+            start: 61,
+            end: 100,
+            school: "СУНЦ УрФУ",
+            city: "Екатеринбург",
+            tg: "@danya_phys",
+            tariff: "VIP · Индивидуально",
+            text: "100&nbsp;баллов. Если бы&nbsp;не&nbsp;Валерий — было&nbsp;бы&nbsp;80. Он показал, как решать&nbsp;34 за&nbsp;6&nbsp;минут вместо&nbsp;15. На&nbsp;ЕГЭ это решило всё.",
+          },
+          {
+            num: "04",
+            name: "Соня В.",
+            initials: "СВ",
+            start: 38,
+            end: 87,
+            school: "Шк. 192",
+            city: "Новосибирск",
+            tg: "@sonya_chem",
+            tariff: "Минигруппа",
+            text: "Я&nbsp;была абсолютным нулём. Сентябрь — 38, май — 87. Это +49&nbsp;баллов. Главное — расписание на&nbsp;36&nbsp;недель: знаешь, что и&nbsp;когда учить.",
+          },
+          {
+            num: "05",
+            name: "Никита Ш.",
+            initials: "НШ",
+            start: 54,
+            end: 94,
+            school: "Лицей ВШЭ",
+            city: "Москва",
+            tg: "@nik_bio",
+            tariff: "Минигруппа",
+            text: "До&nbsp;этого ходил в&nbsp;большую онлайн-школу — там в&nbsp;потоке было 400&nbsp;человек, я&nbsp;ничего не&nbsp;запоминал. У&nbsp;Валерия в&nbsp;группе 5&nbsp;ребят и&nbsp;он помнит всё.",
+          },
+          {
+            num: "06",
+            name: "Маша Б.",
+            initials: "МБ",
+            start: 44,
+            end: 89,
+            school: "Гимн. 56",
+            city: "Санкт-Петербург",
+            tg: "@masha_chemist",
+            tariff: "Минигруппа",
+            text: "Куратор у&nbsp;нас был — Лиза, аспирантка РХТУ. Она каждый день голосовыми разбирала мои ошибки в&nbsp;ДЗ. Я&nbsp;будто учусь у&nbsp;старшей сестры.",
+          },
+          {
+            num: "07",
+            name: "Лев Г.",
+            initials: "ЛГ",
+            start: 50,
+            end: 91,
+            school: "Шк. 7",
+            city: "Казань",
+            tg: "@lev_kazan",
+            tariff: "Самостоятельный",
+            text: "Я&nbsp;брал тариф без&nbsp;вебинаров, чисто платформу и&nbsp;тренажёр. И&nbsp;это уже дало +41&nbsp;балл. На&nbsp;следующий год пойду на&nbsp;Минигруппу — хочу 95+.",
+          },
+          {
+            num: "08",
+            name: "Ника П.",
+            initials: "НП",
+            start: 57,
+            end: 98,
+            school: "Шк. 152",
+            city: "Москва",
+            tg: "@nika_p",
+            tariff: "VIP · Индивидуально",
+            text: "Готовилась 1&nbsp;на&nbsp;1, занятия 4&nbsp;раза в&nbsp;неделю. Валерий дал мне не&nbsp;только химию, но&nbsp;и&nbsp;план поступления. Сейчас на&nbsp;педиатрическом РНИМУ.",
+          },
+        ];
+
+        cases.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "case-card";
+          div.innerHTML = `
+      <div class="flex items-start justify-between mb-6 font-mono text-[11px]">
+        <span class="text-dim">CASE · ${c.num}</span>
+        <span class="text-acid">[ +${c.end - c.start} БАЛЛОВ ]</span>
+      </div>
+
+      <div class="flex items-start gap-4 mb-6">
+        <div class="w-16 h-16 border border-line relative overflow-hidden shrink-0">
+          <div class="absolute inset-0 hatched"></div>
+          <div class="absolute inset-0 grid place-items-center font-display font-bold text-xl">${c.initials}</div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-display font-bold text-lg leading-tight">${c.name}</div>
+          <div class="font-mono text-[11px] text-dim mt-1">${c.school} · ${c.city}</div>
+          <a href="https://t.me/${c.tg.replace("@", "")}" class="font-mono text-[11px] text-acid hover:underline">tg ${c.tg}</a>
+        </div>
+      </div>
+
+      <div class="flex items-end gap-3 mb-6">
+        <div>
+          <div class="font-mono text-[10px] text-dim uppercase">старт</div>
+          <div class="font-display font-bold text-3xl text-dim">${c.start}</div>
+        </div>
+        <div class="font-mono text-2xl text-dim pb-1">→</div>
+        <div>
+          <div class="font-mono text-[10px] text-acid uppercase">егэ</div>
+          <div class="font-display font-bold text-5xl text-acid">${c.end}</div>
+        </div>
+        <div class="ml-auto font-mono text-[10px] text-dim text-right">тариф<br/><span class="text-paper">${c.tariff}</span></div>
+      </div>
+
+      <p class="text-paper/85 text-sm leading-snug">«${c.text}»</p>
+    `;
+          track.appendChild(div);
+        });
+
+        let idx = 0;
+        const visibleCount = () =>
+          window.innerWidth < 700 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+        const maxIdx = () => Math.max(0, cases.length - visibleCount());
+
+        function update() {
+          if (idx > maxIdx()) idx = maxIdx();
+          const card = track.querySelector(".case-card");
+          if (!card) return;
+          const w = card.offsetWidth + 24;
+          track.style.transform = `translateX(${-idx * w}px)`;
+          counter.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(cases.length).padStart(2, "0")}`;
+        }
+        document.getElementById("prevCase").onclick = () => {
+          idx = Math.max(0, idx - 1);
+          update();
+        };
+        document.getElementById("nextCase").onclick = () => {
+          idx = Math.min(maxIdx(), idx + 1);
+          update();
+        };
+        window.addEventListener("resize", update);
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") {
+            idx = Math.max(0, idx - 1);
+            update();
+          }
+          if (e.key === "ArrowRight") {
+            idx = Math.min(maxIdx(), idx + 1);
+            update();
+          }
+        });
+        // touch swipe
+        let sx = 0;
+        track.addEventListener("touchstart", (e) => {
+          sx = e.touches[0].clientX;
+        });
+        track.addEventListener("touchend", (e) => {
+          const dx = e.changedTouches[0].clientX - sx;
+          if (Math.abs(dx) < 40) return;
+          if (dx < 0) {
+            idx = Math.min(maxIdx(), idx + 1);
+          } else {
+            idx = Math.max(0, idx - 1);
+          }
+          update();
+        });
+        update();
+      })();
+
+      // ====================== 13. FAQ ======================
+      (function faq() {
+        const wrap = document.getElementById("faqList");
+        if (!wrap) return;
+        const items = [
+          {
+            q: "Я учусь в 10 классе и пока ничего не понимаю. Этот курс не для отличников?",
+            a: "Нет. 60% наших учеников приходят со&nbsp;стартовым баллом 30–50. Курс построен от&nbsp;нуля: первые 4&nbsp;недели мы&nbsp;закрываем 8-й&nbsp;класс и&nbsp;строение атома. Если уровень выше — есть ускоренный трек.",
+          },
+          {
+            q: "Что если я не потяну темп?",
+            a: "У&nbsp;каждого ученика есть куратор, который следит за&nbsp;нагрузкой. Если темп не&nbsp;твой — переводим в&nbsp;другую группу или даём 1-2 индивидуальных занятия по&nbsp;цене группового тарифа.",
+          },
+          {
+            q: "Сколько часов в неделю реально нужно?",
+            a: "2 вебинара по&nbsp;90&nbsp;минут + 3–4 часа на&nbsp;домашку. Итого 6–7&nbsp;часов в&nbsp;неделю. Меньше — будет провисать, больше — не&nbsp;имеет смысла на&nbsp;дистанции 9&nbsp;месяцев.",
+          },
+          {
+            q: "Можно перейти с группового на индивидуальный посреди курса?",
+            a: "Да, в&nbsp;любой момент. Пересчитываем оплату пропорционально дням и&nbsp;переводим в&nbsp;течение 24&nbsp;часов.",
+          },
+          {
+            q: "Что если ЕГЭ изменится в 2026?",
+            a: "Каждое лето методист переписывает программу под&nbsp;актуальный кодификатор и&nbsp;спецификацию ФИПИ. В&nbsp;2025&nbsp;году мы&nbsp;уже переписали 7&nbsp;блоков под&nbsp;новую структуру задачи&nbsp;33.",
+          },
+          {
+            q: "А деньги вернёте, если не понравится?",
+            a: "В&nbsp;первые 14&nbsp;дней — да, без&nbsp;объяснений. Дальше — пропорционально пройденному материалу. Для&nbsp;VIP действует «гарантия 85+»: если ученик ходил, сдавал ДЗ и&nbsp;всё равно получил меньше — возвращаем 50%.",
+          },
+          {
+            q: "Можно платить с юр. лица или маткапиталом?",
+            a: "Да и&nbsp;да. Принимаем оплату от&nbsp;юр.&nbsp;лиц с&nbsp;НДС, делаем налоговый вычет 13%. Документы — в&nbsp;течение 3&nbsp;дней.",
+          },
+          {
+            q: "Как вы отбираете преподавателей и кураторов?",
+            a: "Все преподаватели — выпускники МГУ/МФТИ/РХТУ со&nbsp;своим ЕГЭ от&nbsp;95. Кураторы — наши же&nbsp;бывшие ученики, которые сдали на&nbsp;90+ и&nbsp;учатся в&nbsp;профильных вузах.",
+          },
+        ];
+        items.forEach((it, i) => {
+          const d = document.createElement("details");
+          d.className = "border-b border-line group";
+          d.innerHTML = `
+      <summary class="flex items-start gap-6 py-6 md:py-8 hover:text-acid transition">
+        <div class="font-mono text-sm text-dim mt-1 w-10 shrink-0">${String(i + 1).padStart(2, "0")}</div>
+        <div class="font-display font-medium text-xl md:text-2xl leading-snug flex-1">${it.q}</div>
+        <div class="faq-plus font-mono text-2xl shrink-0 mt-1">+</div>
+      </summary>
+      <div class="pb-8 pl-16 pr-12 max-w-3xl text-paper/80 leading-relaxed">${it.a}</div>
+    `;
+          wrap.appendChild(d);
+        });
+      })();
+
+      // ====================== FORM ======================
+      (function form() {
+        function makeSelector(wrapId) {
+          const w = document.getElementById(wrapId);
+          if (!w) return;
+          w.querySelectorAll(".pickbtn").forEach((b) => {
+            b.addEventListener("click", () => {
+              w.querySelectorAll(".pickbtn").forEach((x) =>
+                x.classList.remove("is-on"),
+              );
+              b.classList.add("is-on");
+            });
+          });
+        }
+        makeSelector("levelChoice");
+        makeSelector("tariffChoice");
+
+        const f = document.getElementById("leadForm");
+        if (f) {
+          f.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const btn = f.querySelector("button[type=submit]");
+            btn.textContent = "✓ Заявка отправлена · напишем в Telegram";
+            btn.classList.remove("bg-acid");
+            btn.classList.add("bg-paper");
+          });
+        }
+      })();
+
+      // ====================== COUNTDOWN ======================
+      (function countdown() {
+        document.querySelectorAll("[data-days-to]").forEach((el) => {
+          const target = new Date(el.dataset.daysTo);
+          const today = new Date();
+          const days = Math.max(
+            0,
+            Math.floor((target - today) / (1000 * 60 * 60 * 24)),
+          );
+          el.textContent = days;
+        });
+      })();
+
+      // ====================== GSAP REVEAL & COUNTERS ======================
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll(".titrate").forEach((el) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 85%",
+          once: true,
+          onEnter: () => el.classList.add("in"),
+        });
+      });
+
+      document.querySelectorAll("[data-counter]").forEach((el) => {
+        const target = parseInt(el.dataset.counter, 10);
+        const suffix = el.dataset.suffix || "";
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 88%",
+          once: true,
+          onEnter: () => {
+            const obj = { v: 0 };
+            gsap.to(obj, {
+              v: target,
+              duration: 1.8,
+              ease: "expo.out",
+              onUpdate: () => {
+                el.textContent =
+                  Math.round(obj.v).toLocaleString("ru-RU") + suffix;
+              },
+            });
+          },
+        });
+      });
+
+      // ====================== CURSOR TRAIL ======================
+      (function cursorTrail() {
+        if (window.matchMedia("(hover: none)").matches) return;
+        const wrap = document.getElementById("trailWrap");
+        const formulas = [
+          "H₂O",
+          "CO₂",
+          "O₂",
+          "NH₃",
+          "HCl",
+          "CH₄",
+          "NaOH",
+          "H⁺",
+          "OH⁻",
+          "e⁻",
+          "C₂H₅OH",
+        ];
+        let last = 0;
+        document.addEventListener("mousemove", (e) => {
+          const now = performance.now();
+          if (now - last < 90) return;
+          last = now;
+          const t = document.createElement("div");
+          t.className = "trail";
+          t.textContent = formulas[Math.floor(Math.random() * formulas.length)];
+          t.style.left = e.clientX + "px";
+          t.style.top = e.clientY + "px";
+          wrap.appendChild(t);
+          gsap.fromTo(
+            t,
+            { opacity: 0.9, y: 0, scale: 1 },
+            {
+              opacity: 0,
+              y: -40,
+              scale: 0.7,
+              duration: 1.2,
+              ease: "power1.out",
+              onComplete: () => t.remove(),
+            },
+          );
+        });
+      })();
+
+      // CTA bubbles
+      document.querySelectorAll(".cta-pulse .bub").forEach((b, i) => {
+        gsap.to(b, {
+          opacity: 0.8,
+          y: -30,
+          scale: 1.4,
+          duration: 1.4,
+          repeat: -1,
+          delay: i * 0.4,
+          ease: "sine.out",
+          onRepeat: () => {
+            gsap.set(b, { y: 0, opacity: 0, scale: 1 });
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
