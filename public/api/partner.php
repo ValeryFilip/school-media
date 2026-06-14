@@ -107,7 +107,14 @@ function build_partner_message(array $d): string
     if ($fio !== '')                     $lines[] = '👤 <b>Имя:</b> ' . $e($fio);
     if (($d['telegram'] ?? '') !== '')   $lines[] = '✈️ <b>Telegram:</b> @' . $e($d['telegram']);
     if (($d['phone'] ?? '') !== '')      $lines[] = '📞 <b>Телефон:</b> ' . $e($d['phone']);
-    if (($d['utm'] ?? '') !== '')        $lines[] = '📊 utm: ' . $e($d['utm']);
+
+    $ref = (string)($d['utm'] ?? '');
+    if ($ref === '' && ($d['telegram'] ?? '') !== '') {
+        $ref = 'https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign=telegram&utm_content='
+            . rawurlencode((string)$d['telegram']);
+    }
+    if ($ref !== '') $lines[] = '🔗 <b>Рефка:</b> <a href="' . $e($ref) . '">' . $e($ref) . '</a>';
+
     $lines[] = '🕒 ' . date('d.m.Y H:i');
 
     return implode("\n", $lines);
