@@ -24,7 +24,7 @@
     window,
     document,
     "script",
-    "https://mc.yandex.ru/metrika/tag.js?id=104058532",
+    "https://mc.yandex.ru/metrika/tag.js",
     "ym",
   );
 
@@ -38,6 +38,29 @@
     url: location.href,
     accurateTrackBounce: true,
   });
+
+  document.addEventListener(
+    "click",
+    function (event) {
+      var target = event.target;
+      if (!(target instanceof Element)) return;
+
+      var element = target.closest("[data-ym-goal]");
+      if (!element) return;
+
+      var goal = element.getAttribute("data-ym-goal");
+      if (!goal || typeof window.ym !== "function") return;
+
+      window.ym(104058532, "reachGoal", goal, {
+        url:
+          element.getAttribute("href") ||
+          element.getAttribute("data-payment-url") ||
+          undefined,
+        text: (element.textContent || "").trim().slice(0, 120),
+      });
+    },
+    true,
+  );
 </script>
 <noscript
   ><div>

@@ -213,15 +213,14 @@ const urls = stepikUrls(f.stepik);
                 ссылка на страницу курса/пакета. */}
             <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-2">
               {s.paymentUrl && (
-                <a
-                  href="javascript:void(0)"
-                  role="button"
+                <button
+                  type="button"
                   data-payment-url={s.paymentUrl}
                   data-ym-goal="payment_upsell"
-                  class="block w-full text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
+                  class="block w-full cursor-pointer border-0 text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
                 >
                   Оплатить со скидкой 5%
-                </a>
+                </button>
               )}
               <a
                 href={s.href}
@@ -259,16 +258,3 @@ const urls = stepikUrls(f.stepik);
     </div>
   </div>
 </section>
-
-<script is:inline>
-  (function () {
-    document.addEventListener("click", function (e) {
-      var el = e.target.closest("[data-ym-goal]");
-      if (!el) return;
-      var goal = el.getAttribute("data-ym-goal");
-      if (goal && typeof window.ym === "function") {
-        window.ym(104058532, "reachGoal", goal);
-      }
-    });
-  })();
-</script>

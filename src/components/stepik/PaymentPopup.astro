@@ -197,7 +197,9 @@ const {
     });
 
     document.body.addEventListener("click", function (e) {
-      var el = e.target.closest("[data-payment-url]");
+      var target = e.target;
+      if (!(target instanceof Element)) return;
+      var el = target.closest("[data-payment-url]");
       if (el && el.getAttribute("data-payment-url")) {
         e.preventDefault();
         window.openPaymentPopup(el.getAttribute("data-payment-url"));

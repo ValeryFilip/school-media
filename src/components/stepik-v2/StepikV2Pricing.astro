@@ -51,11 +51,11 @@ const { data } = Astro.props as Props;
             </div>
           </div>
           <div class="grid gap-3">
-            <a href="javascript:void(0)" role="button" data-payment-url={data.featured.paymentUrl} data-ym-goal="payment_main" class="cta-pulse relative block w-full text-center bg-acid text-ink py-5 font-display font-bold uppercase tracking-tight text-lg hover:bg-paper transition overflow-hidden">
+            <button type="button" data-payment-url={data.featured.paymentUrl} data-ym-goal="payment_main" class="cta-pulse relative block w-full cursor-pointer border-0 text-center bg-acid text-ink py-5 font-display font-bold uppercase tracking-tight text-lg hover:bg-paper transition overflow-hidden">
               <span class="bub" style="width:6px;height:6px;left:20px;bottom:10px;"></span>
               <span class="bub" style="width:4px;height:4px;left:40px;bottom:16px;"></span>
               {data.featured.cta}
-            </a>
+            </button>
             <a href={data.featured.stepikUrl} target="_blank" rel="noopener" data-ym-goal="stepik_main" class="block w-full text-center border border-line py-4 font-mono text-[12px] uppercase tracking-widest text-paper hover:bg-paper hover:text-ink transition">
               {data.featured.directCta ?? "Курс на Stepik"}
             </a>
@@ -101,15 +101,14 @@ const { data } = Astro.props as Props;
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {pack.paymentUrl && (
-              <a
-                href="javascript:void(0)"
-                role="button"
+              <button
+                type="button"
                 data-payment-url={pack.paymentUrl}
                 data-ym-goal="payment_upsell"
-                class="block w-full text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
+                class="block w-full cursor-pointer border-0 text-center bg-acid text-ink py-3 font-mono font-bold uppercase tracking-widest text-[12px] hover:bg-paper transition"
               >
                 {pack.payCta ?? "Оплатить со скидкой 5%"}
-              </a>
+              </button>
             )}
             <a
               href={pack.href}
@@ -135,19 +134,6 @@ const { data } = Astro.props as Props;
     </div>
   </div>
 </section>
-
-<script is:inline>
-  (function () {
-    document.addEventListener("click", function (e) {
-      var el = e.target.closest("[data-ym-goal]");
-      if (!el) return;
-      var goal = el.getAttribute("data-ym-goal");
-      if (goal && typeof window.ym === "function") {
-        window.ym(104058532, "reachGoal", goal);
-      }
-    });
-  })();
-</script>
 
 <style>
   .pricing-section { background: var(--fuchsia2); color: var(--ink); }
