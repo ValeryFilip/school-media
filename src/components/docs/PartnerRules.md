@@ -472,7 +472,7 @@
 **Статус:** плательщик налога на профессиональный доход
 **Проект:** ЕГЭХИМ
 **Сайт:** [egehim.ru](https://egehim.ru)
-**ИНН:** ____________________
+**ИНН:** 026824238284
 **Электронная почта:** [info@egehim.ru](mailto:info@egehim.ru)
 **Telegram:** [@valery_chemistry](https://t.me/valery_chemistry)
 

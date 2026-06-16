@@ -27,6 +27,7 @@ interface Props {
   siteLinks?: LinkItem[];
   landingLinks?: LinkItem[];
   links?: LinkItem[];
+  showLandingLinks?: boolean;
   cta?: Cta;
 }
 
@@ -38,10 +39,11 @@ const {
   siteLinks = [],
   landingLinks,
   links = [],
+  showLandingLinks = false,
   cta = { href: "#form", label: "Пробный урок" },
 } = Astro.props as Props;
 
-const pageLinks = landingLinks ?? links;
+const pageLinks = showLandingLinks ? (landingLinks ?? links) : [];
 const ctaAttrs = cta.popupId
   ? {
       "data-popup-id": cta.popupId,
@@ -107,11 +109,15 @@ const ctaAttrs = cta.popupId
     </div>
 
     <div class="ege-nav__right">
-      <nav class="ege-nav__landing" aria-label="Навигация по лендингу">
-        {pageLinks.map((link) => (
-          <a href={link.href}>{link.label}</a>
-        ))}
-      </nav>
+      {
+        pageLinks.length > 0 && (
+          <nav class="ege-nav__landing" aria-label="Навигация по лендингу">
+            {pageLinks.map((link) => (
+              <a href={link.href}>{link.label}</a>
+            ))}
+          </nav>
+        )
+      }
 
       {
         cta.popupId ? (
