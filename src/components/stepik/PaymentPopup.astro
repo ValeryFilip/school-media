@@ -122,6 +122,10 @@ const {
   }
 
   window.openPaymentPopup = function (url) {
+    if (window.__appendReferralCampaignToStepikUrl) {
+      url = window.__appendReferralCampaignToStepikUrl(url);
+    }
+
     var popup = document.querySelector("[data-payment-popup]");
     if (!popup) return;
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
+header('Cache-Control: no-store, max-age=0');
+header('Pragma: no-cache');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -30,10 +32,28 @@ try {
     if ($telegram === '') {
         respond(['error' => 'Telegram is required'], 400);
     }
+    if (!preg_match('/^[A-Za-z0-9_]{3,64}$/', $telegram)) {
+        respond(['error' => 'Invalid Telegram username'], 400);
+    }
 
-    $pdo  = create_pdo($config['db']);
+    $pdo = create_pdo($config['db']);
+    $columns = get_table_columns($pdo, 'refs');
+    if (!isset($columns['telegram'])) {
+        respond(['error' => 'Telegram column is missing'], 500);
+    }
+    $select = [
+        column_expr($columns, 'name', "''"),
+        column_expr($columns, 'family', "''"),
+        column_expr($columns, 'telegram', "''"),
+        column_expr($columns, 'students', '0'),
+        column_expr($columns, 'stepik', '0'),
+        column_expr($columns, 'total', '0'),
+        column_expr($columns, 'paid', '0'),
+        first_existing_column_expr($columns, ['ref_link', 'ref_url', 'referral_link', 'partner_link', 'link'], "''", 'ref_link'),
+    ];
+
     $stmt = $pdo->prepare(
-        'SELECT name, family, telegram, students, stepik, total, paid FROM refs WHERE telegram = ? LIMIT 1'
+        'SELECT ' . implode(', ', $select) . ' FROM refs WHERE LOWER(telegram) = LOWER(?) LIMIT 1'
     );
     $stmt->execute([$telegram]);
     $row = $stmt->fetch();
@@ -42,7 +62,17 @@ try {
         respond(['error' => 'Not found'], 404);
     }
 
-    respond($row);
+    respond([
+        'ok' => true,
+        'name' => (string)($row['name'] ?? ''),
+        'family' => (string)($row['family'] ?? ''),
+        'telegram' => (string)($row['telegram'] ?? $telegram),
+        'students' => (int)($row['students'] ?? 0),
+        'stepik' => (float)($row['stepik'] ?? 0),
+        'total' => (float)($row['total'] ?? 0),
+        'paid' => (float)($row['paid'] ?? 0),
+        'ref_link' => (string)($row['ref_link'] ?? ''),
+    ]);
 
 } catch (Throwable $e) {
     error_log('TgChecker error: ' . $e->getMessage());
@@ -70,4 +100,36 @@ function create_pdo(array $db): PDO
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
+}
+
+function get_table_columns(PDO $pdo, string $table): array
+{
+    $stmt = $pdo->query('SHOW COLUMNS FROM `' . str_replace('`', '``', $table) . '`');
+    $columns = [];
+    foreach ($stmt->fetchAll() as $row) {
+        $name = (string)($row['Field'] ?? '');
+        if ($name !== '') {
+            $columns[$name] = true;
+        }
+    }
+    return $columns;
+}
+
+function column_expr(array $columns, string $name, string $fallback): string
+{
+    $alias = '`' . str_replace('`', '``', $name) . '`';
+    if (isset($columns[$name])) {
+        return $alias;
+    }
+    return $fallback . ' AS ' . $alias;
+}
+
+function first_existing_column_expr(array $columns, array $names, string $fallback, string $alias): string
+{
+    foreach ($names as $name) {
+        if (isset($columns[$name])) {
+            return '`' . str_replace('`', '``', $name) . '` AS `' . str_replace('`', '``', $alias) . '`';
+        }
+    }
+    return $fallback . ' AS `' . str_replace('`', '``', $alias) . '`';
 }

@@ -1,0 +1,108 @@
+---
+import { referRules } from "../../data/referLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+const d = referRules;
+---
+
+<section class="section paper-section relative" id="rules">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+      </div>
+    </div>
+
+    <!-- Top quick params -->
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-ink mb-12"
+    >
+      {
+        d.quickParams.map((p) => (
+          <div class="paper-card p-6">
+            <div class="label mb-2">{p.label}</div>
+            <div
+              class={`font-display font-bold ${p.valueClass ?? "text-3xl md:text-4xl"}`}
+              set:html={p.value.html}
+            />
+            {p.sub && (
+              <div class="font-mono text-[11px] text-dim mt-1">{p.sub}</div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- 4 rules -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-ink">
+      {
+        d.rules.map((r) => (
+          <div class="paper-card p-8 md:p-10">
+            <div class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-5">
+              {r.kicker}
+            </div>
+            <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-4">
+              {r.title}
+            </h3>
+            {r.text &&
+              (typeof r.text === "string" ? (
+                <p class="body leading-snug">{r.text}</p>
+              ) : (
+                <p class="body leading-snug" set:html={r.text.html} />
+              ))}
+            {r.bullets && (
+              <ul class="space-y-2 body leading-snug">
+                {r.bullets.map((b) => (
+                  <li class="flex gap-3">
+                    <span class="font-mono text-fuchsia2 shrink-0">✕</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {r.tags && (
+              <div class="flex flex-wrap gap-2 mt-4">
+                {r.tags.map((t) => (
+                  <span class="font-mono text-[11px] border border-ink px-3 py-2">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-10 flex justify-center">
+      <a
+        href="/docs/partners/"
+        target="_blank"
+        rel="noopener"
+        class="rules-link relative z-10 inline-flex items-center justify-center gap-3 px-8 py-5 font-display font-bold text-base uppercase tracking-tight transition"
+      >
+        Читать полные условия программы
+        <span class="font-mono">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rules-link {
+    background: var(--ink);
+    color: var(--paper) !important;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+  }
+
+  .rules-link:hover,
+  .rules-link:focus-visible {
+    background: var(--fuchsia2);
+    color: var(--ink) !important;
+    border-color: var(--fuchsia2);
+  }
+</style>

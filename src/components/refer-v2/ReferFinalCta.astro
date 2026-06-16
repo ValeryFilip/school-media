@@ -1,0 +1,40 @@
+---
+import { referFinalCta } from "../../data/referLanding";
+
+const d = referFinalCta;
+---
+
+<section class="section relative overflow-hidden">
+  <div
+    class="absolute inset-0 pt-grid opacity-[0.2] pointer-events-none"
+    id="ptBg2"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="relative gutter py-24 md:py-32 text-center">
+    <div
+      class="font-mono text-[11px] text-acid uppercase tracking-widest mb-6"
+    >
+      {d.kicker}
+    </div>
+    <h2
+      class="font-display font-bold text-[clamp(48px,9vw,160px)] leading-[0.9] tracking-[-0.03em] max-w-5xl mx-auto"
+      set:html={d.title.html}
+    />
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <a
+        href={d.ctaPrimary.href}
+        class="cta-pulse relative inline-flex items-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight text-[16px] px-7 py-5"
+      >
+        {d.ctaPrimary.label}
+        <span class="font-mono">→</span>
+      </a>
+      <a
+        href={d.ctaSecondary.href}
+        class="font-mono text-[12px] uppercase tracking-wider text-paper/80 hover:text-acid transition px-4 py-5"
+      >
+        {d.ctaSecondary.label}
+      </a>
+    </div>
+  </div>
+</section>

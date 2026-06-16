@@ -52,16 +52,41 @@ try {
     if (!$checkbox($body['consent_privacy'] ?? '') || !$checkbox($body['consent_personal_data'] ?? '')) {
         throw new InvalidArgumentException('Required consents are missing');
     }
+    $consentPartners = $checkbox($body['consent_partners'] ?? '');
+    if (!$consentPartners) {
+        throw new InvalidArgumentException('Partner rules must be accepted');
+    }
+
+    $ageStatus = $safe($body['age_status'] ?? '', 16);
+    if (!in_array($ageStatus, ['adult', 'minor'], true)) {
+        throw new InvalidArgumentException('Age status is required');
+    }
+    $guardianName = $safe($body['guardian_name'] ?? '', 255);
+    $guardianContact = $safe($body['guardian_contact'] ?? '', 255);
+    if ($ageStatus === 'minor' && ($guardianName === '' || $guardianContact === '')) {
+        throw new InvalidArgumentException('Guardian contact is required');
+    }
+
+    $refLink = $safe($body['ref_link'] ?? $body['utm'] ?? '');
+    if ($refLink === '') {
+        $refLink = 'https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign='
+            . rawurlencode($telegram);
+    }
 
     $data = [
         'name'                 => $name,
         'family'               => $family,
         'telegram'             => $telegram,
         'phone'                => $phone,
-        'utm'                  => $safe($body['utm'] ?? ''),
+        'utm'                  => $safe($body['utm'] ?? $refLink),
+        'ref_link'             => $refLink,
         'consent_privacy'      => $checkbox($body['consent_privacy'] ?? ''),
         'consent_personal_data'=> $checkbox($body['consent_personal_data'] ?? ''),
         'consent_marketing'    => $checkbox($body['consent_marketing'] ?? ''),
+        'consent_partners'     => $consentPartners,
+        'age_status'           => $ageStatus,
+        'guardian_name'        => $guardianName,
+        'guardian_contact'     => $guardianContact,
         'ip_address'           => get_client_ip(),
         'user_agent'           => mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 2000, 'UTF-8'),
     ];
@@ -107,10 +132,25 @@ function build_partner_message(array $d): string
     if ($fio !== '')                     $lines[] = '👤 <b>Имя:</b> ' . $e($fio);
     if (($d['telegram'] ?? '') !== '')   $lines[] = '✈️ <b>Telegram:</b> @' . $e($d['telegram']);
     if (($d['phone'] ?? '') !== '')      $lines[] = '📞 <b>Телефон:</b> ' . $e($d['phone']);
+    $lines[] = '📄 <b>Правила:</b> приняты';
+    $lines[] = ($d['age_status'] ?? '') === 'minor'
+        ? '🧑‍🧑‍🧒 <b>Возраст:</b> несовершеннолетний участник'
+        : '🔞 <b>Возраст:</b> 18+';
 
-    $ref = (string)($d['utm'] ?? '');
+    if (($d['age_status'] ?? '') === 'minor') {
+        $lines[] = '';
+        $lines[] = '👪 <b>Контакты родителя / законного представителя</b>';
+        if (($d['guardian_name'] ?? '') !== '') {
+            $lines[] = '👤 <b>Имя:</b> ' . $e($d['guardian_name']);
+        }
+        if (($d['guardian_contact'] ?? '') !== '') {
+            $lines[] = '💬 <b>Telegram или телефон:</b> ' . $e($d['guardian_contact']);
+        }
+    }
+
+    $ref = (string)($d['ref_link'] ?? $d['utm'] ?? '');
     if ($ref === '' && ($d['telegram'] ?? '') !== '') {
-        $ref = 'https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign=telegram&utm_content='
+        $ref = 'https://egehim.ru/?utm_source=partner&utm_medium=referral&utm_campaign='
             . rawurlencode((string)$d['telegram']);
     }
     if ($ref !== '') $lines[] = '🔗 <b>Рефка:</b> <a href="' . $e($ref) . '">' . $e($ref) . '</a>';

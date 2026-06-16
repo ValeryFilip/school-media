@@ -1,0 +1,361 @@
+---
+/**
+ * Единый слайдер реальных отзывов для всех лендингов
+ * (ЕГЭ / ОГЭ / 10 класс / репетитор). Тёмная тема EgeLandingLayout.
+ * Карточки рендерятся на сервере (SSR), слайдер — самодостаточный скрипт.
+ */
+import type { RealReview } from "../../data/realReviews";
+import { realReviews } from "../../data/realReviews";
+import EgeLightbox from "./EgeLightbox.astro";
+
+interface Props {
+  id?: string;
+  section?: string;
+  title?: string;
+  mutedTitle?: string;
+  prevLabel?: string;
+  nextLabel?: string;
+  hint?: string;
+  cases?: RealReview[];
+  allReviewsHref?: string;
+  allReviewsText?: string;
+  animateTitle?: boolean;
+}
+
+const {
+  id = "cases",
+  section = "[09] / КЕЙСЫ",
+  title = "Результаты,",
+  mutedTitle = "которые можно проверить.",
+  prevLabel = "←",
+  nextLabel = "→",
+  hint = "← / → · стрелки на клавиатуре · свайп на тачскрине",
+  cases = realReviews,
+  allReviewsHref = "/otzyvy-na-kursi/",
+  allReviewsText = "Читать все отзывы",
+  animateTitle = true,
+} = Astro.props as Props;
+
+const tgUrl = (c: RealReview) =>
+  c.telegramUrl ||
+  (c.telegramLink.startsWith("@")
+    ? `https://t.me/${c.telegramLink.slice(1)}`
+    : c.telegramLink);
+
+const total = cases.length;
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<!-- ============== КЕЙСЫ — единый слайдер реальных отзывов ============== -->
+<section class="section relative" id={id}>
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-12 items-end">
+      <div class="col-span-12 md:col-span-3 self-start">
+        <div class="sec-num">{section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-6">
+        <h2
+          class:list={[
+            "font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em]",
+            animateTitle && "titrate",
+          ]}
+        >
+          {title}
+          <span class="text-dim" set:html={mutedTitle} />
+        </h2>
+      </div>
+      <div class="col-span-12 md:col-span-3 flex md:justify-end gap-2">
+        <button
+          id="prevReview"
+          class="w-12 h-12 border border-paper grid place-items-center hover:bg-paper hover:text-ink transition font-mono"
+        >
+          {prevLabel}
+        </button>
+        <button
+          id="nextReview"
+          class="w-12 h-12 border border-paper grid place-items-center hover:bg-paper hover:text-ink transition font-mono"
+        >
+          {nextLabel}
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-hidden">
+      <div class="cases-track" id="reviewsTrack">
+        {
+          cases.map((c, i) => (
+            <article class="case-card flex flex-col">
+              <div class="flex items-start justify-between mb-6 font-mono text-[11px]">
+                <span class="text-dim">CASE · {pad(i + 1)}</span>
+                <span class="text-acid">[ +{c.egeScore - c.entranceScore} БАЛЛОВ ]</span>
+              </div>
+
+              <div class="flex items-start gap-4 mb-6">
+                <div class="w-16 h-16 border border-line relative overflow-hidden shrink-0">
+                  <img
+                    src={c.studentPhoto}
+                    alt={c.studentName}
+                    class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-display font-bold text-lg leading-tight">
+                    {c.studentName}
+                  </div>
+                  <div class="font-mono text-[11px] text-dim mt-1 leading-snug">
+                    {c.university}
+                  </div>
+                  <a
+                    href={tgUrl(c)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-mono text-[11px] text-acid hover:underline"
+                  >
+                    {c.telegramLink}
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-end gap-3 mb-6">
+                <div>
+                  <div class="font-mono text-[10px] text-dim uppercase">старт</div>
+                  <div class="font-display font-bold text-3xl text-dim">
+                    {c.entranceScore}
+                  </div>
+                </div>
+                <div class="font-mono text-2xl text-dim pb-1">→</div>
+                <div>
+                  <div class="font-mono text-[10px] text-acid uppercase">егэ</div>
+                  <div class="font-display font-bold text-5xl text-acid">
+                    {c.egeScore}
+                  </div>
+                </div>
+              </div>
+
+              <p class="review-text text-paper/85 text-sm leading-snug">
+                «{c.reviewText}»
+              </p>
+              <button
+                type="button"
+                class="review-more font-mono text-[11px] mt-2 self-start"
+                hidden
+              >
+                Читать далее ↓
+              </button>
+
+              {(c.footerPhoto1 || c.footerPhoto2) && (
+                <div class="review-shots mt-auto pt-5 border-t border-line flex flex-wrap gap-2">
+                  {c.footerPhoto1 && (
+                    <button
+                      type="button"
+                      class="review-shot font-mono text-[11px] border px-3 py-2 inline-flex items-center gap-2 transition"
+                      data-lightbox-src={c.footerPhoto1}
+                      data-lightbox-alt={`Скриншот отзыва — ${c.studentName}`}
+                    >
+                      <span class="review-shot__b">▣</span> Скриншот 1
+                    </button>
+                  )}
+                  {c.footerPhoto2 && (
+                    <button
+                      type="button"
+                      class="review-shot font-mono text-[11px] border px-3 py-2 inline-flex items-center gap-2 transition"
+                      data-lightbox-src={c.footerPhoto2}
+                      data-lightbox-alt={`Скриншот отзыва — ${c.studentName}`}
+                    >
+                      <span class="review-shot__b">▣</span> Скриншот 2
+                    </button>
+                  )}
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+
+    <div
+      class="mt-8 flex items-center justify-between font-mono text-xs text-dim"
+    >
+      <div>{hint}</div>
+      <div id="reviewCounter">{`01 / ${pad(total)}`}</div>
+    </div>
+
+    <div class="mt-10 flex justify-center">
+      <a
+        href={allReviewsHref}
+        class="inline-flex items-center gap-3 border border-paper px-7 py-4 font-mono text-xs uppercase tracking-wider hover:bg-acid hover:text-ink transition"
+      >
+        {allReviewsText}
+        <span class="font-mono">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<EgeLightbox />
+
+<style>
+  /* Каждая карточка своей высоты — разворот «Читать далее» растит только её,
+     а не весь ряд (по умолчанию у flex align-items: stretch) */
+  #reviewsTrack {
+    align-items: flex-start;
+  }
+  /* Свёрнутый отзыв: ограничиваем до 9 строк, чтобы карточки были ровными */
+  .review-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    line-clamp: 9;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Развёрнутый по клику «Читать далее» */
+  .review-text.is-expanded {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    display: block;
+    overflow: visible;
+  }
+  /* «Читать далее» — фуксия-акцент */
+  .review-more {
+    color: var(--fuchsia2);
+  }
+  .review-more:hover {
+    color: var(--paper);
+    text-decoration: underline;
+  }
+
+  /* Кнопки скриншотов — фуксия-ховер */
+  .review-shot {
+    cursor: pointer;
+    color: var(--paper);
+    border-color: var(--line);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .review-shot__b {
+    color: var(--fuchsia2);
+    transition: color 0.2s ease;
+  }
+  .review-shot:hover {
+    background: var(--fuchsia2);
+    border-color: var(--fuchsia2);
+    color: var(--ink);
+  }
+  .review-shot:hover .review-shot__b {
+    color: var(--ink);
+  }
+</style>
+
+<script>
+  (function () {
+    const track = document.getElementById("reviewsTrack");
+    const counter = document.getElementById("reviewCounter");
+    const prevBtn = document.getElementById("prevReview");
+    const nextBtn = document.getElementById("nextReview");
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const cards = Array.from(track.children) as HTMLElement[];
+    const count = cards.length;
+    if (count === 0) return;
+
+    // «Читать далее»: показываем кнопку только если текст реально обрезан
+    function setupReadMore() {
+      cards.forEach((card) => {
+        const text = card.querySelector(".review-text") as HTMLElement | null;
+        const moreBtn = card.querySelector(".review-more") as HTMLElement | null;
+        if (!text || !moreBtn) return;
+        const expanded = text.classList.contains("is-expanded");
+        const truncated = text.scrollHeight - text.clientHeight > 2;
+        if (expanded || truncated) {
+          moreBtn.hidden = false;
+        } else {
+          moreBtn.hidden = true;
+        }
+      });
+    }
+
+    cards.forEach((card) => {
+      const text = card.querySelector(".review-text") as HTMLElement | null;
+      const moreBtn = card.querySelector(".review-more") as HTMLElement | null;
+      if (!text || !moreBtn) return;
+      moreBtn.addEventListener("click", () => {
+        const expanded = text.classList.toggle("is-expanded");
+        moreBtn.textContent = expanded ? "Свернуть ↑" : "Читать далее ↓";
+      });
+    });
+
+    let idx = 0;
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    const visibleCount = () =>
+      window.innerWidth < 700 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+    const maxIdx = () => Math.max(0, count - visibleCount());
+
+    function update() {
+      if (idx > maxIdx()) idx = maxIdx();
+      if (idx < 0) idx = 0;
+      const w = cards[0].offsetWidth + 24; // gap из .cases-track
+      (track as HTMLElement).style.transform = `translateX(${-idx * w}px)`;
+      if (counter) counter.textContent = `${pad(idx + 1)} / ${pad(count)}`;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      idx = Math.max(0, idx - 1);
+      update();
+    });
+    nextBtn.addEventListener("click", () => {
+      idx = Math.min(maxIdx(), idx + 1);
+      update();
+    });
+    window.addEventListener("resize", () => {
+      update();
+      setupReadMore();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        idx = Math.max(0, idx - 1);
+        update();
+      } else if (e.key === "ArrowRight") {
+        idx = Math.min(maxIdx(), idx + 1);
+        update();
+      }
+    });
+
+    // Свайп на тачскрине
+    let startX = 0;
+    let dragging = false;
+    track.addEventListener(
+      "touchstart",
+      (e) => {
+        startX = e.touches[0].clientX;
+        dragging = true;
+      },
+      { passive: true },
+    );
+    track.addEventListener(
+      "touchend",
+      (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) idx = Math.min(maxIdx(), idx + 1);
+          else idx = Math.max(0, idx - 1);
+          update();
+        }
+      },
+      { passive: true },
+    );
+
+    update();
+    setupReadMore();
+    // Шрифты могут догрузиться позже — пересчёт обрезки
+    if ((document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(setupReadMore);
+    }
+  })();
+</script>

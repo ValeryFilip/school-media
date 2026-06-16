@@ -1,0 +1,101 @@
+---
+import {
+  referFaqSecNum,
+  referFaqTitle,
+  referFaqLead,
+  referFaqItems,
+  referSupport,
+} from "../../data/referLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+const sup = referSupport;
+const pad2 = (n: number) => String(n + 1).padStart(2, "0");
+---
+
+<section class="section relative" id="faq">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{referFaqSecNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={referFaqTitle.text} marks={referFaqTitle.marks} />
+        <p class="mt-6 max-w-2xl text-lg leading-snug text-paper/80">
+          {referFaqLead}
+        </p>
+      </div>
+    </div>
+
+    <div>
+      {
+        referFaqItems.map((it, i) => (
+          <details class="faq" open={i === 0}>
+            <summary>
+              <span class="faq-num">[{pad2(i)}]</span>
+              <span class="faq-q-text">{it.q}</span>
+              <span class="faq-plus">+</span>
+            </summary>
+            <div class="faq-body">{it.a}</div>
+          </details>
+        ))
+      }
+    </div>
+
+    <!-- Support block -->
+    <div
+      class="mt-12 border border-line bg-coal grid grid-cols-12 gap-px overflow-hidden"
+    >
+      <div class="col-span-12 md:col-span-7 p-8 md:p-10 bg-coal">
+        <div
+          class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-4"
+        >
+          {sup.kicker}
+        </div>
+        <div
+          class="font-display font-bold text-[clamp(32px,4vw,56px)] leading-[1.0] tracking-[-0.015em] mb-4"
+          set:html={sup.title.html}
+        />
+        <p class="text-paper/75 text-lg leading-snug max-w-xl">{sup.lead}</p>
+      </div>
+      <div
+        class="col-span-12 md:col-span-5 p-8 md:p-10 bg-ink border-t md:border-t-0 md:border-l border-line flex flex-col justify-between gap-6"
+      >
+        <div class="space-y-4 font-mono text-[13px]">
+          {
+            sup.contacts.map((c, i) => (
+              <div
+                class:list={[
+                  "flex items-center justify-between gap-4",
+                  i < sup.contacts.length - 1 && "pb-3 border-b border-line",
+                ]}
+              >
+                <span class="text-dim">{c.label}</span>
+                {c.href ? (
+                  <a
+                    href={c.href}
+                    target={c.href.startsWith("http") ? "_blank" : undefined}
+                    rel={c.href.startsWith("http") ? "noopener" : undefined}
+                    class="text-paper hover:text-acid transition"
+                  >
+                    {c.value}
+                  </a>
+                ) : (
+                  <span class="text-paper">{c.value}</span>
+                )}
+              </div>
+            ))
+          }
+        </div>
+        <a
+          href={sup.cta.href}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center justify-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight text-[15px] px-6 py-4 hover:bg-paper transition"
+        >
+          {sup.cta.label}
+          <span class="font-mono">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

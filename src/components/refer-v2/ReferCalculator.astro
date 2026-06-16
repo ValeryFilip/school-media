@@ -1,0 +1,338 @@
+---
+import { referCalc } from "../../data/referLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+const d = referCalc;
+
+// SSR-стартовые значения — соответствуют начальным позициям слайдеров.
+// JS пересчитывает их же при первом mount + на каждый input.
+const calculateStudentsTotal = (count: number) =>
+  Math.min(count, 5) * d.tierRates[0] +
+  Math.min(Math.max(count - 5, 0), 5) * d.tierRates[1] +
+  Math.max(count - 10, 0) * d.tierRates[2];
+const initialStudentsTotal = calculateStudentsTotal(d.students.initial);
+const initialStepikTotal = Math.round(d.stepik.initial * d.stepikPct);
+const initialGrandTotal = initialStudentsTotal + initialStepikTotal;
+const fmtRu = (n: number) =>
+  n.toLocaleString("ru-RU").replace(/\s/g, " ");
+---
+
+<section class="section relative" id="calc">
+  <div class="gutter relative py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+        <p
+          class="mt-6 max-w-2xl text-lg leading-snug text-paper/80"
+          set:html={d.lead.html}
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 border border-fuchsia2">
+      <!-- LEFT — controls (ink) -->
+      <div
+        class="col-span-12 lg:col-span-7 bg-ink p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-fuchsia2"
+      >
+        <div class="flex items-center justify-between mb-10">
+          <div
+            class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest"
+          >
+            // параметры расчёта
+          </div>
+          <div class="font-mono text-[10px] text-dim flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-acid"></span>
+            INPUT
+          </div>
+        </div>
+
+        <!-- Слайдер 01 — ученики -->
+        <div class="mb-12 pb-10 border-b border-line">
+          <div class="flex items-end justify-between mb-5">
+            <div>
+              <div
+                class="font-mono text-[11px] text-dim uppercase tracking-widest"
+              >
+                {d.students.paramKicker}
+              </div>
+              <div
+                class="font-display font-bold text-3xl md:text-4xl mt-1 tracking-tight"
+              >
+                {d.students.label}
+              </div>
+            </div>
+            <div
+              class="font-display font-bold text-4xl md:text-6xl tracking-tight text-acid leading-none"
+              id="calcStudentsVal"
+            >
+              {d.students.initial}
+            </div>
+          </div>
+          <input
+            type="range"
+            min={d.students.min}
+            max={d.students.max}
+            value={d.students.initial}
+            step={d.students.step}
+            id="calcStudents"
+            class="calc-slider"
+          />
+          <div
+            class="flex justify-between font-mono text-[10px] uppercase tracking-widest mt-3 text-dim"
+          >
+            {d.students.marks.map((m) => <span>{m}</span>)}
+          </div>
+
+          <!-- Tier display -->
+          <div class="space-y-2 mt-7">
+            <div
+              class="font-mono text-[10px] uppercase tracking-widest text-dim mb-3"
+            >
+              {d.students.tiersHeader}
+            </div>
+            {
+              d.students.tiers.map((t, i) => (
+                <div class="calc-tier" data-tier={i}>
+                  <span>{t.range}</span>
+                  <span class="tier-rate">{t.rate}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Слайдер 02 — Stepik -->
+        <div>
+          <div class="flex items-end justify-between mb-5">
+            <div>
+              <div
+                class="font-mono text-[11px] text-dim uppercase tracking-widest"
+              >
+                {d.stepik.paramKicker}
+              </div>
+              <div
+                class="font-display font-bold text-3xl md:text-4xl mt-1 tracking-tight"
+              >
+                {d.stepik.label}
+              </div>
+              <div class="font-mono text-[11px] text-dim mt-1">
+                {d.stepik.sub}
+              </div>
+            </div>
+            <div
+              class="font-display font-bold text-3xl md:text-4xl tracking-tight text-acid leading-none"
+            >
+              <span id="calcStepikVal"
+                >{d.stepik.initial.toLocaleString("ru-RU")}</span
+              ><span class="text-xl text-dim">&nbsp;₽</span>
+            </div>
+          </div>
+          <input
+            type="range"
+            min={d.stepik.min}
+            max={d.stepik.max}
+            value={d.stepik.initial}
+            step={d.stepik.step}
+            id="calcStepik"
+            class="calc-slider"
+          />
+          <div
+            class="flex justify-between font-mono text-[10px] uppercase tracking-widest mt-3 text-dim"
+          >
+            {d.stepik.marks.map((m) => <span>{m}</span>)}
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — FUCHSIA DISPLAY -->
+      <div
+        class="col-span-12 lg:col-span-5 p-8 md:p-12 flex flex-col relative"
+        style="background: var(--fuchsia2); color: var(--ink);"
+      >
+        <div
+          class="absolute inset-0 pointer-events-none opacity-[0.18]"
+          style="background-image: repeating-linear-gradient(135deg, #0A0A0A 0 1px, transparent 1px 11px);"
+        >
+        </div>
+
+        <div class="relative z-10 flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-mono text-[11px] uppercase tracking-widest"
+              >// твой потенциал</span
+            >
+            <span class="font-mono text-[10px] flex items-center gap-2">
+              <span class="w-1.5 h-1.5 bg-ink animate-pulse"></span>
+              LIVE
+            </span>
+          </div>
+
+          <div class="mb-8">
+            <div
+              class="font-mono text-[11px] uppercase tracking-widest mb-2 opacity-70"
+            >
+              Итоговая сумма / мес
+            </div>
+            <div
+              class="font-display font-bold text-[clamp(44px,7vw,84px)] leading-[0.9] tracking-[-0.03em] flex items-baseline gap-2 flex-wrap break-all"
+            >
+              <span id="calcTotal" style="color: #0A0A0A;">{fmtRu(initialGrandTotal).replace(/ /g, " ")}</span>
+              <span class="text-[clamp(20px,2.4vw,36px)] opacity-50">₽</span>
+            </div>
+          </div>
+
+          <!-- Breakdown — ink panel внутри фуксии -->
+          <div class="bg-ink text-paper border border-ink mb-8">
+            <div
+              class="px-5 py-4 border-b border-line flex items-center justify-between"
+            >
+              <span
+                class="font-mono text-[10px] uppercase tracking-widest text-dim"
+                >// разбивка</span
+              >
+              <span class="font-mono text-[10px] text-acid">●</span>
+            </div>
+            <div class="px-5 py-4 border-b border-line">
+              <div class="flex items-baseline justify-between gap-3 flex-wrap">
+                <span
+                  class="font-mono text-[11px] uppercase tracking-widest text-dim"
+                  >За учеников</span
+                >
+                <span class="font-mono text-[12px] text-paper/70">
+                  <span id="calcStudentsCount">{d.students.initial}</span>
+                  &nbsp;чел. · накопительная шкала
+                </span>
+              </div>
+              <div
+                class="font-display font-bold text-2xl md:text-3xl mt-1 text-acid"
+              >
+                <span id="calcStudentsTotal"
+                  >{initialStudentsTotal.toLocaleString("ru-RU")}</span
+                >&nbsp;₽
+              </div>
+              <div class="mt-3 space-y-1 font-mono text-[10px] text-dim">
+                <div class="flex justify-between gap-4">
+                  <span>1–5 · 3 000 ₽</span>
+                  <span id="calcTier1">{fmtRu(Math.min(d.students.initial, 5) * d.tierRates[0])} ₽</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                  <span>6–10 · 4 000 ₽</span>
+                  <span id="calcTier2">0 ₽</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                  <span>11+ · 5 000 ₽</span>
+                  <span id="calcTier3">0 ₽</span>
+                </div>
+              </div>
+            </div>
+            <div class="px-5 py-4">
+              <div class="flex items-baseline justify-between gap-3 flex-wrap">
+                <span
+                  class="font-mono text-[11px] uppercase tracking-widest text-dim"
+                  >За Stepik · {Math.round(d.stepikPct * 100)}%</span
+                >
+                <span class="font-mono text-[12px] text-paper/70"
+                  >от&nbsp;<span id="calcStepikBase"
+                    >{d.stepik.initial.toLocaleString("ru-RU")}</span
+                  >&nbsp;₽</span
+                >
+              </div>
+              <div
+                class="font-display font-bold text-2xl md:text-3xl mt-1 text-acid"
+              >
+                <span id="calcStepikTotal"
+                  >{Math.round(d.stepik.initial * d.stepikPct).toLocaleString("ru-RU")}</span
+                >&nbsp;₽
+              </div>
+            </div>
+          </div>
+
+          <a
+            href={d.ctaHref}
+            class="mt-auto inline-flex items-center justify-center gap-3 bg-ink text-acid font-display font-bold uppercase tracking-tight text-[15px] px-7 py-5 self-stretch border-2 border-ink hover:bg-acid hover:text-ink transition"
+          >
+            {d.ctaLabel}
+            <span class="font-mono">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mt-6 font-mono text-[11px] text-dim flex flex-wrap items-center gap-4"
+    >
+      <span>{d.note}</span>
+    </div>
+  </div>
+</section>
+
+<script
+  is:inline
+  define:vars={{
+    pct: d.stepikPct,
+    rates: d.tierRates,
+    thresh: d.tierThresholds,
+    maxStudents: d.students.max,
+  }}
+>
+  (function () {
+    const studentsEl = document.getElementById("calcStudents");
+    const stepikEl = document.getElementById("calcStepik");
+    if (!studentsEl) return;
+
+    const fmt = (n) =>
+      n.toLocaleString("ru-RU").replace(/\s/g, " ");
+
+    function tierIndex(n) {
+      if (n <= 0) return -1;
+      for (let i = 0; i < thresh.length; i++) {
+        if (n <= thresh[i]) return i;
+      }
+      return thresh.length;
+    }
+    function tierRate(n) {
+      if (n <= 0) return 0;
+      const i = tierIndex(n);
+      return rates[i] ?? rates[rates.length - 1];
+    }
+
+    function studentTierTotals(n) {
+      return [
+        Math.min(n, 5) * rates[0],
+        Math.min(Math.max(n - 5, 0), 5) * rates[1],
+        Math.max(n - 10, 0) * rates[2],
+      ];
+    }
+
+    function update() {
+      const n = parseInt(studentsEl.value, 10);
+      const s = parseInt(stepikEl.value, 10);
+      const tierTotals = studentTierTotals(n);
+      const studentsTotal = tierTotals.reduce((sum, value) => sum + value, 0);
+      const stepikTotal = Math.round(s * pct);
+      const total = studentsTotal + stepikTotal;
+
+      const displayN = n >= maxStudents ? maxStudents + "+" : n;
+      document.getElementById("calcStudentsVal").textContent = displayN;
+      document.getElementById("calcStepikVal").textContent = fmt(s);
+      document.getElementById("calcStudentsCount").textContent = displayN;
+      document.getElementById("calcStudentsTotal").textContent = fmt(studentsTotal);
+      document.getElementById("calcTier1").textContent = fmt(tierTotals[0]) + " ₽";
+      document.getElementById("calcTier2").textContent = fmt(tierTotals[1]) + " ₽";
+      document.getElementById("calcTier3").textContent = fmt(tierTotals[2]) + " ₽";
+      document.getElementById("calcStepikBase").textContent = fmt(s);
+      document.getElementById("calcStepikTotal").textContent = fmt(stepikTotal);
+      document.getElementById("calcTotal").textContent = fmt(total);
+
+      const idx = tierIndex(n);
+      document.querySelectorAll(".calc-tier").forEach((el, i) => {
+        el.classList.toggle("is-active", i === idx);
+      });
+    }
+    studentsEl.addEventListener("input", update);
+    stepikEl.addEventListener("input", update);
+    update();
+  })();
+</script>

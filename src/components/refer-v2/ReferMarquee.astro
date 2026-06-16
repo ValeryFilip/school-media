@@ -1,0 +1,45 @@
+---
+interface Props {
+  items: string[];
+  /** Цвета точек-разделителей; первый — нечётные, второй — чётные. */
+  dots?: [string, string];
+  /** Класс контейнера (фон/обводка). По умолчанию — тёмный. */
+  rootClass?: string;
+  /** Цвет текста маркизы. */
+  textClass?: string;
+}
+
+const {
+  items,
+  dots = ["text-acid", "text-fuchsia2"],
+  rootClass = "relative border-t border-line py-4 overflow-hidden",
+  textClass = "text-dim",
+} = Astro.props;
+---
+
+<div class={rootClass}>
+  <div
+    class={`marquee font-mono text-sm ${textClass} whitespace-nowrap`}
+  >
+    <div class="flex items-center gap-12">
+      {
+        items.map((it, i) => (
+          <>
+            <span>{it}</span>
+            <span class={dots[i % 2]}>●</span>
+          </>
+        ))
+      }
+    </div>
+    <div class="flex items-center gap-12" aria-hidden="true">
+      {
+        items.map((it, i) => (
+          <>
+            <span>{it}</span>
+            <span class={dots[i % 2]}>●</span>
+          </>
+        ))
+      }
+    </div>
+  </div>
+</div>

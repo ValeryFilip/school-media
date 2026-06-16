@@ -1,0 +1,572 @@
+---
+import { referJoinForm } from "../../data/referLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+const d = referJoinForm;
+
+const halves = d.fields.filter((f) => f.layout === "half");
+const fulls = d.fields.filter((f) => f.layout === "full");
+---
+
+<section class="section paper-section relative" id="join">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+        <p class="mt-6 max-w-2xl text-lg leading-snug body">{d.lead}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-px bg-line border border-ink">
+      <!-- Form -->
+      <div class="col-span-12 lg:col-span-7 paper-card p-8 md:p-12">
+        <form
+          id="joinForm"
+          class="space-y-5"
+          data-form
+          data-endpoint="/api/partner.php"
+          data-form-type="partner"
+          data-form-id="2026.PARTNER.NEW"
+          data-required-all="name,family,telegram,phone,age_status"
+          data-success-message="Заявка отправлена. Напишем в Telegram в течение рабочего дня."
+        >
+          <div
+            class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-2"
+          >
+            {d.formId}
+          </div>
+
+          {
+            halves.length > 0 && (
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {halves.map((f) => (
+                  <div>
+                    <label class="font-mono text-[11px] uppercase tracking-widest block mb-2">
+                      <span class="text-fuchsia2">[{f.idx}]</span> {f.label}{" "}
+                      {f.required && <span class="text-fuchsia2">*</span>}
+                    </label>
+                    <input
+                      type={f.type}
+                      name={f.name}
+                      placeholder={f.placeholder}
+                      required={f.required}
+                      autocomplete={f.autocomplete}
+                      class="form-input"
+                    />
+                  </div>
+                ))}
+              </div>
+            )
+          }
+
+          {
+            fulls.map((f) => (
+              <div>
+                <label class="font-mono text-[11px] uppercase tracking-widest block mb-2">
+                  <span class="text-fuchsia2">[{f.idx}]</span> {f.label}{" "}
+                  {f.required && <span class="text-fuchsia2">*</span>}
+                </label>
+                <input
+                  type={f.type}
+                  name={f.name}
+                  placeholder={f.placeholder}
+                  required={f.required}
+                  autocomplete={f.autocomplete}
+                  class="form-input"
+                />
+              </div>
+            ))
+          }
+
+          <fieldset>
+            <legend class="font-mono text-[11px] uppercase tracking-widest block mb-2">
+              <span class="text-fuchsia2">[05]</span> Возрастной статус
+              <span class="text-fuchsia2">*</span>
+            </legend>
+            <div class="age-options">
+              <label class="age-option">
+                <input type="radio" name="age_status" value="adult" required />
+                <span class="age-marker" aria-hidden="true"></span>
+                <span class="age-label">Мне есть 18 лет</span>
+              </label>
+              <label class="age-option">
+                <input type="radio" name="age_status" value="minor" required />
+                <span class="age-marker" aria-hidden="true"></span>
+                <span class="age-label">Мне нет 18 лет</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div data-guardian-fields hidden class="border border-ink bg-paperWarm p-5 space-y-4">
+            <div class="font-mono text-[10px] uppercase tracking-widest text-fuchsia2">
+              // согласие законного представителя
+            </div>
+            <p class="body text-sm leading-snug">
+              После заявки мы напишем представителю и получим подтверждение в переписке.
+              До подтверждения кабинет и выплаты не активируются.
+            </p>
+            <div>
+              <label class="font-mono text-[11px] uppercase tracking-widest block mb-2">
+                Имя представителя
+              </label>
+              <input
+                type="text"
+                name="guardian_name"
+                autocomplete="name"
+                placeholder="Имя родителя или опекуна"
+                class="form-input"
+                data-guardian-required
+              />
+            </div>
+            <div>
+              <label class="font-mono text-[11px] uppercase tracking-widest block mb-2">
+                Telegram или телефон представителя
+              </label>
+              <input
+                type="text"
+                name="guardian_contact"
+                autocomplete="tel"
+                placeholder="@telegram или +7 999 123-45-67"
+                class="form-input"
+                data-guardian-required
+              />
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-3">
+            {
+              d.checkboxes.map((c) => (
+                <label class="check-row">
+                  <input
+                    type="checkbox"
+                    name={c.name}
+                    value="true"
+                    required={c.required}
+                    checked={c.checked}
+                  />
+                  <span class="check-box" />
+                  <span
+                    class="font-mono text-[12px] leading-snug"
+                    set:html={c.label.html}
+                  />
+                </label>
+              ))
+            }
+          </div>
+
+          <button
+            type="submit"
+            class="cta-pulse-f w-full mt-4 inline-flex items-center justify-center gap-3 bg-fuchsia2 text-ink font-display font-bold uppercase tracking-tight text-[15px] px-7 py-5"
+          >
+            {d.submitLabel}
+            <span class="font-mono">→</span>
+          </button>
+
+          <div class="font-mono text-[10px] text-dim pt-2">{d.submitNote}</div>
+          <div
+            class="form-status font-mono text-[12px] leading-snug"
+            data-form-status
+            role="status"
+            aria-live="polite"
+            hidden
+          />
+        </form>
+      </div>
+
+      <!-- Stats check sidebar -->
+      <div
+        class="col-span-12 lg:col-span-5 paper-card p-8 md:p-12 flex flex-col"
+      >
+        <div
+          class="font-mono text-[11px] text-fuchsia2 uppercase tracking-widest mb-5"
+        >
+          {d.sidebar.kicker}
+        </div>
+        <h3
+          class="font-display font-bold text-3xl md:text-4xl leading-tight tracking-[-0.01em] mb-4"
+          set:html={d.sidebar.title.html}
+        />
+        <p class="body leading-snug mb-8">{d.sidebar.lead}</p>
+
+        <div class="space-y-4">
+          <div>
+            <label
+              class="font-mono text-[11px] uppercase tracking-widest block mb-2"
+            >
+              {d.sidebar.field.label}
+            </label>
+            <div class="cabinet-query">
+              <input
+                id="partner-cabinet-telegram"
+                type="text"
+                placeholder={d.sidebar.field.placeholder}
+                class="form-input"
+                autocomplete="username"
+              />
+              <button
+                id="partner-cabinet-submit"
+                type="button"
+                class="cabinet-query__submit"
+                aria-controls="partner-cabinet-result"
+                aria-expanded="false"
+              >
+                {d.sidebar.fieldCtaLabel}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-10">
+          <div
+            id="partner-cabinet-result"
+            class="partner-cabinet border border-ink bg-paperWarm"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <div class="flex items-center justify-between border-b border-ink px-5 py-3">
+              <span class="font-mono text-[10px] uppercase tracking-widest" data-cabinet-kicker>
+                // личный кабинет
+              </span>
+              <span class="font-mono text-[10px] text-fuchsia2" data-cabinet-indicator>●</span>
+            </div>
+            <div class="p-5" data-cabinet-body>
+              <p class="font-mono text-sm">Проверяем данные...</p>
+            </div>
+          </div>
+
+          <div
+            class="mt-5 flex items-center justify-between font-mono text-[11px]"
+          >
+            <span>{d.sidebar.supportLine}</span>
+            <a
+              href={d.sidebar.supportLinkHref}
+              target="_blank"
+              rel="noopener"
+              class="underline hover:text-fuchsia2"
+            >
+              {d.sidebar.supportLinkLabel}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById("joinForm");
+    if (form) {
+      const guardianBox = form.querySelector("[data-guardian-fields]");
+      const guardianInputs = form.querySelectorAll("[data-guardian-required]");
+      const syncAge = () => {
+        const isMinor = form.querySelector('[name="age_status"]:checked')?.value === "minor";
+        if (guardianBox) guardianBox.hidden = !isMinor;
+        guardianInputs.forEach((input) => {
+          input.required = isMinor;
+          if (!isMinor) input.value = "";
+        });
+      };
+      form.querySelectorAll('[name="age_status"]').forEach((input) => {
+        input.addEventListener("change", syncAge);
+      });
+      form.addEventListener("reset", () => setTimeout(syncAge, 0));
+      syncAge();
+    }
+
+    const input = document.getElementById("partner-cabinet-telegram");
+    const button = document.getElementById("partner-cabinet-submit");
+    const result = document.getElementById("partner-cabinet-result");
+    const body = result?.querySelector("[data-cabinet-body]");
+    const kicker = result?.querySelector("[data-cabinet-kicker]");
+    const indicator = result?.querySelector("[data-cabinet-indicator]");
+    if (!input || !button || !result || !body) return;
+
+    const formatNumber = (value) => {
+      const number = Number(String(value ?? 0).replace(/\s/g, "").replace(",", "."));
+      return Number.isFinite(number) ? number.toLocaleString("ru-RU") : String(value ?? "0");
+    };
+    const formatMoney = (value) => `${formatNumber(value)} ₽`;
+    const node = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      el.textContent = text;
+      return el;
+    };
+    const showMessage = (title, text, isError = false) => {
+      result.hidden = false;
+      button.setAttribute("aria-expanded", "true");
+      if (kicker) kicker.textContent = isError ? "// данные не найдены" : "// личный кабинет";
+      if (indicator) indicator.textContent = isError ? "×" : "●";
+      body.replaceChildren(
+        node("div", "font-display font-bold text-xl mb-2", title),
+        node("p", "body text-sm leading-snug", text),
+      );
+    };
+    const renderCabinet = (data, telegram) => {
+      result.hidden = false;
+      button.setAttribute("aria-expanded", "true");
+      if (kicker) kicker.textContent = "// личный кабинет партнёра";
+      if (indicator) indicator.textContent = "●";
+
+      const header = node("div", "mb-5", "");
+      header.append(
+        node("div", "font-display font-bold text-2xl leading-tight", `${data.name || ""} ${data.family || ""}`.trim() || "Партнёр ЕГЭХИМ"),
+        node("div", "font-mono text-[11px] text-dim mt-1", `@${data.telegram || telegram}`),
+      );
+
+      const refLink = String(data.ref_link || "").trim();
+      const linkBox = node("div", "mb-5 border border-ink bg-paper", "");
+      const linkHead = node("div", "border-b border-ink px-4 py-3 font-mono text-[9px] uppercase tracking-wider text-dim", "реферальная ссылка");
+      const linkRow = node("div", "grid gap-px bg-ink md:grid-cols-[minmax(0,1fr)_auto]", "");
+      const linkValue = node("a", "bg-paper px-4 py-3 font-mono text-[11px] break-all hover:text-fuchsia2", refLink || "Ссылка ещё не выдана");
+      if (refLink) {
+        linkValue.href = refLink;
+        linkValue.target = "_blank";
+        linkValue.rel = "noopener";
+      }
+      const copyBtn = node("button", "cabinet-copy", refLink ? "Скопировать" : "Нет ссылки");
+      copyBtn.type = "button";
+      copyBtn.disabled = !refLink;
+      copyBtn.dataset.copyValue = refLink;
+      linkRow.append(linkValue, copyBtn);
+      linkBox.append(linkHead, linkRow);
+
+      const grid = node("div", "grid grid-cols-2 gap-px bg-ink border border-ink", "");
+      [
+        ["Ученики", formatNumber(data.students)],
+        ["Начислено Stepik", formatMoney(data.stepik)],
+        ["К выплате", formatMoney(data.total)],
+        ["Выплачено", formatMoney(data.paid)],
+      ].forEach(([label, value], index) => {
+        const cell = node("div", "bg-paper p-4 min-w-0", "");
+        cell.append(
+          node("div", `font-display font-bold text-xl break-words ${index === 2 ? "text-fuchsia2" : ""}`, value),
+          node("div", "font-mono text-[9px] text-dim mt-1 uppercase tracking-wider", label),
+        );
+        grid.append(cell);
+      });
+      body.replaceChildren(header, linkBox, grid);
+    };
+    const check = async () => {
+      const telegram = input.value.trim().replace(/^@+/, "");
+      if (!telegram) {
+        showMessage("Нужен Telegram-ник", "Введи ник без @, который указывал при регистрации.", true);
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      showMessage("Проверяем данные", "Сверяем ник с базой партнёров.");
+      try {
+        const response = await fetch(`/api/tg-check.php?telegram=${encodeURIComponent(telegram)}`, {
+          cache: "no-store",
+          headers: { Accept: "application/json" },
+        });
+        const data = await response.json();
+        if (!response.ok || data.error) {
+          showMessage(
+            "Партнёр не найден",
+            "Проверь написание ника. Если заявка уже одобрена, но данных нет — напиши в поддержку.",
+            true,
+          );
+          return;
+        }
+        renderCabinet(data, telegram);
+      } catch {
+        showMessage("Сервис временно недоступен", "Попробуй ещё раз или напиши в поддержку.", true);
+      } finally {
+        button.disabled = false;
+      }
+    };
+    button.addEventListener("click", check);
+    result.addEventListener("click", async (event) => {
+      const copyButton = event.target.closest("[data-copy-value]");
+      if (!copyButton || copyButton.disabled) return;
+      const value = copyButton.dataset.copyValue || "";
+      if (!value) return;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = value;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+        }
+        copyButton.textContent = "Скопировано";
+        setTimeout(() => {
+          copyButton.textContent = "Скопировать";
+        }, 1600);
+      } catch {
+        copyButton.textContent = "Не скопировано";
+        setTimeout(() => {
+          copyButton.textContent = "Скопировать";
+        }, 1600);
+      }
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        check();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .age-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+  }
+
+  .age-option {
+    position: relative;
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    gap: 12px;
+    background: var(--paper);
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .age-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .age-marker {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+  }
+
+  .age-label {
+    min-width: 0;
+    line-height: 1.25;
+  }
+
+  .age-option:has(input:checked) {
+    background: var(--fuchsia2);
+  }
+
+  .age-option:has(input:checked) .age-marker {
+    background: var(--ink);
+    box-shadow: inset 0 0 0 4px var(--fuchsia2);
+  }
+
+  .age-option:focus-within {
+    outline: 2px solid var(--ink);
+    outline-offset: -3px;
+  }
+
+  .cabinet-query {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+  }
+
+  .cabinet-query .form-input {
+    min-width: 0;
+    border: 0;
+  }
+
+  .cabinet-query__submit {
+    min-height: 52px;
+    border: 0;
+    background: var(--fuchsia2);
+    color: var(--ink);
+    padding: 0 24px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .cabinet-query__submit:hover {
+    background: var(--acid);
+  }
+
+  .cabinet-query__submit:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
+
+  .cabinet-copy {
+    min-height: 44px;
+    border: 0;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0 16px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .cabinet-copy:hover:not(:disabled) {
+    background: var(--fuchsia2);
+    color: var(--ink);
+  }
+
+  .cabinet-copy:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .form-status.ok {
+    color: #376400;
+  }
+
+  .form-status.err {
+    color: #a31414;
+  }
+
+  .partner-cabinet[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 520px) {
+    .age-options,
+    .cabinet-query {
+      grid-template-columns: 1fr;
+    }
+
+    .cabinet-query__submit {
+      min-height: 48px;
+    }
+  }
+</style>

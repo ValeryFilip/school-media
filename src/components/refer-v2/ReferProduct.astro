@@ -1,0 +1,63 @@
+---
+import { referProduct } from "../../data/referLanding";
+import EgeH2 from "../ege/EgeH2.astro";
+
+const d = referProduct;
+---
+
+<section class="section relative overflow-hidden" id="trust">
+  <div class="gutter py-24 md:py-32 pb-12">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} />
+        <p class="mt-6 max-w-2xl text-lg leading-snug text-paper/80">
+          {d.lead}
+        </p>
+      </div>
+    </div>
+
+    <!-- Big stat strip -->
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line"
+    >
+      {
+        d.stats.map((s) => (
+          <div class="bg-ink p-6 md:p-8">
+            <div
+              class={`font-display font-bold text-[clamp(48px,6.5vw,88px)] leading-none tracking-tight ${s.valueClass ?? ""}`}
+              set:html={s.value.html}
+            />
+            <div class="label mt-4" set:html={s.label.html} />
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- 3 reasons strip -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line border-t-0"
+    >
+      {
+        d.reasons.map((r) => (
+          <div class="bg-ink p-6 flex items-start gap-4">
+            <span class="font-mono text-acid text-[12px] mt-1 shrink-0">
+              {r.idx}
+            </span>
+            <div>
+              <div class="font-display font-bold text-lg leading-tight mb-1">
+                {r.title}
+              </div>
+              <div class="font-mono text-[11px] text-dim leading-relaxed">
+                {r.text}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+</section>

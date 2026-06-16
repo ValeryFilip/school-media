@@ -1,0 +1,187 @@
+---
+/**
+ * Единая модалка просмотра картинок в стиле лендинга (тёмная тема).
+ * Открывается по клику на любой элемент с атрибутом data-lightbox-src
+ * (опционально data-lightbox-alt). Достаточно одного экземпляра на странице.
+ */
+---
+
+<div class="ege-lb" id="egeLightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="ege-lb__bar font-mono">
+    <span class="ege-lb__tag" id="egeLightboxCap">// скриншот отзыва</span>
+    <button class="ege-lb__close" type="button" aria-label="Закрыть">[ ЗАКРЫТЬ ✕ ]</button>
+  </div>
+  <div class="ege-lb__viewport" id="egeLightboxViewport">
+    <img class="ege-lb__img" id="egeLightboxImg" src="" alt="" />
+  </div>
+</div>
+
+<style>
+  .ege-lb {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+    background: rgba(10, 10, 10, 0.92);
+    background: color-mix(in srgb, var(--ink) 92%, transparent);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .ege-lb.is-open {
+    display: flex;
+    opacity: 1;
+  }
+  .ege-lb__bar {
+    width: 100%;
+    max-width: 90vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .ege-lb__tag {
+    color: var(--dim);
+  }
+  .ege-lb__close {
+    color: var(--acid);
+    border: 1px solid var(--line);
+    background: transparent;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+  .ege-lb__close:hover {
+    background: var(--acid);
+    color: var(--ink);
+  }
+  .ege-lb__viewport {
+    width: 90vw;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+  }
+  .ege-lb__viewport.is-zoomed {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .ege-lb__img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid var(--line);
+    background: var(--ink);
+    display: block;
+    cursor: zoom-in;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .ege-lb__viewport.is-zoomed .ege-lb__img {
+    max-width: none;
+    max-height: none;
+    cursor: zoom-out;
+  }
+</style>
+
+<script>
+  (function () {
+    const lb = document.getElementById("egeLightbox");
+    if (!lb) return;
+    const img = document.getElementById("egeLightboxImg") as HTMLImageElement | null;
+    const cap = document.getElementById("egeLightboxCap");
+    const viewport = document.getElementById("egeLightboxViewport");
+    const closeBtn = lb.querySelector(".ege-lb__close");
+    if (!img || !viewport) return;
+
+    let zoomed = false;
+
+    function resetZoom() {
+      zoomed = false;
+      viewport!.classList.remove("is-zoomed");
+      img!.style.width = "";
+      img!.style.height = "";
+      viewport!.scrollTo(0, 0);
+    }
+
+    function open(src: string, alt: string) {
+      resetZoom();
+      img!.src = src;
+      img!.alt = alt;
+      if (cap) cap.textContent = alt ? `// ${alt}` : "// скриншот отзыва";
+      lb!.classList.add("is-open");
+      lb!.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      resetZoom();
+      lb!.classList.remove("is-open");
+      lb!.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      setTimeout(() => {
+        if (!lb!.classList.contains("is-open")) img!.removeAttribute("src");
+      }, 200);
+    }
+
+    img.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      if (zoomed) {
+        resetZoom();
+        return;
+      }
+
+      const rect = img.getBoundingClientRect();
+      const xRatio = (e.clientX - rect.left) / rect.width;
+      const yRatio = (e.clientY - rect.top) / rect.height;
+
+      zoomed = true;
+      viewport.classList.add("is-zoomed");
+      img.style.width = `${rect.width * 2}px`;
+      img.style.height = `${rect.height * 2}px`;
+
+      requestAnimationFrame(() => {
+        viewport.scrollLeft = Math.max(
+          0,
+          xRatio * img.offsetWidth - viewport.clientWidth / 2,
+        );
+        viewport.scrollTop = Math.max(
+          0,
+          yRatio * img.offsetHeight - viewport.clientHeight / 2,
+        );
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      const trigger = (e.target as HTMLElement)?.closest(
+        "[data-lightbox-src]",
+      ) as HTMLElement | null;
+      if (!trigger) return;
+      e.preventDefault();
+      open(
+        trigger.dataset.lightboxSrc || "",
+        trigger.dataset.lightboxAlt || "",
+      );
+    });
+
+    closeBtn?.addEventListener("click", close);
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lb.classList.contains("is-open")) close();
+    });
+  })();
+</script>

@@ -1,0 +1,199 @@
+---
+import { referHero } from "../../data/referLanding";
+
+const d = referHero;
+---
+
+<section class="relative pt-14 overflow-hidden">
+  <div
+    class="absolute inset-0 pt-grid opacity-[0.35] pointer-events-none"
+    id="ptBg"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative gutter pt-16 md:pt-20 pb-16">
+    <nav
+      aria-label="Хлебные крошки"
+      class="mb-8 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-dim"
+    >
+      <a href="/" class="hover:text-acid transition">Главная</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page" class="text-paper">Партнёрская программа</span>
+    </nav>
+
+    <div class="flex items-center gap-3 mb-6">
+      <span class="w-2 h-2 bg-acid"></span>
+      <span class="label">{d.secNum}</span>
+    </div>
+
+    <div class="grid grid-cols-12 gap-10 items-start">
+      <div class="col-span-12 lg:col-span-8">
+        <div
+          class="font-mono text-[12px] text-fuchsia2 uppercase tracking-widest mb-5"
+        >
+          {d.microKicker}
+        </div>
+
+        <h1
+          class="font-display font-bold tracking-[-0.035em] leading-[0.88] text-[clamp(52px,9vw,150px)]"
+          set:html={d.headline.html}
+        />
+
+        <p
+          class="mt-8 max-w-2xl text-paper/80 text-lg md:text-xl leading-snug"
+          set:html={d.lead.html}
+        />
+
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+          <a
+            href={d.ctaPrimary.href}
+            class="cta-pulse relative inline-flex items-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight text-[16px] px-7 py-5"
+          >
+            {d.ctaPrimary.label}
+            <span class="font-mono">→</span>
+          </a>
+          <a
+            href={d.ctaSecondary.href}
+            class="font-mono text-[12px] uppercase tracking-wider text-paper/80 hover:text-acid transition px-4 py-5"
+          >
+            {d.ctaSecondary.label}
+          </a>
+        </div>
+      </div>
+
+      <!-- Right — реферальная сеть (как молекула) -->
+      <div class="col-span-12 lg:col-span-4">
+        <div class="mol-stage mol-stage--bare" id="refStage">
+          <svg class="mol-svg" viewBox="0 0 300 300" id="refSvg">
+            <g id="refGroup" transform="translate(150 150)">
+              {
+                d.network.nodes.map((n) => (
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2={n.cx}
+                    y2={n.cy}
+                    stroke="#262626"
+                    stroke-width="2"
+                  />
+                ))
+              }
+
+              <circle
+                r="50"
+                fill="none"
+                stroke="#CCFF00"
+                stroke-width="1.5"
+                stroke-dasharray="3 3"
+              />
+
+              {
+                d.network.nodes.map((n) => (
+                  <g>
+                    <circle
+                      cx={n.cx}
+                      cy={n.cy}
+                      r="17"
+                      fill="#141414"
+                      stroke="#F2F2F2"
+                      stroke-width="2"
+                    />
+                    <text
+                      x={n.cx}
+                      y={n.cy + 5}
+                      text-anchor="middle"
+                      fill={n.fill}
+                      font-family="JetBrains Mono"
+                      font-size={n.fontSize ?? 13}
+                      font-weight="700"
+                    >
+                      {n.text}
+                    </text>
+                  </g>
+                ))
+              }
+
+              <!-- центр — ВЫ -->
+              <circle r="30" fill="#CCFF00" stroke="#0A0A0A" stroke-width="2" />
+              <text
+                x="0"
+                y="9"
+                text-anchor="middle"
+                fill="#0A0A0A"
+                font-family="Space Grotesk"
+                font-size="26"
+                font-weight="700">₽</text
+              >
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div
+      class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line"
+    >
+      {
+        d.stats.map((s) => (
+          <div class="bg-ink p-6">
+            <div
+              class={`font-display font-bold text-4xl md:text-5xl ${s.valueClass ?? ""}`}
+              set:html={s.value.html}
+            />
+            <div class="label mt-2">{s.label}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  /* Реферальная сеть — лёгкая авто-ротация + следование за курсором. */
+  (function () {
+    const stage = document.getElementById("refSvg");
+    const grp = document.getElementById("refGroup");
+    if (!stage || !grp) return;
+    let tx = 0,
+      ty = 0,
+      cx = 0,
+      cy = 0;
+    stage.addEventListener("mousemove", (e: MouseEvent) => {
+      const r = (stage as HTMLElement).getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 18;
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 18;
+    });
+    let auto = 0;
+    function loop() {
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      auto += 0.28;
+      grp!.setAttribute(
+        "transform",
+        `translate(150 150) rotate(${auto}) skewX(${cx}) skewY(${cy})`,
+      );
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+
+  /* PT-grid фон */
+  (function () {
+    ["ptBg", "ptBg2"].forEach((id) => {
+      const g = document.getElementById(id);
+      if (!g || g.childElementCount) return;
+      for (let i = 0; i < 18 * 5; i++)
+        g.appendChild(document.createElement("div"));
+    });
+  })();
+</script>
+
+<style>
+  .mol-stage--bare {
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+</style>

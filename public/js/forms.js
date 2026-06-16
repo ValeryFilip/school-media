@@ -89,7 +89,58 @@
         };
       }
     }
+
+    const partnerSource = String(params.get("utm_source") || "").trim().toLowerCase();
+    const partnerMedium = String(params.get("utm_medium") || "").trim().toLowerCase();
+    if (partnerSource === "partner" || partnerMedium === "referral") {
+      const contentCode = String(params.get("utm_content") || "").trim();
+      const campaignCode = String(params.get("utm_campaign") || "").trim();
+      const code = contentCode || (campaignCode !== "telegram" ? campaignCode : "");
+      if (code) {
+        return {
+          code,
+          key: contentCode ? "utm_content" : "utm_campaign",
+        };
+      }
+    }
+
     return null;
+  };
+
+  const getStoredReferralCode = () => {
+    const firstReferral = tryParse(storage.getItem(LS_REF_FT)) || {};
+    const lastReferral = tryParse(storage.getItem(LS_REF_LT)) || {};
+    return String(firstReferral.code || lastReferral.code || "").trim();
+  };
+
+  const withReferralCampaign = (rawUrl) => {
+    const refCode = getStoredReferralCode();
+    if (!refCode || !rawUrl) return rawUrl;
+
+    let url;
+    try {
+      url = new URL(rawUrl, window.location.href);
+    } catch {
+      return rawUrl;
+    }
+
+    if (!/(^|\.)stepik\.org$/i.test(url.hostname)) return rawUrl;
+
+    url.searchParams.set("utm_campaign", refCode);
+    return url.toString();
+  };
+
+  const syncStepikReferralCampaign = (root = document) => {
+    if (!getStoredReferralCode()) return;
+
+    $$('a[href*="stepik.org"]', root).forEach((link) => {
+      link.href = withReferralCampaign(link.href);
+    });
+
+    $$("[data-payment-url]", root).forEach((element) => {
+      const paymentUrl = element.getAttribute("data-payment-url");
+      if (paymentUrl) element.setAttribute("data-payment-url", withReferralCampaign(paymentUrl));
+    });
   };
 
   const readCookie = (name) => {
@@ -224,6 +275,11 @@
         return;
       }
 
+      if (key === "comment") {
+        if (!out.message) out.message = value;
+        return;
+      }
+
       out[key] = value;
     });
 
@@ -238,6 +294,7 @@
     const firstTouchUtm = firstTouch.utm || {};
     const refFirstTouch = attr.ref_first_touch || {};
     const refLastTouch = attr.ref_last_touch || {};
+    const stableRefCode = refFirstTouch.code || refLastTouch.code || "";
 
     return {
       page: location.href,
@@ -261,7 +318,7 @@
       ft_campaign: firstTouchUtm.utm_campaign || "",
       ft_content: firstTouchUtm.utm_content || "",
       ft_term: firstTouchUtm.utm_term || "",
-      ref_code: refLastTouch.code || refFirstTouch.code || "",
+      ref_code: stableRefCode,
       ref_first_code: refFirstTouch.code || "",
       ref_last_code: refLastTouch.code || "",
     };
@@ -412,6 +469,9 @@
 
   ready(() => {
     initAttribution();
+    window.__appendReferralCampaignToStepikUrl = withReferralCampaign;
+    window.__syncStepikReferralCampaign = syncStepikReferralCampaign;
+    syncStepikReferralCampaign();
     $$("form[data-form]").forEach(initForm);
   });
 })();

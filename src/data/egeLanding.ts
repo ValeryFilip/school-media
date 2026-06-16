@@ -224,6 +224,7 @@ export const egeLandingData = {
       { href: "/docs/cookies/", label: "Политика cookie и аналитики", rel: "noopener" },
       { href: "/docs/marketing-consent/", label: "Согласие на рекламные рассылки", rel: "noopener" },
       { href: "/docs/payment/", label: "Оплата и возвраты", rel: "noopener" },
+      { href: "/docs/partners/", label: "Правила реферальной программы", rel: "noopener" },
     ],
     columns: [
       {

@@ -148,7 +148,7 @@ function normalize_payload(array $source): array
         'phone' => $safe($source['phone'] ?? '', 64),
         'telegram' => ltrim($safe($source['telegram'] ?? '', 128), '@'),
         'email' => $safe($source['email'] ?? '', 255),
-        'message' => $safe($source['message'] ?? ''),
+        'message' => $safe($source['message'] ?? $source['comment'] ?? ''),
         'consent_privacy' => $checkbox($source['consent_privacy'] ?? ''),
         'consent_personal_data' => $checkbox($source['consent_personal_data'] ?? ''),
         'consent_marketing' => $checkbox($source['consent_marketing'] ?? ''),
@@ -284,4 +284,3 @@ function get_client_ip(): string
 
     return '';
 }
-

@@ -1,139 +1,173 @@
-﻿---
-import "../styles/new-global.css";
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import { egeLandingData } from "../data/egeLanding";
 
-import MainLayout from "../layouts/MainLayout.astro";
-import ReferHero from "../components/partners/ReferHero.astro";
-import ReferStats from "../components/partners/ReferStats.astro";
-import ReferBenefits from "../components/partners/ReferBenefits.astro";
-import ReferTrust from "../components/partners/ReferTrust.astro";
-import ReferTrustTabs from "../components/partners/ReferTrustTabs.astro";
-import ReferStepikReviews from "../components/partners/ReferStepikReviews.astro";
-import ReferHowItWorks from "../components/partners/ReferHowItWorks.astro";
-import ReferPlacement from "../components/partners/ReferPlacement.astro";
-import ReferRules from "../components/partners/ReferRules.astro";
-import ReferCalculator from "../components/partners/ReferCalculator.astro";
-import ReferFaq from "../components/partners/ReferFaq.astro";
-import ReferFormApply from "../components/partners/ReferFormApply.astro";
-import ReferTelegramChecker from "../components/partners/ReferTelegramChecker.astro";
+import ReferHero from "../components/refer-v2/ReferHero.astro";
+import ReferMarquee from "../components/refer-v2/ReferMarquee.astro";
+import ReferWhyUs from "../components/refer-v2/ReferWhyUs.astro";
+import ReferProduct from "../components/refer-v2/ReferProduct.astro";
+import ReferChannels from "../components/refer-v2/ReferChannels.astro";
+import ReferRules from "../components/refer-v2/ReferRules.astro";
+import ReferCalculator from "../components/refer-v2/ReferCalculator.astro";
+import ReferHowItWorks from "../components/refer-v2/ReferHowItWorks.astro";
+import ReferTestimonials from "../components/refer-v2/ReferTestimonials.astro";
+import ReferJoinForm from "../components/refer-v2/ReferJoinForm.astro";
+import ReferFinalCta from "../components/refer-v2/ReferFinalCta.astro";
+import EgeReviews from "../components/ege/EgeReviews.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import { realReviews } from "../data/realReviews";
 
-const seo = {
-  title: "Партнёрская программа ЕГЭХИМ - помогай друзьям и зарабатывай",
-  description:
-    "Присоединяйся к партнёрской программе нашей школы химии. Делись материалами и получай 15% комиссии с каждой регистрации.",
+import {
+  referSeo,
+  referNavLinks,
+  referNavCta,
+  referHeroMarquee,
+  referTestimonialsMarquee,
+  referFaqTitle,
+  referFaqItems,
+} from "../data/referLanding";
+
+// ── Меню ──────────────────────────────────────────────────────
+// сайт-ссылки берём общие из egeLanding (Главная / Курсы / Академия / …),
+// ссылки по лендингу — под партнёрку.
+const referNav = {
+  ...egeLandingData.nav,
+  meta: "/ партнёрская программа",
+  landingLinks: referNavLinks,
+  cta: referNavCta,
+};
+
+// ── JSON-LD ───────────────────────────────────────────────────
+const webPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: referSeo.title,
+  description: referSeo.description,
+  url: referSeo.url,
+  inLanguage: "ru-RU",
+  isPartOf: {
+    "@type": "WebSite",
+    name: "ЕГЭХИМ",
+    url: "https://egehim.ru/",
+  },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: referFaqItems.map((it) => ({
+    "@type": "Question",
+    name: it.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: it.a,
+    },
+  })),
 };
 ---
 
-<MainLayout
-  title={seo.title}
-  description={seo.description}
-  showBreadcrumbs={false}
+<EgeLandingLayout
+  title={referSeo.title}
+  description={referSeo.description}
+  url={referSeo.url}
+  nav={referNav}
+  footer={egeLandingData.footer}
+  floatingActions={egeLandingData.floatingActions}
+  popupForm={egeLandingData.popupForm}
+  breadcrumbs={[
+    { name: "Партнёрская программа", href: "/refer/" },
+  ]}
+  showBreadcrumbs={true}
+  webPageJsonLd={webPageJsonLd}
+  faqJsonLd={faqJsonLd}
 >
   <ReferHero />
-  <ReferStats />
-  <ReferBenefits />
-  <div class="section-separator">
-    <ReferTrust />
-    <ReferTrustTabs />
-    <ReferStepikReviews />
-  </div>
-  <ReferHowItWorks />
-  <ReferPlacement />
-
-  <div class="section-separator">
-    <ReferRules />
-  </div>
+  <ReferMarquee items={referHeroMarquee} />
+  <ReferWhyUs />
+  <ReferProduct />
+  <EgeReviews
+    cases={realReviews}
+    id="student-reviews"
+    section="[04] / РЕЗУЛЬТАТЫ УЧЕНИКОВ"
+    title="Продукт, который"
+    mutedTitle="не стыдно рекомендовать."
+    hint="← / → · реальные результаты учеников ЕГЭХИМ"
+    allReviewsHref="/otzyvy-na-kursi/"
+    allReviewsText="Смотреть все отзывы"
+    animateTitle={false}
+  />
+  <ReferChannels />
+  <ReferRules />
   <ReferCalculator />
-  <div class="section-separator">
-    <ReferFormApply />
-    <ReferTelegramChecker />
-  </div>
-  <ReferFaq />
-</MainLayout>
+  <ReferHowItWorks />
+  <ReferTestimonials />
+  <ReferMarquee
+    items={referTestimonialsMarquee}
+    rootClass="border-t border-ink py-4 overflow-hidden"
+    textClass="text-paper"
+  />
+  <ReferJoinForm />
+  <EgeFaq
+    section="[10] / FAQ"
+    title={referFaqTitle}
+    items={referFaqItems}
+    animateTitle={false}
+    supportCta={{
+      source: "partner-faq",
+      campaign: "partner",
+      lead: "Ответим по условиям программы, фиксации рекомендаций, начислениям и выплатам.",
+    }}
+  />
+  <ReferFinalCta />
 
-<style>
-  .section-separator {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 100px;
-    padding: var(--space-40) 20px;
-    background:
-      radial-gradient(
-        circle at 14% 18%,
-        color-mix(in srgb, var(--color-brand) 12%, transparent) 0%,
-        transparent 16%
-      ),
-      radial-gradient(
-        circle at 97% 24%,
-        color-mix(in srgb, var(--color-accent) 40%, transparent) 0%,
-        transparent 18%
-      ),
-      radial-gradient(
-        circle at 54% 100%,
-        color-mix(in srgb, var(--color-success) 30%, transparent) 0%,
-        transparent 24%
-      ),
-      var(--color-bg-invert);
-    border-radius: 48px;
-  }
+  <script>
+    /* Titrate reveal + счётчики — глобально для страницы. */
+    const io = new IntersectionObserver(
+      (es) => {
+        es.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("in");
+        });
+      },
+      { threshold: 0.15 },
+    );
+    document.querySelectorAll(".titrate").forEach((el) => io.observe(el));
 
-  .section-separator :global(.h2zag-title) {
-    color: var(--color-brand);
-  }
+    (function () {
+      const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+      const setFinal = (el: HTMLElement) => {
+        const target = parseInt(el.dataset.counter || "0", 10);
+        const suffix = el.dataset.suffix || "";
+        el.textContent = target.toLocaleString("ru-RU") + suffix;
+      };
+      // Render final value immediately so numbers are never stuck at 0
+      document
+        .querySelectorAll<HTMLElement>("[data-counter]")
+        .forEach(setFinal);
 
-  .section-separator :global(.h2zag-subtitle) {
-    color: color-mix(in srgb, var(--color-text-inverse) 86%, transparent);
-  }
-
-  @media (max-width: 900px) {
-    .section-separator {
-      padding: var(--space-32) 18px;
-      border-radius: 36px;
-      background:
-        radial-gradient(
-          circle at 12% 14%,
-          color-mix(in srgb, var(--color-brand) 18%, transparent) 0%,
-          transparent 24%
-        ),
-        radial-gradient(
-          circle at 90% 28%,
-          color-mix(in srgb, var(--color-accent) 14%, transparent) 0%,
-          transparent 24%
-        ),
-        radial-gradient(
-          circle at 50% 100%,
-          color-mix(in srgb, var(--color-success) 10%, transparent) 0%,
-          transparent 28%
-        ),
-        linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--gray-800) 88%, var(--color-brand)) 0%,
-          var(--gray-800) 100%
-        );
-    }
-  }
-
-  @media (max-width: 600px) {
-    .section-separator {
-      gap: var(--space-40);
-      padding: var(--space-24) 14px;
-      border-radius: 28px;
-      background:
-        radial-gradient(
-          circle at 14% 12%,
-          color-mix(in srgb, var(--color-brand) 25%, transparent) 0%,
-          transparent 20%
-        ),
-        radial-gradient(
-          circle at 88% 34%,
-          color-mix(in srgb, var(--color-accent) 22%, transparent) 0%,
-          transparent 22%
-        ),
-        radial-gradient(
-          circle at 46% 100%,
-          color-mix(in srgb, var(--color-success) 48%, transparent) 0%,
-          transparent 24%
-        ),
-        var(--gray-900);
-    }
-  }
-</style>
+      const obs = new IntersectionObserver(
+        (es) => {
+          es.forEach((en) => {
+            if (!en.isIntersecting) return;
+            const el = en.target as HTMLElement;
+            const target = parseInt(el.dataset.counter || "0", 10);
+            const suffix = el.dataset.suffix || "";
+            const dur = 1400;
+            const start = performance.now();
+            const step = (t: number) => {
+              const p = Math.min(1, (t - start) / dur);
+              const v = Math.round(target * ease(p));
+              el.textContent = v.toLocaleString("ru-RU") + suffix;
+              if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+            obs.unobserve(el);
+          });
+        },
+        { threshold: 0.4 },
+      );
+      document
+        .querySelectorAll("[data-counter]")
+        .forEach((el) => obs.observe(el));
+    })();
+  </script>
+</EgeLandingLayout>

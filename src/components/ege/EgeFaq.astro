@@ -24,6 +24,8 @@ interface Props {
   items?: ReadonlyArray<{ q: string; a: string }>;
   /** Опциональный миниблок поддержки внутри FAQ-секции. */
   supportCta?: boolean | SupportCta;
+  /** Можно отключить reveal-анимацию заголовка, если блок подключён без общего EgeScripts. */
+  animateTitle?: boolean;
 }
 
 const {
@@ -32,6 +34,7 @@ const {
   titleHtml = 'Вопросы, <span class="text-dim">которые ты&nbsp;задаёшь себе в&nbsp;3&nbsp;часа ночи</span> перед&nbsp;тем, как&nbsp;записаться.',
   items = [],
   supportCta = false,
+  animateTitle = true,
 } = Astro.props as Props;
 
 const supportCtaProps = supportCta === true ? {} : supportCta || null;
@@ -46,9 +49,18 @@ const supportCtaProps = supportCta === true ? {} : supportCta || null;
       <div class="col-span-12 md:col-span-9">
         {
           title ? (
-            <EgeH2 text={title.text} marks={title.marks} class="titrate" />
+            <EgeH2
+              text={title.text}
+              marks={title.marks}
+              class={animateTitle ? "titrate" : ""}
+            />
           ) : (
-            <h2 class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate">
+            <h2
+              class:list={[
+                "font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em]",
+                animateTitle && "titrate",
+              ]}
+            >
               <Fragment set:html={titleHtml} />
             </h2>
           )
