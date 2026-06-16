@@ -27,8 +27,8 @@ const d = referHero;
       <span class="label">{d.secNum}</span>
     </div>
 
-    <div class="grid grid-cols-12 gap-10 items-start">
-      <div class="col-span-12 lg:col-span-8">
+    <div class="grid grid-cols-12 gap-6 lg:gap-10 items-start">
+      <div class="col-span-12 lg:col-span-8 min-w-0">
         <div
           class="font-mono text-[12px] text-fuchsia2 uppercase tracking-widest mb-5"
         >
@@ -36,12 +36,12 @@ const d = referHero;
         </div>
 
         <h1
-          class="font-display font-bold tracking-[-0.035em] leading-[0.88] text-[clamp(52px,9vw,150px)]"
+          class="font-display font-bold tracking-[-0.035em] leading-[0.88] text-[clamp(40px,9vw,150px)] break-words"
           set:html={d.headline.html}
         />
 
         <p
-          class="mt-8 max-w-2xl text-paper/80 text-lg md:text-xl leading-snug"
+          class="mt-8 max-w-xl text-paper/80 text-base md:text-xl leading-snug"
           set:html={d.lead.html}
         />
 
@@ -63,9 +63,9 @@ const d = referHero;
       </div>
 
       <!-- Right — реферальная сеть (как молекула) -->
-      <div class="col-span-12 lg:col-span-4">
-        <div class="mol-stage mol-stage--bare" id="refStage">
-          <svg class="mol-svg" viewBox="0 0 300 300" id="refSvg">
+      <div class="col-span-12 lg:col-span-4 min-w-0">
+        <div class="mol-stage mol-stage--bare mx-auto w-full max-w-[420px] aspect-square" id="refStage">
+          <svg class="mol-svg w-full h-full" viewBox="0 0 300 300" id="refSvg">
             <g id="refGroup" transform="translate(150 150)">
               {
                 d.network.nodes.map((n) => (
