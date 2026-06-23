@@ -1,0 +1,68 @@
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import EgeHero from "../components/ege/EgeHero.astro";
+import EgeOutcomes from "../components/ege/EgeOutcomes.astro";
+import EgePainPoints from "../components/ege/EgePainPoints.astro";
+import EgeHowTo from "../components/ege/EgeHowTo.astro";
+import EgeAuthor from "../components/ege/EgeAuthor.astro";
+import EgeCompare from "../components/ege/EgeCompare.astro";
+import EgeProgram from "../components/ege/EgeProgram.astro";
+import EgeIncludes from "../components/ege/EgeIncludes.astro";
+import EgeReviews from "../components/ege/EgeReviews.astro";
+import EgePricing from "../components/ege/EgePricing.astro";
+import EgeLeadForm from "../components/ege/EgeLeadForm.astro";
+import EgeParents from "../components/ege/EgeParents.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import EgeScripts from "../components/ege/EgeScripts.astro";
+import StepikV2Universities from "../components/stepik-v2/StepikV2Universities.astro";
+import { ogeLandingData } from "../data/ogeLanding";
+import { ogeReviews } from "../data/landingReviews";
+import { buildEgeLandingSeoSchemas } from "../lib/egeLandingSeo";
+
+const description =
+  "Онлайн-подготовка к ОГЭ по химии 2027 в минигруппе: теория, задачи, экспериментальная часть, пробники и бесплатная диагностика.";
+const image = "/images/new-design/oge.webp";
+const { courseJsonLd, productJsonLd, faqJsonLd, webPageJsonLd } = buildEgeLandingSeoSchemas({
+  origin: Astro.url.origin,
+  pathname: Astro.url.pathname,
+  data: ogeLandingData,
+  name: "Годовой курс подготовки к ОГЭ по химии 2027",
+  description,
+  image,
+  keywords: ["ОГЭ по химии", "подготовка к ОГЭ по химии", "курс ОГЭ химия", "химия ОГЭ 2027"],
+});
+---
+
+<EgeLandingLayout
+  title={ogeLandingData.pageTitle}
+  description={description}
+  image={image}
+  url="/oge/"
+  courseJsonLd={courseJsonLd}
+  productJsonLd={productJsonLd}
+  faqJsonLd={faqJsonLd}
+  webPageJsonLd={webPageJsonLd}
+  imageAlt="Подготовка к ОГЭ по химии в минигруппе ЕГЭХИМ"
+  imageWidth={1000}
+  imageHeight={563}
+  nav={ogeLandingData.nav}
+  footer={ogeLandingData.footer}
+  floatingActions={ogeLandingData.floatingActions}
+  popupForm={ogeLandingData.popupForm}
+>
+  <EgeHero {...ogeLandingData.hero} />
+  <EgeOutcomes {...ogeLandingData.outcomes} />
+  <EgePainPoints {...ogeLandingData.painPoints} />
+  <EgeHowTo {...ogeLandingData.howTo} />
+  <EgeAuthor />
+  <EgeCompare />
+  <EgeProgram {...ogeLandingData.program} />
+  <EgeIncludes {...ogeLandingData.includes} />
+  <EgeReviews cases={ogeReviews} {...ogeLandingData.cases} />
+  <EgePricing {...ogeLandingData.pricing} />
+  <EgeLeadForm {...ogeLandingData.leadForm} />
+  <EgeParents {...ogeLandingData.parents} />
+  <StepikV2Universities data={ogeLandingData.universities} />
+  <EgeFaq {...ogeLandingData.faq} supportCta={{ source: "oge-faq", campaign: "oge" }} />
+  <EgeScripts slot="after-footer" data={{ ...ogeLandingData.runtime, faq: ogeLandingData.faq.items }} />
+</EgeLandingLayout>

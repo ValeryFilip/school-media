@@ -1,0 +1,68 @@
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import EgeHero from "../components/ege/EgeHero.astro";
+import EgeOutcomes from "../components/ege/EgeOutcomes.astro";
+import EgePainPoints from "../components/ege/EgePainPoints.astro";
+import EgeHowTo from "../components/ege/EgeHowTo.astro";
+import EgeAuthor from "../components/ege/EgeAuthor.astro";
+import EgeCompare from "../components/ege/EgeCompare.astro";
+import EgeProgram from "../components/ege/EgeProgram.astro";
+import EgeIncludes from "../components/ege/EgeIncludes.astro";
+import EgeReviews from "../components/ege/EgeReviews.astro";
+import EgePricing from "../components/ege/EgePricing.astro";
+import EgeLeadForm from "../components/ege/EgeLeadForm.astro";
+import EgeParents from "../components/ege/EgeParents.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import EgeScripts from "../components/ege/EgeScripts.astro";
+import StepikV2Universities from "../components/stepik-v2/StepikV2Universities.astro";
+import { grade10LandingData } from "../data/grade10Landing";
+import { grade10Reviews } from "../data/landingReviews";
+import { buildEgeLandingSeoSchemas } from "../lib/egeLandingSeo";
+
+const description =
+  "Годовой онлайн-курс органической химии для 10 класса: 1500+ заданий, живые уроки в минигруппе и фундамент для ЕГЭ.";
+const image = "/images/new-design/10-klass.webp";
+const { courseJsonLd, productJsonLd, faqJsonLd, webPageJsonLd } = buildEgeLandingSeoSchemas({
+  origin: Astro.url.origin,
+  pathname: Astro.url.pathname,
+  data: grade10LandingData,
+  name: "Годовой курс органической химии для 10 класса 2027",
+  description,
+  image,
+  keywords: ["химия 10 класс", "курс химии 10 класс", "подготовка к ЕГЭ с 10 класса", "органика 10 класс"],
+});
+---
+
+<EgeLandingLayout
+  title={grade10LandingData.pageTitle}
+  description={description}
+  image={image}
+  url="/10-klass/"
+  courseJsonLd={courseJsonLd}
+  productJsonLd={productJsonLd}
+  faqJsonLd={faqJsonLd}
+  webPageJsonLd={webPageJsonLd}
+  imageAlt="Онлайн-курс химии для учеников 10 класса"
+  imageWidth={1000}
+  imageHeight={563}
+  nav={grade10LandingData.nav}
+  footer={grade10LandingData.footer}
+  floatingActions={grade10LandingData.floatingActions}
+  popupForm={grade10LandingData.popupForm}
+>
+  <EgeHero {...grade10LandingData.hero} />
+  <EgeOutcomes {...grade10LandingData.outcomes} />
+  <EgePainPoints {...grade10LandingData.painPoints} />
+  <EgeHowTo {...grade10LandingData.howTo} />
+  <EgeAuthor />
+  <EgeCompare />
+  <EgeProgram {...grade10LandingData.program} />
+  <EgeIncludes {...grade10LandingData.includes} />
+  <EgeReviews cases={grade10Reviews} {...grade10LandingData.cases} />
+  <EgePricing {...grade10LandingData.pricing} />
+  <EgeLeadForm {...grade10LandingData.leadForm} />
+  <EgeParents {...grade10LandingData.parents} />
+  <StepikV2Universities data={grade10LandingData.universities} />
+  <EgeFaq {...grade10LandingData.faq} supportCta={{ source: "grade-10-faq", campaign: "grade-10" }} />
+  <EgeScripts slot="after-footer" data={{ ...grade10LandingData.runtime, faq: grade10LandingData.faq.items }} />
+</EgeLandingLayout>
