@@ -15,9 +15,9 @@ const columns = (footer.columns ?? []) as Array<{
   links?: FooterLink[];
   groups?: { title?: string; links?: FooterLink[] }[];
 }>;
-const legalLinks = footer.legalLinks ?? [];
-const socialGroups = footer.socialGroups ?? [];
-const bottomLinks = footer.bottomLinks ?? [];
+const legalLinks = (footer.legalLinks ?? []) as FooterLink[];
+const socialGroups = (footer.socialGroups ?? []) as Array<{ title?: string; links?: FooterLink[] }>;
+const bottomLinks = (footer.bottomLinks ?? []) as FooterLink[];
 ---
 
 <footer class="border-t border-aline bg-apaper2">

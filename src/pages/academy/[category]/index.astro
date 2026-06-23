@@ -126,6 +126,7 @@ const proseDefault = `
   <p>Хочешь больше? <a href="${academyPath()}">Главная Академии ЕГЭХИМ</a>&nbsp;— все категории, теги и&nbsp;поиск. Или сразу к&nbsp;<a href="/allcourses/">курсам по&nbsp;химии</a>, когда устанешь учиться сам.</p>
 `;
 const prose = meta.introHtml ?? proseDefault;
+const oldSeo = categoryDescriptions[String(categoryName || "").toLowerCase()] ?? null;
 // FAQ — единый источник для рендера и JSON-LD:
 // 1) кураторский CAT_META.faq (v2, основной путь)
 // 2) старый categoryDescriptions.faq (legacy fallback из config)
@@ -167,7 +168,6 @@ const marquee = [
 ];
 
 const siteUrl = (Astro.site?.href ?? config.siteUrl).replace(/\/$/, "");
-const oldSeo = categoryDescriptions[String(categoryName || "").toLowerCase()] ?? null;
 const seoTitle =
   oldSeo?.title || `Все статьи в категории «${categoryName}» — Академия ЕГЭХИМ`;
 const seoDescription =
