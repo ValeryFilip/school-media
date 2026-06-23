@@ -15,6 +15,7 @@ import StepikV2Value from "../components/stepik-v2/StepikV2Value.astro";
 import StepikV2Pricing from "../components/stepik-v2/StepikV2Pricing.astro";
 import StepikV2Universities from "../components/stepik-v2/StepikV2Universities.astro";
 import { stepikGeneralLanding as page } from "../data/stepikGeneralLanding";
+import { STEPIK_COURSES } from "../data/reviews-page";
 import {
   buildCourseJsonLd,
   buildFAQJsonLd,
@@ -27,13 +28,15 @@ import {
 const origin = Astro.url.origin;
 const url = pageUrlFromPath(origin, Astro.url.pathname);
 const courseName = "Курс по общей химии для ЕГЭ 2027";
+// Реальный рейтинг и число отзывов берём из данных страницы /otzyvy-na-kursi/
+const stepikCourse = STEPIK_COURSES.find((course) => course.url === "/obschaya/");
 const courseJsonLd = buildCourseJsonLd({
   origin,
   url,
   name: courseName,
   description: page.seo.description,
-  ratingValue: 4.9,
-  reviewCount: 100,
+  ratingValue: stepikCourse?.rating,
+  reviewCount: stepikCourse?.reviewsCount,
   keywords: page.seo.keywords,
 });
 const productJsonLd = buildProductJsonLd({
