@@ -1,0 +1,153 @@
+---
+/**
+ * Компактная карточка курса (тёмная тема лендингов).
+ * Источник дизайна — .course-card из мокапа home.html.
+ */
+interface Props {
+  href: string;
+  external?: boolean;
+  num?: string;
+  image?: string;
+  symbol?: string;
+  symbolColor?: "acid" | "fuchsia2" | "paper";
+  badge?: { label: string; variant?: "solid" | "fuchsia" | "line" };
+  category: string;
+  categoryColor?: "acid" | "fuchsia2";
+  level?: string;
+  title: string;
+  description?: string;
+  tags?: string[];
+  priceNew: string;
+  priceUnit?: string;
+  priceOld?: string;
+  priceNote?: string;
+  priceAccent?: boolean;
+  ctaLabel?: string;
+}
+const {
+  href,
+  external = false,
+  num = "",
+  image = "",
+  symbol = "",
+  symbolColor = "paper",
+  badge,
+  category,
+  categoryColor = "acid",
+  level = "",
+  title,
+  description = "",
+  tags = [],
+  priceNew,
+  priceUnit = "",
+  priceOld = "",
+  priceNote = "",
+  priceAccent = false,
+  ctaLabel = "подробнее →",
+} = Astro.props as Props;
+
+const symCls =
+  symbolColor === "acid"
+    ? "text-acid"
+    : symbolColor === "fuchsia2"
+      ? "text-fuchsia2"
+      : "text-paper";
+const catCls = categoryColor === "fuchsia2" ? "text-fuchsia2" : "text-acid";
+const badgeCls =
+  badge?.variant === "solid"
+    ? "bg-acid text-ink"
+    : badge?.variant === "fuchsia"
+      ? "border border-fuchsia2 text-fuchsia2"
+      : "border border-line text-dim";
+const ext = external
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
+---
+
+<a
+  href={href}
+  {...ext}
+  class="course-card group flex flex-col border border-line bg-ink hover:border-paper transition"
+>
+  <div class="aspect-[16/10] bg-coal border-b border-line relative overflow-hidden">
+    {
+      image ? (
+        <img
+          src={image}
+          alt={title}
+          class="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        symbol && (
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class={`font-display font-bold text-[clamp(56px,9vw,88px)] ${symCls}`}>
+              {symbol}
+            </span>
+          </div>
+        )
+      )
+    }
+    {num && (
+      <span class="absolute top-3 left-3 font-mono text-[10px] text-dim">№ {num}</span>
+    )}
+    {
+      badge && (
+        <span class={`absolute top-3 right-3 font-mono text-[10px] px-2 py-1 ${badgeCls}`}>
+          {badge.label}
+        </span>
+      )
+    }
+  </div>
+
+  <div class="p-6 flex-1 flex flex-col">
+    <div class="flex items-center gap-3 mb-3 font-mono text-[11px]">
+      <span class={`uppercase tracking-wider ${catCls}`}>{category}</span>
+      {level && (
+        <>
+          <span class="text-dim">·</span>
+          <span class="text-dim">{level}</span>
+        </>
+      )}
+    </div>
+
+    <h3
+      class="font-display font-bold text-xl leading-tight mb-3 group-hover:text-acid transition"
+      set:html={title}
+    />
+    <p
+      class="font-mono text-[12px] text-paper/70 leading-snug mb-5"
+      set:html={description}
+    />
+
+    {
+      tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mb-5">
+          {tags.map((t) => (
+            <span class="font-mono text-[10px] border border-line px-2 py-1 text-dim">
+              {t}
+            </span>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="mt-auto pt-4 border-t border-line flex items-baseline justify-between gap-3">
+      <span class="flex items-baseline gap-2 min-w-0">
+        <span class={`font-display font-bold text-2xl ${priceAccent ? "text-acid" : ""}`}>
+          {priceNew}{priceUnit && (
+            <span class="text-[11px] text-dim font-mono font-normal">{priceUnit}</span>
+          )}
+        </span>
+        {priceOld && (
+          <span class="font-mono text-[11px] text-dim line-through">{priceOld}</span>
+        )}
+      </span>
+      <span class="font-mono text-[11px] text-paper group-hover:text-acid whitespace-nowrap">
+        {ctaLabel}
+      </span>
+    </div>
+    {priceNote && <div class="font-mono text-[10px] text-fuchsia2 mt-2">{priceNote}</div>}
+  </div>
+</a>

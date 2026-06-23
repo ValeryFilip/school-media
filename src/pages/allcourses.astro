@@ -1,278 +1,559 @@
 ---
-// src/pages/courses.astro
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import CoursesSection from "../components/courses/CoursesSection.astro";
+import EgeH2 from "../components/ege/EgeH2.astro";
+import EgeLeadForm from "../components/ege/EgeLeadForm.astro";
+import { egeLandingData } from "../data/egeLanding";
+import { absUrl, pageUrlFromPath } from "../lib/seoData";
 
-/* Глобальные стили */
-
-import "../styles/global_lend.css";
-
-/* Лейаут и блоки */
-import MainLayout from "../layouts/MainLayout.astro";
-import CourseCards from "../components/mainpage/CourseCards.astro";
-import AdFreeBanner from "../components/mainpage/AdFreeBanner.astro";
-import LeadCapture from "../components/mainpage/LeadCapture.astro";
-import Faq from "../components/mainpage/Faq.astro";
-import HeroCourses from "../components/HeroCourses.astro";
-import { buildFAQJsonLd } from "../lib/seoData";
-
-/* SEO */
-const seo = {
-  title: "Курсы по химии — ЕГЭ, ОГЭ, темы и интенсивы",
-  description:
-    "Самостоятельные курсы и наборы по химии: ЕГЭ, ОГЭ, органика, неорганика, задачи №34 и тренажёры. Удобный формат и поддержка.",
-  image: "/images/technical/og-home.png",
-};
-
-/* Блок 1: заголовок + лид + 5 карточек */
-const pageH2 = "Выбирай курс под свою цель";
-const pageLead =
-  "Самостоятельные программы на Stepik: видео, практика с автопроверкой и поддержка. Начинай с нужного раздела — без лишней воды.";
-
-const cardsTop = [
+const yearCourses = [
   {
-    href: "/neorganika/",
-    labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
-    title: "Неорганическая химия с нуля для цели 80+",
-    features: [
-      "<b>Гарантированный рост</b>: только на неорганике можно взять +40 баллов",
-      "<b>Точечная подготовка</b>: разбираем именно то, что нужно для ЕГЭ",
-      "<b>Короткие и понятные видео</b> — до 30 минут, без воды (28 часов видео)",
-      "<b>1000+ заданий</b>: от простых до формата ЕГЭ, с автопроверкой",
-      "<b>Поддержка и чат</b>: никогда не останешься один на один с вопросами",
-      "<b>Выгодно</b>: курс заменит 30+ занятий с репетитором и сэкономит ~50 000₽",
-      "<b>Игровые механики</b>: карточки, мини-игры и Quizlet для легкого запоминания",
-      "<b>Обновлен под ЕГЭ-2026</b>",
-      "<b>Проверено учениками</b>: результаты 80+ баллов",
-    ],
-    price: { current: "5 790 ₽", old: "7 300 ₽", discount: "скидка 26%" },
-    image: "/images/flasks/CE-BEISET__57187.png",
+    href: "/ege-year/", image: "/images/new-design/ege.webp", num: "01", symbol: "CH₄", symbolColor: "acid",
+    badge: { label: "★ хит", variant: "solid" },
+    category: "ЕГЭ", categoryColor: "acid", level: "11 класс",
+    title: "Годовой курс ЕГЭ 2027",
+    description: "Минигруппа до&nbsp;6 · 2&nbsp;урока в&nbsp;неделю · 4000+ заданий · 15&nbsp;пробников.",
+    tags: ["минигруппа", "цель 80+", "поддержка автора"],
+    priceNew: "14 000 ₽", priceUnit: "/мес", priceOld: "17 200 ₽", priceAccent: true,
   },
   {
-    href: "/organika/",
-    labels: [{ text: "Химия ЕГЭ" }, { text: "Вечный доступ" }],
-    title: "Органическая химия с нуля для цели 80+",
-    features: [
-      "<b>Примерно 30% ЕГЭ — органика</b>: закрываем всю теорию и практику",
-      "<b>Структура от базы до сложных цепочек</b> (включая задание на 5 баллов)",
-      "<b>Короткие видео</b> — только нужная информация, без лишней воды",
-      "<b>1000+ заданий</b>: тематические + формат ЕГЭ, с автопроверкой",
-      "<b>Учишься рассуждать, а не зубрить</b>",
-      "<b>Поддержка и чат</b> — вопросы не остаются без ответа",
-      "<b>Экономия до 100 000₽</b> по сравнению с репетитором",
-      "<b>Полный курс</b>: всё в одном месте, искать дополнительно ничего не нужно",
-      "<b>Игровые механики</b>: карточки, Quizlet, интерактив",
-      "<b>Обновлен под ЕГЭ-2026</b>",
-      "<b>Результаты учеников</b> — 80+ баллов",
-    ],
-    price: { current: "5 790 ₽", old: "7 300 ₽", discount: "скидка 25%" },
-    image: "/images/flasks/CE-FLAISET__44996.png",
+    href: "/oge-year/", image: "/images/new-design/oge.webp", num: "02", symbol: "H₂O", symbolColor: "fuchsia2",
+    badge: { label: "9 класс", variant: "line" },
+    category: "ОГЭ", categoryColor: "fuchsia2", level: "9 класс",
+    title: "Годовой курс ОГЭ 2027",
+    description: "Минигруппа до&nbsp;6 · 1&nbsp;урок в&nbsp;неделю · вся открытая база ФИПИ · 9&nbsp;пробников.",
+    tags: ["минигруппа", "эксперимент", "5 на ОГЭ"],
+    priceNew: "8 000 ₽", priceUnit: "/мес", priceOld: "12 000 ₽",
   },
   {
-    href: "/obschaya/",
-    labels: [{ text: "Химия ЕГЭ" }, { text: "Легкие 35 баллов " }],
-    title: "Общая химия с нуля для цели 80+",
-    features: [
-      "<b>Примерно 30% ЕГЭ — общая химия</b> (16 заданий)",
-      "<b>Короткие видео 5–25 мин</b> — только концентрат знаний",
-      "<b>500+ заданий + разборы прошлых лет</b>",
-      "<b>Автопроверка для практики</b>",
-      "<b>Обновлен под ЕГЭ-2026</b> (+100 новых заданий 2023–2024)",
-      "<b>Поддержка и чат</b>",
-      "<b>Без ограничений по времени</b> — проходи в удобном темпе",
-      "<b>Результаты учеников</b> — 80+ баллов",
-      "<b>Выгодная цена</b>",
-    ],
-    price: { current: "2 390 ₽", old: "2 600 ₽", discount: "скидка 16%" },
-    image: "/images/flasks/CE-SEPF250_1__97109.png",
+    href: "/10-klass-himiya-year/", image: "/images/new-design/10-klass.webp", num: "03", symbol: "C₆H₆", symbolColor: "paper",
+    badge: { label: "база", variant: "line" },
+    category: "10 класс", categoryColor: "acid", level: "10 класс",
+    title: "Органика для 10 класса 2027",
+    description: "1&nbsp;урок в&nbsp;неделю · 62&nbsp;темы · 1500+ заданий · 5&nbsp;пробников по&nbsp;органике.",
+    tags: ["органика", "база для ЕГЭ"],
+    priceNew: "8 000 ₽", priceUnit: "/мес", priceOld: "12 000 ₽",
+  },
+];
+
+const selfCourses = [
+  {
+    href: "/neorganika/", image: "/images/new-design/neorg.webp", num: "01", symbol: "Fe", symbolColor: "acid",
+    category: "Stepik", categoryColor: "acid", level: "ЕГЭ",
+    title: "Неорганическая химия с&nbsp;нуля для цели&nbsp;80+",
+    description: "28&nbsp;ч видео · 1000+ заданий · автопроверка · вечный доступ.",
+    tags: ["+40 баллов", "автопроверка"],
+    priceNew: "5 790 ₽", priceOld: "7 490 ₽", priceNote: "скидка 23%",
   },
   {
-    href: "/ovr/",
-    labels: [{ text: "Химия ЕГЭ" }, { text: "ОВР и реакции" }],
-    title: "ОВР и 29 задание",
-    features: [
-      "<b>ОВР — ключ к заданиям 19 и 29</b>",
-      "<b>Пошаговая структура</b>: от базы до сложных реакций",
-      "<b>Короткие видео</b> — только нужное, без воды",
-      "<b>Практика с усложнением</b> — дойдешь до уровня «ОВР с закрытыми глазами»",
-      "<b>Поддержка и чат</b>: вопросы никогда не остаются без ответа",
-      "<b>Проверено учениками</b> — 80+ баллов",
-      "<b>Соответствует ЕГЭ-2026</b>",
-      "<b>Выгодная стоимость</b>",
-    ],
-    price: { current: "990 ₽", old: "1 200 ₽", discount: "скидка 17%" },
-    image: "/images/flasks/ce-fdis250_1__98982.png",
+    href: "/organika/", image: "/images/new-design/org.webp", num: "02", symbol: "C₆H₆", symbolColor: "fuchsia2",
+    category: "Stepik", categoryColor: "fuchsia2", level: "ЕГЭ",
+    title: "Органическая химия с&nbsp;нуля для цели&nbsp;80+",
+    description: "50% ЕГЭ — органика · 1000+ заданий · цепочки до&nbsp;5&nbsp;баллов.",
+    tags: ["органика", "задача 34"],
+    priceNew: "5 790 ₽", priceOld: "7 490 ₽", priceNote: "скидка 23%",
+  },
+  {
+    href: "/obschaya/", image: "/images/new-design/obsch.webp", num: "03", symbol: "Na⁺", symbolColor: "paper",
+    category: "Stepik", categoryColor: "acid", level: "ЕГЭ",
+    title: "Общая химия с&nbsp;нуля для цели&nbsp;80+",
+    description: "33% ЕГЭ · 500+ заданий · короткие видео 5–25&nbsp;мин.",
+    tags: ["16 заданий", "лёгкие баллы"],
+    priceNew: "2 390 ₽", priceOld: "3 190 ₽", priceNote: "скидка 25%",
+  },
+  {
+    href: "/ovr/", image: "/images/new-design/ovr.webp", num: "04", symbol: "e⁻", symbolColor: "acid",
+    badge: { label: "29 задание", variant: "line" },
+    category: "Stepik", categoryColor: "acid", level: "ЕГЭ",
+    title: "ОВР и&nbsp;29&nbsp;задание",
+    description: "Ключ к&nbsp;заданиям 19 и&nbsp;29 · от&nbsp;базы до&nbsp;сложных реакций.",
+    tags: ["ОВР", "задание 29"],
+    priceNew: "990 ₽", priceOld: "1 300 ₽", priceNote: "скидка 24%",
   },
   {
     href: "https://stepik.org/a/140949?utm_source=cite&utm_medium=allcourses",
-    labels: [{ text: "Химия ЕГЭ" }, { text: "Варианты и тесты" }],
-    title: "Авторские варианты ЕГЭ по химии",
-    features: [
-      "<b>15 авторских вариантов</b> и 650 заданий",
-      "<b>По кодификатору ФИПИ</b> — никакой лишней теории",
-      "<b>Сложность = реальному экзамену</b>",
-      "<b>Видеоразборы от автора</b>",
-      "<b>Автопроверка заданий</b>",
-      "<b>Результаты учеников</b> — 80+ баллов",
-      "<b>Соответствует ЕГЭ-2026</b>",
-      "<b>Выгодная покупка</b>: цена растет с добавлением новых вариантов",
-      "<b>Акции и промокоды</b>",
-    ],
-    price: { current: "500 ₽", old: "650 ₽", discount: "скидка 23%" },
-    image: "",
+    image: "/images/new-design/varianti.webp",
+    external: true, num: "05", symbol: "34", symbolColor: "fuchsia2",
+    badge: { label: "тесты", variant: "fuchsia" },
+    category: "Stepik", categoryColor: "fuchsia2", level: "практика",
+    title: "Авторские варианты ЕГЭ",
+    description: "15&nbsp;авторских вариантов · 650&nbsp;заданий по&nbsp;кодификатору ФИПИ.",
+    tags: ["15 вариантов", "650 заданий"],
+    priceNew: "500 ₽", priceOld: "990 ₽", priceNote: "скидка 49%",
   },
 ];
 
-/* Блок 2: заголовок + лид + 3 карточки */
-const secondH2 = "Популярные наборы";
-const secondLead =
-  "Если нужно закрыть конкретную цель: подтянуть раздел, начать с нуля или отточить задачи высокого уровня.";
-
-const cardsBottom = [
+const packCourses = [
   {
     href: "https://stepik.org/a/238138?utm_source=cite&utm_medium=allcourses",
-    labels: [{ text: "Пакет курсов" }, { text: "Вечный доступ" }],
-    title: "Пакет из 4 курсов",
-    features: [
-      "<b>Пакет из 4 курсов</b>: неорганика, органика, общая химия + авторские варианты",
-      "<b>68 часов видео</b>",
-      "<b>3365 заданий</b> суммарно",
-      "<b>Доступ навсегда</b> — без подписок и ограничений",
-      "<b>15 полных вариантов</b> для экзаменационной практики",
-      "<b>Автопроверка заданий</b> — без ожидания проверки преподавателя",
-      "<b>Теория для заданий 1–33</b> в трёх самостоятельных курсах",
-      "<b>Практика полного формата</b> на авторских вариантах",
-    ],
-    price: { current: "11 700 ₽", old: "14 470 ₽", discount: "–19%" },
-    image: "/images/flasks/CE-BEISET__57187.jpg",
+    image: "/images/new-design/org-neorg-obsch-var.webp",
+    external: true, num: "01", symbol: "×4", symbolColor: "acid",
+    badge: { label: "выгодно", variant: "solid" },
+    category: "Пакет", categoryColor: "acid", level: "−19%",
+    title: "Пакет из&nbsp;4&nbsp;курсов",
+    description: "Неорганика + органика + общая + 15 вариантов. 3365 заданий.",
+    tags: ["68 ч", "15 вариантов"],
+    priceNew: "11 700 ₽", priceOld: "14 470 ₽", priceNote: "–19%", priceAccent: true,
   },
   {
     href: "https://stepik.org/a/238137?utm_source=cite&utm_medium=allcourses",
-    labels: [{ text: "Пакет курсов" }, { text: "Вечный доступ" }],
-    title: "Полный курс 1–33 задания",
-    features: [
-      "<b>Полный курс 1–33 задания</b> — охватывает все темы ЕГЭ (кроме 34)",
-      "<b>68 часов видео + 2715 заданий</b> для отработки",
-      "<b>Подробные видеоуроки</b> — всё объясняется с нуля",
-      "<b>Домашки после каждой темы + таблицы и файлы для печати</b>",
-      "<b>Автопроверка</b> — без ожидания проверки преподавателя",
-      "<b>Вопросы на платформе и в общем чате</b>",
-      "<b>Доступ навсегда, можно начать в любой момент</b>",
-      "<b>Выгоднее репетитора</b> (экономия сотен тысяч рублей)",
-      "<b>Включает курсы</b>: неорганика (26 ч), органика (25 ч), общая химия (17 ч)",
-    ],
-    price: { current: "11 300 ₽", old: "13 970 ₽", discount: "–19%" },
-    image: "/images/flasks/CE-FLAISET__44996.png",
+    image: "/images/new-design/org-neorg-obsch.webp",
+    external: true, num: "02", symbol: "1–33", symbolColor: "paper",
+    badge: { label: "−19%", variant: "line" },
+    category: "Пакет", categoryColor: "acid", level: "ЕГЭ",
+    title: "Полный курс 1–33&nbsp;задания",
+    description: "Все темы ЕГЭ кроме&nbsp;34 · 68 ч видео · 2715&nbsp;заданий.",
+    tags: ["1–33", "196 тем"],
+    priceNew: "11 300 ₽", priceOld: "13 970 ₽", priceNote: "–19%",
   },
   {
     href: "https://stepik.org/a/238136?utm_source=cite&utm_medium=allcourses",
-    labels: [{ text: "Пакет курсов" }, { text: "Вечный доступ" }],
-    title: "2 курса в одном: общая химия + неорганика",
-    features: [
-      "<b>2 курса в одном</b>: общая химия + неорганика",
-      "<b>Теория для 24 из 34 заданий ЕГЭ</b>",
-      "<b>43 часа видео + 1650 заданий</b> для практики",
-      "<b>Пошаговые видеоуроки</b> — от простого к сложному",
-      "<b>Домашки, таблицы и файлы</b> для закрепления материала",
-      "<b>Автопроверка заданий</b>",
-      "<b>Вопросы на платформе и в общем чате</b>",
-      "<b>Доступ навсегда, без подписок и ограничений</b>",
-      "<b>Бессрочный доступ</b> без подписки и обязательных продлений",
-    ],
-    price: { current: "6 990 ₽", old: "8 180 ₽", discount: "–15%" },
-    image: "/images/flasks/CE-SEPF250_1__97109.png",
+    image: "/images/new-design/obsch-neorg.webp",
+    external: true, num: "03", symbol: "×2", symbolColor: "fuchsia2",
+    badge: { label: "−15%", variant: "line" },
+    category: "Пакет", categoryColor: "fuchsia2", level: "ЕГЭ",
+    title: "Общая химия + неорганика",
+    description: "Общая + неорганика · 43 ч видео · 1650 заданий.",
+    tags: ["24 из 34 заданий", "134 темы"],
+    priceNew: "6 990 ₽", priceOld: "8 180 ₽", priceNote: "–15%",
   },
 ];
 
-/* FAQ */
-const faqItems = [
-  {
-    q: "Как понять, какой курс выбрать?",
-    a: "Напишите нам через форму ниже — подберём программу под ваш уровень и сроки.",
-  },
-  {
-    q: "Доступ к курсам ограничен по времени?",
-    a: "Нет, для самостоятельных пакетов — бессрочный доступ (если в карточке не указано иначе).",
-  },
-  {
-    q: "Есть ли домашки и проверка?",
-    a: "Задания размещены на Stepik и проверяются автоматически. Вопросы по материалам можно задавать на платформе или в общем чате.",
-  },
-  {
-    q: "Можно учиться с телефона?",
-    a: "Да, Stepik доступен в приложении. Материалы и задания адаптируются для мобильных устройств.",
-  },
-  {
-    q: "Можно ли вернуть деньги?",
-    a: "Возврат можно оформить в течение 14 дней после покупки по действующим правилам Stepik.",
-  },
+const nav = [
+  { label: "Годовые", href: "#year" },
+  { label: "Самостоятельные", href: "#self" },
+  { label: "Пакеты", href: "#packs" },
+  { label: "Репетитор", href: "#tutor" },
 ];
 
-const faqJsonLd = buildFAQJsonLd(faqItems);
+// Витрина в hero: мини-карточки реальных курсов, орбитой облетающие центр (каталог = товары)
+interface HeroCourse {
+  href: string;
+  symbol: string;
+  symbolColor: "acid" | "fuchsia2" | "paper";
+  category: string;
+  categoryColor: "acid" | "fuchsia2";
+  name: string;
+  priceNew: string;
+  priceUnit?: string;
+  priceOld?: string;
+  badge?: string;
+}
+const heroShowcase: HeroCourse[] = [
+  { href: "#year", symbol: "CH₄", symbolColor: "acid", category: "ЕГЭ", categoryColor: "acid", name: "Годовой курс", priceNew: "14 000 ₽", priceUnit: "/мес", priceOld: "17 200 ₽", badge: "★ хит" },
+  { href: "#year", symbol: "H₂O", symbolColor: "fuchsia2", category: "ОГЭ", categoryColor: "fuchsia2", name: "Годовой ОГЭ", priceNew: "8 000 ₽", priceUnit: "/мес", priceOld: "12 000 ₽" },
+  { href: "#self", symbol: "Fe", symbolColor: "paper", category: "Stepik", categoryColor: "acid", name: "Неорганика", priceNew: "5 790 ₽", priceOld: "7 490 ₽" },
+  { href: "#self", symbol: "C₆H₆", symbolColor: "fuchsia2", category: "Stepik", categoryColor: "fuchsia2", name: "Органика", priceNew: "5 790 ₽", priceOld: "7 490 ₽" },
+  { href: "#self", symbol: "e⁻", symbolColor: "acid", category: "Stepik", categoryColor: "acid", name: "ОВР · 29", priceNew: "990 ₽", priceOld: "1 300 ₽" },
+  { href: "#packs", symbol: "×4", symbolColor: "acid", category: "Пакет", categoryColor: "acid", name: "4 курса", priceNew: "11 700 ₽", priceOld: "14 470 ₽", badge: "−19%" },
+];
+const heroSymColor: Record<string, string> = { acid: "text-acid", fuchsia2: "text-fuchsia2", paper: "text-paper" };
+const heroCatColor: Record<string, string> = { acid: "text-acid", fuchsia2: "text-fuchsia2" };
+
+const pageTitle = "Все курсы по химии — ЕГЭ, ОГЭ, Stepik, репетитор · ЕГЭХИМ";
+const description =
+  "Каталог курсов по химии: годовые курсы ЕГЭ и ОГЭ, курс для 10 класса, самостоятельные курсы на Stepik, пакеты и занятия с репетитором.";
+const image = "/images/new-design/org-neorg-obsch-var.webp";
+const pageUrl = pageUrlFromPath(Astro.url.origin, Astro.url.pathname);
+const allCourses = [...yearCourses, ...selfCourses, ...packCourses];
+const cleanText = (value?: string) =>
+  String(value ?? "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&mdash;/g, "—")
+    .replace(/&ndash;/g, "–")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+const parsePrice = (value?: string) => String(value ?? "").replace(/[^0-9]/g, "");
+const itemListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: allCourses.map((course, index) => {
+    const courseUrl = absUrl(Astro.url.origin, course.href);
+    const price = parsePrice(course.priceNew);
+    return {
+      "@type": "ListItem",
+      position: index + 1,
+      url: courseUrl,
+      item: {
+        "@type": "Course",
+        name: cleanText(course.title),
+        description: cleanText(course.description),
+        url: courseUrl,
+        provider: {
+          "@type": "Organization",
+          "@id": `${Astro.url.origin}/#organization`,
+          name: "ЕГЭХИМ",
+        },
+        ...(price && {
+          offers: {
+            "@type": "Offer",
+            price,
+            priceCurrency: "RUB",
+            availability: "https://schema.org/InStock",
+            url: courseUrl,
+          },
+        }),
+      },
+    };
+  }),
+};
+const collectionPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description,
+  url: pageUrl,
+  mainEntity: itemListJsonLd,
+};
 ---
 
-<MainLayout
-  title={seo.title}
-  description={seo.description}
-  image={seo.image}
-  seoType="website"
-  showBreadcrumbs={false}
-  faqJsonLd={faqJsonLd}
+<EgeLandingLayout
+  title={pageTitle}
+  description={description}
+  image={image}
+  url="/allcourses/"
+  showBreadcrumbs={true}
+  breadcrumbs={[{ name: "Все курсы" }]}
+  jsonLd={[collectionPageJsonLd]}
+  nav={egeLandingData.nav}
+  footer={egeLandingData.footer}
+  floatingActions={egeLandingData.floatingActions}
+  popupForm={egeLandingData.popupForm}
 >
-  <div class="page-stack">
-    <section id="hero" aria-labelledby="hero-courses-title">
-      <HeroCourses
-        title="Качественная самостоятельная подготовка к ЕГЭ –"
-        highlight="реальность!"
-        lead="Качественная самостоятельная подготовка к ЕГЭ – реальность!"
-      />
-    </section>
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 pt-grid opacity-[0.35]" aria-hidden="true"></div>
+    <div class="relative gutter pt-20 pb-16 md:pt-24 md:pb-20">
+      <!-- Хлебные крошки (видимые + BreadcrumbList в JSON-LD) -->
+      <nav
+        class="mb-8 flex items-center gap-2 font-mono text-[12px] tracking-wider uppercase text-dim"
+        aria-label="Хлебные крошки"
+      >
+        <a href="/" class="hover:text-acid transition">Главная</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-paper" aria-current="page">Все курсы</span>
+      </nav>
 
-    <!-- Блок 1: заголовок+лид+5 карточек -->
-    <section id="courses-top" role="region" aria-labelledby="allcourses-top-title">
-      <CourseCards heading={pageH2} subtitle={pageLead} headingId="allcourses-top-title" cards={cardsTop} />
-    </section>
+      <div class="grid grid-cols-12 gap-6 items-center">
+        <!-- Left: текст + якорная навигация -->
+        <div class="col-span-12 lg:col-span-7">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-2 h-2 bg-acid"></span>
+            <span class="label">[00] / Каталог · все форматы подготовки</span>
+          </div>
+          <h1 class="font-display font-bold tracking-[-0.03em] leading-[0.92] text-[clamp(48px,9vw,140px)]">
+            Все курсы<br />
+            <span class="inline-block relative"><span class="ul">по&nbsp;химии.</span></span>
+          </h1>
+          <p class="mt-10 max-w-2xl text-paper/80 text-lg md:text-xl leading-snug">
+            Годовые курсы в&nbsp;минигруппах, самостоятельные курсы на&nbsp;Stepik, пакеты со&nbsp;скидкой
+            и&nbsp;занятия с&nbsp;репетитором&nbsp;1&nbsp;на&nbsp;1. Выбери формат под&nbsp;свою цель и&nbsp;темп.
+          </p>
 
-    <!-- Баннер с бесплатными мини-курсами -->
-    <section id="ad-free" role="region" aria-labelledby="ad-free-title">
-      <AdFreeBanner
-        title="Забери 2 бесплатных мини-курса: +30 баллов к ЕГЭ"
-        lead="Видео + практические задания. Подойдут, чтобы быстро войти в режим и закрыть базовые пробелы."
-        ctaText="Забрать бесплатно"
-        image={{
-          src: "/images/mainpage/adfree.webp",
-          width: 420,
-          height: 300,
-          alt: "Бесплатные мини-курсы по химии",
-        }}
-        ctaHref="https://t.me/chemistry_examBot?start=s=3272321-utm_source=cite-utm_content=main"
-        ,
-      />
-    </section>
+          <!-- Якорная навигация -->
+          <nav class="mt-10 flex flex-wrap gap-2" aria-label="Разделы каталога">
+            {
+              nav.map((n) => (
+                <a
+                  href={n.href}
+                  class="font-mono text-[12px] uppercase tracking-wider border border-line px-4 py-3 hover:bg-acid hover:text-ink hover:border-acid transition"
+                >
+                  {n.label}
+                </a>
+              ))
+            }
+          </nav>
+        </div>
 
-    <!-- Блок 2: заголовок+лид+3 карточки -->
-    <section id="courses-bottom" role="region" aria-labelledby="allcourses-bottom-title">
-      <CourseCards
-        heading={secondH2}
-        subtitle={secondLead}
-        headingId="allcourses-bottom-title"
-        cards={cardsBottom}
-      />
-    </section>
+        <!-- Right: карточки курсов, орбитой облетающие центр (тот же концепт, что и кластер) -->
+        <div class="col-span-12 lg:col-span-5 relative mt-12 lg:mt-0">
+          <div class="hero-orbit mx-auto" id="heroOrbit" aria-hidden="true">
+            <div class="hero-orbit__readout" style="top:0;left:0">// каталог</div>
+            <div class="hero-orbit__readout hero-orbit__readout--acid" style="top:0;right:0">11 курсов</div>
+            <div class="hero-orbit__readout" style="bottom:0;left:0">ЕГЭ · ОГЭ · STEPIK</div>
+            <div class="hero-orbit__readout hero-orbit__readout--acid" style="bottom:0;right:0">[ В НАЛИЧИИ ]</div>
+            <div class="hero-orbit__stage">
+              {heroShowcase.map((c, i) => (
+                <a href={c.href} class="hero-orbit__node group" style={`--i:${i}`}>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class={`font-mono text-[9px] uppercase tracking-wider ${heroCatColor[c.categoryColor]}`}>
+                      {c.category}
+                    </span>
+                    {c.badge && (
+                      <span class="font-mono text-[8px] uppercase tracking-wider border border-line px-1 py-0.5 text-dim">
+                        {c.badge}
+                      </span>
+                    )}
+                  </div>
+                  <div class="flex items-center justify-center py-2">
+                    <span
+                      class={`font-display font-bold text-[30px] leading-none ${heroSymColor[c.symbolColor]}`}
+                      set:html={c.symbol}
+                    />
+                  </div>
+                  <div class="font-display font-bold text-[12px] leading-tight group-hover:text-acid transition">
+                    {c.name}
+                  </div>
+                  <div class="mt-1 pt-2 border-t border-line flex items-baseline gap-1.5">
+                    <span class="font-display font-bold text-[13px]">
+                      {c.priceNew}
+                      {c.priceUnit && (
+                        <span class="font-mono text-[9px] text-dim font-normal">{c.priceUnit}</span>
+                      )}
+                    </span>
+                    {c.priceOld && (
+                      <span class="font-mono text-[9px] text-dim line-through">{c.priceOld}</span>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Лид-форма -->
-    <section id="lead-capture" role="region" aria-labelledby="lead-capture-title">
-      <LeadCapture
-        title="Помочь с выбором курса?"
-        subtitle="Оставьте заявку — за 5 минут подскажем оптимальный маршрут под ваши цели и сроки"
-        formAction="/api/lead.php"
-        utmSource="allcourses"
-        utmMedium="organic"
-        utmCampaign="allcourses-lead"
-      />
-    </section>
+  <!-- [01] ГОДОВЫЕ -->
+  <CoursesSection
+    id="year"
+    secNum="[01] / ГОДОВЫЕ КУРСЫ"
+    title="Годовые курсы в&nbsp;минигруппах."
+    titleMarks={[{ text: "минигруппах.", color: "dim" }]}
+    subtitle="9&nbsp;месяцев системной подготовки: живые вебинары, проверка ДЗ, куратор и&nbsp;ежемесячные пробники."
+    cards={yearCourses}
+  />
 
-    <!-- FAQ -->
-    <section id="faq" role="region" aria-labelledby="faq-title">
-      <Faq title="Вопросы по курсам" items={faqItems} singleOpen={true} />
-    </section>
-  </div>
-</MainLayout>
+  <!-- [02] САМОСТОЯТЕЛЬНЫЕ -->
+  <CoursesSection
+    id="self"
+    secNum="[02] / САМОСТОЯТЕЛЬНЫЕ"
+    title="Курсы на&nbsp;Stepik. В&nbsp;своём темпе."
+    titleMarks={[{ text: "В&nbsp;своём темпе.", color: "dim" }]}
+    subtitle="Видео, практика с&nbsp;автопроверкой и&nbsp;поддержка в&nbsp;чате. Вечный доступ — начинай с&nbsp;нужного раздела."
+    cards={selfCourses}
+  />
+
+  <!-- [03] ПАКЕТЫ -->
+  <CoursesSection
+    id="packs"
+    secNum="[03] / ПАКЕТЫ"
+    title="Пакеты и&nbsp;подборки со&nbsp;скидкой."
+    titleMarks={[{ text: "со&nbsp;скидкой.", color: "dim" }]}
+    subtitle="Несколько курсов в&nbsp;одном — выгоднее, чем по&nbsp;отдельности. Доступ навсегда."
+    cards={packCourses}
+  />
+
+  <!-- [04] РЕПЕТИТОР — светлая секция (как «Родителям» на лендинге) -->
+  <section class="paper-section" id="tutor">
+    <div class="gutter py-24 md:py-32">
+      <div class="grid grid-cols-12 gap-6 mb-14">
+        <div class="col-span-12 md:col-span-3">
+          <div class="font-mono text-[12px] tracking-wider uppercase text-ink/50">
+            [04] / РЕПЕТИТОР
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <EgeH2
+            text={'Нужно лично — <span class="text-ink/50">1&nbsp;на&nbsp;1 с&nbsp;репетитором.</span>'}
+            class="titrate"
+          />
+        </div>
+      </div>
+
+      <!-- Большая карточка: фото + контент -->
+      <div class="grid grid-cols-12 gap-px bg-ink/15 border border-ink/20">
+        <!-- Фото -->
+        <div
+          class="col-span-12 md:col-span-5 bg-paper relative aspect-[4/3] md:aspect-auto overflow-hidden"
+        >
+          <img
+            src="/images/valerii-filipenko.webp"
+            alt="Валерий Филипенко — репетитор по химии"
+            class="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <div
+            class="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-widest bg-paper/90 text-ink border border-ink/10 backdrop-blur-sm px-2 py-1"
+          >
+            // репетитор · 1&nbsp;на&nbsp;1
+          </div>
+        </div>
+
+        <!-- Контент -->
+        <div class="col-span-12 md:col-span-7 bg-paper p-8 md:p-12 flex flex-col">
+          <div
+            class="font-display font-bold text-[clamp(28px,3.5vw,44px)] leading-[1.05] tracking-tight"
+          >
+            Валерий Филипенко
+          </div>
+          <p class="mt-3 text-ink/70 text-lg leading-snug max-w-md">
+            Готовлю к&nbsp;ЕГЭ, ОГЭ, поступлению в&nbsp;мед и&nbsp;олимпиадам.
+            Индивидуальный план под&nbsp;твою цель и&nbsp;темп.
+          </p>
+
+          <div class="mt-7 grid grid-cols-3 gap-px bg-ink/15 border border-ink/15">
+            <div class="bg-paper p-4">
+              <div class="font-display font-bold text-3xl">2000+</div>
+              <div class="font-mono text-[10px] text-ink/55 mt-1 uppercase">учеников</div>
+            </div>
+            <div class="bg-paper p-4">
+              <div class="font-display font-bold text-3xl">10</div>
+              <div class="font-mono text-[10px] text-ink/55 mt-1 uppercase">лет опыта</div>
+            </div>
+            <div class="bg-paper p-4">
+              <div class="font-display font-bold text-3xl">8</div>
+              <div class="font-mono text-[10px] text-ink/55 mt-1 uppercase">авторских курсов</div>
+            </div>
+          </div>
+
+          <ul class="mt-7 font-mono text-sm space-y-2 text-ink/85">
+            <li>→ Индивидуальный план под&nbsp;цель и&nbsp;сроки</li>
+            <li>→ Гибкий график · онлайн или очно (Москва)</li>
+            <li>→ Разбор ДЗ и&nbsp;пробников лично</li>
+            <li>→ Первое занятие 60&nbsp;мин — бесплатно</li>
+          </ul>
+
+          <div class="mt-8 pt-6 border-t border-ink/15 flex flex-wrap items-center gap-4">
+            <a
+              href="/tutor/"
+              class="inline-flex items-center gap-3 bg-acid text-ink font-display font-bold uppercase tracking-tight px-6 py-4 hover:bg-fuchsia2 hover:text-ink transition"
+            >
+              Записаться <span class="font-mono">→</span>
+            </a>
+            <div class="font-mono text-[11px] text-ink/55">
+              подробнее на&nbsp;странице репетитора
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Форма — в конце -->
+  <EgeLeadForm />
+
+  <script>
+    // Реверс .titrate (как на лендингах) — иначе заголовки скрыты clip-path
+    const g = (window as any).gsap;
+    const ST = (window as any).ScrollTrigger;
+    if (g && ST) {
+      g.registerPlugin(ST);
+      document.querySelectorAll(".titrate").forEach((el) =>
+        ST.create({ trigger: el, start: "top 85%", once: true, onEnter: () => el.classList.add("in") }),
+      );
+    } else {
+      document.querySelectorAll(".titrate").forEach((el) => el.classList.add("in"));
+    }
+
+    // Орбита карточек курсов в hero: тот же концепт «летающего кластера»,
+    // но узлы — товары. Карточки облетают центр по эллипсу с глубиной
+    // (ближние крупнее/ярче, дальние мельче/бледнее), оставаясь лицом к зрителю.
+    (function heroOrbit() {
+      const root = document.getElementById("heroOrbit");
+      if (!root) return;
+      const nodes = Array.from(root.querySelectorAll<HTMLElement>(".hero-orbit__node"));
+      if (!nodes.length) return;
+      const n = nodes.length;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const place = (t: number) => {
+        const rect = root.getBoundingClientRect();
+        const Rx = rect.width * 0.3;
+        const Ry = rect.height * 0.18;
+        nodes.forEach((el, i) => {
+          const a = (Math.PI * 2 * i) / n + t;
+          const depth = Math.sin(a); // -1 (зад) .. 1 (перёд)
+          const x = Math.cos(a) * Rx;
+          const y = depth * Ry + Math.sin(t * 0.8 + i) * 5;
+          const k = (depth + 1) / 2; // 0..1
+          const scale = 0.78 + k * 0.3;
+          el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
+          el.style.zIndex = String(Math.round(k * 100));
+          el.style.opacity = (0.45 + k * 0.55).toFixed(2);
+        });
+      };
+
+      if (reduce) {
+        place(0);
+        return;
+      }
+      let t = 0;
+      (function loop() {
+        t += 0.004; // ~в 1.5 раза медленнее
+        place(t);
+        requestAnimationFrame(loop);
+      })();
+    })();
+  </script>
+
+  <style>
+    .hero-orbit {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 1 / 1;
+    }
+    .hero-orbit__readout {
+      position: absolute;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      pointer-events: none;
+      z-index: 200;
+    }
+    .hero-orbit__readout--acid {
+      color: var(--acid);
+    }
+    .hero-orbit__stage {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-orbit__node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(116px, 30vw, 132px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: rgba(10, 10, 10, 0.92);
+      color: var(--paper);
+      text-decoration: none;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+      transition: border-color 160ms ease;
+    }
+    .hero-orbit__node:hover {
+      border-color: var(--paper);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      /* Статичная раскладка обеспечивается JS (place(0)). */
+      .hero-orbit__node {
+        position: static;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+      .hero-orbit {
+        aspect-ratio: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .hero-orbit__stage {
+        position: static;
+        display: contents;
+      }
+      .hero-orbit__node {
+        width: auto;
+      }
+    }
+  </style>
+</EgeLandingLayout>

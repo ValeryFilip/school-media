@@ -1,0 +1,48 @@
+---
+import CourseCard from "./CourseCard.astro";
+import EgeH2 from "../ege/EgeH2.astro";
+
+interface Props {
+  id?: string;
+  secNum: string;
+  title: string;
+  /** Подсветка слов в заголовке (см. EgeH2: { text, underline?, color? }). */
+  titleMarks?: {
+    text: string;
+    underline?: "acid" | "fuchsia";
+    color?: "acid" | "fuchsia" | "dim" | "paper" | "ink";
+  }[];
+  subtitle?: string;
+  cols?: string;
+  cards: any[];
+}
+const {
+  id,
+  secNum,
+  title,
+  titleMarks = [],
+  subtitle = "",
+  cols = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+  cards = [],
+} = Astro.props as Props;
+---
+
+<section class="section relative" id={id}>
+  <div class="gutter py-20 md:py-28">
+    <div class="grid grid-cols-12 gap-6 mb-12 items-start">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{secNum}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={title} marks={titleMarks} class="titrate" />
+        {subtitle && (
+          <p class="mt-4 text-paper/70 text-lg max-w-2xl leading-snug" set:html={subtitle} />
+        )}
+      </div>
+    </div>
+
+    <div class={`grid ${cols} gap-6`}>
+      {cards.map((c) => <CourseCard {...c} />)}
+    </div>
+  </div>
+</section>

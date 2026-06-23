@@ -8,7 +8,13 @@ const {
 } = Astro.props;
 
 const year = new Date().getFullYear();
-const columns = footer.columns ?? [];
+type FooterLink = { href?: string; label: string; external?: boolean; rel?: string };
+const columns = (footer.columns ?? []) as Array<{
+  title?: string;
+  titleHref?: string;
+  links?: FooterLink[];
+  groups?: { title?: string; links?: FooterLink[] }[];
+}>;
 const legalLinks = footer.legalLinks ?? [];
 const socialGroups = footer.socialGroups ?? [];
 const bottomLinks = footer.bottomLinks ?? [];
@@ -74,21 +80,57 @@ const bottomLinks = footer.bottomLinks ?? [];
 
       {columns.slice(0, 2).map((column) => (
         <div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-apaper p-6 md:p-8">
-          <div class="label mb-3">{column.title}</div>
-          <ul class="font-mono text-sm space-y-2 text-ainkSoft">
-            {column.links?.map((link) => (
-              <li>
-                <a
-                  class="hover:text-rust transition"
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : link.rel}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {column.titleHref ? (
+            <a
+              href={column.titleHref}
+              class="label mb-3 inline-flex items-center gap-1 hover:text-rust transition"
+            >
+              {column.title}
+              <span aria-hidden="true">↗</span>
+            </a>
+          ) : (
+            <div class="label mb-3">{column.title}</div>
+          )}
+          {column.groups ? (
+            column.groups.map((group, groupIndex) => (
+              <div class={groupIndex === 0 ? "" : "mt-5"}>
+                {group.title && (
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-adim mb-2">
+                    {group.title}
+                  </div>
+                )}
+                <ul class="font-mono text-sm space-y-2 text-ainkSoft">
+                  {group.links?.map((link) => (
+                    <li>
+                      <a
+                        class="hover:text-rust transition"
+                        href={link.href}
+                        target={link.external ? "_blank" : undefined}
+                        rel={link.external ? "noopener noreferrer" : link.rel}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <ul class="font-mono text-sm space-y-2 text-ainkSoft">
+              {column.links?.map((link) => (
+                <li>
+                  <a
+                    class="hover:text-rust transition"
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : link.rel}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       ))}
 

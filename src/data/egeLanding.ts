@@ -13,19 +13,18 @@ export const egeLandingData = {
           {
             title: "Годовые курсы",
             links: [
-              { href: "/#courses-tabs", label: "Годовые курсы" },
               {
-                href: "/#courses-tabs",
+                href: "/ege-year/",
                 label: "Годовой курс ЕГЭ",
                 description: "Полный курс подготовки к ЕГЭ",
               },
               {
-                href: "/#courses-tabs",
+                href: "/10-klass-himiya-year/",
                 label: "Годовой курс для 10 класса",
                 description: "Подготовка к ЕГЭ с 10 класса",
               },
               {
-                href: "/#courses-tabs",
+                href: "/oge-year/",
                 label: "Годовой курс ОГЭ",
                 description: "Подготовка к ОГЭ",
               },
@@ -486,8 +485,8 @@ export const egeLandingData = {
       title: "Минигруппа",
       subtitle: "// рабочая концентрация · до&nbsp;6&nbsp;человек в&nbsp;группе",
       oldPrice: "17&nbsp;200 ₽",
-      discount: "−30%",
-      price: "12&nbsp;000&nbsp;₽",
+      discount: "−19%",
+      price: "14&nbsp;000&nbsp;₽",
       period: "/ мес",
       installment: "примерно 1&nbsp;000&nbsp;₽ за&nbsp;занятие · 2 урока в&nbsp;неделю по&nbsp;90&nbsp;мин",
       placesLabel: "// МЕСТ ОСТАЛОСЬ",
@@ -496,7 +495,7 @@ export const egeLandingData = {
       placesWidth: "75%",
       placesNote:
         'Набор 2027 закрывается 1&nbsp;сентября. До&nbsp;конца скидки <span data-countdown-to="2026-08-01T00:00:00+03:00" class="text-paper">—</span>',
-      cta: "Записаться · сэкономить&nbsp;5&nbsp;200&nbsp;₽ →",
+      cta: "Записаться · сэкономить&nbsp;3&nbsp;200&nbsp;₽ →",
       note: "пробный урок &mdash; бесплатно · 60 мин · с автором курса",
     },
     bonuses: [
@@ -734,17 +733,35 @@ export const egeLandingData = {
         ],
       },
       {
-        title: "Курсы",
-        links: [
-          { href: "/allcourses/", label: "Все курсы по химии на Stepik" },
-          { href: "/neorganika/", label: "Неорганическая химия ЕГЭ" },
-          { href: "/organika/", label: "Органическая химия ЕГЭ" },
-          { href: "/obschaya/", label: "Общая химия ЕГЭ" },
-          { href: "/ovr/", label: "ОВР и задание 29 ЕГЭ" },
-          { href: "/paket-2-kursa/", label: "Пакет ×2: общая + неорганика" },
-          { href: "/paket-3-kursa/", label: "Пакет ×3: вся химия ЕГЭ" },
-          { href: "/paket-4-kursa/", label: "Пакет ×4: курсы + варианты" },
-          { href: "/varianty-ege/", label: "Авторские варианты ЕГЭ" },
+        title: "Все курсы ЕГЭХИМ",
+        titleHref: "/allcourses/",
+        groups: [
+          {
+            title: "Годовые курсы",
+            links: [
+              { href: "/ege-year/", label: "Годовой курс ЕГЭ" },
+              { href: "/oge-year/", label: "Годовой курс ОГЭ" },
+              { href: "/10-klass-himiya-year/", label: "Годовой курс 10 класс" },
+            ],
+          },
+          {
+            title: "Самостоятельные на Stepik",
+            links: [
+              { href: "/neorganika/", label: "Неорганическая химия ЕГЭ" },
+              { href: "/organika/", label: "Органическая химия ЕГЭ" },
+              { href: "/obschaya/", label: "Общая химия ЕГЭ" },
+              { href: "/ovr/", label: "ОВР и задание 29 ЕГЭ" },
+              { href: "/varianty-ege/", label: "Авторские варианты ЕГЭ" },
+            ],
+          },
+          {
+            title: "Пакеты",
+            links: [
+              { href: "/paket-2-kursa/", label: "Пакет ×2: общая + неорганика" },
+              { href: "/paket-3-kursa/", label: "Пакет ×3: вся химия ЕГЭ" },
+              { href: "/paket-4-kursa/", label: "Пакет ×4: курсы + варианты" },
+            ],
+          },
         ],
       },
     ],
