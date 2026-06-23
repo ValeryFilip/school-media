@@ -1,0 +1,225 @@
+<script is:inline>
+  (function buildPTBg() {
+    const grid = document.getElementById("ptBg");
+    if (!grid) return;
+    for (let i = 0; i < 18 * 5; i++) grid.appendChild(document.createElement("div"));
+  })();
+
+  function floatingFormulas() {
+    const field = document.getElementById("formulaField");
+    if (!field || !window.gsap) return;
+    const formulas = ["H₂O", "NaCl", "CO₂", "HCl", "NH₃", "O₂", "H₂SO₄", "NaOH", "CH₄", "CaCO₃", "KOH", "C₂H₅OH", "Fe₂O₃"];
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement("div");
+      el.className = "formula-particle";
+      el.textContent = formulas[Math.floor(Math.random() * formulas.length)];
+      el.style.left = Math.random() * 100 + "%";
+      el.style.top = Math.random() * 100 + "%";
+      el.style.fontSize = 10 + Math.random() * 8 + "px";
+      el.style.opacity = 0.15 + Math.random() * 0.25;
+      field.appendChild(el);
+      gsap.to(el, {
+        x: (Math.random() - 0.5) * 60,
+        y: (Math.random() - 0.5) * 60,
+        duration: 8 + Math.random() * 8,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    }
+  }
+
+  (function buildMethod() {
+    const grid = document.getElementById("methodGrid");
+    if (!grid || grid.childElementCount > 0) return;
+    const items = [
+      { num: "01", sym: "Df", title: "От&nbsp;диагностики, не&nbsp;от&nbsp;учебника", text: "Первая встреча — мини-ЕГЭ на&nbsp;20&nbsp;вопросов. Видим, где дыры. Только потом — план. Без&nbsp;диагностики «универсальный курс» — это потеря 2&nbsp;месяцев." },
+      { num: "02", sym: "St", title: "Не&nbsp;учебники Габриеляна", text: "Своя структура: атом → связь → ОВР → растворы → органика. Без&nbsp;повторов трёх разных классификаций. Конспекты — 40&nbsp;листов вместо 4&nbsp;учебников." },
+      { num: "03", sym: "Fb", title: "Каждая ошибка — голосовое", text: "После урока ты&nbsp;получаешь голосовое в&nbsp;TG с&nbsp;разбором твоих ошибок. Это работает в&nbsp;5&nbsp;раз лучше, чем «исправь и&nbsp;покажи»." },
+      { num: "04", sym: "Px", title: "Пробники каждые 4&nbsp;недели", text: "Полный вариант ЕГЭ в&nbsp;условиях экзамена: бланки, таймер, без&nbsp;интернета. Разбор твоих личных ошибок видео-сообщением." },
+    ];
+    items.forEach((s) => {
+      const div = document.createElement("div");
+      div.className = "bg-ink p-7 md:p-10 cursor-default";
+      div.innerHTML = `
+        <div class="flex items-start gap-6">
+          <div class="w-20 h-20 border border-paper grid place-items-center font-mono font-bold text-2xl relative shrink-0">
+            ${s.sym}
+            <span class="absolute top-1 left-1.5 font-mono text-[10px] text-dim font-normal">${s.num}</span>
+          </div>
+          <div class="flex-1">
+            <div class="font-mono text-[11px] text-acid mb-2">// ПРИНЦИП ${s.num}</div>
+            <div class="font-display font-bold text-2xl md:text-3xl leading-tight mb-3">${s.title}</div>
+            <p class="text-paper/80 text-sm leading-snug">${s.text}</p>
+          </div>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+  })();
+
+  (function buildServices() {
+    const grid = document.getElementById("servicesGrid");
+    if (!grid || grid.childElementCount > 0) return;
+    const services = [
+      { num: "01", sym: "CH₄", name: "ЕГЭ · 8–11 класс", meta: "индивидуально", price: "от 3 000 ₽", unit: "/ 60 мин", desc: "Полная подготовка к&nbsp;ЕГЭ с&nbsp;любого уровня: диагностика, план, домашка с&nbsp;проверкой и&nbsp;пробники." },
+      { num: "02", sym: "Hb", name: "Поступление · мед/хим", meta: "мед, фарм, хим", price: "от 3 000 ₽", unit: "/ 60 мин", desc: "Целевая подготовка под&nbsp;медицинские, фармацевтические и&nbsp;химические вузы. Внутренние экзамены, ДВИ." },
+      { num: "03", sym: "Au", name: "Олимпиады", meta: "ВОШ, Менделеевская", price: "от 4 000 ₽", unit: "/ 60 мин", desc: "Региональный и&nbsp;заключительный этапы. Задачи на&nbsp;3–5&nbsp;ходов, нестандартные синтезы, экспериментальный тур.", acid: true },
+      { num: "04", sym: "×2", name: "Пересдача ЕГЭ", meta: "выпускники прошлых лет", price: "от 3 000 ₽", unit: "/ 60 мин", desc: "Интенсив на&nbsp;3–6&nbsp;месяцев. Закрываем пробелы, выводим балл с&nbsp;55–65 на&nbsp;85+." },
+      { num: "05", sym: "R–H", name: "Помощь студентам", meta: "1–4 курс", price: "от 3 000 ₽", unit: "/ 60 мин", desc: "Общая, неорганическая, органическая, аналитическая. Подготовка к&nbsp;коллоквиумам и&nbsp;экзаменам." },
+      { num: "06", sym: "cat.", name: "Консультации преподавателям", meta: "методика, разбор", price: "по запросу", unit: "/ договорно", desc: "Методическая помощь школьным и&nbsp;вузовским преподам: материалы, разбор сложных тем, ИКТ-инструменты.", acid: true },
+    ];
+
+    services.forEach((s) => {
+      const div = document.createElement("button");
+      div.type = "button";
+      div.className = "svc-card text-left block bg-ink p-7 md:p-8 border-line border";
+      div.setAttribute("data-popup-id", "lead-popup");
+      div.setAttribute("data-source", "tutor-services");
+      div.setAttribute("data-variant", s.name);
+      div.innerHTML = `
+        <div class="flex items-start justify-between mb-6">
+          <span class="font-mono text-[11px] svc-dim text-dim">№ ${s.num}</span>
+          <span class="font-mono text-[11px] svc-fuchsia text-fuchsia2">${s.meta}</span>
+        </div>
+        <div class="font-display font-bold text-[64px] leading-none ${s.acid ? "text-acid" : ""} mb-4">${s.sym}</div>
+        <div class="font-display font-bold text-2xl leading-tight mb-2">${s.name}</div>
+        <p class="font-mono text-[12px] svc-dim text-dim leading-snug mb-7">${s.desc}</p>
+        <div class="flex items-end justify-between pt-5 border-t border-line">
+          <div>
+            <div class="font-mono text-[10px] svc-dim text-dim uppercase tracking-wider">стоимость</div>
+            <div class="flex items-baseline gap-2 mt-1">
+              <div class="font-display font-bold text-2xl">${s.price}</div>
+              <div class="font-mono text-[11px] svc-dim text-dim">${s.unit}</div>
+            </div>
+          </div>
+          <span class="font-mono text-xl svc-arrow">→</span>
+        </div>
+      `;
+      div.addEventListener("click", () => {
+        const opener = document.querySelector(`.popup-btn[data-popup-id="lead-popup"]`);
+        if (opener) opener.click();
+      });
+      grid.appendChild(div);
+    });
+  })();
+
+  (function buildFaq() {
+    const wrap = document.getElementById("tutorFaqList");
+    if (!wrap || wrap.childElementCount > 0) return;
+    const items = [
+      { q: "Занятия проходят онлайн?", a: "Да. Занятия проходят онлайн: созвон, общая доска, материалы и&nbsp;домашняя работа с&nbsp;проверкой." },
+      { q: "Сколько занятий в неделю реально нужно?", a: "Для&nbsp;ЕГЭ с&nbsp;нуля за&nbsp;9&nbsp;месяцев — 2&nbsp;занятия по&nbsp;90&nbsp;минут + 4&nbsp;часа домашки. Для&nbsp;поступления в&nbsp;мед — 3. Меньше двух — не&nbsp;берусь, это не&nbsp;работает." },
+      { q: "А&nbsp;если ребёнок не&nbsp;потянет темп?", a: "Темп подстраиваю под&nbsp;ученика. Если совсем не&nbsp;идёт — корректируем цель: вместо 90+ метим в&nbsp;75. Лучше реальные 75, чем выдуманные 95." },
+      { q: "Можно сначала бесплатный пробный?", a: "Да. Первое занятие — 60&nbsp;минут — бесплатно. Это диагностика: я&nbsp;вижу твой уровень, ты&nbsp;видишь, как я&nbsp;объясняю." },
+      { q: "Работа ведётся официально?", a: "Да. После оплаты предоставляется чек, условия занятий и&nbsp;возврата фиксируются заранее." },
+      { q: "Что если ученик уже в&nbsp;11&nbsp;классе и&nbsp;начинает с&nbsp;нуля?", a: "Берусь. Минимум 3&nbsp;занятия в&nbsp;неделю + жёсткая домашка. За&nbsp;7&nbsp;месяцев реально выйти на&nbsp;75–85, если ученик готов работать." },
+    ];
+    items.forEach((it, i) => {
+      const d = document.createElement("details");
+      d.className = "border-b border-line group";
+      d.innerHTML = `
+        <summary class="flex items-start gap-6 py-6 md:py-7 hover:text-acid transition">
+          <div class="font-mono text-sm text-dim mt-1 w-10 shrink-0">${String(i + 1).padStart(2, "0")}</div>
+          <div class="font-display font-medium text-xl md:text-2xl leading-snug flex-1">${it.q}</div>
+          <div class="faq-plus font-mono text-2xl shrink-0 mt-1">+</div>
+        </summary>
+        <div class="pb-7 pl-16 pr-12 max-w-3xl text-paper/80 leading-relaxed">${it.a}</div>
+      `;
+      wrap.appendChild(d);
+    });
+  })();
+
+  (function selectors() {
+    document.querySelectorAll("[data-target]").forEach((wrap) => {
+      const targetName = wrap.dataset.target;
+      const targetInput = targetName ? document.querySelector(`input[name="${targetName}"]`) : null;
+      wrap.querySelectorAll(".pickbtn").forEach((button) => {
+        button.addEventListener("click", () => {
+          wrap.querySelectorAll(".pickbtn").forEach((item) => item.classList.remove("is-on"));
+          button.classList.add("is-on");
+          if (targetInput) targetInput.value = button.dataset.val || button.textContent.trim();
+        });
+      });
+    });
+  })();
+
+  (function countdown() {
+    document.querySelectorAll("[data-days-to]").forEach((el) => {
+      const target = new Date(el.dataset.daysTo);
+      const today = new Date();
+      const days = Math.max(0, Math.floor((target - today) / (1000 * 60 * 60 * 24)));
+      el.textContent = days;
+    });
+  })();
+
+  function runTutorAnimations() {
+    if (!window.gsap || !window.ScrollTrigger) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.querySelectorAll(".titrate").forEach((el) => {
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top 85%",
+        once: true,
+        onEnter: () => el.classList.add("in"),
+      });
+    });
+
+    document.querySelectorAll("[data-counter]").forEach((el) => {
+      const target = parseInt(el.dataset.counter, 10);
+      const suffix = el.dataset.suffix || "";
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top 88%",
+        once: true,
+        onEnter: () => {
+          const obj = { v: 0 };
+          gsap.to(obj, {
+            v: target,
+            duration: 1.8,
+            ease: "expo.out",
+            onUpdate: () => {
+              el.textContent = Math.round(obj.v).toLocaleString("ru-RU") + suffix;
+            },
+          });
+        },
+      });
+    });
+
+    document.querySelectorAll(".cta-pulse .bub").forEach((bubble, index) => {
+      gsap.to(bubble, {
+        opacity: 0.8,
+        y: -30,
+        scale: 1.4,
+        duration: 1.4,
+        repeat: -1,
+        delay: index * 0.4,
+        ease: "sine.out",
+        onRepeat: () => {
+          gsap.set(bubble, { y: 0, opacity: 0, scale: 1 });
+        },
+      });
+    });
+  }
+
+  function bootTutorAnimations() {
+    if (window.gsap && window.ScrollTrigger) {
+      floatingFormulas();
+      runTutorAnimations();
+      return;
+    }
+
+    window.addEventListener(
+      "load",
+      () => {
+        floatingFormulas();
+        runTutorAnimations();
+      },
+      { once: true }
+    );
+  }
+
+  bootTutorAnimations();
+</script>

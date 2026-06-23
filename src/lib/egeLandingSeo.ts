@@ -2,6 +2,7 @@ import {
   buildCourseJsonLd,
   buildFAQJsonLd,
   buildProductJsonLd,
+  buildWebPageJsonLd,
   pageUrlFromPath,
 } from "./seoData";
 
@@ -11,6 +12,9 @@ type LandingData = {
       title?: string;
       price?: string;
     };
+  };
+  faq?: {
+    items?: Array<{ q: string; a: string }>;
   };
   runtime?: {
     faq?: Array<{ q: string; a: string }>;
@@ -63,6 +67,9 @@ function text(value?: string): string {
     .trim();
 }
 
+/** Дата, до которой действует цена набора. Тянется на конец учебного года. */
+const DEFAULT_PRICE_VALID_UNTIL = "2027-08-31";
+
 export function buildEgeLandingSeoSchemas(params: {
   origin: string;
   pathname: string;
@@ -72,6 +79,16 @@ export function buildEgeLandingSeoSchemas(params: {
   image?: string;
   keywords?: string[];
   faqItems?: Array<{ q: string; a: string }>;
+  priceValidUntil?: string;
+  ratingValue?: number;
+  reviewCount?: number;
+  reviews?: Array<{
+    author: string;
+    datePublished: string;
+    reviewBody: string;
+    ratingValue?: number;
+    image?: string;
+  }>;
 }) {
   const { origin, pathname, data, name, description, image, keywords } = params;
   const url = pageUrlFromPath(origin, pathname);
@@ -80,7 +97,11 @@ export function buildEgeLandingSeoSchemas(params: {
   const productName = text(featured.title)
     ? `${name}: ${text(featured.title)}`
     : name;
-  const faqItems = params.faqItems ?? data.runtime?.faq ?? egeLandingFaqItems;
+  const faqItems =
+    params.faqItems ??
+    data.faq?.items ??
+    data.runtime?.faq ??
+    egeLandingFaqItems;
 
   return {
     courseJsonLd: buildCourseJsonLd({
@@ -88,8 +109,6 @@ export function buildEgeLandingSeoSchemas(params: {
       url,
       name,
       description,
-      ratingValue: 4.9,
-      reviewCount: 100,
       keywords,
     }),
     productJsonLd: buildProductJsonLd({
@@ -100,7 +119,18 @@ export function buildEgeLandingSeoSchemas(params: {
       image,
       price,
       priceCurrency: "RUB",
+      priceValidUntil: params.priceValidUntil ?? DEFAULT_PRICE_VALID_UNTIL,
+      ratingValue: params.ratingValue,
+      reviewCount: params.reviewCount,
+      reviews: params.reviews,
     }),
     faqJsonLd: buildFAQJsonLd(faqItems),
+    webPageJsonLd: buildWebPageJsonLd({
+      origin,
+      url,
+      name,
+      siteName: "ЕГЭХИМ",
+      about: name,
+    }),
   };
 }

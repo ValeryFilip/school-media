@@ -1,0 +1,101 @@
+---
+const rows = [
+  ["Формат", "небольшая группа с живым участием", "потоковые занятия и вебинары", "yes", "mid"],
+  ["Внимание к ученику", "преподаватель видит ошибки каждого", "ученик может потеряться в потоке", "yes", "mid"],
+  ["Вопросы", "можно задать напрямую автору курса", "чаще через куратора или общий чат", "yes", "mid"],
+  ["Проверка заданий", "тесты автоматически, развёрнутая часть — преподавателем", "зависит от тарифа и системы проверки", "yes", "mid"],
+  ["Темп обучения", "можно подстроить под уровень группы", "единая программа для большого числа учеников", "yes", "mid"],
+  ["Контроль прогресса", "проще заметить, что ученик отстал", "многое зависит от самостоятельности", "yes", "mid"],
+  ["Цена", "выше, потому что больше личной работы", "ниже за счёт массового формата", "mid", "yes"],
+  ["Подходит, если", "нужен контакт, контроль и разбор ошибок", "ученик самостоятельный и хочет бюджетный формат", "yes", "mid"],
+] as const;
+
+const symbol = (mark: string) => mark === "yes" ? "✓" : mark === "no" ? "✕" : "~";
+---
+
+<!-- ============== 06. СРАВНЕНИЕ: МИНИГРУППА vs ОНЛАЙН-ШКОЛА ============== -->
+<section class="paper-section" id="compare">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="font-mono text-[12px] tracking-wider uppercase text-ink/50">
+          [06] / СРАВНЕНИЕ
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          Минигруппа до&nbsp;6 человек или большая онлайн-школа.
+          <span class="text-ink/50">
+            Сравните <span class="ul-fuchsia">форматы обучения</span>.
+          </span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="border border-ink/20 border-b-0">
+      <div class="cmp-row head">
+        <div class="font-mono text-[11px] text-dim uppercase tracking-wider">
+          Параметр
+        </div>
+        <div class="cmp-win">
+          <div class="font-mono text-[11px] text-ink uppercase tracking-wider mb-1">
+            [ ЕГЭХИМ ]
+          </div>
+          <div class="font-display font-bold text-xl">
+            Минигруппа · до&nbsp;6 человек
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-1">
+            [ ДРУГОЙ ФОРМАТ ]
+          </div>
+          <div class="font-display font-bold text-xl text-dim">
+            Большая онлайн-школа
+          </div>
+        </div>
+      </div>
+
+      <div id="cmpBody">
+        {
+          rows.map(([parameter, egehim, other, egehimMark, otherMark], index) => (
+            <div class="cmp-row">
+              <div class="cmp-label font-mono text-sm">{parameter}</div>
+              <div class="cmp-win">
+                <div class="flex items-center gap-3">
+                  <span class={`mark-${egehimMark} font-mono`}>{symbol(egehimMark)}</span>
+                  <span
+                    class:list={[
+                      "font-display font-medium text-lg",
+                      index === rows.length - 1 && "bg-acid text-ink px-1",
+                    ]}
+                  >
+                    {egehim}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center gap-3 cmp-other">
+                  <span class={`mark-${otherMark} font-mono`}>{symbol(otherMark)}</span>
+                  <span class="font-display font-medium text-lg">{other}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="mt-10 grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-8 md:col-start-3">
+        <p class="font-display text-xl md:text-2xl leading-snug text-center">
+          Выбирайте формат под&nbsp;характер ученика.
+          <span class="bg-acid text-ink px-1">
+            Минигруппа подходит тем, кому важны контакт, контроль и&nbsp;разбор ошибок.
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

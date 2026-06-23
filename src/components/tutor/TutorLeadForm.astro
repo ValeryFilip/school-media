@@ -1,0 +1,124 @@
+---
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+---
+
+<section class="section relative" id="form">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">[08] / СВЯЗЬ</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="font-display font-bold text-[clamp(40px,6vw,96px)] leading-[0.9] tracking-[-0.02em] titrate">
+          Напиши. <span class="ul">Отвечу</span> <span class="text-dim">в&nbsp;течение часа.</span>
+        </h2>
+        <p class="text-paper/80 text-lg max-w-2xl mt-6">
+          Можно сразу в&nbsp;Telegram, можно через форму — оба варианта приходят в&nbsp;один и&nbsp;тот&nbsp;же чат. Первый звонок — бесплатно, 60&nbsp;минут.
+        </p>
+      </div>
+    </div>
+
+    <form
+      id="tutorLeadForm"
+      class="border border-paper/30 bg-ink p-6 md:p-10 relative max-w-4xl mx-auto"
+      data-form
+      data-form-type="tutor"
+      data-form-id="tutor-lead"
+      data-success-message="Заявка отправлена! Валерий напишет в Telegram."
+      data-success-redirect="/thank-you"
+      data-success-delay="1200"
+      data-required-any="telegram,phone"
+    >
+      <div class="absolute top-4 right-4 font-mono text-[10px] text-dim">// FORM_ID: 2027.VF.01</div>
+
+      <div class="font-mono text-[11px] text-acid mb-6 uppercase tracking-widest pt-2">// заполни 5 полей · займёт 30 секунд</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+        <div>
+          <label class="field-label mb-2"><span class="field-num">[01]</span> Как тебя зовут <span class="field-req">*</span></label>
+          <input name="name" type="text" required placeholder="Например — Артём / Ольга" autocomplete="name" />
+        </div>
+        <div>
+          <label class="field-label mb-2"><span class="field-num">[02]</span> Кто на&nbsp;связи <span class="field-req">*</span></label>
+          <input name="role" type="text" required placeholder="ученик / родитель / студент" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="field-label mb-2"><span class="field-num">[03]</span> Telegram <span class="field-req">*</span></label>
+        <input name="telegram" type="text" placeholder="@username" autocomplete="off" />
+      </div>
+
+      <div class="mb-5">
+        <label class="field-label mb-2"><span class="field-num">[04]</span> Телефон</label>
+        <input name="phone" type="tel" inputmode="tel" placeholder="+7 ___ ___-__-__" autocomplete="tel" />
+      </div>
+
+      <div class="mb-5">
+        <label class="field-label mb-2"><span class="field-num">[05]</span> Какая цель</label>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="goalChoice" data-target="goal">
+          <button type="button" class="pickbtn" data-val="ЕГЭ · 8–11 кл">ЕГЭ · 8–11&nbsp;кл</button>
+          <button type="button" class="pickbtn" data-val="Поступление">Поступление</button>
+          <button type="button" class="pickbtn" data-val="Олимпиада">Олимпиада</button>
+          <button type="button" class="pickbtn" data-val="Пересдача">Пересдача</button>
+          <button type="button" class="pickbtn" data-val="Студенту">Студенту</button>
+          <button type="button" class="pickbtn" data-val="Другое">Другое</button>
+        </div>
+        <input type="hidden" name="goal" />
+      </div>
+
+      <div class="mb-7">
+        <label class="field-label mb-2"><span class="field-num">[06]</span> Текущий уровень или вопрос <span class="text-dim normal-case font-normal tracking-normal">(необязательно)</span></label>
+        <textarea name="comment" rows="3" placeholder="например: 11 класс, химия со второй четверти, нужна база с нуля"></textarea>
+      </div>
+
+      <EgeAcidButton
+        as="button"
+        type="submit"
+        label="Отправить заявку"
+        arrow="→"
+        bubblePreset="center"
+        class="w-full text-lg py-5"
+      />
+
+      <p class="font-mono text-[10px] text-dim mt-4">
+        Нажимая, ты&nbsp;соглашаешься, что я&nbsp;напишу тебе в&nbsp;Telegram или WhatsApp в&nbsp;течение часа.
+      </p>
+      <div class="lead-status font-mono text-xs mt-4" data-form-status hidden></div>
+      <pre class="lead-debug font-mono text-[10px] mt-4 whitespace-pre-wrap" data-form-debug hidden></pre>
+    </form>
+
+    <div class="mt-12 md:mt-16">
+      <div class="flex items-center gap-3 mb-5 font-mono text-[11px] text-dim uppercase tracking-widest">
+        <span class="w-2 h-2 bg-acid"></span>
+        <span>// или сразу в любом из каналов ниже</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
+        <a href="https://t.me/valery_chemistry" class="group flex items-center justify-between gap-4 bg-ink p-6 hover:bg-acid hover:text-ink transition">
+          <div>
+            <div class="font-mono text-[11px] text-dim group-hover:text-ink/60 uppercase tracking-wider">// предпочтительный</div>
+            <div class="font-display font-bold text-2xl mt-1">Telegram</div>
+            <div class="font-mono text-sm text-paper/70 group-hover:text-ink/70 mt-1">@valery_chemistry</div>
+          </div>
+          <span class="font-mono text-2xl">↗</span>
+        </a>
+        <a href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20" class="group flex items-center justify-between gap-4 bg-ink p-6 hover:bg-acid hover:text-ink transition">
+          <div>
+            <div class="font-mono text-[11px] text-dim group-hover:text-ink/60 uppercase tracking-wider">// WhatsApp</div>
+            <div class="font-display font-bold text-2xl mt-1">WhatsApp</div>
+            <div class="font-mono text-sm text-paper/70 group-hover:text-ink/70 mt-1">звонки 11:00–22:00 МСК</div>
+          </div>
+          <span class="font-mono text-2xl">↗</span>
+        </a>
+        <a href="mailto:info@egehim.ru" class="group flex items-center justify-between gap-4 bg-ink p-6 hover:bg-acid hover:text-ink transition">
+          <div>
+            <div class="font-mono text-[11px] text-dim group-hover:text-ink/60 uppercase tracking-wider">// E-mail</div>
+            <div class="font-display font-bold text-2xl mt-1">info@egehim.ru</div>
+            <div class="font-mono text-sm text-paper/70 group-hover:text-ink/70 mt-1">для&nbsp;документов</div>
+          </div>
+          <span class="font-mono text-2xl">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,102 @@
+---
+interface ParentItem {
+  title: string;
+  text: string;
+}
+
+interface ParentStat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  section?: string;
+  titleHtml: string;
+  concernsTitle: string;
+  concerns: ParentItem[];
+  benefitsTitle: string;
+  stats: ParentStat[];
+  benefits: string[];
+  ctaTitle: string;
+  ctaLabel: string;
+  ctaHref?: string;
+}
+
+const {
+  section = "[12] / РОДИТЕЛЯМ",
+  titleHtml,
+  concernsTitle,
+  concerns,
+  benefitsTitle,
+  stats,
+  benefits,
+  ctaTitle,
+  ctaLabel,
+  ctaHref = "#form",
+} = Astro.props as Props;
+---
+
+<section class="paper-section" id="parents">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="font-mono text-[12px] tracking-wider uppercase text-ink/50">
+          {section}
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em]"
+          set:html={titleHtml}
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-px bg-ink/15 border border-ink/20">
+      <div class="col-span-12 md:col-span-6 bg-paper p-8">
+        <div class="font-mono text-[11px] text-ink/50 mb-4">{concernsTitle}</div>
+        <ul class="space-y-7">
+          {
+            concerns.map((item) => (
+              <li>
+                <div class="font-display font-bold text-xl mb-1">{item.title}</div>
+                <p class="text-ink/70 leading-snug" set:html={item.text} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="col-span-12 md:col-span-6 bg-paper p-8">
+        <div class="font-mono text-[11px] text-ink/50 mb-4">{benefitsTitle}</div>
+        <div class="grid grid-cols-2 gap-px bg-ink/15 border border-ink/20 mb-8">
+          {
+            stats.map((stat) => (
+              <div class="bg-paper p-5">
+                <div class="font-display font-bold text-3xl" set:html={stat.value} />
+                <div
+                  class="font-mono text-[11px] text-ink/55 mt-1 uppercase"
+                  set:html={stat.label}
+                />
+              </div>
+            ))
+          }
+        </div>
+
+        <ul class="font-mono text-sm space-y-3 text-ink/85">
+          {benefits.map((benefit) => <li set:html={`→ ${benefit}`} />)}
+        </ul>
+
+        <div class="mt-8 pt-8 border-t border-ink/15">
+          <div class="font-display font-bold text-lg mb-3">{ctaTitle}</div>
+          <a
+            href={ctaHref}
+            class="inline-flex items-center justify-center gap-3 border-0 bg-black text-white px-6 py-4 font-mono text-xs font-bold uppercase tracking-wider hover:bg-fuchsia2 hover:text-ink transition"
+          >
+            {ctaLabel} <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

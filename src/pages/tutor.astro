@@ -1,0 +1,123 @@
+---
+import EgeLandingLayout from "../layouts/EgeLandingLayout.astro";
+import TutorHero from "../components/tutor/TutorHero.astro";
+import TutorDynamicSections from "../components/tutor/TutorDynamicSections.astro";
+import TutorAfterRequest from "../components/tutor/TutorAfterRequest.astro";
+import TutorScripts from "../components/tutor/TutorScripts.astro";
+import EgeOutcomes from "../components/ege/EgeOutcomes.astro";
+import EgeAuthor from "../components/ege/EgeAuthor.astro";
+import EgeParents from "../components/ege/EgeParents.astro";
+import EgeFaq from "../components/ege/EgeFaq.astro";
+import EgeLeadForm from "../components/ege/EgeLeadForm.astro";
+import { tutorLandingData } from "../data/tutorLanding";
+import { tutorFaq, tutorLeadForm, tutorOutcomes, tutorParents } from "../data/tutorContent";
+import {
+  absUrl,
+  buildFAQJsonLd,
+  buildWebPageJsonLd,
+  pageUrlFromPath,
+} from "../lib/seoData";
+
+const description =
+  "Репетитор по химии Валерий Филипенко: индивидуальная онлайн-подготовка к ЕГЭ, олимпиадам, ДВИ и экзаменам в медицинские и химические вузы.";
+const image = "/images/new-design/ege.webp";
+const pageUrl = pageUrlFromPath(Astro.url.origin, Astro.url.pathname);
+const personId = `${Astro.url.origin}/#valerii-filipenko`;
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": personId,
+  name: "Валерий Филипенко",
+  jobTitle: "Репетитор по химии",
+  url: pageUrl,
+  image: absUrl(Astro.url.origin, "/images/valerii-filipenko.webp"),
+  sameAs: [
+    "https://t.me/valery_chemistry",
+    "https://www.youtube.com/@chemistry_exam",
+    "https://vk.com/chemistry_exam",
+  ],
+  knowsAbout: ["ЕГЭ по химии", "олимпиадная химия", "органическая химия", "подготовка к ДВИ"],
+  worksFor: { "@id": `${Astro.url.origin}/#organization` },
+};
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": `${pageUrl}#service`,
+  name: "Индивидуальные занятия по химии",
+  description,
+  serviceType: "Репетиторство по химии",
+  provider: { "@id": personId },
+  areaServed: {
+    "@type": "Country",
+    name: "Россия",
+  },
+  availableChannel: {
+    "@type": "ServiceChannel",
+    serviceUrl: pageUrl,
+    serviceLocation: {
+      "@type": "VirtualLocation",
+      url: pageUrl,
+    },
+  },
+  offers: {
+    "@type": "Offer",
+    price: "3000",
+    priceCurrency: "RUB",
+    url: pageUrl,
+    availability: "https://schema.org/InStock",
+  },
+};
+const faqJsonLd = buildFAQJsonLd(tutorFaq);
+const webPageJsonLd = buildWebPageJsonLd({
+  origin: Astro.url.origin,
+  url: pageUrl,
+  name: tutorLandingData.pageTitle,
+  siteName: "ЕГЭХИМ",
+  about: "Индивидуальные занятия и репетиторство по химии",
+});
+---
+
+<EgeLandingLayout
+  title={tutorLandingData.pageTitle}
+  description={description}
+  image={image}
+  imageAlt="Репетитор по химии Валерий Филипенко"
+  imageWidth={1000}
+  imageHeight={563}
+  url="/tutor/"
+  faqJsonLd={faqJsonLd}
+  webPageJsonLd={webPageJsonLd}
+  jsonLd={[personJsonLd, serviceJsonLd]}
+  nav={tutorLandingData.nav}
+  footer={tutorLandingData.footer}
+  floatingActions={tutorLandingData.floatingActions}
+  popupForm={tutorLandingData.popupForm}
+>
+  <TutorHero />
+  <EgeOutcomes {...tutorOutcomes} />
+  <EgeAuthor
+    section="[03] / АВТОР"
+    cta={{
+      href: "#form",
+      html: "Записаться на диагностику",
+      note: "60 МИН · БЕСПЛАТНО · ОНЛАЙН",
+    }}
+  />
+  <TutorDynamicSections />
+  <EgeParents {...tutorParents} />
+  <TutorAfterRequest />
+  <EgeLeadForm {...tutorLeadForm} />
+  <EgeFaq
+    section="[11] / FAQ"
+    title={{
+      text: "Что обычно спрашивают перед&nbsp;первой диагностикой.",
+      marks: [
+        { text: "перед&nbsp;первой диагностикой.", color: "dim" },
+        { text: "спрашивают", underline: "acid" },
+      ],
+    }}
+    items={tutorFaq}
+    supportCta={{ source: "tutor-faq", campaign: "tutor" }}
+  />
+  <TutorScripts slot="after-footer" />
+</EgeLandingLayout>

@@ -1,0 +1,165 @@
+---
+import EgeAcidButton from "./EgeAcidButton.astro";
+
+const {
+  label = "[01] / Hero · набор 2027 открыт",
+  titleLines = ["ЕГЭ.", "ХИМИЯ."],
+  highlightedTitle = "ЦЕЛЬ&nbsp;80+",
+  h1 = "",
+  description = "",
+  cta = { href: "#form", label: "Записаться на пробный", arrow: "→" },
+  ctaNote = "БЕСПЛАТНО · 60 МИН · ДИАГНОСТИКА",
+  moleculeMeta = {
+    x: "X: 0.00",
+    y: "Y: 0.00",
+    formula: "C₆H₅OH · phenol",
+    status: "[ACTIVE]",
+  },
+  visual = "molecule",
+  marquee = [],
+} = Astro.props;
+const marqueeItems = marquee.length ? marquee : [
+  "H₂SO₄ + Cu → CuSO₄ + SO₂ + H₂O",
+  "CH₃COOH ⇌ CH₃COO⁻ + H⁺",
+  "2KMnO₄ + 16HCl → 2KCl + 2MnCl₂ + 5Cl₂ + 8H₂O",
+  "C₂H₅OH + O₂ → CO₂ + H₂O",
+];
+---
+
+<!-- ============== 01. HERO (с автором) ============== -->
+<section class="relative pt-14 overflow-hidden">
+      <div
+        class="absolute inset-0 pt-grid opacity-[0.35]"
+        id="ptBg"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute inset-0 pointer-events-none"
+        id="formulaField"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative gutter pt-20 pb-24 md:pt-24 md:pb-28">
+        <div class="grid grid-cols-12 gap-6 items-start">
+          <!-- Left: title + author info -->
+          <div class="col-span-12 lg:col-span-7">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="w-2 h-2 bg-acid"></span>
+              <span class="label">{label}</span>
+            </div>
+
+            <div
+              aria-hidden="true"
+              class="font-display font-bold tracking-[-0.03em] leading-[0.92] text-[clamp(48px,9vw,148px)]"
+            >
+              {titleLines.map((line) => (
+                <>{line}<br /></>
+              ))}
+              <span class="inline-block relative">
+                <span class="ul" set:html={highlightedTitle} />
+              </span>
+            </div>
+
+            {h1 && (
+              <h1
+                class="mt-7 max-w-2xl font-display font-semibold tracking-[-0.01em] leading-[1.06] text-[clamp(22px,3.2vw,38px)] text-paper/90"
+                set:html={h1}
+              />
+            )}
+
+            <p
+              class="mt-8 max-w-xl text-paper/80 text-lg md:text-xl leading-snug"
+            >
+              <Fragment set:html={description} />
+            </p>
+
+            <div class="mt-10 flex flex-wrap items-center gap-5">
+              <EgeAcidButton
+                href={cta.href}
+                label={cta.label}
+                arrow={cta.arrow}
+                class="text-[17px] px-7 py-5"
+              />
+              <div class="font-mono text-xs text-dim">
+                {ctaNote}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: visual -->
+          <div class="col-span-12 lg:col-span-5 relative">
+            {visual === "chaos" ? (
+              <div class="aspect-square relative hero-concept-stage mx-auto max-w-[460px]" id="stageA">
+                <div class="readout" style="top: 0; left: 0">ЧАСТИЦ: <span id="aCount">0</span></div>
+                <div class="readout" style="top: 0; right: 0" id="aState">[CHAOS]</div>
+                <div class="readout" style="bottom: 0; left: 0">ХАОС → ПОРЯДОК</div>
+                <div class="readout" style="bottom: 0; right: 0; color: var(--acid)">[ЦЕЛЬ: 100]</div>
+                <div class="assembly" id="assembly"></div>
+                <div class="acap" id="aCap">100 баллов · собрано</div>
+              </div>
+            ) : visual === "periodic" ? (
+              <div class="aspect-square relative hero-concept-stage hero-concept-stage--periodic mx-auto max-w-[520px]" id="stageB">
+                <div class="readout" style="top: 0; left: 0">X: 0.00</div>
+                <div class="readout" style="top: 0; right: 0">Y: 0.00</div>
+                <div class="readout" style="bottom: 0; left: 0">ПЕРИОДИЧЕСКАЯ СИСТЕМА · 118</div>
+                <div class="readout" style="bottom: 0; right: 0; color: var(--acid)">[ЕГЭ · ОГЭ]</div>
+                <div class="scene hero-cluster" id="sceneB"></div>
+              </div>
+            ) : (
+              <div
+                class="aspect-square relative molecule-stage"
+                id="moleculeStage"
+              >
+                <div class="absolute inset-0 pointer-events-none">
+                  <div
+                    class="absolute top-0 left-0 font-mono text-[10px] text-dim"
+                    id="moleculeX"
+                  >
+                    {moleculeMeta.x}
+                  </div>
+                  <div
+                    class="absolute top-0 right-0 font-mono text-[10px] text-dim"
+                    id="moleculeY"
+                  >
+                    {moleculeMeta.y}
+                  </div>
+                  <div
+                    class="absolute bottom-0 left-0 font-mono text-[10px] text-dim"
+                  >
+                    {moleculeMeta.formula}
+                  </div>
+                  <div
+                    class="absolute bottom-0 right-0 font-mono text-[10px] text-acid"
+                  >
+                    {moleculeMeta.status}
+                  </div>
+                </div>
+                <div class="absolute inset-8 molecule" id="molecule"></div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- Marquee -->
+      <div class="relative border-t border-line py-4 overflow-hidden">
+        <div class="marquee font-mono text-sm text-dim whitespace-nowrap">
+          <div class="flex items-center gap-12">
+            {marqueeItems.map((item, index) => (
+              <>
+                <span>{item}</span>
+                <span class={index % 2 === 0 ? "text-acid" : "text-fuchsia2"}>●</span>
+              </>
+            ))}
+          </div>
+          <div class="flex items-center gap-12" aria-hidden="true">
+            {marqueeItems.map((item, index) => (
+              <>
+                <span>{item}</span>
+                <span class={index % 2 === 0 ? "text-acid" : "text-fuchsia2"}>●</span>
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>

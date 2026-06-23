@@ -1,0 +1,239 @@
+---
+interface ProgramMetric {
+  label: string;
+  value: string | number;
+  suffix?: string;
+  note?: string;
+}
+
+interface ProgramSection {
+  sym: string;
+  code: string;
+  name: string;
+  topics: number;
+  duration: string;
+  acid?: boolean;
+  list: string[];
+  metrics: [ProgramMetric, ProgramMetric];
+  outcome: string;
+}
+
+interface Props {
+  section?: string;
+  title: string;
+  mutedTitle: string;
+  sections: ProgramSection[];
+}
+
+const {
+  section = "[07] / ПРОГРАММА",
+  title,
+  mutedTitle,
+  sections,
+} = Astro.props as Props;
+---
+
+<!-- ============== 07. ПРОГРАММА (раскрывающиеся блоки) ============== -->
+<section class="section relative" id="program">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          {title}
+          <span class="text-dim" set:html={mutedTitle} />
+        </h2>
+      </div>
+    </div>
+
+    <div
+      class="program-top border border-line mb-0"
+      style={`--program-columns:${sections.length}`}
+      data-program-top
+    >
+      {
+        sections.map((item, index) => (
+          <button
+            type="button"
+            class:list={[
+              "cell aspect-square md:aspect-[5/4] p-4 md:p-5 flex flex-col justify-between cursor-pointer text-left",
+              item.acid && "cell-acid",
+            ]}
+            data-program-index={index}
+            aria-controls={`program-section-${item.code}`}
+          >
+            <div class="cell-num">{item.code}</div>
+            <div class="cell-mass">{item.topics} тем · {item.duration}</div>
+            <div class="flex items-center justify-center flex-1 -mt-2 -mb-2">
+              <div class="text-center">
+                <div
+                  class:list={[
+                    "font-display font-bold text-[clamp(40px,7vw,72px)] leading-none",
+                    item.acid && "text-acid",
+                  ]}
+                >
+                  {item.sym}
+                </div>
+                <div class="font-mono text-xs mt-3 cell-meta text-dim">{item.name}</div>
+              </div>
+            </div>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="mt-12" data-program-accordion>
+      {
+        sections.map((item, index) => (
+          <details
+            class="prog-group"
+            id={`program-section-${item.code}`}
+            open={index === 0}
+          >
+            <summary class="flex items-center justify-between gap-6 group">
+              <div class="flex items-center gap-6">
+                <div class="font-mono text-sm text-dim">[{item.code}]</div>
+                <div
+                  class:list={[
+                    "font-display font-bold text-2xl md:text-4xl tracking-tight",
+                    item.acid && "text-acid",
+                  ]}
+                >
+                  {item.name}
+                </div>
+                <div class="font-mono text-xs text-dim hidden md:block">
+                  / {item.topics} тем · {item.duration}
+                </div>
+              </div>
+              <div class="faq-plus font-mono text-3xl shrink-0">+</div>
+            </summary>
+
+            <div class="pb-8 pt-2">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+                {
+                  item.list.map((topic, topicIndex) => (
+                    <div class="topic-pill bg-ink">
+                      <span class="pill-num">
+                        {String(topicIndex + 1).padStart(2, "0")}
+                      </span>
+                      <span set:html={topic} />
+                    </div>
+                  ))
+                }
+              </div>
+
+              <div class="mt-px grid grid-cols-12 gap-px bg-line border border-line border-t-0">
+                <div class="col-span-12 md:col-span-3 bg-ink p-5">
+                  <div class="font-mono text-[10px] text-dim uppercase tracking-wider">
+                    // что закроем
+                  </div>
+                  <div class="font-display font-bold text-base mt-2">
+                    Раздел{" "}
+                    <span class={item.acid ? "text-acid" : "text-paper"}>
+                      «{item.name}»
+                    </span>
+                  </div>
+                </div>
+
+                {
+                  item.metrics.map((metric) => (
+                    <div class="col-span-6 md:col-span-3 bg-ink p-5">
+                      <div class="font-mono text-[10px] text-dim uppercase tracking-wider">
+                        {metric.label}
+                      </div>
+                      <div class="flex items-baseline gap-2 mt-2">
+                        <div class="font-display font-bold text-5xl text-acid">
+                          {metric.value}
+                        </div>
+                        {metric.suffix && (
+                          <div class="font-mono text-xs text-dim">{metric.suffix}</div>
+                        )}
+                      </div>
+                      {metric.note && (
+                        <div class="font-mono text-[10px] text-dim mt-2" set:html={metric.note} />
+                      )}
+                    </div>
+                  ))
+                }
+
+                <div class="col-span-12 md:col-span-3 bg-acid text-ink p-5 flex flex-col justify-between">
+                  <div class="font-mono text-[10px] uppercase tracking-wider">
+                    // итог по&nbsp;разделу
+                  </div>
+                  <div class="font-display font-bold text-2xl leading-tight" set:html={item.outcome} />
+                </div>
+              </div>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll("[data-program-top]").forEach(function (top) {
+    top.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!(target instanceof Element)) return;
+
+      var button = target.closest("[data-program-index]");
+      if (!button) return;
+
+      var section = document.getElementById(button.getAttribute("aria-controls"));
+      if (!(section instanceof HTMLDetailsElement)) return;
+
+      section.open = true;
+      section.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+</script>
+
+<style>
+  .program-top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .program-top .cell {
+    width: 100%;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    transition:
+      background 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .program-top .cell:hover {
+    background: var(--acid);
+    color: var(--ink);
+    border-color: var(--acid);
+  }
+
+  .program-top .cell:hover .cell-num,
+  .program-top .cell:hover .cell-mass,
+  .program-top .cell:hover .cell-meta,
+  .program-top .cell:hover :global(.text-acid),
+  .program-top .cell:hover :global(.text-dim) {
+    color: var(--ink);
+  }
+
+  @media (min-width: 768px) {
+    .program-top {
+      grid-template-columns: repeat(var(--program-columns), minmax(0, 1fr));
+    }
+
+    .program-top .cell {
+      border-bottom: 0;
+    }
+  }
+</style>

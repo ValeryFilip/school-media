@@ -1,0 +1,236 @@
+---
+import EgeAcidButton from "./EgeAcidButton.astro";
+
+interface Props {
+  section?: string;
+  titleHtml: string;
+  descriptionHtml: string;
+  notes: string[];
+  formId: string;
+  formType: string;
+  formMeta: string;
+  successMessage?: string;
+  namePlaceholder?: string;
+  submitLabel?: string;
+}
+
+const {
+  section = "[11] / ЗАЯВКА",
+  titleHtml = 'Диагностика<br />уровня.<br /><span class="ul">60&nbsp;минут.</span><br /><span class="text-dim">Бесплатно.</span>',
+  descriptionHtml = "Определим текущий уровень и&nbsp;подскажем подходящий формат обучения.",
+  notes = [
+    "Свяжемся в Telegram или по телефону",
+    "Ответим на вопросы по обучению",
+    "Диагностика не обязывает покупать курс",
+  ],
+  formId = "course-lead",
+  formType = "landing",
+  formMeta = "COURSE.01",
+  successMessage = "Заявка отправлена!",
+  namePlaceholder = "Ваше имя и фамилия",
+  submitLabel = "Записаться на диагностику",
+} = Astro.props as Props;
+---
+
+<section class="section relative" id="form">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-5">
+        <div class="sec-num mb-6">{section}</div>
+        <h2
+          class="font-display font-bold text-[clamp(40px,6vw,96px)] leading-[0.9] tracking-[-0.02em] mb-8 titrate"
+          set:html={titleHtml}
+        />
+        <p class="text-paper/80 text-lg max-w-md mb-8" set:html={descriptionHtml} />
+        <div class="font-mono text-xs text-dim space-y-2">
+          {notes.map((note) => <div set:html={`→ ${note}`} />)}
+        </div>
+      </div>
+
+      <div class="col-span-12 md:col-span-7 md:col-start-7">
+        <form
+          id="leadForm"
+          class="border border-paper/30 bg-ink p-6 md:p-10 relative"
+          action="/api/lead.php"
+          method="post"
+          data-form
+          data-endpoint="/api/lead.php"
+          data-form-type={formType}
+          data-form-id={formId}
+          data-success-message={successMessage}
+          data-success-redirect="/thank-you"
+          data-success-delay="1500"
+          data-required-any="phone,telegram"
+          data-required-all="name"
+          novalidate
+        >
+          <div class="absolute top-4 right-4 font-mono text-[10px] text-dim">
+            // FORM_ID: {formMeta}
+          </div>
+
+          <div class="font-mono text-[11px] text-acid mb-6 uppercase tracking-widest pt-2">
+            // ФИО · Telegram · телефон
+          </div>
+
+          <div class="mb-5">
+            <label class="field-label mb-2">
+              <span class="field-num">[01]</span> ФИО
+              <span class="field-req">*</span>
+            </label>
+            <input name="name" type="text" required placeholder={namePlaceholder} autocomplete="name" />
+          </div>
+
+          <div class="mb-5">
+            <label class="field-label mb-2">
+              <span class="field-num">[02]</span> Telegram
+            </label>
+            <input type="text" name="telegram" placeholder="@username" autocomplete="off" />
+          </div>
+
+          <div class="mb-5">
+            <label class="field-label mb-2">
+              <span class="field-num">[03]</span> Телефон
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              inputmode="tel"
+              placeholder="+7 (___) ___-__-__"
+              autocomplete="tel"
+            />
+          </div>
+
+          <div class="lead-consents mb-7">
+            <label>
+              <input name="consent_privacy" type="checkbox" required value="true" />
+              <span>
+                Согласен с <a href="/docs/privacy/" target="_blank" rel="noopener">политикой конфиденциальности</a>
+              </span>
+            </label>
+            <label>
+              <input name="consent_personal_data" type="checkbox" required value="true" />
+              <span>
+                Согласен на <a href="/docs/agreement/" target="_blank" rel="noopener">обработку персональных данных</a>
+              </span>
+            </label>
+            <label>
+              <input name="consent_marketing" type="checkbox" required value="true" />
+              <span>
+                Согласен на <a href="/docs/marketing-consent/" target="_blank" rel="noopener">рекламную рассылку</a>
+              </span>
+            </label>
+          </div>
+
+          <EgeAcidButton
+            as="button"
+            type="submit"
+            label={submitLabel}
+            arrow="→"
+            bubblePreset="center"
+            class="w-full text-lg py-5"
+          />
+
+          <p class="font-mono text-[10px] text-dim mt-4">
+            Укажи Telegram или телефон — достаточно одного способа связи.
+          </p>
+          <div class="lead-status font-mono text-xs mt-4" data-form-status hidden></div>
+          <pre class="lead-debug font-mono text-[10px] mt-4 whitespace-pre-wrap" data-form-debug hidden></pre>
+
+          <div class="lead-socials mt-6">
+            <div class="font-display font-bold text-lg">
+              Не&nbsp;хотите звонок? <span class="text-acid">Напишите нам!</span>
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-1">
+              Ответим в удобном мессенджере.
+            </div>
+            <div class="lead-socials__links mt-4">
+              <a href="https://t.me/valery_chemistry" target="_blank" rel="noopener">
+                Telegram <span>↗</span>
+              </a>
+              <a
+                href="https://wa.me/79818364992?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20"
+                target="_blank"
+                rel="noopener"
+              >
+                WhatsApp <span>↗</span>
+              </a>
+              <a href="https://vk.me/valeryfilip" target="_blank" rel="noopener">
+                VK <span>↗</span>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lead-consents {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  .lead-consents label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .lead-consents input {
+    width: auto;
+    margin-top: 2px;
+    accent-color: var(--acid);
+  }
+
+  .lead-consents a {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+  }
+
+  .lead-socials {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .lead-socials__links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .lead-socials__links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    transition:
+      background 150ms ease,
+      color 150ms ease;
+  }
+
+  .lead-socials__links a:hover {
+    background: var(--fuchsia2);
+    color: var(--ink);
+  }
+
+  @media (max-width: 520px) {
+    .lead-socials__links {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

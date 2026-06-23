@@ -25,6 +25,8 @@ interface Props {
   addSiteSuffix?: boolean;
   siteName?: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   datePublished?: string; // ISO 8601
   dateModified?: string; // ISO 8601
 }
@@ -39,6 +41,8 @@ const {
   addSiteSuffix = true,
   siteName: siteNameProp,
   imageAlt,
+  imageWidth,
+  imageHeight,
   datePublished,
   dateModified,
 } = Astro.props as Props;
@@ -82,8 +86,8 @@ const titleFinal = addSiteSuffix ? `${title} — ${siteName}` : title;
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 {ogImage && <meta property="og:image" content={ogImage} />}
-{ogImage && <meta property="og:image:width" content="1200" />}
-{ogImage && <meta property="og:image:height" content="630" />}
+{ogImage && imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+{ogImage && imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
 {ogImage && (
   <meta
     property="og:image:type"

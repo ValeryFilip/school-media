@@ -44,6 +44,13 @@ const tgUrl = (c: RealReview) =>
 
 const total = cases.length;
 const pad = (n: number) => String(n).padStart(2, "0");
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
 ---
 
 <!-- ============== КЕЙСЫ — единый слайдер реальных отзывов ============== -->
@@ -87,18 +94,32 @@ const pad = (n: number) => String(n).padStart(2, "0");
             <article class="case-card flex flex-col">
               <div class="flex items-start justify-between mb-6 font-mono text-[11px]">
                 <span class="text-dim">CASE · {pad(i + 1)}</span>
-                <span class="text-acid">[ +{c.egeScore - c.entranceScore} БАЛЛОВ ]</span>
+                <span class="text-acid">
+                  [
+                  {c.scoreDeltaText ??
+                    (typeof c.egeScore === "number" &&
+                    typeof c.entranceScore === "number"
+                      ? `+${c.egeScore - c.entranceScore} БАЛЛОВ`
+                      : "РЕАЛЬНЫЙ ОТЗЫВ")}
+                  ]
+                </span>
               </div>
 
               <div class="flex items-start gap-4 mb-6">
                 <div class="w-16 h-16 border border-line relative overflow-hidden shrink-0">
-                  <img
-                    src={c.studentPhoto}
-                    alt={c.studentName}
-                    class="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  {c.studentPhoto ? (
+                    <img
+                      src={c.studentPhoto}
+                      alt={c.studentName}
+                      class="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="absolute inset-0 grid place-items-center bg-paper text-ink font-display font-bold text-xl">
+                      {initials(c.studentName)}
+                    </div>
+                  )}
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="font-display font-bold text-lg leading-tight">
@@ -118,21 +139,32 @@ const pad = (n: number) => String(n).padStart(2, "0");
                 </div>
               </div>
 
-              <div class="flex items-end gap-3 mb-6">
-                <div>
-                  <div class="font-mono text-[10px] text-dim uppercase">старт</div>
-                  <div class="font-display font-bold text-3xl text-dim">
-                    {c.entranceScore}
+              {typeof c.entranceScore === "number" &&
+              typeof c.egeScore === "number" ? (
+                <div class="flex items-end gap-3 mb-6">
+                  <div>
+                    <div class="font-mono text-[10px] text-dim uppercase">
+                      {c.scoreStartLabel ?? "старт"}
+                    </div>
+                    <div class="font-display font-bold text-3xl text-dim">
+                      {c.entranceScore}
+                    </div>
+                  </div>
+                  <div class="font-mono text-2xl text-dim pb-1">→</div>
+                  <div>
+                    <div class="font-mono text-[10px] text-acid uppercase">
+                      {c.scoreEndLabel ?? "ЕГЭ"}
+                    </div>
+                    <div class="font-display font-bold text-5xl text-acid">
+                      {c.egeScore}
+                    </div>
                   </div>
                 </div>
-                <div class="font-mono text-2xl text-dim pb-1">→</div>
-                <div>
-                  <div class="font-mono text-[10px] text-acid uppercase">егэ</div>
-                  <div class="font-display font-bold text-5xl text-acid">
-                    {c.egeScore}
-                  </div>
+              ) : c.resultText ? (
+                <div class="font-mono text-[11px] text-acid uppercase mb-6 border-l-2 border-acid pl-3">
+                  {c.resultText}
                 </div>
-              </div>
+              ) : null}
 
               <p class="review-text text-paper/85 text-sm leading-snug">
                 «{c.reviewText}»

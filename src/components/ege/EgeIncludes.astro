@@ -1,0 +1,312 @@
+---
+interface IncludeItem {
+  num: string;
+  tag: string;
+  title: string;
+  desc: string;
+  bullets: string[];
+  placeholder: string;
+  images?: Array<{
+    src: string;
+    alt: string;
+  }>;
+  videos?: Array<{
+    src: string;
+    alt: string;
+  }>;
+}
+
+interface Props {
+  section?: string;
+  titleHtml: string;
+  items: IncludeItem[];
+}
+
+const {
+  section = "[08] / ВНУТРИ КУРСА",
+  titleHtml,
+  items,
+} = Astro.props as Props;
+---
+
+<section class="section relative" id="includes">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+        >
+          <Fragment set:html={titleHtml} />
+        </h2>
+      </div>
+    </div>
+
+    <div class="border border-line">
+      {
+        items.map((item, index) => {
+          const reversed = index % 2 === 1;
+          const images = item.images ?? [];
+          const videos = item.videos ?? [];
+          const media = [
+            ...images.map((image) => ({ ...image, type: "image" as const })),
+            ...videos.map((video) => ({ ...video, type: "video" as const })),
+          ];
+          const hasSlider = media.length > 1;
+
+          return (
+            <div class="inc-row grid grid-cols-12 items-stretch">
+              <div
+                class:list={[
+                  "col-span-12 md:col-span-7 p-8 md:p-12 flex flex-col justify-center",
+                  reversed ? "md:order-2 md:border-l border-line" : "md:border-r border-line",
+                ]}
+              >
+                <div class="flex items-center gap-3 mb-5">
+                  <span class="font-mono text-[11px] text-acid">[{item.num}]</span>
+                  <span class="font-mono text-[11px] text-dim">// {item.tag}</span>
+                </div>
+                <h3
+                  class="font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.0] mb-5"
+                  set:html={item.title}
+                />
+                <p
+                  class="text-paper/80 text-base md:text-lg max-w-lg leading-snug mb-6"
+                  set:html={item.desc}
+                />
+                <ul class="font-mono text-sm space-y-2 text-paper/85">
+                  {item.bullets.map((bullet) => <li set:html={`→ ${bullet}`} />)}
+                </ul>
+              </div>
+              <div
+                class:list={[
+                  "col-span-12 md:col-span-5 p-6 md:p-10 flex items-center justify-center",
+                  reversed && "md:order-1",
+                ]}
+              >
+                <div class="inc-img w-full">
+                  {media.length === 0 ? (
+                    <div class="inc-img-ph">// {item.placeholder}</div>
+                  ) : (
+                    <div
+                      class="inc-gallery"
+                      data-include-slider={hasSlider ? "" : undefined}
+                      aria-label={hasSlider ? `Галерея: ${item.title}` : undefined}
+                    >
+                      <div
+                        class:list={["inc-gallery__track", hasSlider && "is-slider"]}
+                        data-include-track
+                      >
+                        {media.map((mediaItem, mediaIndex) => (
+                          <figure class="inc-gallery__slide" data-include-slide>
+                            {mediaItem.type === "image" ? (
+                              <button
+                                type="button"
+                                class="inc-gallery__open"
+                                data-lightbox-src={mediaItem.src}
+                                data-lightbox-alt={mediaItem.alt}
+                                aria-label={`Открыть изображение: ${mediaItem.alt}`}
+                              >
+                                <img
+                                  src={mediaItem.src}
+                                  alt={mediaItem.alt}
+                                  loading="lazy"
+                                  decoding="async"
+                                />
+                              </button>
+                            ) : (
+                              <video
+                                class="inc-gallery__video"
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                preload="metadata"
+                                aria-label={mediaItem.alt}
+                              >
+                                <source src={mediaItem.src} type="video/webm" />
+                              </video>
+                            )}
+                            {hasSlider && (
+                              <figcaption class="sr-only">
+                                Материал {mediaIndex + 1} из {media.length}
+                              </figcaption>
+                            )}
+                          </figure>
+                        ))}
+                      </div>
+
+                      {hasSlider && (
+                        <div class="inc-gallery__controls">
+                          <button
+                            type="button"
+                            class="inc-gallery__button"
+                            data-include-prev
+                            aria-label="Предыдущий материал"
+                          >
+                            ←
+                          </button>
+                          <div class="inc-gallery__count" aria-live="polite">
+                            <span data-include-current>1</span> / {media.length}
+                          </div>
+                          <button
+                            type="button"
+                            class="inc-gallery__button"
+                            data-include-next
+                            aria-label="Следующий материал"
+                          >
+                            →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll("[data-include-slider]").forEach(function (slider) {
+    if (slider.dataset.includeSliderReady === "true") return;
+    slider.dataset.includeSliderReady = "true";
+
+    var track = slider.querySelector("[data-include-track]");
+    var slides = Array.from(slider.querySelectorAll("[data-include-slide]"));
+    var current = slider.querySelector("[data-include-current]");
+    var previous = slider.querySelector("[data-include-prev]");
+    var next = slider.querySelector("[data-include-next]");
+    var index = 0;
+    var scrollingTo = null;
+    var scrollTimer;
+
+    if (!(track instanceof HTMLElement) || slides.length < 2) return;
+
+    function update(nextIndex, shouldScroll) {
+      index = (nextIndex + slides.length) % slides.length;
+      if (current) current.textContent = String(index + 1);
+      if (shouldScroll) {
+        scrollingTo = index;
+        track.scrollTo({
+          left: track.clientWidth * index,
+          behavior: "smooth",
+        });
+      }
+    }
+
+    previous?.addEventListener("click", function () {
+      update(index - 1, true);
+    });
+
+    next?.addEventListener("click", function () {
+      update(index + 1, true);
+    });
+
+    track.addEventListener("scroll", function () {
+      if (!track.clientWidth) return;
+
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(function () {
+        var visibleIndex = Math.round(track.scrollLeft / track.clientWidth);
+        scrollingTo = null;
+        update(visibleIndex, false);
+      }, 80);
+
+      if (scrollingTo === null) {
+        update(Math.round(track.scrollLeft / track.clientWidth), false);
+      }
+    });
+  });
+</script>
+
+<style>
+  .inc-gallery,
+  .inc-gallery__track,
+  .inc-gallery__slide,
+  .inc-gallery__open {
+    width: 100%;
+    height: 100%;
+  }
+
+  .inc-gallery__track.is-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .inc-gallery__track.is-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .inc-gallery__slide {
+    min-width: 100%;
+    margin: 0;
+    scroll-snap-align: start;
+  }
+
+  .inc-gallery__open {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .inc-gallery__open img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .inc-gallery__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .inc-gallery__controls {
+    position: absolute;
+    z-index: 2;
+    right: 12px;
+    bottom: 12px;
+    display: grid;
+    grid-template-columns: 40px auto 40px;
+    align-items: center;
+    color: var(--paper);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--ink) 88%, transparent);
+  }
+
+  .inc-gallery__button {
+    height: 38px;
+    border: 0;
+    background: transparent;
+    color: var(--acid);
+    cursor: pointer;
+  }
+
+  .inc-gallery__button:hover,
+  .inc-gallery__button:focus-visible {
+    background: var(--acid);
+    color: var(--ink);
+  }
+
+  .inc-gallery__count {
+    min-width: 58px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+</style>

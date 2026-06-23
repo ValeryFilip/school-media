@@ -472,38 +472,38 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
           {
             id: 1,
             anx: 140,
-            t: "«Школьная учительница объясняет — а я не понимаю».",
-            d: "На уроке вроде всё понятно, а дома открываешь вариант — и не знаешь, с чего начать.",
+            t: "«На уроке вроде понятно, а в варианте — пустота».",
+            d: "Учитель объясняет тему, ты киваешь, записываешь, даже думаешь: «ну вроде легко». А потом открываешь задание ЕГЭ — и не понимаешь, с какого вещества вообще начинать.",
           },
           {
             id: 2,
             anx: 220,
-            t: "«Вроде готовлюсь, а пробники на 40 баллов».",
-            d: "Задачи решаются кусками: сегодня получилось, завтра та же тема снова развалилась.",
+            t: "«Я готовлюсь, но пробники всё равно на 40–50 баллов».",
+            d: "Видео смотрятся, конспекты пишутся, задания иногда решаются. Но на пробнике всё разваливается: где-то забыл формулу, где-то не узнал реакцию, где-то тупо не понял условие.",
           },
           {
             id: 3,
             anx: 180,
-            t: "«Органика — это ад. Кажется, я тупой».",
-            d: "Дело не&nbsp;в&nbsp;тебе. Дело в&nbsp;том, что никто не&nbsp;показал, как читать структурную формулу.",
+            t: "«Органика — это какой-то отдельный язык».",
+            d: "Ты видишь структурную формулу и не понимаешь, куда смотреть: где главная цепь, что от чего отщепляется, почему тут именно эта реакция. Кажется, что все вокруг «просто видят», а ты нет.",
           },
           {
             id: 4,
             anx: 200,
-            t: "«Скоро ЕГЭ, а мне кажется, что я не готовлюсь».",
-            d: "Время уходит на ролики, конспекты и обещания начать с понедельника — результата в баллах не видно.",
-          },
-          {
-            id: 5,
-            anx: 120,
-            t: "«На занятии кивают: всё нормально, а ошибок меньше не становится».",
-            d: "Нужен не контроль ради контроля, а разбор, почему ты ошибся и как больше не попадаться.",
+            t: "«Я постоянно что-то учу, но баллы не растут».",
+            d: "Сегодня повторил теорию, завтра посмотрел разбор, послезавтра начал новый блок. Но ошибок меньше не становится, потому что нет системы: что уже закрыто, что проседает, что нужно добить прямо сейчас.",
           },
           {
             id: 6,
-            anx: 240,
-            t: "«В онлайн-школе я — один из 8000 учеников».",
-            d: "Когда вопросов много, а обратная связь общая, легко выпасть и заметить это только перед пробником.",
+            anx: 190,
+            t: "«Я боюсь, что начал слишком поздно».",
+            d: "Кажется, что все уже прошли органику, решают пробники и разбирают сложные задачи, а ты ещё путаешь оксиды, кислоты и соли. Из-за этого хочется не ускориться, а вообще закрыть вкладку и сделать вид, что ЕГЭ не существует.",
+          },
+          {
+            id: 7,
+            anx: 160,
+            t: "«В онлайн-школе я просто один из сотен учеников».",
+            d: "Вебинары идут, домашки есть, чат шумит, но лично тебя никто не вытаскивает, если ты выпал. А когда замечаешь, что отстал, уже страшно даже спросить.",
           },
         ];
 
@@ -619,7 +619,7 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
             sym: "Pl",
             mass: "36 нед",
             title: "Личный план на&nbsp;36 недель",
-            text: "Получаешь карту из&nbsp;62&nbsp;тем с&nbsp;дедлайнами. Видно, какие недели — органика, какие — задачи, когда первый пробник.",
+            text: "Получаешь карту из&nbsp;204&nbsp;тем с&nbsp;дедлайнами. Видно, какие недели — органика, какие — задачи, когда первый пробник.",
           },
           {
             num: "03",
@@ -638,14 +638,14 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
           {
             num: "05",
             sym: "Pt",
-            mass: "12 шт",
+            mass: "15 шт",
             title: "Пробники каждый месяц",
             text: "Полные варианты ЕГЭ в&nbsp;течение курса. После каждого — разбор в&nbsp;группе ошибок учащихся.",
           },
           {
             num: "06",
             sym: "Ex",
-            mass: "25.05",
+            mass: "до ЕГЭ",
             title: "Поддержка до&nbsp;и&nbsp;после экзамена",
             text: "За&nbsp;неделю до&nbsp;ЕГЭ — антипаника-сессия. Если результат спорный — помогаем с&nbsp;апелляцией.",
           },
@@ -668,47 +668,47 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
       // ====================== 06. COMPARE ======================
       __egeIdle(function buildCompare() {
         const wrap = document.getElementById("cmpBody");
-        if (!wrap) return;
+        if (!wrap || wrap.childElementCount > 0) return;
         const rows = __egeRuntime.compareRows ?? [
           {
-            p: "Человек в группе",
-            a: { v: "до 6", m: "yes", hl: true },
-            b: { v: "вебинар на&nbsp;тысячи", m: "no" },
+            p: "Формат",
+            a: { v: "небольшая группа с&nbsp;живым участием", m: "yes" },
+            b: { v: "потоковые занятия и&nbsp;вебинары", m: "mid" },
           },
           {
-            p: "Кто ведёт занятия",
-            a: { v: "автор курса · 10 лет практики", m: "yes" },
-            b: { v: "лектор потока", m: "mid" },
+            p: "Внимание к ученику",
+            a: { v: "преподаватель видит ошибки каждого", m: "yes" },
+            b: { v: "ученик может потеряться в&nbsp;потоке", m: "mid" },
           },
           {
-            p: "Кто отвечает на вопросы",
-            a: { v: "автор курса", m: "yes" },
-            b: { v: "куратор с&nbsp;ЕГЭ 75+", m: "mid" },
+            p: "Вопросы",
+            a: { v: "можно задать напрямую автору курса", m: "yes" },
+            b: { v: "чаще через куратора или общий чат", m: "mid" },
           },
           {
-            p: "Проверка домашки",
-            a: { v: "тесты автоматически, развёрнутая часть автором", m: "yes" },
-            b: { v: "автотесты, самопроверка или куратор", m: "mid" },
+            p: "Проверка заданий",
+            a: { v: "тесты автоматически, развёрнутая часть — преподавателем", m: "yes" },
+            b: { v: "зависит от тарифа и&nbsp;системы проверки", m: "mid" },
           },
           {
-            p: "Среднее повышение балла",
-            a: { v: "+46 баллов", m: "yes", hl: true },
-            b: { v: "вам не расскажут", m: "no" },
+            p: "Темп обучения",
+            a: { v: "можно подстроить под уровень группы", m: "yes" },
+            b: { v: "единая программа для большого числа учеников", m: "mid" },
           },
           {
-            p: "Доля сдавших на&nbsp;80+",
-            a: { v: "каждый 3-й", m: "yes", hl: true },
-            b: { v: "27–41%", m: "no" },
+            p: "Контроль прогресса",
+            a: { v: "проще заметить, что ученик отстал", m: "yes" },
+            b: { v: "многое зависит от самостоятельности", m: "mid" },
           },
           {
             p: "Цена",
-            a: { v: "выше, но&nbsp;за работу автора", m: "mid" },
-            b: { v: "дешевле за счёт потока", m: "yes" },
+            a: { v: "выше, потому что больше личной работы", m: "mid" },
+            b: { v: "ниже за счёт массового формата", m: "yes" },
           },
           {
-            p: "Итоговая логика",
-            a: { v: "меньше людей → больше внимания", m: "yes" },
-            b: { v: "больше поток → меньше контакта", m: "no" },
+            p: "Подходит, если",
+            a: { v: "нужен контакт, контроль и&nbsp;разбор ошибок", m: "yes", hl: true },
+            b: { v: "ученик самостоятельный и&nbsp;хочет бюджетный формат", m: "mid" },
           },
         ];
         const sym = (m) =>
@@ -731,305 +731,6 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
         <div class="flex items-center gap-3 cmp-other">
           <span class="mark-${r.b.m} font-mono">${sym(r.b.m)}</span>
           <span class="font-display font-medium text-lg ${r.b.m === "no" ? "line-through decoration-line decoration-1" : ""}">${r.b.v}</span>
-        </div>
-      </div>
-    `;
-          wrap.appendChild(div);
-        });
-      });
-
-      // ====================== 07. PROGRAM ======================
-      __egeIdle(function buildProgram() {
-        const top = document.getElementById("progTop");
-        const acc = document.getElementById("progAccordion");
-        if (!top || !acc) return;
-
-        const sections = __egeRuntime.programSections ?? [
-          {
-            sym: "Об",
-            code: "01",
-            name: "Общая химия",
-            topics: 18,
-            weeks: 8,
-            tasks: 8,
-            points: 12,
-            exTasks: "1–7, 23",
-            list: [
-              "Строение атома · квантовые числа",
-              "Периодический закон и&nbsp;ПСХЭ",
-              "Химическая связь · ионная, ковалентная",
-              "Электроотрицательность · полярность",
-              "Скорость хим. реакций · кинетика",
-              "Хим. равновесие · принцип Ле&nbsp;Шателье",
-              "Термохимия · тепловой эффект",
-              "Растворы · концентрация · pH",
-              "Электролитическая диссоциация",
-              "Окислительно-восстановительные реакции",
-              "Электролиз растворов и&nbsp;расплавов",
-              "Гидролиз солей",
-              "Электрохимия · ряд активности",
-              "Классификация неорганических соединений",
-              "Номенклатура · IUPAC",
-              "Расчёты по&nbsp;формулам",
-              "Стехиометрия · уравнения",
-              "Газовые законы",
-            ],
-          },
-          {
-            sym: "Нг",
-            code: "02",
-            name: "Неорганика",
-            topics: 16,
-            weeks: 9,
-            tasks: 11,
-            points: 15,
-            exTasks: "8–13, 22, 24–26",
-            list: [
-              "Водород и&nbsp;его соединения",
-              "Галогены · Cl, Br, I, F",
-              "Халькогены · кислород, сера",
-              "Азот и&nbsp;его соединения",
-              "Углерод · аллотропия",
-              "Кремний · силикаты",
-              "Щелочные металлы · Na, K, Li",
-              "Щёлочноземельные · Mg, Ca",
-              "Алюминий и&nbsp;его соединения",
-              "Железо · Fe, Fe²⁺, Fe³⁺",
-              "Медь, цинк, хром · переходные",
-              "Кислоты · классификация и&nbsp;свойства",
-              "Основания и&nbsp;амфотерные гидроксиды",
-              "Соли · средние, кислые, основные",
-              "Оксиды · кислотные, основные, амфотерные",
-              "Качественные реакции на&nbsp;катионы и&nbsp;анионы",
-            ],
-          },
-          {
-            sym: "Ог",
-            code: "03",
-            name: "Органика",
-            topics: 20,
-            weeks: 14,
-            acid: true,
-            tasks: 12,
-            points: 18,
-            exTasks: "14–21, 32",
-            list: [
-              "Алканы · номенклатура, изомерия",
-              "Алкены · правило Марковникова",
-              "Алкины · реакция Кучерова",
-              "Алкадиены · диеновый синтез",
-              "Циклоалканы и&nbsp;арены",
-              "Бензол · реакции замещения",
-              "Спирты одноатомные и&nbsp;многоатомные",
-              "Фенолы · кислотные свойства",
-              "Альдегиды и&nbsp;кетоны",
-              "Карбоновые кислоты",
-              "Сложные эфиры · гидролиз",
-              "Жиры · омыление",
-              "Углеводы · моно-, ди-, поли-",
-              "Амины первичные, вторичные, третичные",
-              "Аминокислоты · биполярный ион",
-              "Белки · пептидная связь",
-              "Нуклеиновые кислоты",
-              "Высокомолекулярные соединения",
-              "Изомерия · цис-, транс-, оптическая",
-              "Цепочки превращений · мостики между классами",
-            ],
-          },
-          {
-            sym: "34",
-            code: "04",
-            name: "Задачи 33–35",
-            topics: 8,
-            weeks: 5,
-            acid: true,
-            tasks: 3,
-            points: 11,
-            exTasks: "33, 34, 35",
-            list: [
-              "Задача 33 · реакции по&nbsp;цепочке",
-              "Задача 34 · смеси и&nbsp;примеси",
-              "Задача 34 · избыток и&nbsp;недостаток",
-              "Задача 34 · растворы · ω, c, m",
-              "Задача 35 · вывод формулы органики",
-              "Задача 35 · газы и&nbsp;пары",
-              "Задача 35 · кристаллогидраты",
-              "Стратегия времени на&nbsp;ЕГЭ · 90 мин",
-            ],
-          },
-        ];
-
-        // Top cells
-        sections.forEach((s, i) => {
-          const c = document.createElement("div");
-          c.className =
-            "cell aspect-square md:aspect-[5/4] p-4 md:p-5 flex flex-col justify-between cursor-pointer" +
-            (s.acid ? " cell-acid" : "");
-          c.dataset.idx = i;
-          c.innerHTML = `
-      <div class="cell-num">${s.code}</div>
-      <div class="cell-mass">${s.topics} тем · ${s.weeks} нед</div>
-      <div class="flex items-center justify-center flex-1 -mt-2 -mb-2">
-        <div class="text-center">
-          <div class="font-display font-bold text-[clamp(40px,7vw,72px)] leading-none ${s.acid ? "text-acid" : ""}">${s.sym}</div>
-          <div class="font-mono text-xs mt-3 cell-meta text-dim">${s.name}</div>
-        </div>
-      </div>
-    `;
-          c.addEventListener("click", () => {
-            const d = acc.querySelectorAll("details")[i];
-            if (d) {
-              d.open = !d.open;
-              d.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
-          });
-          top.appendChild(c);
-        });
-
-        // Accordion
-        sections.forEach((s, i) => {
-          const d = document.createElement("details");
-          d.className = "prog-group";
-          if (i === 0) d.open = true;
-          d.innerHTML = `
-      <summary class="flex items-center justify-between gap-6 group">
-        <div class="flex items-center gap-6">
-          <div class="font-mono text-sm text-dim">[${s.code}]</div>
-          <div class="font-display font-bold text-2xl md:text-4xl tracking-tight ${s.acid ? "text-acid" : ""}">${s.name}</div>
-          <div class="font-mono text-xs text-dim hidden md:block">/ ${s.topics} тем · ${s.weeks} нед.</div>
-        </div>
-        <div class="faq-plus font-mono text-3xl shrink-0">+</div>
-      </summary>
-      <div class="pb-8 pt-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
-          ${s.list
-            .map(
-              (t, idx) => `
-            <div class="topic-pill bg-ink">
-              <span class="pill-num">${String(idx + 1).padStart(2, "0")}</span>${t}
-            </div>
-          `,
-            )
-            .join("")}
-        </div>
-
-        <div class="mt-px grid grid-cols-12 gap-px bg-line border border-line border-t-0">
-          <div class="col-span-12 md:col-span-3 bg-ink p-5">
-            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">// что закроем</div>
-            <div class="font-display font-bold text-base mt-2">Раздел <span class="${s.acid ? "text-acid" : "text-paper"}">«${s.name}»</span></div>
-          </div>
-          <div class="col-span-6 md:col-span-3 bg-ink p-5 group">
-            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">решишь заданий</div>
-            <div class="flex items-baseline gap-2 mt-2">
-              <div class="font-display font-bold text-5xl text-acid">${s.tasks}</div>
-              <div class="font-mono text-xs text-dim">/ 34 в&nbsp;варианте</div>
-            </div>
-            <div class="font-mono text-[10px] text-dim mt-2">№ ${s.exTasks}</div>
-          </div>
-          <div class="col-span-6 md:col-span-3 bg-ink p-5">
-            <div class="font-mono text-[10px] text-dim uppercase tracking-wider">возьмёшь баллов</div>
-            <div class="flex items-baseline gap-2 mt-2">
-              <div class="font-display font-bold text-5xl text-acid">+${s.points}</div>
-              <div class="font-mono text-xs text-dim">/ 56 первичных</div>
-            </div>
-            <div class="font-mono text-[10px] text-dim mt-2">≈ ${Math.round((s.points / 56) * 100)}% теста</div>
-          </div>
-          <div class="col-span-12 md:col-span-3 bg-acid text-ink p-5 flex flex-col justify-between">
-            <div class="font-mono text-[10px] uppercase tracking-wider">// итог по&nbsp;разделу</div>
-            <div class="font-display font-bold text-2xl leading-tight">${s.weeks} недель → +${s.points} баллов</div>
-          </div>
-        </div>
-      </div>
-    `;
-          acc.appendChild(d);
-        });
-      });
-
-      // ====================== 08. INCLUDES (zigzag) ======================
-      __egeIdle(function buildIncludes() {
-        const wrap = document.getElementById("includesList");
-        if (!wrap) return;
-        const items = __egeRuntime.includes ?? [
-          {
-            num: "01",
-            tag: "LIVE",
-            title: "Уроки в&nbsp;минигруппе",
-            desc: "Два&nbsp;раза в&nbsp;неделю по&nbsp;90&nbsp;минут. Группа до&nbsp;6&nbsp;человек — это разговор, а&nbsp;не&nbsp;лекция в&nbsp;пустоту. Можно перебивать, задавать вопросы и&nbsp;спорить с&nbsp;автором.",
-            bullets: [
-              "Расписание подстраивается под&nbsp;группу",
-              "Запись + конспект после занятия",
-              "Можно пропустить — догонишь по&nbsp;записи",
-            ],
-            ph: "screen · zoom + whiteboard",
-          },
-          {
-            num: "02",
-            tag: "HW",
-            title: "Домашка с&nbsp;проверкой",
-            desc: "Тесты, которые робот проверяет за&nbsp;30&nbsp;секунд, и&nbsp;развёрнутая часть с&nbsp;ручной проверкой по&nbsp;критериям ЕГЭ. В&nbsp;базе и&nbsp;на курсах — 4000+ заданий уровня ЕГЭ.",
-            bullets: [
-              "Автопроверка тестовой части",
-              "Разбор развёрнутых заданий",
-              "Ошибки возвращаются в&nbsp;повторение",
-            ],
-            ph: "screen · solution review",
-          },
-          {
-            num: "03",
-            tag: "APP",
-            title: "Платформа и&nbsp;тренажёр",
-            desc: "Личный кабинет с&nbsp;твоим прогрессом по&nbsp;темам. Тренажёр на&nbsp;4000+ задач — решаешь по&nbsp;дороге в&nbsp;школу, на&nbsp;перемене, ночью.",
-            bullets: [
-              "Доступ с&nbsp;любого устройства · 24/7",
-              "Адаптивный режим — даёт то, что&nbsp;ты&nbsp;не&nbsp;знаешь",
-              "Карточки для&nbsp;повторения · spaced repetition",
-            ],
-            ph: "screen · LMS dashboard",
-          },
-          {
-            num: "04",
-            tag: "TG",
-            title: "Поддержка автора",
-            desc: "Закрытый чат в&nbsp;Telegram, где можно написать «не&nbsp;понимаю задачу 14». Автор работает с&nbsp;группой лично: объясняет, помогает и&nbsp;показывает, как сделать лучше.",
-            bullets: [
-              "Ответы автора в&nbsp;чате группы",
-              "Помощь по&nbsp;домашке и&nbsp;разбору ошибок",
-              "Антипаника-чат в&nbsp;апреле и&nbsp;мае",
-            ],
-            ph: "screen · telegram chat",
-          },
-          {
-            num: "05",
-            tag: "TEST",
-            title: "Пробники и&nbsp;диагностики",
-            desc: "12&nbsp;пробных ЕГЭ за&nbsp;курс — это полный вариант 210&nbsp;минут с&nbsp;тематическими ловушками. Каждый — с&nbsp;разбором от&nbsp;автора.",
-            bullets: [
-              "Имитация условий ЕГЭ · бланки + таймер",
-              "Разбор типичных и&nbsp;сложных ошибок",
-              "Сравнение с&nbsp;группой и&nbsp;средним по&nbsp;стране",
-            ],
-            ph: "screen · mock exam pdf",
-          },
-        ];
-        items.forEach((it, i) => {
-          const reversed = i % 2 === 1;
-          const div = document.createElement("div");
-          div.className = "inc-row grid grid-cols-12 items-stretch";
-          div.innerHTML = `
-      <div class="col-span-12 md:col-span-7 ${reversed ? "md:order-2" : ""} p-8 md:p-12 flex flex-col justify-center ${reversed ? "md:border-l border-line" : "md:border-r border-line"}">
-        <div class="flex items-center gap-3 mb-5">
-          <span class="font-mono text-[11px] text-acid">[${it.num}]</span>
-          <span class="font-mono text-[11px] text-dim">// ${it.tag}</span>
-        </div>
-        <h3 class="font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.0] mb-5">${it.title}</h3>
-        <p class="text-paper/80 text-base md:text-lg max-w-lg leading-snug mb-6">${it.desc}</p>
-        <ul class="font-mono text-sm space-y-2 text-paper/85">
-          ${it.bullets.map((b) => `<li>→ ${b}</li>`).join("")}
-        </ul>
-      </div>
-      <div class="col-span-12 md:col-span-5 ${reversed ? "md:order-1" : ""} p-6 md:p-10 flex items-center justify-center">
-        <div class="inc-img w-full">
-          <div class="inc-img-ph">// ${it.ph}</div>
         </div>
       </div>
     `;
@@ -1125,7 +826,7 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
             city: "Казань",
             tg: "@lev_kazan",
             tariff: "Самостоятельный",
-            text: "Я&nbsp;брал тариф без&nbsp;живых уроков, чисто платформу и&nbsp;тренажёр. И&nbsp;это уже дало +41&nbsp;балл. На&nbsp;следующий год пойду на&nbsp;Минигруппу — хочу 95+.",
+            text: "Я&nbsp;брал тариф без&nbsp;живых уроков, чисто платформу и&nbsp;тренажёр. И&nbsp;это уже дало +41&nbsp;балл. На&nbsp;следующий год пойду на&nbsp;Минигруппу — цель 80+.",
           },
           {
             num: "08",
@@ -1249,31 +950,6 @@ const runtimeData = { ...data, faq: data.faq ?? egeLandingFaqItems };
           wrap.appendChild(d);
         });
       });
-
-      // ====================== FORM ======================
-      (function form() {
-        function makeSelector(wrapId) {
-          const w = document.getElementById(wrapId);
-          if (!w) return;
-          const targetName = w.dataset.target;
-          const targetInput = targetName
-            ? document.querySelector(`input[name="${targetName}"]`)
-            : null;
-          w.querySelectorAll(".pickbtn").forEach((b) => {
-            b.addEventListener("click", () => {
-              w.querySelectorAll(".pickbtn").forEach((x) =>
-                x.classList.remove("is-on"),
-              );
-              b.classList.add("is-on");
-              if (targetInput) {
-                targetInput.value = b.dataset.val || b.textContent.trim();
-              }
-            });
-          });
-        }
-        makeSelector("levelChoice");
-        makeSelector("tariffChoice");
-      })();
 
       // ====================== COUNTDOWN ======================
       (function countdown() {

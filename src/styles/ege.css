@@ -789,7 +789,7 @@
       }
       .inc-img {
         position: relative;
-        aspect-ratio: 4/3;
+        aspect-ratio: 16/9;
         background: var(--ink);
         border: 1px solid var(--line);
         overflow: hidden;
@@ -803,7 +803,7 @@
         font-family: "JetBrains Mono", monospace;
         font-size: 11px;
       }
-      .inc-img::after {
+      .inc-img-ph::after {
         content: "";
         position: absolute;
         inset: 0;
@@ -965,6 +965,135 @@
       .paper-card {
         background: var(--paper);
         border: 1px solid var(--ink);
+      }
+
+      .need-card {
+        position: relative;
+        min-height: 260px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        background: var(--ink);
+        transition:
+          background 200ms ease,
+          border-color 200ms ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .need-card:hover {
+        background: var(--coal);
+        border-color: var(--paper);
+      }
+      .need-card .need-go {
+        transition: transform 180ms ease;
+      }
+      .need-card:hover .need-go {
+        transform: translateX(4px);
+      }
+
+      .fmt-row {
+        transition: background 160ms ease;
+      }
+      .fmt-row:hover {
+        background: var(--coal);
+      }
+
+      .soc-tile {
+        transition:
+          background 180ms ease,
+          color 180ms ease,
+          border-color 180ms ease;
+      }
+      .soc-tile:hover {
+        background: var(--acid);
+        color: var(--ink);
+        border-color: var(--acid);
+      }
+      .soc-tile:hover .soc-dim {
+        color: rgba(10, 10, 10, 0.7);
+      }
+
+      .home-slider .course-card {
+        transition:
+          transform 200ms ease,
+          border-color 200ms ease,
+          background 200ms ease;
+      }
+      .home-slider .course-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--paper);
+        background: var(--coal);
+      }
+
+      .home-slider__btn {
+        width: 48px;
+        height: 48px;
+        border: 1px solid var(--paper);
+        display: grid;
+        place-items: center;
+        font-family: "JetBrains Mono", monospace;
+        transition:
+          background 160ms ease,
+          color 160ms ease;
+      }
+      .home-slider__btn:hover {
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      .field {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 16px;
+        color: var(--paper);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        transition: border-color 150ms ease;
+      }
+      .field::placeholder {
+        color: var(--dim);
+      }
+      .field:focus {
+        outline: none;
+        border-color: var(--acid);
+      }
+
+      /* Paper-вариант финального блока: светлый фон, тёмный текст.
+         Fuchsia-фон по предыдущей версии «выжигал» глаза на длинной
+         форме с выбором, тут спокойнее. */
+      .home-pick {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .home-pick .pickbtn {
+        border-color: var(--ink);
+        color: var(--ink);
+      }
+      .home-pick .pickbtn:hover,
+      .home-pick .pickbtn.is-active {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .home-pick .field {
+        background: var(--paper);
+        border-color: var(--ink);
+        color: var(--ink);
+      }
+      .home-pick .field::placeholder {
+        color: rgba(10, 10, 10, 0.45);
+      }
+
+      .home-hero-title {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 520px) {
+        .home-hero-title {
+          font-size: clamp(34px, 11vw, 48px);
+          line-height: 0.98;
+        }
       }
       .paper-section .text-paper,
       .paper-section .text-paper\/60,

@@ -1,0 +1,105 @@
+---
+import EgeAcidButton from "../ege/EgeAcidButton.astro";
+---
+
+<section class="section relative" id="author">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">[03] / ОБО МНЕ</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate">
+          Валерий&nbsp;Филипенко. <span class="text-dim">Учил репетитор — буду учить и&nbsp;я. Только <span class="ul">лучше</span>.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-px bg-line border border-line">
+      <div class="col-span-12 md:col-span-5 bg-ink p-6 md:p-8">
+        <div class="flex items-start justify-between mb-6 font-mono text-[11px]">
+          <span>ID · 0001</span>
+          <span class="text-dim">[ TUTOR · CHEM ]</span>
+        </div>
+        <div class="aspect-[4/5] border border-line relative overflow-hidden mb-6">
+          <img
+            src="/images/valerii-filipenko.webp"
+            alt="Валерий Филипенко — репетитор по химии"
+            class="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="1200"
+          />
+          <div class="absolute top-3 right-3 font-mono text-[10px] text-acid">● rec</div>
+        </div>
+        <div class="font-display font-bold text-3xl">Валерий Филипенко</div>
+        <div class="font-mono text-xs text-dim mt-1">СПбГТИ (ТУ) · хим.фак · красный диплом</div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="https://t.me/valery_chemistry" class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition">tg @valery_chemistry</a>
+          <a href="https://www.youtube.com/@chemistry_exam" class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition">YouTube</a>
+          <a href="https://vk.com/chemistry_exam" class="font-mono text-[11px] border border-line px-3 py-2 hover:bg-paper hover:text-ink transition">VK</a>
+        </div>
+      </div>
+
+      <div class="col-span-12 md:col-span-7 bg-ink">
+        <div class="grid grid-cols-2 md:grid-cols-3 border-b border-line">
+          <div class="p-6 border-r border-line">
+            <div class="font-display font-bold text-4xl text-acid" data-counter="100">0</div>
+            <div class="label mt-2">Свой ЕГЭ</div>
+          </div>
+          <div class="p-6 border-r border-line">
+            <div class="font-display font-bold text-4xl" data-counter="10">0</div>
+            <div class="label mt-2">Лет в&nbsp;подготовке</div>
+          </div>
+          <div class="p-6">
+            <div class="font-display font-bold text-4xl" data-counter="2000" data-suffix="+">0</div>
+            <div class="label mt-2">Учеников</div>
+          </div>
+          <div class="p-6 border-r border-line border-t md:border-t-0">
+            <div class="font-display font-bold text-4xl" data-counter="2">0</div>
+            <div class="label mt-2">100-балльников</div>
+          </div>
+          <div class="p-6 border-r border-line border-t md:border-t-0">
+            <div class="font-display font-bold text-4xl text-fuchsia2" data-counter="8">0</div>
+            <div class="label mt-2">Статей в&nbsp;РИНЦ</div>
+          </div>
+          <div class="p-6 border-t md:border-t-0">
+            <div class="font-display font-bold text-4xl" data-counter="8">0</div>
+            <div class="label mt-2">Курсов выпустил</div>
+          </div>
+        </div>
+
+        <div class="p-6 md:p-8 space-y-5 text-paper/90">
+          <p class="font-display text-xl md:text-2xl leading-snug">
+            «Я&nbsp;сдал ЕГЭ по&nbsp;химии на&nbsp;100&nbsp;баллов и&nbsp;с&nbsp;2016 года выстраиваю методику, в&nbsp;которой сложные темы объясняются последовательно и&nbsp;без лишней теории».
+          </p>
+          <ul class="font-mono text-sm space-y-3 text-paper/85 mt-6">
+            <li class="flex gap-4"><span class="text-acid shrink-0 w-8">[01]</span><span>Окончил химический факультет СПбГТИ&nbsp;(ТУ) с&nbsp;красным дипломом.</span></li>
+            <li class="flex gap-4"><span class="text-acid shrink-0 w-8">[02]</span><span>С&nbsp;2016&nbsp;года готовит к&nbsp;ЕГЭ, ОГЭ, поступлению и&nbsp;олимпиадам. Обучил 2000+ учеников.</span></li>
+            <li class="flex gap-4"><span class="text-acid shrink-0 w-8">[03]</span><span>Автор восьми курсов по&nbsp;химии и&nbsp;сборника авторских вариантов ЕГЭ.</span></li>
+            <li class="flex gap-4"><span class="text-acid shrink-0 w-8">[04]</span><span>Автор восьми научных статей в&nbsp;РИНЦ и&nbsp;ежедневных разборов задач в&nbsp;социальных сетях.</span></li>
+          </ul>
+
+          <div class="pt-6 border-t border-line mt-8 flex flex-wrap items-center gap-4">
+            <EgeAcidButton
+              as="button"
+              type="button"
+              html="Записаться на&nbsp;пробное"
+              arrow="→"
+              popupId="lead-popup"
+              source="tutor-author"
+              variant="inline"
+              campaign="tutor"
+              class="px-6 py-4"
+            />
+            <div class="font-mono text-[11px] text-dim">
+              60 МИН · БЕСПЛАТНО · ОНЛАЙН
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

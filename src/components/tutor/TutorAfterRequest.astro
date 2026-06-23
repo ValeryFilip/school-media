@@ -1,0 +1,38 @@
+---
+import EgeH2 from "../ege/EgeH2.astro";
+import { tutorAfterRequest } from "../../data/tutorContent";
+
+const d = tutorAfterRequest;
+---
+
+<section class="section relative" id="after-request">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="sec-num">{d.section}</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <EgeH2 text={d.title.text} marks={d.title.marks} class="titrate" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line">
+      {
+        d.steps.map((step) => (
+          <article class="bg-ink p-7 md:p-8 min-h-[280px] flex flex-col">
+            <div class="flex items-start justify-between gap-4 mb-10">
+              <span class="font-mono text-[11px] text-acid">// ШАГ {step.num}</span>
+              <span class="font-mono text-2xl text-dim">→</span>
+            </div>
+            <h3 class="font-display font-bold text-2xl md:text-3xl leading-tight mb-4">
+              {step.title}
+            </h3>
+            <p class="mt-auto font-mono text-sm leading-snug text-paper/75">
+              {step.text}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

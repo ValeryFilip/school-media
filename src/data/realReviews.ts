@@ -4,11 +4,15 @@
  * и во всех лендингах (EgeReviews — ЕГЭ / ОГЭ / 10 класс / репетитор).
  */
 export interface RealReview {
-  entranceScore: number; // Входные баллы
-  egeScore: number; // Результат на ЕГЭ
+  entranceScore?: number; // Входные баллы / оценка
+  egeScore?: number; // Результат на ЕГЭ / ОГЭ
+  scoreStartLabel?: string;
+  scoreEndLabel?: string;
+  scoreDeltaText?: string;
+  resultText?: string;
   university: string; // Куда поступил
   studentName: string; // Имя ученика
-  studentPhoto: string; // Фото ученика (аватар)
+  studentPhoto?: string; // Фото ученика (аватар)
   telegramUrl: string; // Полная ссылка (tg / vk)
   telegramLink: string; // Подпись ссылки (@ник)
   reviewText: string; // Текст отзыва

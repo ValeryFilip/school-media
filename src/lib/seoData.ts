@@ -290,9 +290,6 @@ export function buildCourseJsonLd(params: {
 
 const DEFAULT_PRODUCT_IMAGE = "/images/technical/og-home.png";
 
-/** Дата действия цены по умолчанию (конец следующего года) */
-const DEFAULT_PRICE_VALID_UNTIL = "2026-12-31";
-
 /**
  * Генерирует JSON-LD для Product + Offer
  * image обязателен для rich results в Google (ImageObject).
@@ -332,9 +329,9 @@ export function buildProductJsonLd(params: {
     price,
     priceCurrency = "RUB",
     availability = "https://schema.org/InStock",
-    priceValidUntil = DEFAULT_PRICE_VALID_UNTIL,
-    ratingValue = 4.9,
-    reviewCount = 100,
+    priceValidUntil,
+    ratingValue,
+    reviewCount,
     reviews,
   } = params;
   const imagePath = params.image && params.image.trim() ? params.image : DEFAULT_PRODUCT_IMAGE;
@@ -344,71 +341,25 @@ export function buildProductJsonLd(params: {
     "@type": "Offer" as const,
     price: String(price).replace(/[^0-9]/g, ""),
     priceCurrency,
-    priceValidUntil,
     url,
     availability,
-    hasMerchantReturnPolicy: {
-      "@type": "MerchantReturnPolicy" as const,
-      applicableCountry: "RU",
-      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-      merchantReturnDays: 30,
-      returnFees: "https://schema.org/FreeReturn",
-    },
-    shippingDetails: {
-      "@type": "OfferShippingDetails" as const,
-      shippingRate: {
-        "@type": "MonetaryAmount" as const,
-        value: 0,
-        currency: "RUB",
-      },
-      deliveryTime: {
-        "@type": "ShippingDeliveryTime" as const,
-        handlingTime: {
-          "@type": "QuantitativeValue" as const,
-          minValue: 0,
-          maxValue: 0,
-          unitCode: "DAY",
-        },
-        transitTime: {
-          "@type": "QuantitativeValue" as const,
-          minValue: 0,
-          maxValue: 0,
-          unitCode: "DAY",
-        },
-      },
-    },
+    ...(priceValidUntil && { priceValidUntil }),
   };
 
-  const reviewList =
-    reviews && reviews.length > 0
-      ? reviews.map((r) => ({
-          "@type": "Review" as const,
-          author: { "@type": "Person" as const, name: r.author },
-          datePublished: r.datePublished,
-          reviewBody: r.reviewBody,
-          ...(r.image && { image: absUrl(origin, r.image) }),
-          ...(typeof r.ratingValue === "number" && {
-            reviewRating: {
+  const reviewList = reviews?.map((review) => ({
+    "@type": "Review" as const,
+    author: { "@type": "Person" as const, name: review.author },
+    datePublished: review.datePublished,
+    reviewBody: review.reviewBody,
+    ...(review.image && { image: absUrl(origin, review.image) }),
+    ...(typeof review.ratingValue === "number" && {
+      reviewRating: {
               "@type": "Rating" as const,
-              ratingValue: r.ratingValue,
-              bestRating: 5,
-            },
-          }),
-        }))
-      : [
-          {
-            "@type": "Review" as const,
-            author: { "@type": "Person" as const, name: ORGANIZATION_DATA.defaultAuthor.name },
-            datePublished: "2024-01-15",
-            reviewBody:
-              "Курс помог системно подготовиться к ЕГЭ по химии. Структура от простого к сложному, много практики с автопроверкой. Рекомендую.",
-            reviewRating: {
-              "@type": "Rating" as const,
-              ratingValue: 5,
-              bestRating: 5,
-            },
-          },
-        ];
+        ratingValue: review.ratingValue,
+        bestRating: 5,
+      },
+    }),
+  }));
 
   return {
     "@context": "https://schema.org",
@@ -425,13 +376,16 @@ export function buildProductJsonLd(params: {
     },
     url,
     offers: offer,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue,
-      reviewCount: Math.max(1, Math.round(reviewCount)),
-      bestRating: 5,
-    },
-    review: reviewList,
+    ...(typeof ratingValue === "number" &&
+      typeof reviewCount === "number" && {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue,
+          reviewCount: Math.max(1, Math.round(reviewCount)),
+          bestRating: 5,
+        },
+      }),
+    ...(reviewList?.length ? { review: reviewList } : {}),
   };
 }
 

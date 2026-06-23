@@ -1,0 +1,36 @@
+---
+const {
+  section = "[04] / ПОДГОТОВКА",
+  title = "Как устроена подготовка.",
+  mutedTitle = "6 шагов от&nbsp;«ничего не&nbsp;помню» до&nbsp;90+.",
+  note = "",
+} = Astro.props;
+---
+
+<!-- ============== 04. КАК УСТРОЕНА ПОДГОТОВКА (шаги) ============== -->
+<section class="section relative" id="howto">
+      <div class="gutter py-24 md:py-32">
+        <div class="grid grid-cols-12 gap-6 mb-16">
+          <div class="col-span-12 md:col-span-3">
+            <div class="sec-num">{section}</div>
+          </div>
+          <div class="col-span-12 md:col-span-9">
+            <h2
+              class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.95] tracking-[-0.02em] titrate"
+            >
+              {title}
+              <span class="text-dim" set:html={mutedTitle} />
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line"
+          id="stepsGrid"
+        ></div>
+
+        <div class="mt-12 font-mono text-xs text-dim max-w-xl">
+          <Fragment set:html={note} />
+        </div>
+      </div>
+    </section>

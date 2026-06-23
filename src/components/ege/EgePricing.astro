@@ -1,0 +1,238 @@
+---
+import EgeAcidButton from "./EgeAcidButton.astro";
+
+interface PricingTile {
+  label: string;
+  title: string;
+  text: string;
+}
+
+interface PricingOption {
+  href: string;
+  meta: string;
+  hint: string;
+  titleHtml: string;
+  subtitle: string;
+  priceHtml: string;
+  period: string;
+  text: string;
+  accent?: "fuchsia" | "paper";
+}
+
+interface Props {
+  section: string;
+  title: string;
+  mutedTitle: string;
+  badgePrefix: string;
+  badgeCounter?: number | null;
+  badgeText: string;
+  ribbonLeft: string;
+  ribbonRight: string;
+  featured: {
+    metaLeft: string;
+    metaRight: string;
+    title: string;
+    subtitle: string;
+    oldPrice: string;
+    discount: string;
+    price: string;
+    period: string;
+    installment: string;
+    placesLabel: string;
+    placesCurrent: string;
+    placesTotal: string;
+    placesWidth: string;
+    placesNote: string;
+    cta: string;
+    note: string;
+  };
+  bonuses: PricingTile[];
+  featuresTitle: string;
+  features: string[];
+  options: PricingOption[];
+  facts: PricingTile[];
+}
+
+const {
+  section,
+  title,
+  mutedTitle,
+  badgePrefix,
+  badgeCounter,
+  badgeText,
+  ribbonLeft,
+  ribbonRight,
+  featured,
+  bonuses,
+  featuresTitle,
+  features,
+  options,
+  facts,
+} = Astro.props as Props;
+---
+
+<section class="pricing-section relative" id="prices">
+  <div class="gutter py-24 md:py-32">
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="font-mono text-[12px] tracking-wider uppercase text-ink/70">
+          {section}
+        </div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2
+          class="font-display font-bold text-[clamp(36px,5.5vw,84px)] leading-[0.9] tracking-[-0.025em]"
+        >
+          {title}
+          <span class="text-ink/60" set:html={mutedTitle} />
+        </h2>
+        <div class="mt-6 inline-flex items-center gap-3 bg-ink text-paper px-4 py-2 font-mono text-xs">
+          <span class="w-2 h-2 bg-acid"></span>
+          {badgePrefix}
+          {
+            badgeCounter !== null && badgeCounter !== undefined && (
+              <span class="text-acid font-bold" data-counter={badgeCounter}>0</span>
+            )
+          }
+          <Fragment set:html={badgeText} />
+        </div>
+      </div>
+    </div>
+
+    <div class="border-2 border-ink relative bg-ink text-paper">
+      <div class="bg-acid text-ink font-mono text-[11px] tracking-widest py-2 px-5 uppercase font-bold flex flex-wrap items-center justify-between gap-2">
+        <span>{ribbonLeft}</span>
+        <span class="hidden md:inline">{ribbonRight}</span>
+      </div>
+
+      <div class="grid grid-cols-12">
+        <div class="col-span-12 lg:col-span-5 p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-line">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-mono text-[12px] text-acid">{featured.metaLeft}</div>
+            <div class="font-mono text-[11px] text-dim">{featured.metaRight}</div>
+          </div>
+          <div class="font-display font-bold text-[clamp(44px,5.2vw,76px)] leading-[0.9] tracking-[-0.025em] break-words">
+            {featured.title}
+          </div>
+          <div class="font-mono text-sm text-dim mt-3 mb-8" set:html={featured.subtitle} />
+
+          <div class="relative mb-2">
+            <div class="font-mono text-base text-dim line-through inline-block" set:html={featured.oldPrice} />
+            <span class="inline-block ml-3 bg-fuchsia2 text-ink font-mono text-[10px] px-2 py-1 align-middle font-bold tracking-widest">
+              {featured.discount}
+            </span>
+          </div>
+          <div class="flex items-baseline gap-3 mb-2">
+            <div
+              class="font-display font-bold text-[clamp(56px,8vw,108px)] leading-none text-acid"
+              set:html={featured.price}
+            />
+            <div class="font-mono text-sm text-dim">{featured.period}</div>
+          </div>
+          <div class="font-mono text-xs text-dim mb-8" set:html={featured.installment} />
+
+          <div class="border border-fuchsia2 p-4 mb-6">
+            <div class="flex items-center justify-between font-mono text-[11px] mb-2">
+              <span class="text-fuchsia2">{featured.placesLabel}</span>
+              <span>
+                <span class="text-fuchsia2 font-bold">{featured.placesCurrent}</span>
+                <span class="text-dim">{featured.placesTotal}</span>
+              </span>
+            </div>
+            <div class="h-1.5 bg-line relative overflow-hidden">
+              <div class="absolute inset-y-0 left-0 bg-fuchsia2" style={`width:${featured.placesWidth}`} />
+            </div>
+            <div class="font-mono text-[10px] text-dim mt-2" set:html={featured.placesNote} />
+          </div>
+
+          <EgeAcidButton href="#form" html={featured.cta} class="w-full text-center py-5 text-lg" />
+          <div class="font-mono text-[10px] text-dim mt-3 text-center" set:html={featured.note} />
+        </div>
+
+        <div class="col-span-12 lg:col-span-7">
+          <div class="grid grid-cols-2 gap-px bg-line border-b border-line">
+            {
+              bonuses.map((bonus) => (
+                <div class="bg-ink p-5">
+                  <div class="font-mono text-[10px] text-acid uppercase mb-2">{bonus.label}</div>
+                  <div class="font-display font-bold text-xl leading-tight" set:html={bonus.title} />
+                  <p class="font-mono text-[11px] text-dim mt-2 leading-snug" set:html={bonus.text} />
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="p-8 md:p-10">
+            <div class="font-mono text-[11px] text-dim uppercase tracking-wider mb-5">
+              {featuresTitle}
+            </div>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 font-mono text-sm text-paper/90">
+              {
+                features.map((feature) => (
+                  <li class="flex gap-3">
+                    <span class="text-acid">✓</span>
+                    <span set:html={feature} />
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {
+        options.map((option) => (
+          <a
+            href={option.href}
+            class="block bg-ink text-paper p-6 md:p-8 border border-ink hover:border-fuchsia2 transition group"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class:list={[
+                "font-mono text-[11px]",
+                option.accent === "fuchsia" ? "text-fuchsia2" : "text-paper/70",
+              ]}>
+                {option.meta}
+              </div>
+              <div class="font-mono text-[11px] text-dim group-hover:text-fuchsia2 transition">
+                {option.hint}
+              </div>
+            </div>
+            <div
+              class="font-display font-bold text-3xl md:text-4xl mb-1 leading-tight"
+              set:html={option.titleHtml}
+            />
+            <div class="font-mono text-xs text-dim mb-6" set:html={option.subtitle} />
+            <div class="flex items-baseline gap-3 mb-4">
+              <div class="font-display font-bold text-3xl" set:html={option.priceHtml} />
+              <div class="font-mono text-[11px] text-dim">{option.period}</div>
+            </div>
+            <div class="font-mono text-xs text-paper/80 leading-snug" set:html={option.text} />
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/15 border border-ink/20">
+      {
+        facts.map((fact) => (
+          <div class="bg-acid p-6 md:p-7 flex flex-col">
+            <div class="font-mono text-[11px] text-ink/60 uppercase tracking-wider mb-3">
+              {fact.label}
+            </div>
+            <div class="font-display font-bold text-xl md:text-2xl leading-tight" set:html={fact.title} />
+            <p class="font-mono text-[12px] text-ink/70 mt-3 leading-snug" set:html={fact.text} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing-section {
+    background: var(--fuchsia2);
+    color: var(--ink);
+  }
+</style>
