@@ -60,6 +60,12 @@ const courseColumns: {
       { href: "/paket-4-kursa/", title: "Пакет «4 курса»", subtitle: "Всё + авторские варианты" },
     ],
   },
+  {
+    title: "Индивидуально",
+    links: [
+      { href: "/tutor/", title: "Репетитор по химии", subtitle: "Занятия 1 на 1 с автором" },
+    ],
+  },
 ];
 
 const fallbackCategories = searchArticles
@@ -127,8 +133,6 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
             ))}
           </div>
         </details>
-
-        <a href="/tutor/">Репетитор</a>
 
       </nav>
     </div>
@@ -199,8 +203,6 @@ const categoryLinks = categories.length ? categories : fallbackCategories;
                 </div>
               </details>
             ))}
-
-            <a href="/tutor/"><span>Репетитор</span></a>
           </nav>
 
           <div class="academy-nav__panel-footer">

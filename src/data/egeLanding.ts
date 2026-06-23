@@ -81,9 +81,18 @@ export const egeLandingData = {
               },
             ],
           },
+          {
+            title: "Индивидуально",
+            links: [
+              {
+                href: "/tutor/",
+                label: "Репетитор по химии",
+                description: "Занятия 1 на 1 с автором",
+              },
+            ],
+          },
         ],
       },
-      { href: "/tutor/", label: "Репетитор" },
       { href: "/academy/", label: "Академия" },
       { href: "/otzyvy-na-kursi/", label: "Отзывы" },
       { href: "/contacts/", label: "Контакты" },
@@ -722,7 +731,6 @@ export const egeLandingData = {
       {
         title: "Разделы",
         links: [
-          { href: "/tutor/", label: "Репетитор · 1 на 1" },
           { href: "/refer/", label: "Реферальная программа" },
           { href: "/otzyvy-na-kursi/", label: "Отзывы" },
           { href: "/academy/", label: "Академия" },
@@ -762,6 +770,12 @@ export const egeLandingData = {
               { href: "/paket-2-kursa/", label: "Пакет ×2: общая + неорганика" },
               { href: "/paket-3-kursa/", label: "Пакет ×3: вся химия ЕГЭ" },
               { href: "/paket-4-kursa/", label: "Пакет ×4: курсы + варианты" },
+            ],
+          },
+          {
+            title: "Индивидуально",
+            links: [
+              { href: "/tutor/", label: "Репетитор по химии · 1 на 1" },
             ],
           },
         ],
